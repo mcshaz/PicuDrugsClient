@@ -11,9 +11,6 @@ import {  inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../types";
 
-//Dexie.dependencies.indexedDB = require('fake-indexeddb')
-//Dexie.dependencies.IDBKeyRange = require('fake-indexeddb/lib/FDBKeyRange')
-
 @injectable()
 export class drugsDBLocal extends Dexie {
     // Declare implicit table properties.

@@ -16,6 +16,6 @@ export class BrowserFetch implements IFetch {
                                     'Content-Type': 'application/json'
                                     }),
                                 });
-        return await response.json() as IServerChanges;
+        return (await response.json()) as IServerChanges;
     }
 }
