@@ -1,0 +1,37 @@
+{
+  "name": "picu_drugs_client",
+  "version": "1.0.0",
+  "description": "client based drug calculator",
+  "main": "index.ts",
+  "scripts": {
+    "test": "mocha --require ts-node/register test/**/*.ts"
+  },
+  "keywords": [
+    "drug",
+    "infusion",
+    "calculation",
+    "weight"
+  ],
+  "author": "Brent McSharry",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/chai-roughly": "^1.0.0",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "chai-roughly": "^1.0.0",
+    "dexie": "^2.0.4",
+    "fake-indexeddb": "^2.0.6",
+    "mocha": "^6.0.2",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.3333"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mcshaz/repository.git"
+  },
+  "dependencies": {
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13"
+  }
+}
