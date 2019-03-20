@@ -3,7 +3,7 @@ export class SiPrefix
 	constructor(readonly logValue: number, readonly fullName: string, readonly siSymbol?: string)
 	{
 		if (siSymbol === void 0){
-			siSymbol = fullName.length > 0
+			this.siSymbol = fullName.length > 0
 				? fullName[0]
 				: fullName
 		} else if (siSymbol.length > 1) {

@@ -6,14 +6,14 @@ export interface searchResult { comparison:searchComparison, lowerBound?:number,
 export function binarySearch(lookup:(index:number) => number, 
         target: number, minIndex:number,maxIndex:number):searchResult{
     const minVal = lookup(minIndex);
-    if (minVal < target){
+    if (minVal > target){
         return { comparison: searchComparison.lessThanMin };
     }
     if (minVal === target){
         return { comparison: searchComparison.inRange, lowerBound:minVal, upperBound:minVal };
     }
     const maxVal = lookup(maxIndex);
-    if (maxVal > target){
+    if (maxVal < target){
         return { comparison: searchComparison.greaterThanMax };
     }
     if (maxVal === target){
@@ -35,5 +35,5 @@ export function binarySearch(lookup:(index:number) => number,
         }
     }
     
-    return { comparison: searchComparison.inRange, lowerBound:currentIndex, upperBound:currentIndex };
+    return { comparison: searchComparison.inRange, lowerBound:currentIndex, upperBound:currentIndex+1 };
 }
