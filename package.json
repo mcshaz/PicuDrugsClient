@@ -16,10 +16,10 @@
   "license": "MIT",
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/chai-roughly": "^1.0.0",
+    "@types/chai-almost": "^1.0.0",
     "@types/mocha": "^5.2.6",
     "chai": "^4.2.0",
-    "chai-roughly": "^1.0.0",
+    "chai-almost": "^1.0.1", 
     "dexie": "^2.0.4",
     "fake-indexeddb": "^2.0.6",
     "mocha": "^6.0.2",

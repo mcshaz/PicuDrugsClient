@@ -1,8 +1,8 @@
 ﻿import chai = require('chai'); //import { expect } from 'chai';
-import chaiRoughly = require('chai-roughly'); //By default, chai-almost allows a tolerance of 1 x 10-6
+import chaiAlmost = require('chai-almost'); //By default, chai-almost allows a tolerance of 1 x 10-6
 import { VariableInfusionView, VariableInfusionDrugVM, transformVariableInfusions, SiUnitMeasure, InfusionRateUnit, VariableConcentrationDetailVM, NumericRange } from './../../src/infusionCalculations';
 import { dilutionMethod, siUnit } from './../../src/db';
-chai.use(chaiRoughly);
+chai.use(chaiAlmost());
 describe('variableVMConversion', () => {
     const methodsTested = new Set<dilutionMethod>()
     for (const td of getVariableInfusionVMTestData()) {
@@ -11,7 +11,7 @@ describe('variableVMConversion', () => {
         td.viewRows.forEach(vr=> vr.Note = vr.Note || "");
         it(`${td.vm[0].DrugName} (${td.wt}kg) - dilMethod [${dilMethods.join(',')}]`, () => {
             const testOut = transformVariableInfusions(td.wt, td.viewRows);
-            chai.expect(testOut).to.roughly.deep.equal(td.vm);
+            chai.expect(testOut).to.deep.almost.equal(td.vm);
         });
     }
     it('has tested relevant methods', () => {

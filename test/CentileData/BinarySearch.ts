@@ -1,37 +1,40 @@
-import { searchComparison, binarySearch } from './../../src/anthropometry/binarySearch';
+import { searchComparison, binarySearch } from '../../src/anthropometry/binarySearch';
 import { expect } from 'chai';
 
 describe('binarySearch',()=>{
-    const testArray = [2,5,9,10,24];
+    let testArray:number[];
     const look=(indx:number) => testArray[indx];
-    it('finds exact index',()=>{
-        const searchNum = 10;
-        const indx = testArray.indexOf(searchNum);
-        let searchResult = binarySearch(look,searchNum,0,testArray.length-1)
-        expect(searchResult.comparison).to.equal(searchComparison.inRange);
-        expect(searchResult.lowerBound).to.equal(indx);
-        expect(searchResult.upperBound).to.equal(indx);
-    });
-    it('finds indexes surrounding',()=>{
-        const searchNum = 8.3;
-        const indx = testArray.indexOf(5);
-        let searchResult = binarySearch(look,searchNum,0,testArray.length-1)
-        expect(searchResult.comparison).to.equal(searchComparison.inRange);
-        expect(searchResult.lowerBound).to.equal(indx);
-        expect(searchResult.upperBound).to.equal(indx+1);
-    });
+    for(const testData of [{array: [2,5,9,10,24], name:'odd'},{array: [2,3,5,9,10,24], name:'even'}]){
+        testArray = testData.array;
+        it('finds exact index ' + testData.name,()=>{
+            const searchNum = 10;
+            const indx = testArray.indexOf(searchNum);
+            const searchResult = binarySearch(look,searchNum,0,testArray.length-1)
+            expect(searchResult.comparison).to.equal(searchComparison.inRange);
+            expect(searchResult.lowerBound).to.equal(indx);
+            expect(searchResult.upperBound).to.equal(indx);
+        });
+        it('finds indexes surrounding ' + testData.name,()=>{
+            const searchNum = 8.3;
+            const indx = testArray.indexOf(5);
+            const searchResult = binarySearch(look,searchNum,0,testArray.length-1)
+            expect(searchResult.comparison).to.equal(searchComparison.inRange,'comparison type [enum]');
+            expect(searchResult.lowerBound).to.equal(indx,'lower bound');
+            expect(searchResult.upperBound).to.equal(indx+1,'upper bound');
+        });
+    }
     it("doesn't find less than min",()=>{
         const min = Math.min(...testArray);
-        let searchResult = binarySearch(look,min-1,0,testArray.length-1)
+        const searchResult = binarySearch(look,min-1,0,testArray.length-1)
         expect(searchResult.comparison).to.equal(searchComparison.lessThanMin);
         expect(searchResult.lowerBound).to.equal(void 0);
         expect(searchResult.upperBound).to.equal(void 0);
     });
     it("doesn't find more than max",()=>{
         const max = Math.max(...testArray);
-        let searchResult = binarySearch(look,max+0.1,0,testArray.length-1)
+        const searchResult = binarySearch(look,max+0.1,0,testArray.length-1)
         expect(searchResult.comparison).to.equal(searchComparison.greaterThanMax);
         expect(searchResult.lowerBound).to.equal(void 0);
         expect(searchResult.upperBound).to.equal(void 0);
     });
-})
+});

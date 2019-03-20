@@ -19,9 +19,8 @@ export function binarySearch(lookup:(index:number) => number,
     if (maxVal === target){
         return { comparison: searchComparison.inRange, lowerBound:maxVal, upperBound:maxVal };
     } 
-    let currentIndex:number;
     while (maxIndex - minIndex > 1) {
-        currentIndex = Math.floor((minIndex + maxIndex) / 2);
+        const currentIndex = Math.floor((minIndex + maxIndex) / 2);
         const currentVal = lookup(currentIndex);
     
         if (currentVal < target) {
@@ -35,5 +34,5 @@ export function binarySearch(lookup:(index:number) => number,
         }
     }
     
-    return { comparison: searchComparison.inRange, lowerBound:currentIndex, upperBound:currentIndex+1 };
+    return  { comparison: searchComparison.inRange, lowerBound:minIndex, upperBound:maxIndex };
 }

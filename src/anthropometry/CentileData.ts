@@ -109,7 +109,8 @@ export abstract class CentileData {
             return min;
         }
         const max = delegate(bounds.upperBound);
-        return (target-min)/(max-min);
+        const fraction = (target-min)/(max-min);
+        return bounds.lowerBound + fraction;//should be fraction * (bounds.upperBound - bounds.lowerBound), but this always equals 1
     }
 
     ageDaysForMedian(median: number, isMale:boolean):medianMatchResult{
@@ -125,12 +126,13 @@ export abstract class CentileData {
                     gestation:currentAgeRange.min
                 };
             case searchComparison.inRange:
-                let interpol = this.linearInterpolateOnDelegate(currentDelegate,currentHit, median)
+                const interpol = this.linearInterpolateOnDelegate(currentDelegate,currentHit, median)
                 if (interpol <= termGestationWeeks){
+                    const exactWeeks = Math.floor(interpol);
                     return {
                         matchType: searchComparison.inRange,
-                        ageDays: (interpol - currentHit.lowerBound)*7,
-                        gestation: currentHit.lowerBound
+                        ageDays: (interpol - exactWeeks)*7,
+                        gestation: exactWeeks
                     };
                 }
                 return {
