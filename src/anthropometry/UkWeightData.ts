@@ -1,7 +1,7 @@
-﻿import { CentileData } from "./CentileData";
+﻿import { CentileCollection } from "./CentileData";
 import { Lms } from "./Lms";
 
-export class UKWeightData extends CentileData{
+export class UKWeightData extends CentileCollection{
     constructor(){
         super();
     }

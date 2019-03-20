@@ -1,7 +1,7 @@
-import { CentileData, GenderRange, GestAgeWeeksRange } from "./CentileData";
+import { CentileCollection, GenderRange, GestAgeWeeksRange } from "./CentileData";
 import { Lms } from "./Lms";
 
-export class UKLengthData extends CentileData{
+export class UKLengthData extends CentileCollection{
     constructor(){
         super({gestAgeRange: new GenderRange(new GestAgeWeeksRange(25, 43))});
     }

@@ -2,7 +2,7 @@
 import { searchComparison, binarySearch, searchResult } from "./binarySearch";
 type integer = number;
 const daysPerYear = 365.25;
-const daysPerMonth = daysPerYear / 12;
+export const daysPerMonth = daysPerYear / 12;
 const weeksPerMonth = daysPerMonth / 7;
 const termGestationWeeks = 40;
 const ceaseCorrectingAtDaysOfAge = daysPerMonth * 24;
@@ -81,7 +81,7 @@ interface centileArgs {
 
 interface medianMatchResult{ageDays:number, matchType: searchComparison, gestation:number}
 
-export abstract class CentileData {
+export abstract class CentileCollection {
     readonly gestAgeRange: GenderRange<GestAgeWeeksRange>;
     readonly ageWeeksRange: GenderRange<AgeWeeksSinceTermRange>;
     readonly ageMonthsRange: GenderRange<AgeMonthsSinceTerm>;
@@ -191,7 +191,7 @@ export abstract class CentileData {
         }
         return {
             matchType: searchComparison.greaterThanMax,
-            ageDays: currentAgeRange.max,
+            ageDays: currentAgeRange.max * daysPerMonth,
             gestation: termGestationWeeks
         };
     }
@@ -218,7 +218,7 @@ export abstract class CentileData {
             case searchComparison.lessThanMin:
                 throw new RangeError("totalWeeksGestAtBirth must be greater than gestAgeRange - check property prior to calling");
             case searchComparison.inRange:
-                return CentileData.interpolate(gestRangeMatch.value, isMale, this.lMSForGestAge);
+                return CentileCollection.interpolate(gestRangeMatch.value, isMale, this.lMSForGestAge);
         }
         let weeksRangeMatch = this.ageWeeksRange.get(isMale).isAgeInRange(daysSinceBirth, weeksGestAtBirth);
         switch (weeksRangeMatch.matchResult){
@@ -229,7 +229,7 @@ export abstract class CentileData {
                 const weeksLms = this.lMSForAgeWeeks(this.ageWeeksRange.get(isMale).min, isMale);
                 return gestLms.linearInterpolate(weeksLms,gestRangeMatch.value - gestMax);
             case searchComparison.inRange:
-                return CentileData.interpolate(weeksRangeMatch.value, isMale, this.lMSForAgeWeeks);
+                return CentileCollection.interpolate(weeksRangeMatch.value, isMale, this.lMSForAgeWeeks);
         }
 
         let monthsRangeMatch = this.ageMonthsRange.get(isMale).isAgeInRange(daysSinceBirth, weeksGestAtBirth);
@@ -243,7 +243,7 @@ export abstract class CentileData {
                 weeksMax *= 4;
                 return weeksLms.linearInterpolate(monthsLms,(monthsRangeMatch.value - weeksMax)/(monthsMin - weeksMax));
             case searchComparison.inRange:
-                return CentileData.interpolate(monthsRangeMatch.value, isMale, this.lMSForAgeMonths);
+                return CentileCollection.interpolate(monthsRangeMatch.value, isMale, this.lMSForAgeMonths);
         }
         return this.lMSForAgeMonths(this.ageMonthsRange.get(isMale).max,isMale);
     };
