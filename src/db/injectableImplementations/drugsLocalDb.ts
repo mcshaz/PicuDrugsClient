@@ -1,18 +1,18 @@
 import Dexie from 'dexie';
-import { IWard } from './../entities/IWard';
-import { IDeletionDate } from './../entities/IDeletionDate';
-import { IContextInfusionDrug } from './../entities/IContextInfusionDrugBase';
-import { IContextBolusDrug } from './../entities/IContextBolusDrug';
-import { tableName } from './../entities/enums/tableNames';
-import { IEntityDeletion } from './../entities/IEntityDeletion';
-import { ILogger } from './../Injectables/ILogger';
-import { IFetch, IdbMods, IServerChanges } from './../Injectables/IFetch';
+import { IWard } from '../entities/IWard';
+import { IDeletionDate } from '../entities/IDeletionDate';
+import { IContextInfusionDrug } from '../entities/IContextInfusionDrugBase';
+import { IContextBolusDrug } from '../entities/IContextBolusDrug';
+import { tableName } from '../entities/enums/tableNames';
+import { IEntityDeletion } from '../entities/IEntityDeletion';
+import { ILogger } from '../Injectables/ILogger';
+import { IFetch, IdbMods, IServerChanges } from '../Injectables/IFetch';
 import {  inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../types";
 
 @injectable()
-export class drugsDBLocal extends Dexie {
+export class DrugsDBLocal extends Dexie {
     // Declare implicit table properties.
     // (just to inform Typescript. Instanciated by Dexie in stores() method)
     wards: Dexie.Table<IWard, number>; // number = type of the primkey

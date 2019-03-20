@@ -16,9 +16,9 @@ export function tranformIInfusion(weight: number, contextDrug: IContextDrug, new
 		throw new Error(fieldConst.wtErr);
 	}
 
-	newDrug.DrawingUpUnits = new SiUnitMeasure(contextDrug.AmpulePrefix, contextDrug.siUnit);
+	newDrug.DrawingUpUnits = new SiUnitMeasure(contextDrug.AmpulePrefix, contextDrug.SiUnit);
 	let method = getDilutionMethod(contextDrug.DilutionMethod);
-	newDrug.RateUnit = new InfusionRateUnit(contextDrug.InfusionPrefix, contextDrug.siUnit, method.isPerKg, contextDrug.IsPerMin);
+	newDrug.RateUnit = new InfusionRateUnit(contextDrug.InfusionPrefix, contextDrug.SiUnit, method.isPerKg, contextDrug.IsPerMin);
 	let ampConvFact = Math.pow(10, contextDrug.InfusionPrefix - contextDrug.AmpulePrefix);
 
 	let workingWt = 0;

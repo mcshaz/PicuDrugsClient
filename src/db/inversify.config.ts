@@ -1,14 +1,15 @@
 import { Container } from "inversify";
 import { TYPES } from "./types";
 import { IFetch } from "./Injectables/IFetch";
-import { ILogger, EmptyLogger } from "./Injectables/ILogger";
+import { ILogger } from "./Injectables/ILogger";
 import { IDrugDB } from "./Injectables/IDrugDB";
-import { drugsDBLocal } from "./injectableImplementations/drugsLocalDb";
-import { BrowserFetch } from "./injectableImplementations/WebWorkerFetch";
+import { DrugsDBLocal } from "./injectableImplementations/DrugsLocalDb";
+import { MockFetch } from "./injectableImplementations/BrowserFetch";
+import { EmptyLogger } from "./injectableImplementations/EmptyLogger";
 
 
 const drugDbContainer = new Container();
-drugDbContainer.bind<IFetch>(TYPES.IFetch).to(BrowserFetch);
+drugDbContainer.bind<IFetch>(TYPES.IFetch).to(MockFetch);
 drugDbContainer.bind<ILogger>(TYPES.ILogger).to(EmptyLogger);
-drugDbContainer.bind<IDrugDB>(TYPES.IDrugDB).to(drugsDBLocal).inSingletonScope();
+drugDbContainer.bind<IDrugDB>(TYPES.IDrugDB).to(DrugsDBLocal).inSingletonScope();
 export  { drugDbContainer }

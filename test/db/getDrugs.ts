@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { drugsDBLocal } from './../../src/db/injectableImplementations/drugsLocalDb'
+//import { drugsDBLocal } from './../../src/db/injectableImplementations/drugsLocalDb'
 
 
 //Dexie.dependencies.indexedDB = require('fake-indexeddb')
