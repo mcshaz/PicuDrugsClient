@@ -1,8 +1,9 @@
-import { CentileData, Lms, GenderRange, AgeDaysRange } from "./CentileData";
+import { CentileData, GenderRange, AgeMonthsSinceTerm } from "./CentileData";
+import { Lms } from "./Lms";
 
 export class UKHeadCircumferenceData extends CentileData{
     constructor(){
-        super({ ageMonthsRange : new GenderRange(new AgeDaysRange(3, 216),new AgeDaysRange(3, 204))});
+        super({ ageMonthsRange : new GenderRange(new AgeMonthsSinceTerm(3, 216),new AgeMonthsSinceTerm(3, 204))});
     }   lMSForGestAge(gestAgeWeeks:number, isMale:boolean)
     {
         if (isMale)

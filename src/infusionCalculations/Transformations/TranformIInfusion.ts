@@ -1,13 +1,13 @@
-import { SiUnitMeasure } from '../PresentationClasses/Dosing/SiUnitMeasure'
-import { InfusionRateUnit } from '../PresentationClasses/Dosing/InfusionRateUnit'
+import { SiUnitMeasure } from './../PresentationClasses/Dosing/SiUnitMeasure'
+import { InfusionRateUnit } from './../PresentationClasses/Dosing/InfusionRateUnit'
 import { IContextDrug } from './../EntityViewClasses/EntityInterfaces/IContextDrug'
 import { IContextConcentration } from './../EntityViewClasses/EntityInterfaces/IContextConcentration'
-import { IInfusionDrugVM } from '../PresentationClasses/Interfaces/IInfusionDrugVM'
-import { IConcentrationDetailVM } from '../PresentationClasses/Interfaces/IConcentrationDetailVM'
+import { IInfusionDrugVM } from './../PresentationClasses/Interfaces/IInfusionDrugVM'
+import { IConcentrationDetailVM } from './../PresentationClasses/Interfaces/IConcentrationDetailVM'
 import { getVariableDilutionVolumeMls } from './Calculations/getVariableDilutionVolumeMls'
 import { getDilutionMethod } from './Calculations/getDilutionMethod';
-import { IContextFixedConc } from '../EntityViewClasses/EntityInterfaces/IContextFixedConc';
-import * as fieldConst from '../Utilities/fieldConstants'
+import { IContextFixedConc } from './../EntityViewClasses/EntityInterfaces/IContextFixedConc';
+import * as fieldConst from './../Utilities/fieldConstants'
 
 export function tranformIInfusion(weight: number, contextDrug: IContextDrug, newDrug: IInfusionDrugVM, makeAndAddNewConcentration: (arg: IContextConcentration) => IConcentrationDetailVM): void
 {
@@ -16,9 +16,9 @@ export function tranformIInfusion(weight: number, contextDrug: IContextDrug, new
 		throw new Error(fieldConst.wtErr);
 	}
 
-	newDrug.DrawingUpUnits = new SiUnitMeasure(contextDrug.AmpulePrefix, contextDrug.SiUnitId);
+	newDrug.DrawingUpUnits = new SiUnitMeasure(contextDrug.AmpulePrefix, contextDrug.siUnit);
 	let method = getDilutionMethod(contextDrug.DilutionMethod);
-	newDrug.RateUnit = new InfusionRateUnit(contextDrug.InfusionPrefix, contextDrug.SiUnitId, method.isPerKg, contextDrug.IsPerMin);
+	newDrug.RateUnit = new InfusionRateUnit(contextDrug.InfusionPrefix, contextDrug.siUnit, method.isPerKg, contextDrug.IsPerMin);
 	let ampConvFact = Math.pow(10, contextDrug.InfusionPrefix - contextDrug.AmpulePrefix);
 
 	let workingWt = 0;

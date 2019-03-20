@@ -1,5 +1,5 @@
 import { expect, assert } from 'chai';
-import { NumericRange, roundingMethod } from '../../src/infusionCalculations/index';
+import { NumericRange, roundingMethod } from './../../src/infusionCalculations';
 
 describe('NumericRange',()=>{
     it('can be initialized without an initializer', () => {

@@ -1,5 +1,5 @@
-import { MethodLogic } from '../../PresentationClasses/Dosing/MethodLogic'
-import { dilutionMethod } from '../../../db/entities/enums/dilutionMethod'
+import { MethodLogic } from './../../PresentationClasses/Dosing/MethodLogic'
+import { dilutionMethod } from './../../../db'
 const methodLogics : ReadonlyArray<MethodLogic> = [
 		new MethodLogic(true, false, false, false), 
 		new MethodLogic(true, false, false, true), 

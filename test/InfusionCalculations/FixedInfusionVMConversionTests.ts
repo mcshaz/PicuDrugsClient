@@ -1,6 +1,7 @@
-﻿import chai = require('chai'); //import { expect } from 'chai';
+﻿import { dilutionMethod, siUnit} from './../../src/db';
+import chai = require('chai'); //import { expect } from 'chai';
 import chaiRoughly = require('chai-roughly'); //By default, chai-almost allows a tolerance of 1 x 10-6
-import {FixedInfusionView, FixedInfusionDrugVM ,dilutionMethod, transformFixedInfusions, siUnit, SiUnitMeasure, InfusionRateUnit, InfusionPeriodVM, MinutesDuration } from '../../src/infusionCalculations/index';
+import {FixedInfusionView, FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit, InfusionPeriodVM, MinutesDuration } from './../../src/infusionCalculations';
 chai.use(chaiRoughly);
 describe('fixedVMConversion',()=>{
     const methodsTested = new Set<dilutionMethod>()
@@ -28,7 +29,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                     Fullname: "Acetylcysteine",
                     Abbrev: "NAC",
                     AmpulePrefix: -3,
-                    SiUnitId: siUnit.gram,
+                    SiUnit: siUnit.gram,
                     Note: "watch for hypotension.",
                     ReferenceDescription: "Notes on Injectable Drugs 6th Ed",
                     RefAbbrev: "Notes on Inj",
@@ -52,7 +53,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                     Fullname: "Acetylcysteine",
                     Abbrev: "NAC",
                     AmpulePrefix: -3,
-                    SiUnitId: siUnit.gram,
+                    SiUnit: siUnit.gram,
                     Note: "watch for hypotension.",
                     ReferenceDescription: "Notes on Injectable Drugs 6th Ed",
                     RefAbbrev: "Notes on Inj",
@@ -76,7 +77,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                     Fullname: "Acetylcysteine",
                     Abbrev: "NAC",
                     AmpulePrefix: -3,
-                    SiUnitId: siUnit.gram,
+                    SiUnit: siUnit.gram,
                     Note: "watch for hypotension.",
                     ReferenceDescription: "Notes on Injectable Drugs 6th Ed",
                     RefAbbrev: "Notes on Inj",
@@ -149,7 +150,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                 Fullname: "Levosimendan",
                 Abbrev: "Levosimendan",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 ReferenceDescription: "Starship Pharmacy Guidelines (paediatric)",
                 RefAbbrev: "SS pharm",
                 Hyperlink: "file://ahsl6/main/Groups/Everyone/POLICY/Master%20file%20of%20Intranet/Medication%20Admin/Paed/IV/",
@@ -198,7 +199,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                 Fullname: "Magnesium Sulphate (asthma)",
                 Abbrev: "Mg",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 Note: "Watch for hypotension. Keep serum Mg 1.5-2.5 mmol/L. May be repeated.",
                 ReferenceDescription: "Starship PICU Protocols",
                 RefAbbrev: "PICU RBPs",
@@ -249,7 +250,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                 Fullname: "Phenytoin - Peripheral IV",
                 Abbrev: "Phenytoin PIV",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 ReferenceDescription: "Starship Clinical Guidelines",
                 RefAbbrev: "SS Guidelines",
                 Hyperlink: "http://www.adhb.govt.nz/StarShipClinicalGuidelines/",
@@ -298,7 +299,7 @@ function getFixedInfusionVMTestData(): fixedVMTestData[] {
                 Fullname: "Phenytoin - Central Access",
                 Abbrev: "Phenytoin CVL",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 ReferenceDescription: "Starship Clinical Guidelines",
                 RefAbbrev: "SS Guidelines",
                 Hyperlink: "http://www.adhb.govt.nz/StarShipClinicalGuidelines/",

@@ -1,4 +1,4 @@
-import { siUnit } from '../../../db/entities/enums/siUnit'
+import { siUnit } from './../../../db'
 
 const unitAbbreviations: string[] = [
 	"g", "unit", "mol", "J", "L"

@@ -1,169 +1,248 @@
-﻿const daysPerYear = 365.25;
-const msPerDay = 86400000 //24 * 60 * 60 * 1000;
+﻿import { Lms } from "./Lms";
+import { searchComparison, binarySearch, searchResult } from "./binarySearch";
+type integer = number;
+const daysPerYear = 365.25;
 const daysPerMonth = daysPerYear / 12;
 const weeksPerMonth = daysPerMonth / 7;
-const termGestation = 40;
-const ceaseCorrectingDaysOfAge = daysPerMonth * 24;
-const roundingFactor = 0.00001;
-const maximumGestationalCorrection = 43;
-export class GenderRange {
-    readonly maleRange: AgeDaysRange;
-    readonly femaleRange: AgeDaysRange
-    constructor(maleOrUnisexRange: AgeDaysRange, femaleRange?: AgeDaysRange) {
+const termGestationWeeks = 40;
+const ceaseCorrectingAtDaysOfAge = daysPerMonth * 24;
+//const roundingFactor = 0.00001;
+const maximumGestationalCorrection = 42;
+
+export class GenderRange<T extends AgeRange> {
+    readonly maleRange: T;
+    readonly femaleRange: T
+    constructor(maleOrUnisexRange: T, femaleRange?: T) {
         this.maleRange = maleOrUnisexRange;
         this.femaleRange = femaleRange || maleOrUnisexRange;
     };
+    get(isMale:boolean){
+        return isMale ? this.maleRange : this.femaleRange;
+    }
 }
 
-export class AgeDaysRange {
-    constructor(readonly min:number, readonly max:number) {
+interface rangeMatchResult {
+    matchResult: searchComparison,
+    value: number
+}
+
+export abstract class AgeRange {
+    constructor(readonly min:integer, readonly max:integer) {
+        if(!Number.isInteger(min) || !Number.isInteger(max)){
+            throw new Error("min and max must both be integers")
+        }
         if (min < 0) { throw new RangeError("min must be >=0"); }
         if (max < min) { throw new RangeError("max must be >= min"); }
     };
+    protected isValueInRange(value: number): rangeMatchResult {
+        if (value < this.min){
+            return { matchResult: searchComparison.lessThanMin, value };
+        }
+        if (value > this.max){
+            return { matchResult: searchComparison.greaterThanMax, value };
+        }
+        return { matchResult: searchComparison.inRange, value: value } ;
+    }
+    abstract isAgeInRange(ageDaysSinceBirth:integer, gestAgeWeeksAtBirth:integer): rangeMatchResult
 }
 
-export class Lms {
-    constructor(readonly l: number, readonly m: number, readonly s: number) { }
-    linearInterpolate(interpolWith: Lms, fraction:number) {
-        if (fraction < 0 || fraction > 1) {
-            throw ("fraction must be between 0 and 1");
-        }
-        var oppFraction = 1 - fraction;
-        return new Lms(
-            oppFraction * this.l + fraction * interpolWith.l,
-            oppFraction * this.m + fraction * interpolWith.m,
-            oppFraction * this.s + fraction * interpolWith.s
-        );
-    }
-    zFromParam(param:number) {
-        if (this.l == 0) {
-            return Math.log(param / this.m) / this.s;
-        }
-        return (Math.pow(param / this.m, this.l) - 1) / (this.l * this.s);
-    }
-
-    cumSnormfromParam(param:number) {
-        return cumSnorm(this.zFromParam(param));
+export class GestAgeWeeksRange extends AgeRange{
+    isAgeInRange(ageDaysSinceBirth:integer, gestAgeWeeksAtBirth:integer){
+        return this.isValueInRange(gestAgeWeeksAtBirth + ageDaysSinceBirth / 7);
     }
 }
 
-function cumSnorm(zScore:number) {
-    const zAbs = Math.abs(zScore);
-    let returnVal:number,
-        build:number;
-    if (zAbs > 37) {
-        return 0;
-    } else {
-        var Exponential = Math.exp(-Math.pow(zAbs, 2) / 2);
-        if (zAbs < 7.07106781186547) {
-            build = 3.52624965998911E-02 * zAbs + 0.700383064443688;
-            build = build * zAbs + 6.37396220353165;
-            build = build * zAbs + 33.912866078383;
-            build = build * zAbs + 112.079291497871;
-            build = build * zAbs + 221.213596169931;
-            build = build * zAbs + 220.206867912376;
-            returnVal = Exponential * build;
-            build = 8.83883476483184E-02 * zAbs + 1.75566716318264;
-            build = build * zAbs + 16.064177579207;
-            build = build * zAbs + 86.7807322029461;
-            build = build * zAbs + 296.564248779674;
-            build = build * zAbs + 637.333633378831;
-            build = build * zAbs + 793.826512519948;
-            build = build * zAbs + 440.413735824752;
-            returnVal = returnVal / build;
+export class AgeWeeksSinceTermRange extends AgeRange{
+    constructor(min:integer, max:integer){
+        if (max > ceaseCorrectingAtDaysOfAge / 7){
+            throw new Error("This class does not yet account for cease correcting for gest age - change code to account")
         }
-        else {
-            build = zAbs + 0.65;
-            build = zAbs + 4 / build;
-            build = zAbs + 3 / build;
-            build = zAbs + 2 / build;
-            build = zAbs + 1 / build;
-            returnVal = Exponential / build / 2.506628274631;
-        }
+        super(min,max);
     }
-    return (zScore < 0) ? returnVal : 1 - returnVal;
+    isAgeInRange(ageDaysSinceBirth:integer, gestAgeWeeksAtBirth:integer){
+        return this.isValueInRange(ageDaysSinceBirth / 7 - (termGestationWeeks - gestAgeWeeksAtBirth));
+    }
+}
+
+export class AgeMonthsSinceTerm extends AgeRange{
+    isAgeInRange(ageDaysSinceBirth:integer, gestAgeWeeksAtBirth:integer){
+        const ageDaysSinceTerm = ageDaysSinceBirth > ceaseCorrectingAtDaysOfAge 
+            ? ageDaysSinceBirth 
+            : ageDaysSinceBirth - 7 * (termGestationWeeks - gestAgeWeeksAtBirth);
+        return this.isValueInRange(ageDaysSinceTerm / daysPerMonth); 
+    }
 }
 
 interface centileArgs {
-    gestAgeRange?: GenderRange,
-    ageWeeksRange?: GenderRange,
-    ageMonthsRange?: GenderRange
+    gestAgeRange?: GenderRange<GestAgeWeeksRange>,
+    ageWeeksRange?: GenderRange<AgeWeeksSinceTermRange>,
+    ageMonthsRange?: GenderRange<AgeMonthsSinceTerm>
 }
+
+interface medianMatchResult{ageDays:number, matchType: searchComparison, gestation:number}
+
 export abstract class CentileData {
-    readonly gestAgeRange: GenderRange;
-    readonly ageWeeksRange: GenderRange;
-    readonly ageMonthsRange: GenderRange;
-    abstract lMSForGestAge(lookupAge: number, isMale: boolean):Lms;
-    abstract lMSForAgeWeeks(lookupAge: number, isMale: boolean):Lms;
-    abstract lMSForAgeMonths(lookupAge: number, isMale: boolean):Lms;
+    readonly gestAgeRange: GenderRange<GestAgeWeeksRange>;
+    readonly ageWeeksRange: GenderRange<AgeWeeksSinceTermRange>;
+    readonly ageMonthsRange: GenderRange<AgeMonthsSinceTerm>;
+    abstract lMSForGestAge(lookupGestAgeWeeks: integer, isMale: boolean):Lms;
+    abstract lMSForAgeWeeks(lookupAgeWeeksPostBirth: integer, isMale: boolean):Lms;
+    abstract lMSForAgeMonths(lookupAgeMonthsPostBirth: integer, isMale: boolean):Lms;
     constructor(argObj?: centileArgs) {
         argObj = argObj || {};
-        this.gestAgeRange = argObj.gestAgeRange || new GenderRange(new AgeDaysRange(23, 43));
-        this.ageWeeksRange = argObj.ageWeeksRange || new GenderRange(new AgeDaysRange(4, 13));
-        this.ageMonthsRange = argObj.ageMonthsRange || new GenderRange(new AgeDaysRange(3, 240));
+        this.gestAgeRange = argObj.gestAgeRange || new GenderRange(new GestAgeWeeksRange(23, 43));
+        this.ageWeeksRange = argObj.ageWeeksRange || new GenderRange(new AgeWeeksSinceTermRange(4, 13));
+        this.ageMonthsRange = argObj.ageMonthsRange || new GenderRange(new AgeMonthsSinceTerm(3, 240));
     }
-    cumSnormForAge(measure:number, daysOfAge:number, isMale:boolean, totalWeeksGestAtBirth:number) {
+
+    cumSnormForAge(measure:number, daysOfAge:number, isMale:boolean, totalWeeksGestAtBirth:number = termGestationWeeks) {
         return this.lMSForAge(daysOfAge, isMale, totalWeeksGestAtBirth).cumSnormfromParam(measure);
     };
 
-    zForAge(measure:number, daysOfAge:number, isMale:boolean, totalWeeksGestAtBirth:number) {
+    zForAge(measure:number, daysOfAge:number, isMale:boolean, totalWeeksGestAtBirth:number = termGestationWeeks) {
         return this.lMSForAge(daysOfAge, isMale, totalWeeksGestAtBirth).zFromParam(measure);
     };
 
-    lMSForAge(daysOfAge: number, isMale: boolean, totalWeeksGestAtBirth: number) {
-        var lookupTotalAge, lookupAge, maxVal, nextLookupAge, ageMonthsLookup, fraction;
-        if (isMale && (totalWeeksGestAtBirth < this.gestAgeRange.maleRange.min) ||
-            (!isMale && totalWeeksGestAtBirth < this.gestAgeRange.femaleRange.min)) {
-            throw new RangeError("totalWeeksGestAtBirth must be greater than GestAgeRange - check property prior to calling");
+    private linearInterpolateOnDelegate(delegate:(index:number)=>number, bounds:searchResult, target:number){
+        const min = delegate(bounds.lowerBound);
+        if (bounds.lowerBound === bounds.upperBound){
+            return min;
         }
-        totalWeeksGestAtBirth = totalWeeksGestAtBirth || termGestation;
-        if (totalWeeksGestAtBirth > maximumGestationalCorrection) {
-            totalWeeksGestAtBirth = maximumGestationalCorrection;
+        const max = delegate(bounds.upperBound);
+        return (target-min)/(max-min);
+    }
+
+    ageDaysForMedian(median: number, isMale:boolean):medianMatchResult{
+        let currentAgeRange = this.gestAgeRange.get(isMale);
+        let currentDelegate = (v:number)=>this.lMSForGestAge(v,isMale).m
+        let currentHit = binarySearch(currentDelegate,
+                median,currentAgeRange.min,currentAgeRange.max);
+        switch (currentHit.comparison){
+            case searchComparison.lessThanMin:
+                return {
+                    matchType: searchComparison.lessThanMin,
+                    ageDays: 0,
+                    gestation:currentAgeRange.min
+                };
+            case searchComparison.inRange:
+                let interpol = this.linearInterpolateOnDelegate(currentDelegate,currentHit, median)
+                if (interpol <= termGestationWeeks){
+                    return {
+                        matchType: searchComparison.inRange,
+                        ageDays: (interpol - currentHit.lowerBound)*7,
+                        gestation: currentHit.lowerBound
+                    };
+                }
+                return {
+                    matchType: searchComparison.inRange,
+                    ageDays: (interpol - termGestationWeeks)*7,
+                    gestation: termGestationWeeks
+                };
+        }      
+        currentAgeRange = this.ageWeeksRange.get(isMale);
+        currentDelegate = (v:number)=>this.lMSForAgeWeeks(v,isMale).m
+        currentHit = binarySearch(currentDelegate,
+                median,currentAgeRange.min,currentAgeRange.max);
+        switch (currentHit.comparison){
+            case searchComparison.lessThanMin:
+                const max = currentDelegate(currentAgeRange.min);
+                let minWeeks = this.gestAgeRange.get(isMale).max
+                const min = this.lMSForGestAge(minWeeks,isMale).m;
+                minWeeks -= termGestationWeeks
+                const fraction = (median-min)/(max - min);
+                return {
+                    matchType: searchComparison.inRange,
+                    ageDays: (minWeeks + fraction * (currentAgeRange.min - minWeeks)) * 7,
+                    gestation:termGestationWeeks
+                };
+            case searchComparison.inRange:
+                let interpol = this.linearInterpolateOnDelegate(currentDelegate,currentHit, median)
+                return {
+                    matchType: searchComparison.inRange,
+                    ageDays: interpol*7,
+                    gestation: termGestationWeeks
+                };
+        }      
+        currentAgeRange = this.ageMonthsRange.get(isMale);
+        currentDelegate = (v:number)=>this.lMSForAgeMonths(v,isMale).m
+        currentHit = binarySearch(currentDelegate,
+                median,currentAgeRange.min,currentAgeRange.max);
+        switch (currentHit.comparison){
+            case searchComparison.lessThanMin:
+                const max = currentDelegate(currentAgeRange.min);
+                const minWeeks = this.ageWeeksRange.get(isMale).max;
+                const min = this.lMSForAgeWeeks(minWeeks,isMale).m;
+                const fraction = (median-min)/(max - min);
+                const maxWeeks = currentAgeRange.min * weeksPerMonth;
+                return {
+                    matchType: searchComparison.inRange,
+                    ageDays: (minWeeks + fraction * (maxWeeks - minWeeks)) * 7,
+                    gestation:termGestationWeeks
+                };
+            case searchComparison.inRange:
+                let interpol = this.linearInterpolateOnDelegate(currentDelegate,currentHit, median)
+                return {
+                    matchType: searchComparison.inRange,
+                    ageDays: interpol*daysPerMonth,
+                    gestation: termGestationWeeks
+                };
         }
-        if (daysOfAge < 0) {
-            throw new RangeError("daysOfAge:" + daysOfAge + " must be >= 0");
+        return {
+            matchType: searchComparison.greaterThanMax,
+            ageDays: currentAgeRange.max,
+            gestation: termGestationWeeks
+        };
+    }
+
+    ///this currently assumes going up in intervals of 1 - logic breaks down otherwise
+    private static interpolate(age:number, isMale:boolean, lookup:(lookupAge:integer, isMale:boolean)=>Lms){
+        if (Number.isInteger(age)){
+            return lookup(age, isMale);
         }
-        if (daysOfAge > ceaseCorrectingDaysOfAge) {
-            totalWeeksGestAtBirth = termGestation;
+        const lower = Math.floor(age);
+        return lookup(lower, isMale)
+            .linearInterpolate(lookup(lower+1, isMale), age - lower);
+    }
+
+    lMSForAge(daysSinceBirth: number, isMale: boolean, weeksGestAtBirth: number = termGestationWeeks) {
+        if (daysSinceBirth < 0) {
+            throw new RangeError("daysOfAge:" + daysSinceBirth + " must be >= 0");
         }
-        lookupTotalAge = daysOfAge / 7 + totalWeeksGestAtBirth;
-        lookupAge = Math.floor(lookupTotalAge + roundingFactor);
-        maxVal = isMale ? this.gestAgeRange.maleRange.max : this.gestAgeRange.femaleRange.max;
-        if (lookupAge == maxVal) {
-            nextLookupAge = lookupAge + 1;
-            return this.lMSForGestAge(lookupAge, isMale).linearInterpolate(this.lMSForAgeWeeks(nextLookupAge - termGestation, isMale), lookupTotalAge - lookupAge);
+        weeksGestAtBirth = termGestationWeeks > maximumGestationalCorrection 
+            ? maximumGestationalCorrection 
+            : weeksGestAtBirth;
+        let gestRangeMatch = this.gestAgeRange.get(isMale).isAgeInRange(daysSinceBirth,weeksGestAtBirth);
+        switch (gestRangeMatch.matchResult){
+            case searchComparison.lessThanMin:
+                throw new RangeError("totalWeeksGestAtBirth must be greater than gestAgeRange - check property prior to calling");
+            case searchComparison.inRange:
+                return CentileData.interpolate(gestRangeMatch.value, isMale, this.lMSForGestAge);
         }
-        if (lookupAge < maxVal) {
-            nextLookupAge = lookupAge + 1;
-            return this.lMSForGestAge(lookupAge, isMale).linearInterpolate(
-                this.lMSForGestAge(nextLookupAge, isMale),
-                lookupTotalAge - lookupAge);
+        let weeksRangeMatch = this.ageWeeksRange.get(isMale).isAgeInRange(daysSinceBirth, weeksGestAtBirth);
+        switch (weeksRangeMatch.matchResult){
+            case searchComparison.lessThanMin:
+                //age is in weeks so interpolation should be fine
+                const gestMax = this.gestAgeRange.get(isMale).max;
+                const gestLms = this.lMSForGestAge(gestMax,isMale);
+                const weeksLms = this.lMSForAgeWeeks(this.ageWeeksRange.get(isMale).min, isMale);
+                return gestLms.linearInterpolate(weeksLms,gestRangeMatch.value - gestMax);
+            case searchComparison.inRange:
+                return CentileData.interpolate(weeksRangeMatch.value, isMale, this.lMSForAgeWeeks);
         }
-        lookupTotalAge -= termGestation;
-        lookupAge = Math.floor(lookupTotalAge + roundingFactor);
-        maxVal = isMale ? this.ageWeeksRange.maleRange.max : this.ageWeeksRange.femaleRange.max;
-        if (lookupAge == maxVal) {
-            ageMonthsLookup = Math.ceil((daysOfAge + totalWeeksGestAtBirth - termGestation) / daysPerMonth);
-            fraction = (lookupTotalAge - maxVal) / (ageMonthsLookup * weeksPerMonth - maxVal);
-            return this.lMSForAgeWeeks(lookupAge, isMale).linearInterpolate(
-                this.lMSForAgeMonths(ageMonthsLookup, isMale),
-                fraction);
+
+        let monthsRangeMatch = this.ageMonthsRange.get(isMale).isAgeInRange(daysSinceBirth, weeksGestAtBirth);
+        switch (monthsRangeMatch.matchResult){
+            case searchComparison.lessThanMin:
+                //age is in weeks so interpolation should be fine
+                let weeksMax = this.ageWeeksRange.get(isMale).max;
+                const weeksLms = this.lMSForAgeWeeks(weeksMax,isMale);
+                const monthsMin = this.ageMonthsRange.get(isMale).min;
+                const monthsLms = this.lMSForAgeMonths(monthsMin, isMale);
+                weeksMax *= 4;
+                return weeksLms.linearInterpolate(monthsLms,(monthsRangeMatch.value - weeksMax)/(monthsMin - weeksMax));
+            case searchComparison.inRange:
+                return CentileData.interpolate(monthsRangeMatch.value, isMale, this.lMSForAgeMonths);
         }
-        if (lookupAge < maxVal) {
-            nextLookupAge = lookupAge + 1;
-            return this.lMSForAgeWeeks(lookupAge, isMale).linearInterpolate(
-                this.lMSForAgeWeeks(nextLookupAge, isMale),
-                lookupTotalAge - lookupAge);
-        }
-        lookupTotalAge = (daysOfAge + totalWeeksGestAtBirth - termGestation) / daysPerMonth;
-        lookupAge = Math.floor(lookupTotalAge + roundingFactor);
-        maxVal = (isMale ? this.ageMonthsRange.maleRange.max : this.ageMonthsRange.femaleRange.max);
-        if (lookupAge > maxVal) {
-            return this.lMSForAgeMonths(maxVal, isMale);
-        }
-        nextLookupAge = lookupAge + 1;
-        return this.lMSForAgeMonths(lookupAge, isMale).linearInterpolate(
-            this.lMSForAgeMonths(nextLookupAge, isMale),
-            lookupTotalAge - lookupAge);
+        return this.lMSForAgeMonths(this.ageMonthsRange.get(isMale).max,isMale);
     };
 }

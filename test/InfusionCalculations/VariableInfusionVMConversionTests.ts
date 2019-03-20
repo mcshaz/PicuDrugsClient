@@ -1,6 +1,7 @@
 ﻿import chai = require('chai'); //import { expect } from 'chai';
 import chaiRoughly = require('chai-roughly'); //By default, chai-almost allows a tolerance of 1 x 10-6
-import { VariableInfusionView, VariableInfusionDrugVM, dilutionMethod, transformVariableInfusions, siUnit, SiUnitMeasure, InfusionRateUnit, VariableConcentrationDetailVM, NumericRange } from '../../src/infusionCalculations/index';
+import { VariableInfusionView, VariableInfusionDrugVM, transformVariableInfusions, SiUnitMeasure, InfusionRateUnit, VariableConcentrationDetailVM, NumericRange } from './../../src/infusionCalculations';
+import { dilutionMethod, siUnit } from '../../src/db';
 chai.use(chaiRoughly);
 describe('variableVMConversion', () => {
     const methodsTested = new Set<dilutionMethod>()
@@ -26,7 +27,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Fullname: "doPamine/doBUTamine",
                 Abbrev: "doP/doBUT",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 DilutionMethod: dilutionMethod.VaryDrugFixedFlow,
                 InfusionPrefix: -6,
                 Volume: 50,
@@ -42,7 +43,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Abbrev: "Propofol",
                 AmpulePrefix: -3,
                 Note: "NEVER in shock or compensated shock",
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 DilutionMethod: dilutionMethod.NeatVaryFlowByWeight,
                 InfusionPrefix: -3,
                 Volume: 50,
@@ -93,7 +94,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Fullname: "Adrenaline/Noradrenaline",
                 Abbrev: "Adrenaline/Norad",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 Category: "Low",
                 DilutionMethod: dilutionMethod.VaryDrugFixedFlow,
                 InfusionPrefix: -6,
@@ -109,7 +110,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Fullname: "Adrenaline/Noradrenaline",
                 Abbrev: "Adrenaline/Norad",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 Category: "High",
                 DilutionMethod: dilutionMethod.VaryDrugFixedFlow,
                 InfusionPrefix: -6,
@@ -153,7 +154,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Fullname: "Adrenaline/Noradrenaline",
                 Abbrev: "Adrenaline/Norad",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 Category: "Low",
                 DilutionMethod: dilutionMethod.VaryDilutionVolumeFixedFlow,
                 InfusionPrefix: -6,
@@ -168,7 +169,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Fullname: "Adrenaline/Noradrenaline",
                 Abbrev: "Adrenaline/Norad",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 Category: "Medium",
                 DilutionMethod: dilutionMethod.VaryDilutionVolumeFixedFlow,
                 InfusionPrefix: -6,
@@ -183,7 +184,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                 Fullname: "Adrenaline/Noradrenaline",
                 Abbrev: "Adrenaline/Norad",
                 AmpulePrefix: -3,
-                SiUnitId: siUnit.gram,
+                SiUnit: siUnit.gram,
                 Category: "High",
                 DilutionMethod: dilutionMethod.VaryDilutionVolumeFixedFlow,
                 InfusionPrefix: -6,
@@ -232,7 +233,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                     Fullname: "Actrapid Insulin",
                     Abbrev: "Actrapid",
                     AmpulePrefix: 0,
-                    SiUnitId: siUnit.unit,
+                    SiUnit: siUnit.unit,
                     DilutionMethod: dilutionMethod.FixedDilutionVaryFlowByWeight,
                     InfusionPrefix: 0,
                     Volume: 50,
@@ -267,7 +268,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                     Fullname: "Morphine",
                     Abbrev: "Morphine",
                     AmpulePrefix: -3,
-                    SiUnitId: siUnit.gram,
+                    SiUnit: siUnit.gram,
                     DilutionMethod: dilutionMethod.FixedDilutionFixedFlow,
                     InfusionPrefix: -3,
                     Volume: 60,
@@ -302,7 +303,7 @@ function getVariableInfusionVMTestData(): variableVMTestData[] {
                     Fullname: "Frusemide",
                     Abbrev: "Frusemide",
                     AmpulePrefix: -3,
-                    SiUnitId: siUnit.gram,
+                    SiUnit: siUnit.gram,
                     DilutionMethod: dilutionMethod.NeatFixedFlow,
                     InfusionPrefix: -3,
                     Volume: 25,

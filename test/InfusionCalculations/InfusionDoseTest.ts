@@ -1,5 +1,6 @@
 ﻿import { assert } from 'chai';
-import { DrugDoseUnit, siUnit, InfusionRateUnit, SiConcentration } from '../../src/infusionCalculations/index';
+import { DrugDoseUnit, InfusionRateUnit, SiConcentration } from './../../src/infusionCalculations/';
+import { siUnit } from '../../src/db';
 
 describe('DrugDoseUnit',()=>{
     it('Converts to string', () => {
@@ -40,7 +41,7 @@ describe('InfusionRateUnit', ()=>{
         let iru = new InfusionRateUnit(-3, siUnit.gram, true,false);
         let ru = iru.toDrugDoseUnit();
         assert.strictEqual( ru.toString(),"milligrams/kg");
-        let u = iru.toSiUnitMeasure();
+        let u = iru.tosiUnitMeasure();
         assert.strictEqual( u.toString(),"milligrams");
     });
 });

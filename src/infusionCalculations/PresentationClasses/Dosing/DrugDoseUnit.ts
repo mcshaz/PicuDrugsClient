@@ -1,5 +1,5 @@
 import { SiUnitMeasure } from './SiUnitMeasure'
-import { siUnit } from '../../../db/entities/enums/siUnit'
+import { siUnit } from './../../../db'
 export class DrugDoseUnit extends SiUnitMeasure
 {
 	perSeperator: string = "/";
@@ -11,7 +11,7 @@ export class DrugDoseUnit extends SiUnitMeasure
 	{
 		return this.isPerKg ? (this.perSeperator + "kg") : "";
 	}
-	toSiUnitMeasure(): SiUnitMeasure
+	tosiUnitMeasure(): SiUnitMeasure
 	{
 		return new SiUnitMeasure(this.logSi, this.unit);
 	}

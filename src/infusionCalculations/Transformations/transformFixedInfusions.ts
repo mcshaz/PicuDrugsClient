@@ -1,9 +1,9 @@
-import { FixedInfusionDrugVM } from '../PresentationClasses/FixedInfusionDrugVM'
-import { MinutesDuration } from '../PresentationClasses/Duration/MinutesDuration'
-import { FixedInfusionView } from '../EntityViewClasses/FixedInfusionView';
+import { FixedInfusionDrugVM } from './../PresentationClasses/FixedInfusionDrugVM'
+import { MinutesDuration } from './../PresentationClasses/Duration/MinutesDuration'
+import { FixedInfusionView } from './../EntityViewClasses/FixedInfusionView';
 import { tranformIInfusion } from './TranformIInfusion';
-import { IContextConcentration } from '../EntityViewClasses/EntityInterfaces/IContextConcentration';
-import { FixedInfusionPeriodVM } from '../PresentationClasses/FixedInfusionPeriodVM';
+import { IContextConcentration } from './../EntityViewClasses/EntityInterfaces/IContextConcentration';
+import { FixedInfusionPeriodVM } from './../PresentationClasses/FixedInfusionPeriodVM';
 export function transformFixedInfusions(weight: number, views: FixedInfusionView[]): FixedInfusionDrugVM
 {
 	let v1: FixedInfusionView = views[0];

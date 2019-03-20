@@ -1,5 +1,6 @@
 import { DrugDoseUnit } from './DrugDoseUnit'
-import { siUnit } from '../../../db/entities/enums/siUnit'
+import { siUnit } from './../../../db';
+
 export class InfusionRateUnit extends DrugDoseUnit
 {
 	constructor(logSi: number, unit: siUnit, isPerKg: boolean, readonly isPerMin: boolean)

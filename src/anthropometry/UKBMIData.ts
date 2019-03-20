@@ -1,8 +1,9 @@
-import { CentileData, Lms, GenderRange, AgeDaysRange } from "./CentileData";
+import { CentileData, GenderRange, GestAgeWeeksRange } from "./CentileData";
+import { Lms } from "./Lms";
 
 export class UKBMIData extends CentileData{
     constructor(){
-        super({ gestAgeRange : new GenderRange(new AgeDaysRange(43, 43)) });
+        super({ gestAgeRange : new GenderRange(new GestAgeWeeksRange(43, 43)) });
     }
     lMSForGestAge(gestAgeWeeks:number, isMale:boolean)
     {

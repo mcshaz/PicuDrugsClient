@@ -1,4 +1,5 @@
-﻿import { CentileData, Lms } from "./CentileData";
+﻿import { CentileData } from "./CentileData";
+import { Lms } from "./Lms";
 
 export class UKWeightData extends CentileData{
     constructor(){

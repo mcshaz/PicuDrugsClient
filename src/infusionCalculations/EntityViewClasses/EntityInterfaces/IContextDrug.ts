@@ -1,11 +1,10 @@
-import { siUnit } from '../../../db/entities/enums/siUnit'
-import { dilutionMethod } from '../../../db/entities/enums/dilutionMethod'
+import { siUnit, dilutionMethod } from './../../../db'
 import {IContextConcentration} from './IContextConcentration'
 export interface IContextDrug
 {
 	InfusionDrugId: number;
 	AmpulePrefix: number;
-	SiUnitId: siUnit;
+	SiUnit: siUnit;
 	DilutionMethod: dilutionMethod;
 	InfusionPrefix: number;
 	IsPerMin: boolean;

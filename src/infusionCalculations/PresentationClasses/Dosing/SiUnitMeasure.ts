@@ -1,6 +1,7 @@
-import { siUnit } from '../../../db/entities/enums/siUnit'
+
 import { getPrefix } from './getPrefix'
 import { getSiUnitAbbrev} from './getSiUnitAbbrev'
+import { siUnit } from './../../../db';
 export class SiUnitMeasure
 {
 	pleuralise: boolean = true;

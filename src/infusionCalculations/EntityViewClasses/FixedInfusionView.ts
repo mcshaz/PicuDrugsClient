@@ -1,5 +1,4 @@
-import { siUnit } from '../../db/entities/enums/siUnit'
-import { dilutionMethod } from '../../db/entities/enums/dilutionMethod'
+import { siUnit, dilutionMethod } from './../../db'
 import {IContextDrug } from './EntityInterfaces/IContextDrug'
 import {IContextFixedConc } from './EntityInterfaces/IContextFixedConc'
 import {IContextConcentration } from './EntityInterfaces/IContextConcentration'
@@ -9,7 +8,7 @@ export interface FixedInfusionView extends IContextDrug, IContextFixedConc, ICon
 	Fullname: string;
 	Abbrev: string;
 	AmpulePrefix: number;
-	SiUnitId: siUnit;
+	SiUnit: siUnit;
 	Note?: string;
 	ReferenceDescription: string;
 	RefAbbrev: string;

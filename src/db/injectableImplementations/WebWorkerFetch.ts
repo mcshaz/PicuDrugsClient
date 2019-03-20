@@ -1,6 +1,6 @@
-import { ILogger } from '../Injectables/ILogger';
+import { ILogger } from './../Injectables/ILogger';
 import { IdbMods, IFetch, IServerChanges } from "../Injectables/IFetch";
-import { TYPES } from '../types';
+import { TYPES } from './../types';
 import "reflect-metadata";
 import { inject } from 'inversify';
 

@@ -1,7 +1,7 @@
 
 import { EttDetails } from './EttDetails'
 import { RangeFactory } from './../../Utilities/RangeFactory'
-import { roundingMethod } from '../../Utilities/roundingMethod'
+import { roundingMethod } from './../../Utilities/roundingMethod'
 export function getETTSize(ageInMonths: number, weight: number = 0.0, gestAgeBirth: number = 40.0): EttDetails
 {
 	ageInMonths = ageInMonths - (40.0 - gestAgeBirth) * 0.23076923076923078;

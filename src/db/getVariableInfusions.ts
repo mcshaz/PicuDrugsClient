@@ -1,6 +1,6 @@
 import { IContextVariableInfusionDrug } from './entities/IContextVariableInfusionDrug';
 import "reflect-metadata";
-import { ChildAge } from './../infusionCalculations/index';
+import { ChildAge } from './../infusionCalculations';
 import { drugsDBLocal } from './injectableImplementations/drugsLocalDb';
 import { IWard } from './entities/IWard';
 import { IViewVariableInfuionDrug } from './PatientSpecificViews/IViewVariableInfusionDrug';

@@ -1,8 +1,8 @@
-import { VariableInfusionDrugVM } from '../PresentationClasses/VariableInfusionDrugVM'
-import { NumericRange } from '../Utilities/NumericRange'
-import { VariableInfusionView } from '../EntityViewClasses/VariableInfusionView';
+import { VariableInfusionDrugVM } from './../PresentationClasses/VariableInfusionDrugVM'
+import { NumericRange } from './../Utilities/NumericRange'
+import { VariableInfusionView } from './../EntityViewClasses/VariableInfusionView';
 import { tranformIInfusion } from './TranformIInfusion';
-import { VariableConcentrationDetailVM } from '../PresentationClasses/VariableConcentrationDetailVM';
+import { VariableConcentrationDetailVM } from './../PresentationClasses/VariableConcentrationDetailVM';
 import { transformViewToRelations } from './transformViewToRelations';
 
 export function transformVariableInfusions(weight: number, infusions: VariableInfusionView[]): VariableInfusionDrugVM[]

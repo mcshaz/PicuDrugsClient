@@ -1,5 +1,5 @@
 import { SiUnitMeasure } from './SiUnitMeasure'
-import { siUnit } from '../../../db/entities/enums/siUnit'
+import { siUnit } from './../../../db'
 export class SiConcentration extends SiUnitMeasure
 {
 	perSeperator: string;

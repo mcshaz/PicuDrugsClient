@@ -1,5 +1,5 @@
 ﻿import { assert } from 'chai';
-import { ChildAgeFromDob, NumericRange } from '../src/infusionCalculations/index';
+import { ChildAgeFromDob, NumericRange } from './../../../src/infusionCalculations';
 describe('ChildAgeFromDob',()=>{
     //try
   //  const fmt = Intl.DateTimeFormat(['en-NZ','en-AU','en-GB']).format;

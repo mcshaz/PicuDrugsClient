@@ -1,7 +1,5 @@
 export {FixedInfusionView} from './EntityViewClasses/FixedInfusionView'
 export {VariableInfusionView} from './EntityViewClasses/VariableInfusionView'
-export {dilutionMethod} from '../db/entities/enums/dilutionMethod'
-export {siUnit} from '../db/entities/enums/siUnit'
 export {IContextConcentration} from './EntityViewClasses/EntityInterfaces/IContextConcentration'
 export {IContextDrug} from './EntityViewClasses/EntityInterfaces/IContextDrug'
 export {IContextFixedConc} from './EntityViewClasses/EntityInterfaces/IContextFixedConc'
