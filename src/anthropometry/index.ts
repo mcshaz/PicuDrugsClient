@@ -1,5 +1,5 @@
-export {searchComparison,searchResult,binarySearch} from './binarySearch'
-export {GenderRange,GestAgeWeeksRange,AgeWeeksSinceTermRange,AgeMonthsSinceTerm} from './CentileData'
+export { weeksPerMonth } from './CentileRange';
+export { CentileCollection } from './CentileCollection';
 export {Lms} from './Lms'
 export {UKBMIData} from './UKBMIData'
 export {UKHeadCircumferenceData} from './UKHeadCircumferenceData'

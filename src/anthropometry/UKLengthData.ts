@@ -1,15 +1,13 @@
-import { CentileCollection, GenderRange, GestAgeWeeksRange } from "./CentileData";
+import { CentileCollection, GenderRange } from "./CentileCollection";
 import { Lms } from "./Lms";
 
 export class UKLengthData extends CentileCollection{
     constructor(){
-        super({gestAgeRange: new GenderRange(new GestAgeWeeksRange(25, 43))});
+        super({gestAgeWeeksRange: new GenderRange({min:25, max:43})});
     }
 
-    lMSForGestAge(gestAgeWeeks:number, isMale:boolean)
+    lmsForGestAgeMale(gestAgeWeeks:number)
     {
-        if (isMale)
-        {
             switch (gestAgeWeeks)
             {
                 case 25:
@@ -53,7 +51,8 @@ export class UKLengthData extends CentileCollection{
                 default:
                     throw new RangeError("gestAgeWeeks");
             }
-        }
+    }
+    lmsForGestAgeFemale(gestAgeWeeks:number){
         switch (gestAgeWeeks) //Female
         {
             case 25:
@@ -99,10 +98,8 @@ export class UKLengthData extends CentileCollection{
         }
     }
 
-    lMSForAgeWeeks(ageWeeks:number, isMale:boolean)
+    lmsForAgeWeeksMale(ageWeeks:number)
     {
-        if (isMale)
-        {
             switch (ageWeeks)
             {
                 case 4:
@@ -129,6 +126,7 @@ export class UKLengthData extends CentileCollection{
                     throw new RangeError("ageWeeks");
             }
         }
+    lmsForAgeWeeksFemale(ageWeeks:number){
         switch (ageWeeks)
         {
             case 4:
@@ -156,10 +154,8 @@ export class UKLengthData extends CentileCollection{
         }
     }
 
-    lMSForAgeMonths(ageMonths:number, isMale:boolean)
+    lmsForAgeMonthsMale(ageMonths:number)
     {
-        if (isMale)
-        {
             switch (ageMonths)
             {
                 case 3:
@@ -642,6 +638,7 @@ export class UKLengthData extends CentileCollection{
                     throw new RangeError("ageMonths");
             }
         }
+    lmsForAgeMonthsFemale(ageMonths:number){
         switch (ageMonths)
         {
             case 3:

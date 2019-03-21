@@ -1,13 +1,12 @@
-import { CentileCollection, GenderRange, AgeMonthsSinceTerm } from "./CentileData";
+import { CentileCollection, GenderRange } from "./CentileCollection";
 import { Lms } from "./Lms";
 
 export class UKHeadCircumferenceData extends CentileCollection{
     constructor(){
-        super({ ageMonthsRange : new GenderRange(new AgeMonthsSinceTerm(3, 216),new AgeMonthsSinceTerm(3, 204))});
-    }   lMSForGestAge(gestAgeWeeks:number, isMale:boolean)
+        super({ ageMonthsSinceTermRange: new GenderRange({min:3, max:216},{min:3, max:204})});
+    }   
+    lmsForGestAgeMale(gestAgeWeeks:number)
     {
-        if (isMale)
-        {
             switch (gestAgeWeeks)
             {
                 case 23:
@@ -56,6 +55,7 @@ export class UKHeadCircumferenceData extends CentileCollection{
                     throw new RangeError("gestAgeWeeks");
             }
         }
+    lmsForGestAgeFemale(gestAgeWeeks:number){
         switch (gestAgeWeeks)//Female
         {
             case 23:
@@ -105,10 +105,8 @@ export class UKHeadCircumferenceData extends CentileCollection{
         }
     }
 
-    lMSForAgeWeeks(ageWeeks:number, isMale:boolean)
+    lmsForAgeWeeksMale(ageWeeks:number)
     {
-        if (isMale)
-        {
             switch (ageWeeks)
             {
                 case 4:
@@ -135,6 +133,7 @@ export class UKHeadCircumferenceData extends CentileCollection{
                     throw new RangeError("ageWeeks");
             }
         }
+    lmsForAgeWeeksFemale(ageWeeks:number){
         switch (ageWeeks) //Female
         {
             case 4:
@@ -162,10 +161,8 @@ export class UKHeadCircumferenceData extends CentileCollection{
         }
     }
 
-    lMSForAgeMonths(ageMonths:number, isMale:boolean)
+    lmsForAgeMonthsMale(ageMonths:number)
     {
-        if (isMale)
-        {
             switch (ageMonths)
             {
                 case 3:
@@ -600,6 +597,7 @@ export class UKHeadCircumferenceData extends CentileCollection{
                     throw new RangeError("ageMonths");
             }
         }
+    lmsForAgeMonthsFemale(ageMonths:number){
         switch (ageMonths)
         {
             case 3:

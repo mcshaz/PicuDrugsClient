@@ -1,22 +1,22 @@
-import { CentileCollection, GenderRange, GestAgeWeeksRange } from "./CentileData";
+import { CentileCollection, GenderRange } from "./CentileCollection";
 import { Lms } from "./Lms";
 
 export class UKBMIData extends CentileCollection{
     constructor(){
-        super({ gestAgeRange : new GenderRange(new GestAgeWeeksRange(43, 43)) });
+        super({ gestAgeWeeksRange : new GenderRange({min: 43, max: 43})});
     }
-    lMSForGestAge(gestAgeWeeks:number, isMale:boolean)
+    lmsForGestAgeMale(gestAgeWeeks:number)
     {
-        if (isMale)
+        switch (gestAgeWeeks)
         {
-            switch (gestAgeWeeks)
-            {
-                case 43:
-                    return new Lms(0.3449, 14.2241, 0.0923);
-                default:
-                    throw new RangeError("gestAgeWeeks");
-            }
+            case 43:
+                return new Lms(0.3449, 14.2241, 0.0923);
+            default:
+                throw new RangeError("gestAgeWeeks");
         }
+    }
+    lmsForGestAgeFemale(gestAgeWeeks:number)
+    {
         switch (gestAgeWeeks)
         {
             //Female
@@ -27,36 +27,36 @@ export class UKBMIData extends CentileCollection{
         }
     }
 
-    lMSForAgeWeeks(ageWeeks:number, isMale:boolean)
+    lmsForAgeWeeksMale(ageWeeks:number)
     {
-        if (isMale)
+        switch (ageWeeks)
         {
-            switch (ageWeeks)
-            {
-                case 4:
-                    return new Lms(0.2881, 14.7714, 0.09072);
-                case 5:
-                    return new Lms(0.2409, 15.2355, 0.08953);
-                case 6:
-                    return new Lms(0.2003, 15.6107, 0.08859);
-                case 7:
-                    return new Lms(0.1645, 15.9169, 0.08782);
-                case 8:
-                    return new Lms(0.1324, 16.1698, 0.08717);
-                case 9:
-                    return new Lms(0.1032, 16.3787, 0.08661);
-                case 10:
-                    return new Lms(0.0766, 16.5494, 0.08612);
-                case 11:
-                    return new Lms(0.052, 16.6882, 0.08569);
-                case 12:
-                    return new Lms(0.0291, 16.8016, 0.08531);
-                case 13:
-                    return new Lms(0.0077, 16.895, 0.08496);
-                default:
-                    throw new RangeError("ageWeeks");
-            }
+            case 4:
+                return new Lms(0.2881, 14.7714, 0.09072);
+            case 5:
+                return new Lms(0.2409, 15.2355, 0.08953);
+            case 6:
+                return new Lms(0.2003, 15.6107, 0.08859);
+            case 7:
+                return new Lms(0.1645, 15.9169, 0.08782);
+            case 8:
+                return new Lms(0.1324, 16.1698, 0.08717);
+            case 9:
+                return new Lms(0.1032, 16.3787, 0.08661);
+            case 10:
+                return new Lms(0.0766, 16.5494, 0.08612);
+            case 11:
+                return new Lms(0.052, 16.6882, 0.08569);
+            case 12:
+                return new Lms(0.0291, 16.8016, 0.08531);
+            case 13:
+                return new Lms(0.0077, 16.895, 0.08496);
+            default:
+                throw new RangeError("ageWeeks");
         }
+    }
+    lmsForAgeWeeksFemale(ageWeeks:number)
+    {
         switch (ageWeeks)
         {
             case 4:
@@ -83,492 +83,492 @@ export class UKBMIData extends CentileCollection{
                 throw new RangeError("ageWeeks");
         }
     }
-    lMSForAgeMonths(ageMonths:number, isMale:boolean)
+    lmsForAgeMonthsMale(ageMonths:number)
     {
-        if (isMale)
+        switch (ageMonths)
         {
-            switch (ageMonths)
-            {
-                case 3:
-                    return new Lms(0.0068, 16.8987, 0.08495);
-                case 4:
-                    return new Lms (-0.0727, 17.1579, 0.08378);
-                case 5:
-                    return new Lms (-0.137, 17.2919, 0.08296);
-                case 6:
-                    return new Lms (-0.1913, 17.3422, 0.08234);
-                case 7:
-                    return new Lms (-0.2385, 17.3288, 0.08183);
-                case 8:
-                    return new Lms (-0.2802, 17.2647, 0.0814);
-                case 9:
-                    return new Lms (-0.3176, 17.1662, 0.08102);
-                case 10:
-                    return new Lms (-0.3516, 17.0488, 0.08068);
-                case 11:
-                    return new Lms (-0.3828, 16.9239, 0.08037);
-                case 12:
-                    return new Lms (-0.4115, 16.7981, 0.08009);
-                case 13:
-                    return new Lms (-0.4382, 16.6743, 0.07982);
-                case 14:
-                    return new Lms (-0.463, 16.5548, 0.07958);
-                case 15:
-                    return new Lms (-0.4863, 16.4409, 0.07935);
-                case 16:
-                    return new Lms (-0.5082, 16.3335, 0.07913);
-                case 17:
-                    return new Lms (-0.5289, 16.2329, 0.07892);
-                case 18:
-                    return new Lms (-0.5484, 16.1392, 0.07873);
-                case 19:
-                    return new Lms (-0.5669, 16.0528, 0.07854);
-                case 20:
-                    return new Lms (-0.5846, 15.9743, 0.07836);
-                case 21:
-                    return new Lms (-0.6014, 15.9039, 0.07818);
-                case 22:
-                    return new Lms (-0.6174, 15.8412, 0.07802);
-                case 23:
-                    return new Lms (-0.6328, 15.7852, 0.07786);
-                case 24:
-                    return new Lms (-0.6473, 15.7356, 0.07771);
-                case 25:
-                    return new Lms (-0.584, 15.98, 0.07792);
-                case 26:
-                    return new Lms (-0.5497, 15.9414, 0.078);
-                case 27:
-                    return new Lms (-0.5166, 15.9036, 0.07808);
-                case 28:
-                    return new Lms (-0.485, 15.8667, 0.07818);
-                case 29:
-                    return new Lms (-0.4552, 15.8306, 0.07829);
-                case 30:
-                    return new Lms (-0.4274, 15.7953, 0.07841);
-                case 31:
-                    return new Lms (-0.4016, 15.7606, 0.07854);
-                case 32:
-                    return new Lms (-0.3782, 15.7267, 0.07867);
-                case 33:
-                    return new Lms (-0.3572, 15.6934, 0.07882);
-                case 34:
-                    return new Lms (-0.3388, 15.661, 0.07897);
-                case 35:
-                    return new Lms (-0.3231, 15.6294, 0.07914);
-                case 36:
-                    return new Lms (-0.3101, 15.5988, 0.07931);
-                case 37:
-                    return new Lms (-0.3, 15.5693, 0.0795);
-                case 38:
-                    return new Lms (-0.2927, 15.541, 0.07969);
-                case 39:
-                    return new Lms (-0.2884, 15.514, 0.0799);
-                case 40:
-                    return new Lms (-0.2869, 15.4885, 0.08012);
-                case 41:
-                    return new Lms (-0.2881, 15.4645, 0.08036);
-                case 42:
-                    return new Lms (-0.2919, 15.442, 0.08061);
-                case 43:
-                    return new Lms (-0.2981, 15.421, 0.08087);
-                case 44:
-                    return new Lms (-0.3067, 15.4013, 0.08115);
-                case 45:
-                    return new Lms (-0.3174, 15.3827, 0.08144);
-                case 46:
-                    return new Lms (-0.3303, 15.3652, 0.08174);
-                case 47:
-                    return new Lms (-0.3452, 15.3485, 0.08205);
-                case 48:
-                    return new Lms (-0.3622, 15.3326, 0.08238);
-                case 49:
-                    return new Lms (-1.291, 15.752, 0.07684);
-                case 50:
-                    return new Lms (-1.325, 15.704, 0.07692);
-                case 51:
-                    return new Lms (-1.342, 15.682, 0.077);
-                case 52:
-                    return new Lms (-1.359, 15.662, 0.07709);
-                case 53:
-                    return new Lms (-1.375, 15.644, 0.0772);
-                case 54:
-                    return new Lms (-1.391, 15.626, 0.07733);
-                case 55:
-                    return new Lms (-1.407, 15.61, 0.07748);
-                case 56:
-                    return new Lms (-1.422, 15.595, 0.07765);
-                case 57:
-                    return new Lms (-1.437, 15.582, 0.07784);
-                case 58:
-                    return new Lms (-1.452, 15.569, 0.07806);
-                case 59:
-                    return new Lms (-1.467, 15.557, 0.07829);
-                case 60:
-                    return new Lms (-1.481, 15.547, 0.07856);
-                case 61:
-                    return new Lms (-1.495, 15.538, 0.07884);
-                case 62:
-                    return new Lms (-1.509, 15.53, 0.07915);
-                case 63:
-                    return new Lms (-1.523, 15.523, 0.07948);
-                case 64:
-                    return new Lms (-1.536, 15.517, 0.07983);
-                case 65:
-                    return new Lms (-1.549, 15.511, 0.0802);
-                case 66:
-                    return new Lms (-1.562, 15.507, 0.08059);
-                case 67:
-                    return new Lms (-1.575, 15.503, 0.081);
-                case 68:
-                    return new Lms (-1.587, 15.5, 0.08143);
-                case 69:
-                    return new Lms (-1.599, 15.498, 0.08189);
-                case 70:
-                    return new Lms (-1.611, 15.497, 0.08235);
-                case 71:
-                    return new Lms (-1.622, 15.497, 0.08284);
-                case 72:
-                    return new Lms (-1.634, 15.498, 0.08334);
-                case 73:
-                    return new Lms (-1.644, 15.499, 0.08386);
-                case 74:
-                    return new Lms (-1.655, 15.501, 0.08439);
-                case 75:
-                    return new Lms (-1.665, 15.503, 0.08494);
-                case 76:
-                    return new Lms (-1.675, 15.507, 0.08549);
-                case 77:
-                    return new Lms (-1.685, 15.511, 0.08606);
-                case 78:
-                    return new Lms (-1.694, 15.516, 0.08663);
-                case 79:
-                    return new Lms (-1.704, 15.522, 0.08722);
-                case 80:
-                    return new Lms (-1.713, 15.529, 0.08781);
-                case 81:
-                    return new Lms (-1.721, 15.536, 0.08841);
-                case 82:
-                    return new Lms (-1.73, 15.545, 0.08901);
-                case 83:
-                    return new Lms (-1.738, 15.554, 0.08962);
-                case 84:
-                    return new Lms (-1.745, 15.564, 0.09023);
-                case 85:
-                    return new Lms (-1.753, 15.575, 0.09084);
-                case 86:
-                    return new Lms (-1.76, 15.587, 0.09145);
-                case 87:
-                    return new Lms (-1.767, 15.6, 0.09207);
-                case 88:
-                    return new Lms (-1.774, 15.614, 0.09268);
-                case 89:
-                    return new Lms (-1.781, 15.628, 0.0933);
-                case 90:
-                    return new Lms (-1.787, 15.643, 0.09391);
-                case 91:
-                    return new Lms (-1.793, 15.659, 0.09451);
-                case 92:
-                    return new Lms (-1.798, 15.675, 0.09512);
-                case 93:
-                    return new Lms (-1.804, 15.692, 0.09572);
-                case 94:
-                    return new Lms (-1.809, 15.71, 0.09632);
-                case 95:
-                    return new Lms (-1.814, 15.729, 0.09691);
-                case 96:
-                    return new Lms (-1.818, 15.748, 0.09749);
-                case 97:
-                    return new Lms (-1.823, 15.768, 0.09807);
-                case 98:
-                    return new Lms (-1.827, 15.789, 0.09864);
-                case 99:
-                    return new Lms (-1.83, 15.81, 0.0992);
-                case 100:
-                    return new Lms (-1.834, 15.833, 0.09976);
-                case 101:
-                    return new Lms (-1.837, 15.855, 0.1003);
-                case 102:
-                    return new Lms (-1.84, 15.88, 0.10084);
-                case 103:
-                    return new Lms (-1.843, 15.904, 0.10137);
-                case 104:
-                    return new Lms (-1.846, 15.929, 0.10189);
-                case 105:
-                    return new Lms (-1.848, 15.955, 0.1024);
-                case 106:
-                    return new Lms (-1.85, 15.982, 0.1029);
-                case 107:
-                    return new Lms (-1.852, 16.009, 0.1034);
-                case 108:
-                    return new Lms (-1.854, 16.037, 0.10388);
-                case 109:
-                    return new Lms (-1.855, 16.066, 0.10435);
-                case 110:
-                    return new Lms (-1.856, 16.095, 0.10482);
-                case 111:
-                    return new Lms (-1.857, 16.125, 0.10527);
-                case 112:
-                    return new Lms (-1.858, 16.155, 0.10571);
-                case 113:
-                    return new Lms (-1.858, 16.187, 0.10615);
-                case 114:
-                    return new Lms (-1.859, 16.219, 0.10657);
-                case 115:
-                    return new Lms (-1.859, 16.251, 0.10698);
-                case 116:
-                    return new Lms (-1.859, 16.284, 0.10738);
-                case 117:
-                    return new Lms (-1.859, 16.318, 0.10777);
-                case 118:
-                    return new Lms (-1.859, 16.352, 0.10815);
-                case 119:
-                    return new Lms (-1.858, 16.387, 0.10852);
-                case 120:
-                    return new Lms (-1.857, 16.423, 0.10888);
-                case 121:
-                    return new Lms (-1.856, 16.459, 0.10923);
-                case 122:
-                    return new Lms (-1.855, 16.496, 0.10957);
-                case 123:
-                    return new Lms (-1.854, 16.533, 0.1099);
-                case 124:
-                    return new Lms (-1.853, 16.57, 0.11022);
-                case 125:
-                    return new Lms (-1.851, 16.609, 0.11054);
-                case 126:
-                    return new Lms (-1.85, 16.648, 0.11084);
-                case 127:
-                    return new Lms (-1.848, 16.687, 0.11114);
-                case 128:
-                    return new Lms (-1.846, 16.727, 0.11143);
-                case 129:
-                    return new Lms (-1.844, 16.768, 0.1117);
-                case 130:
-                    return new Lms (-1.842, 16.808, 0.11197);
-                case 131:
-                    return new Lms (-1.839, 16.85, 0.11223);
-                case 132:
-                    return new Lms (-1.837, 16.892, 0.11249);
-                case 133:
-                    return new Lms (-1.834, 16.935, 0.11273);
-                case 134:
-                    return new Lms (-1.831, 16.977, 0.11296);
-                case 135:
-                    return new Lms (-1.829, 17.02, 0.11319);
-                case 136:
-                    return new Lms (-1.826, 17.065, 0.11341);
-                case 137:
-                    return new Lms (-1.823, 17.108, 0.11362);
-                case 138:
-                    return new Lms (-1.819, 17.154, 0.11382);
-                case 139:
-                    return new Lms (-1.816, 17.199, 0.11402);
-                case 140:
-                    return new Lms (-1.813, 17.244, 0.1142);
-                case 141:
-                    return new Lms (-1.809, 17.291, 0.11438);
-                case 142:
-                    return new Lms (-1.806, 17.338, 0.11456);
-                case 143:
-                    return new Lms (-1.802, 17.386, 0.11472);
-                case 144:
-                    return new Lms (-1.799, 17.433, 0.11488);
-                case 145:
-                    return new Lms (-1.795, 17.481, 0.11503);
-                case 146:
-                    return new Lms (-1.791, 17.53, 0.11517);
-                case 147:
-                    return new Lms (-1.787, 17.579, 0.11532);
-                case 148:
-                    return new Lms (-1.783, 17.629, 0.11545);
-                case 149:
-                    return new Lms (-1.78, 17.679, 0.11558);
-                case 150:
-                    return new Lms (-1.776, 17.729, 0.1157);
-                case 151:
-                    return new Lms (-1.771, 17.779, 0.11581);
-                case 152:
-                    return new Lms (-1.767, 17.83, 0.11592);
-                case 153:
-                    return new Lms (-1.763, 17.881, 0.11603);
-                case 154:
-                    return new Lms (-1.759, 17.933, 0.11613);
-                case 155:
-                    return new Lms (-1.755, 17.985, 0.11622);
-                case 156:
-                    return new Lms (-1.75, 18.037, 0.11631);
-                case 157:
-                    return new Lms (-1.746, 18.089, 0.11639);
-                case 158:
-                    return new Lms (-1.742, 18.142, 0.11647);
-                case 159:
-                    return new Lms (-1.738, 18.194, 0.11655);
-                case 160:
-                    return new Lms (-1.733, 18.247, 0.11662);
-                case 161:
-                    return new Lms (-1.729, 18.3, 0.11668);
-                case 162:
-                    return new Lms (-1.724, 18.354, 0.11674);
-                case 163:
-                    return new Lms (-1.72, 18.407, 0.1168);
-                case 164:
-                    return new Lms (-1.715, 18.46, 0.11685);
-                case 165:
-                    return new Lms (-1.711, 18.514, 0.1169);
-                case 166:
-                    return new Lms (-1.707, 18.567, 0.11695);
-                case 167:
-                    return new Lms (-1.702, 18.621, 0.11699);
-                case 168:
-                    return new Lms (-1.697, 18.675, 0.11703);
-                case 169:
-                    return new Lms (-1.693, 18.729, 0.11706);
-                case 170:
-                    return new Lms (-1.689, 18.783, 0.1171);
-                case 171:
-                    return new Lms (-1.684, 18.836, 0.11712);
-                case 172:
-                    return new Lms (-1.68, 18.89, 0.11715);
-                case 173:
-                    return new Lms (-1.675, 18.944, 0.11717);
-                case 174:
-                    return new Lms (-1.671, 18.997, 0.11719);
-                case 175:
-                    return new Lms (-1.666, 19.051, 0.11721);
-                case 176:
-                    return new Lms (-1.661, 19.104, 0.11722);
-                case 177:
-                    return new Lms (-1.657, 19.158, 0.11723);
-                case 178:
-                    return new Lms (-1.652, 19.211, 0.11724);
-                case 179:
-                    return new Lms (-1.648, 19.264, 0.11724);
-                case 180:
-                    return new Lms (-1.643, 19.317, 0.11725);
-                case 181:
-                    return new Lms (-1.639, 19.37, 0.11725);
-                case 182:
-                    return new Lms (-1.635, 19.423, 0.11725);
-                case 183:
-                    return new Lms (-1.63, 19.475, 0.11724);
-                case 184:
-                    return new Lms (-1.626, 19.528, 0.11724);
-                case 185:
-                    return new Lms (-1.621, 19.579, 0.11723);
-                case 186:
-                    return new Lms (-1.617, 19.632, 0.11722);
-                case 187:
-                    return new Lms (-1.612, 19.683, 0.11721);
-                case 188:
-                    return new Lms (-1.608, 19.735, 0.11719);
-                case 189:
-                    return new Lms (-1.603, 19.786, 0.11718);
-                case 190:
-                    return new Lms (-1.599, 19.837, 0.11716);
-                case 191:
-                    return new Lms (-1.595, 19.887, 0.11714);
-                case 192:
-                    return new Lms (-1.59, 19.938, 0.11712);
-                case 193:
-                    return new Lms (-1.586, 19.988, 0.1171);
-                case 194:
-                    return new Lms (-1.582, 20.038, 0.11708);
-                case 195:
-                    return new Lms (-1.577, 20.087, 0.11706);
-                case 196:
-                    return new Lms (-1.573, 20.137, 0.11703);
-                case 197:
-                    return new Lms (-1.569, 20.186, 0.117);
-                case 198:
-                    return new Lms (-1.564, 20.234, 0.11698);
-                case 199:
-                    return new Lms (-1.56, 20.282, 0.11695);
-                case 200:
-                    return new Lms (-1.556, 20.33, 0.11692);
-                case 201:
-                    return new Lms (-1.551, 20.378, 0.11689);
-                case 202:
-                    return new Lms (-1.547, 20.425, 0.11686);
-                case 203:
-                    return new Lms (-1.543, 20.472, 0.11683);
-                case 204:
-                    return new Lms (-1.538, 20.519, 0.1168);
-                case 205:
-                    return new Lms (-1.534, 20.565, 0.11677);
-                case 206:
-                    return new Lms (-1.53, 20.611, 0.11674);
-                case 207:
-                    return new Lms (-1.526, 20.656, 0.1167);
-                case 208:
-                    return new Lms (-1.521, 20.702, 0.11667);
-                case 209:
-                    return new Lms (-1.517, 20.746, 0.11663);
-                case 210:
-                    return new Lms (-1.513, 20.791, 0.1166);
-                case 211:
-                    return new Lms (-1.509, 20.836, 0.11657);
-                case 212:
-                    return new Lms (-1.505, 20.879, 0.11653);
-                case 213:
-                    return new Lms (-1.501, 20.923, 0.11649);
-                case 214:
-                    return new Lms (-1.496, 20.967, 0.11646);
-                case 215:
-                    return new Lms (-1.492, 21.009, 0.11642);
-                case 216:
-                    return new Lms (-1.488, 21.052, 0.11639);
-                case 217:
-                    return new Lms (-1.484, 21.095, 0.11635);
-                case 218:
-                    return new Lms (-1.48, 21.136, 0.11631);
-                case 219:
-                    return new Lms (-1.476, 21.178, 0.11628);
-                case 220:
-                    return new Lms (-1.472, 21.22, 0.11624);
-                case 221:
-                    return new Lms (-1.467, 21.26, 0.1162);
-                case 222:
-                    return new Lms (-1.463, 21.301, 0.11617);
-                case 223:
-                    return new Lms (-1.459, 21.342, 0.11613);
-                case 224:
-                    return new Lms (-1.455, 21.382, 0.11609);
-                case 225:
-                    return new Lms (-1.451, 21.422, 0.11605);
-                case 226:
-                    return new Lms (-1.447, 21.461, 0.11602);
-                case 227:
-                    return new Lms (-1.443, 21.501, 0.11598);
-                case 228:
-                    return new Lms (-1.439, 21.54, 0.11594);
-                case 229:
-                    return new Lms (-1.435, 21.578, 0.11591);
-                case 230:
-                    return new Lms (-1.431, 21.617, 0.11587);
-                case 231:
-                    return new Lms (-1.427, 21.655, 0.11583);
-                case 232:
-                    return new Lms (-1.423, 21.693, 0.1158);
-                case 233:
-                    return new Lms (-1.419, 21.73, 0.11576);
-                case 234:
-                    return new Lms (-1.415, 21.768, 0.11572);
-                case 235:
-                    return new Lms (-1.412, 21.805, 0.11569);
-                case 236:
-                    return new Lms (-1.408, 21.842, 0.11565);
-                case 237:
-                    return new Lms (-1.404, 21.878, 0.11561);
-                case 238:
-                    return new Lms (-1.4, 21.914, 0.11558);
-                case 239:
-                    return new Lms (-1.396, 21.951, 0.11554);
-                case 240:
-                    return new Lms (-1.392, 21.986, 0.11551);
-                default:
-                    throw new RangeError("ageMonths");
-            }
+            case 3:
+                return new Lms(0.0068, 16.8987, 0.08495);
+            case 4:
+                return new Lms (-0.0727, 17.1579, 0.08378);
+            case 5:
+                return new Lms (-0.137, 17.2919, 0.08296);
+            case 6:
+                return new Lms (-0.1913, 17.3422, 0.08234);
+            case 7:
+                return new Lms (-0.2385, 17.3288, 0.08183);
+            case 8:
+                return new Lms (-0.2802, 17.2647, 0.0814);
+            case 9:
+                return new Lms (-0.3176, 17.1662, 0.08102);
+            case 10:
+                return new Lms (-0.3516, 17.0488, 0.08068);
+            case 11:
+                return new Lms (-0.3828, 16.9239, 0.08037);
+            case 12:
+                return new Lms (-0.4115, 16.7981, 0.08009);
+            case 13:
+                return new Lms (-0.4382, 16.6743, 0.07982);
+            case 14:
+                return new Lms (-0.463, 16.5548, 0.07958);
+            case 15:
+                return new Lms (-0.4863, 16.4409, 0.07935);
+            case 16:
+                return new Lms (-0.5082, 16.3335, 0.07913);
+            case 17:
+                return new Lms (-0.5289, 16.2329, 0.07892);
+            case 18:
+                return new Lms (-0.5484, 16.1392, 0.07873);
+            case 19:
+                return new Lms (-0.5669, 16.0528, 0.07854);
+            case 20:
+                return new Lms (-0.5846, 15.9743, 0.07836);
+            case 21:
+                return new Lms (-0.6014, 15.9039, 0.07818);
+            case 22:
+                return new Lms (-0.6174, 15.8412, 0.07802);
+            case 23:
+                return new Lms (-0.6328, 15.7852, 0.07786);
+            case 24:
+                return new Lms (-0.6473, 15.7356, 0.07771);
+            case 25:
+                return new Lms (-0.584, 15.98, 0.07792);
+            case 26:
+                return new Lms (-0.5497, 15.9414, 0.078);
+            case 27:
+                return new Lms (-0.5166, 15.9036, 0.07808);
+            case 28:
+                return new Lms (-0.485, 15.8667, 0.07818);
+            case 29:
+                return new Lms (-0.4552, 15.8306, 0.07829);
+            case 30:
+                return new Lms (-0.4274, 15.7953, 0.07841);
+            case 31:
+                return new Lms (-0.4016, 15.7606, 0.07854);
+            case 32:
+                return new Lms (-0.3782, 15.7267, 0.07867);
+            case 33:
+                return new Lms (-0.3572, 15.6934, 0.07882);
+            case 34:
+                return new Lms (-0.3388, 15.661, 0.07897);
+            case 35:
+                return new Lms (-0.3231, 15.6294, 0.07914);
+            case 36:
+                return new Lms (-0.3101, 15.5988, 0.07931);
+            case 37:
+                return new Lms (-0.3, 15.5693, 0.0795);
+            case 38:
+                return new Lms (-0.2927, 15.541, 0.07969);
+            case 39:
+                return new Lms (-0.2884, 15.514, 0.0799);
+            case 40:
+                return new Lms (-0.2869, 15.4885, 0.08012);
+            case 41:
+                return new Lms (-0.2881, 15.4645, 0.08036);
+            case 42:
+                return new Lms (-0.2919, 15.442, 0.08061);
+            case 43:
+                return new Lms (-0.2981, 15.421, 0.08087);
+            case 44:
+                return new Lms (-0.3067, 15.4013, 0.08115);
+            case 45:
+                return new Lms (-0.3174, 15.3827, 0.08144);
+            case 46:
+                return new Lms (-0.3303, 15.3652, 0.08174);
+            case 47:
+                return new Lms (-0.3452, 15.3485, 0.08205);
+            case 48:
+                return new Lms (-0.3622, 15.3326, 0.08238);
+            case 49:
+                return new Lms (-1.291, 15.752, 0.07684);
+            case 50:
+                return new Lms (-1.325, 15.704, 0.07692);
+            case 51:
+                return new Lms (-1.342, 15.682, 0.077);
+            case 52:
+                return new Lms (-1.359, 15.662, 0.07709);
+            case 53:
+                return new Lms (-1.375, 15.644, 0.0772);
+            case 54:
+                return new Lms (-1.391, 15.626, 0.07733);
+            case 55:
+                return new Lms (-1.407, 15.61, 0.07748);
+            case 56:
+                return new Lms (-1.422, 15.595, 0.07765);
+            case 57:
+                return new Lms (-1.437, 15.582, 0.07784);
+            case 58:
+                return new Lms (-1.452, 15.569, 0.07806);
+            case 59:
+                return new Lms (-1.467, 15.557, 0.07829);
+            case 60:
+                return new Lms (-1.481, 15.547, 0.07856);
+            case 61:
+                return new Lms (-1.495, 15.538, 0.07884);
+            case 62:
+                return new Lms (-1.509, 15.53, 0.07915);
+            case 63:
+                return new Lms (-1.523, 15.523, 0.07948);
+            case 64:
+                return new Lms (-1.536, 15.517, 0.07983);
+            case 65:
+                return new Lms (-1.549, 15.511, 0.0802);
+            case 66:
+                return new Lms (-1.562, 15.507, 0.08059);
+            case 67:
+                return new Lms (-1.575, 15.503, 0.081);
+            case 68:
+                return new Lms (-1.587, 15.5, 0.08143);
+            case 69:
+                return new Lms (-1.599, 15.498, 0.08189);
+            case 70:
+                return new Lms (-1.611, 15.497, 0.08235);
+            case 71:
+                return new Lms (-1.622, 15.497, 0.08284);
+            case 72:
+                return new Lms (-1.634, 15.498, 0.08334);
+            case 73:
+                return new Lms (-1.644, 15.499, 0.08386);
+            case 74:
+                return new Lms (-1.655, 15.501, 0.08439);
+            case 75:
+                return new Lms (-1.665, 15.503, 0.08494);
+            case 76:
+                return new Lms (-1.675, 15.507, 0.08549);
+            case 77:
+                return new Lms (-1.685, 15.511, 0.08606);
+            case 78:
+                return new Lms (-1.694, 15.516, 0.08663);
+            case 79:
+                return new Lms (-1.704, 15.522, 0.08722);
+            case 80:
+                return new Lms (-1.713, 15.529, 0.08781);
+            case 81:
+                return new Lms (-1.721, 15.536, 0.08841);
+            case 82:
+                return new Lms (-1.73, 15.545, 0.08901);
+            case 83:
+                return new Lms (-1.738, 15.554, 0.08962);
+            case 84:
+                return new Lms (-1.745, 15.564, 0.09023);
+            case 85:
+                return new Lms (-1.753, 15.575, 0.09084);
+            case 86:
+                return new Lms (-1.76, 15.587, 0.09145);
+            case 87:
+                return new Lms (-1.767, 15.6, 0.09207);
+            case 88:
+                return new Lms (-1.774, 15.614, 0.09268);
+            case 89:
+                return new Lms (-1.781, 15.628, 0.0933);
+            case 90:
+                return new Lms (-1.787, 15.643, 0.09391);
+            case 91:
+                return new Lms (-1.793, 15.659, 0.09451);
+            case 92:
+                return new Lms (-1.798, 15.675, 0.09512);
+            case 93:
+                return new Lms (-1.804, 15.692, 0.09572);
+            case 94:
+                return new Lms (-1.809, 15.71, 0.09632);
+            case 95:
+                return new Lms (-1.814, 15.729, 0.09691);
+            case 96:
+                return new Lms (-1.818, 15.748, 0.09749);
+            case 97:
+                return new Lms (-1.823, 15.768, 0.09807);
+            case 98:
+                return new Lms (-1.827, 15.789, 0.09864);
+            case 99:
+                return new Lms (-1.83, 15.81, 0.0992);
+            case 100:
+                return new Lms (-1.834, 15.833, 0.09976);
+            case 101:
+                return new Lms (-1.837, 15.855, 0.1003);
+            case 102:
+                return new Lms (-1.84, 15.88, 0.10084);
+            case 103:
+                return new Lms (-1.843, 15.904, 0.10137);
+            case 104:
+                return new Lms (-1.846, 15.929, 0.10189);
+            case 105:
+                return new Lms (-1.848, 15.955, 0.1024);
+            case 106:
+                return new Lms (-1.85, 15.982, 0.1029);
+            case 107:
+                return new Lms (-1.852, 16.009, 0.1034);
+            case 108:
+                return new Lms (-1.854, 16.037, 0.10388);
+            case 109:
+                return new Lms (-1.855, 16.066, 0.10435);
+            case 110:
+                return new Lms (-1.856, 16.095, 0.10482);
+            case 111:
+                return new Lms (-1.857, 16.125, 0.10527);
+            case 112:
+                return new Lms (-1.858, 16.155, 0.10571);
+            case 113:
+                return new Lms (-1.858, 16.187, 0.10615);
+            case 114:
+                return new Lms (-1.859, 16.219, 0.10657);
+            case 115:
+                return new Lms (-1.859, 16.251, 0.10698);
+            case 116:
+                return new Lms (-1.859, 16.284, 0.10738);
+            case 117:
+                return new Lms (-1.859, 16.318, 0.10777);
+            case 118:
+                return new Lms (-1.859, 16.352, 0.10815);
+            case 119:
+                return new Lms (-1.858, 16.387, 0.10852);
+            case 120:
+                return new Lms (-1.857, 16.423, 0.10888);
+            case 121:
+                return new Lms (-1.856, 16.459, 0.10923);
+            case 122:
+                return new Lms (-1.855, 16.496, 0.10957);
+            case 123:
+                return new Lms (-1.854, 16.533, 0.1099);
+            case 124:
+                return new Lms (-1.853, 16.57, 0.11022);
+            case 125:
+                return new Lms (-1.851, 16.609, 0.11054);
+            case 126:
+                return new Lms (-1.85, 16.648, 0.11084);
+            case 127:
+                return new Lms (-1.848, 16.687, 0.11114);
+            case 128:
+                return new Lms (-1.846, 16.727, 0.11143);
+            case 129:
+                return new Lms (-1.844, 16.768, 0.1117);
+            case 130:
+                return new Lms (-1.842, 16.808, 0.11197);
+            case 131:
+                return new Lms (-1.839, 16.85, 0.11223);
+            case 132:
+                return new Lms (-1.837, 16.892, 0.11249);
+            case 133:
+                return new Lms (-1.834, 16.935, 0.11273);
+            case 134:
+                return new Lms (-1.831, 16.977, 0.11296);
+            case 135:
+                return new Lms (-1.829, 17.02, 0.11319);
+            case 136:
+                return new Lms (-1.826, 17.065, 0.11341);
+            case 137:
+                return new Lms (-1.823, 17.108, 0.11362);
+            case 138:
+                return new Lms (-1.819, 17.154, 0.11382);
+            case 139:
+                return new Lms (-1.816, 17.199, 0.11402);
+            case 140:
+                return new Lms (-1.813, 17.244, 0.1142);
+            case 141:
+                return new Lms (-1.809, 17.291, 0.11438);
+            case 142:
+                return new Lms (-1.806, 17.338, 0.11456);
+            case 143:
+                return new Lms (-1.802, 17.386, 0.11472);
+            case 144:
+                return new Lms (-1.799, 17.433, 0.11488);
+            case 145:
+                return new Lms (-1.795, 17.481, 0.11503);
+            case 146:
+                return new Lms (-1.791, 17.53, 0.11517);
+            case 147:
+                return new Lms (-1.787, 17.579, 0.11532);
+            case 148:
+                return new Lms (-1.783, 17.629, 0.11545);
+            case 149:
+                return new Lms (-1.78, 17.679, 0.11558);
+            case 150:
+                return new Lms (-1.776, 17.729, 0.1157);
+            case 151:
+                return new Lms (-1.771, 17.779, 0.11581);
+            case 152:
+                return new Lms (-1.767, 17.83, 0.11592);
+            case 153:
+                return new Lms (-1.763, 17.881, 0.11603);
+            case 154:
+                return new Lms (-1.759, 17.933, 0.11613);
+            case 155:
+                return new Lms (-1.755, 17.985, 0.11622);
+            case 156:
+                return new Lms (-1.75, 18.037, 0.11631);
+            case 157:
+                return new Lms (-1.746, 18.089, 0.11639);
+            case 158:
+                return new Lms (-1.742, 18.142, 0.11647);
+            case 159:
+                return new Lms (-1.738, 18.194, 0.11655);
+            case 160:
+                return new Lms (-1.733, 18.247, 0.11662);
+            case 161:
+                return new Lms (-1.729, 18.3, 0.11668);
+            case 162:
+                return new Lms (-1.724, 18.354, 0.11674);
+            case 163:
+                return new Lms (-1.72, 18.407, 0.1168);
+            case 164:
+                return new Lms (-1.715, 18.46, 0.11685);
+            case 165:
+                return new Lms (-1.711, 18.514, 0.1169);
+            case 166:
+                return new Lms (-1.707, 18.567, 0.11695);
+            case 167:
+                return new Lms (-1.702, 18.621, 0.11699);
+            case 168:
+                return new Lms (-1.697, 18.675, 0.11703);
+            case 169:
+                return new Lms (-1.693, 18.729, 0.11706);
+            case 170:
+                return new Lms (-1.689, 18.783, 0.1171);
+            case 171:
+                return new Lms (-1.684, 18.836, 0.11712);
+            case 172:
+                return new Lms (-1.68, 18.89, 0.11715);
+            case 173:
+                return new Lms (-1.675, 18.944, 0.11717);
+            case 174:
+                return new Lms (-1.671, 18.997, 0.11719);
+            case 175:
+                return new Lms (-1.666, 19.051, 0.11721);
+            case 176:
+                return new Lms (-1.661, 19.104, 0.11722);
+            case 177:
+                return new Lms (-1.657, 19.158, 0.11723);
+            case 178:
+                return new Lms (-1.652, 19.211, 0.11724);
+            case 179:
+                return new Lms (-1.648, 19.264, 0.11724);
+            case 180:
+                return new Lms (-1.643, 19.317, 0.11725);
+            case 181:
+                return new Lms (-1.639, 19.37, 0.11725);
+            case 182:
+                return new Lms (-1.635, 19.423, 0.11725);
+            case 183:
+                return new Lms (-1.63, 19.475, 0.11724);
+            case 184:
+                return new Lms (-1.626, 19.528, 0.11724);
+            case 185:
+                return new Lms (-1.621, 19.579, 0.11723);
+            case 186:
+                return new Lms (-1.617, 19.632, 0.11722);
+            case 187:
+                return new Lms (-1.612, 19.683, 0.11721);
+            case 188:
+                return new Lms (-1.608, 19.735, 0.11719);
+            case 189:
+                return new Lms (-1.603, 19.786, 0.11718);
+            case 190:
+                return new Lms (-1.599, 19.837, 0.11716);
+            case 191:
+                return new Lms (-1.595, 19.887, 0.11714);
+            case 192:
+                return new Lms (-1.59, 19.938, 0.11712);
+            case 193:
+                return new Lms (-1.586, 19.988, 0.1171);
+            case 194:
+                return new Lms (-1.582, 20.038, 0.11708);
+            case 195:
+                return new Lms (-1.577, 20.087, 0.11706);
+            case 196:
+                return new Lms (-1.573, 20.137, 0.11703);
+            case 197:
+                return new Lms (-1.569, 20.186, 0.117);
+            case 198:
+                return new Lms (-1.564, 20.234, 0.11698);
+            case 199:
+                return new Lms (-1.56, 20.282, 0.11695);
+            case 200:
+                return new Lms (-1.556, 20.33, 0.11692);
+            case 201:
+                return new Lms (-1.551, 20.378, 0.11689);
+            case 202:
+                return new Lms (-1.547, 20.425, 0.11686);
+            case 203:
+                return new Lms (-1.543, 20.472, 0.11683);
+            case 204:
+                return new Lms (-1.538, 20.519, 0.1168);
+            case 205:
+                return new Lms (-1.534, 20.565, 0.11677);
+            case 206:
+                return new Lms (-1.53, 20.611, 0.11674);
+            case 207:
+                return new Lms (-1.526, 20.656, 0.1167);
+            case 208:
+                return new Lms (-1.521, 20.702, 0.11667);
+            case 209:
+                return new Lms (-1.517, 20.746, 0.11663);
+            case 210:
+                return new Lms (-1.513, 20.791, 0.1166);
+            case 211:
+                return new Lms (-1.509, 20.836, 0.11657);
+            case 212:
+                return new Lms (-1.505, 20.879, 0.11653);
+            case 213:
+                return new Lms (-1.501, 20.923, 0.11649);
+            case 214:
+                return new Lms (-1.496, 20.967, 0.11646);
+            case 215:
+                return new Lms (-1.492, 21.009, 0.11642);
+            case 216:
+                return new Lms (-1.488, 21.052, 0.11639);
+            case 217:
+                return new Lms (-1.484, 21.095, 0.11635);
+            case 218:
+                return new Lms (-1.48, 21.136, 0.11631);
+            case 219:
+                return new Lms (-1.476, 21.178, 0.11628);
+            case 220:
+                return new Lms (-1.472, 21.22, 0.11624);
+            case 221:
+                return new Lms (-1.467, 21.26, 0.1162);
+            case 222:
+                return new Lms (-1.463, 21.301, 0.11617);
+            case 223:
+                return new Lms (-1.459, 21.342, 0.11613);
+            case 224:
+                return new Lms (-1.455, 21.382, 0.11609);
+            case 225:
+                return new Lms (-1.451, 21.422, 0.11605);
+            case 226:
+                return new Lms (-1.447, 21.461, 0.11602);
+            case 227:
+                return new Lms (-1.443, 21.501, 0.11598);
+            case 228:
+                return new Lms (-1.439, 21.54, 0.11594);
+            case 229:
+                return new Lms (-1.435, 21.578, 0.11591);
+            case 230:
+                return new Lms (-1.431, 21.617, 0.11587);
+            case 231:
+                return new Lms (-1.427, 21.655, 0.11583);
+            case 232:
+                return new Lms (-1.423, 21.693, 0.1158);
+            case 233:
+                return new Lms (-1.419, 21.73, 0.11576);
+            case 234:
+                return new Lms (-1.415, 21.768, 0.11572);
+            case 235:
+                return new Lms (-1.412, 21.805, 0.11569);
+            case 236:
+                return new Lms (-1.408, 21.842, 0.11565);
+            case 237:
+                return new Lms (-1.404, 21.878, 0.11561);
+            case 238:
+                return new Lms (-1.4, 21.914, 0.11558);
+            case 239:
+                return new Lms (-1.396, 21.951, 0.11554);
+            case 240:
+                return new Lms (-1.392, 21.986, 0.11551);
+            default:
+                throw new RangeError("ageMonths");
         }
+    }
+    lmsForAgeMonthsFemale(ageMonths:number)
+    {
         switch (ageMonths)
         {
             case 3:
