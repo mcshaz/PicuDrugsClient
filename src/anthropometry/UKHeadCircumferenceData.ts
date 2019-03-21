@@ -1,14 +1,13 @@
-import { CentileCollection, GenderRange } from "./CentileCollection";
-import { Lms } from "./Lms";
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
+import { GenderRange } from './GenderRange';
 
-export class UKHeadCircumferenceData extends CentileCollection{
-    constructor(){
-        super({ ageMonthsSinceTermRange: new GenderRange({min:3, max:216},{min:3, max:204})});
-    }   
-    lmsForGestAgeMale(gestAgeWeeks:number)
-    {
-            switch (gestAgeWeeks)
-            {
+export class UKHeadCircumferenceData extends CentileCollection {
+    constructor() {
+        super({ ageMonthsSinceTermRange: new GenderRange({min: 3, max: 216}, {min: 3, max: 204})});
+    }
+    public lmsForGestAgeMale(gestAgeWeeks: number) {
+            switch (gestAgeWeeks) {
                 case 23:
                     return new Lms(1, 21.63267, 0.04465746);
                 case 24:
@@ -52,12 +51,11 @@ export class UKHeadCircumferenceData extends CentileCollection{
                 case 43:
                     return new Lms(1, 36.5216, 0.03197);
                 default:
-                    throw new RangeError("gestAgeWeeks");
+                    throw new RangeError('gestAgeWeeks');
             }
         }
-    lmsForGestAgeFemale(gestAgeWeeks:number){
-        switch (gestAgeWeeks)//Female
-        {
+    public lmsForGestAgeFemale(gestAgeWeeks: number) {
+        switch (gestAgeWeeks) {
             case 23:
                 return new Lms(1, 21.10156, 0.0662953);
             case 24:
@@ -101,14 +99,12 @@ export class UKHeadCircumferenceData extends CentileCollection{
             case 43:
                 return new Lms(1, 35.843, 0.03231);
             default:
-                throw new RangeError("gestAgeWeeks");
+                throw new RangeError('gestAgeWeeks');
         }
     }
 
-    lmsForAgeWeeksMale(ageWeeks:number)
-    {
-            switch (ageWeeks)
-            {
+    public lmsForAgeWeeksMale(ageWeeks: number) {
+            switch (ageWeeks) {
                 case 4:
                     return new Lms(1, 37.0926, 0.03148);
                 case 5:
@@ -130,12 +126,11 @@ export class UKHeadCircumferenceData extends CentileCollection{
                 case 13:
                     return new Lms(1, 40.5008, 0.02918);
                 default:
-                    throw new RangeError("ageWeeks");
+                    throw new RangeError('ageWeeks');
             }
         }
-    lmsForAgeWeeksFemale(ageWeeks:number){
-        switch (ageWeeks) //Female
-        {
+    public lmsForAgeWeeksFemale(ageWeeks: number) {
+        switch (ageWeeks) {
             case 4:
                 return new Lms(1, 36.3761, 0.03215);
             case 5:
@@ -157,14 +152,12 @@ export class UKHeadCircumferenceData extends CentileCollection{
             case 13:
                 return new Lms(1, 39.521, 0.0314);
             default:
-                throw new RangeError("ageWeeks");
+                throw new RangeError('ageWeeks');
         }
     }
 
-    lmsForAgeMonthsMale(ageMonths:number)
-    {
-            switch (ageMonths)
-            {
+    public lmsForAgeMonthsMale(ageMonths: number) {
+            switch (ageMonths) {
                 case 3:
                     return new Lms(1, 40.5135, 0.02918);
                 case 4:
@@ -594,12 +587,11 @@ export class UKHeadCircumferenceData extends CentileCollection{
                 case 216:
                     return new Lms(1, 57.26, 0.02991);
                 default:
-                    throw new RangeError("ageMonths");
+                    throw new RangeError('ageMonths');
             }
         }
-    lmsForAgeMonthsFemale(ageMonths:number){
-        switch (ageMonths)
-        {
+    public lmsForAgeMonthsFemale(ageMonths: number) {
+        switch (ageMonths) {
             case 3:
                 return new Lms(1, 39.5328, 0.0314);
             case 4:
@@ -1005,10 +997,10 @@ export class UKHeadCircumferenceData extends CentileCollection{
             case 204:
                 return new Lms(1, 55.52, 0.02501);
             default:
-                throw new RangeError("ageMonths");
+                throw new RangeError('ageMonths');
         }
     }
 }
 
 
- 
+

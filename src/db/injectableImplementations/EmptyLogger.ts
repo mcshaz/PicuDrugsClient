@@ -1,24 +1,26 @@
-import { ILogger } from "./../Injectables/ILogger";
+import { ILogger } from './../Injectables/ILogger';
 
-export class EmptyLogger implements ILogger{
-    debug(s: string): boolean {
-        return true;
-    }    
-    error(s: string): boolean {
+export class EmptyLogger implements ILogger {
+    public debug(s: string): boolean {
         return true;
     }
-    fatal(s: string): boolean {
+    public error(s: string): boolean {
         return true;
     }
-    information(s: string): boolean {
+    public fatal(s: string): boolean {
         return true;
     }
-    log(s: string): void {
-    }
-    warning(s: string): boolean {
+    public information(s: string): boolean {
         return true;
     }
-    child(s:string):ILogger{
+    public log(s: string): void {
+        this.information(s);
+    }
+
+    public warning(s: string): boolean {
+        return true;
+    }
+    public child(s: string): ILogger {
         return this;
     }
 }

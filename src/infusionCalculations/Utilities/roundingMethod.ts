@@ -1,6 +1,5 @@
-export enum roundingMethod
-{
-	noRounding,
-	fixedDecimalPlaces,
-	toPrecision
+export enum roundingMethod {
+  noRounding,
+  fixedDecimalPlaces,
+  toPrecision,
 }

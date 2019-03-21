@@ -1,15 +1,14 @@
 import { IContextVariableInfusionDrug } from './entities/IContextVariableInfusionDrug';
-import "reflect-metadata";
+import 'reflect-metadata';
 import { ChildAge } from './../infusionCalculations';
-import { DrugsDBLocal } from './injectableImplementations/DrugsLocalDb';
 import { IWard } from './entities/IWard';
 import { IViewVariableInfuionDrug } from './PatientSpecificViews/IViewVariableInfusionDrug';
 import { drugDbContainer } from './inversify.config';
 import { IDrugDB } from './Injectables/IDrugDB';
 import { TYPES } from './types';
 
-export async function getVariableInfusions(ward:IWard, age:ChildAge, weight:number){
-    if (ward.infusionDrugIds.length === 0){
+export async function getVariableInfusions(ward: IWard, age: ChildAge, weight: number) {
+    if (ward.infusionDrugIds.length === 0) {
         return [];
     }
     const db = drugDbContainer.get<IDrugDB>(TYPES.IDrugDB);
@@ -17,17 +16,18 @@ export async function getVariableInfusions(ward:IWard, age:ChildAge, weight:numb
         .anyOf(ward.infusionDrugIds)
         .toArray() as IContextVariableInfusionDrug[];
     const returnVar: IViewVariableInfuionDrug[] = [];
-    for (const i of infusions){
+    for (const i of infusions) {
         const ar = age.getAgeRangeInDays();
-        //todo logic goes in here
-        const d = i.Dilutions.filter(d=>d.AgeMinMonths < ar.lowerBound);
-        if (d.length === 1){
-            delete i.Dilutions;
-            delete i.LastUpdated;
+        // todo logic goes in here
+        const d = i.Dilutions.filter((dil) => dil.AgeMinMonths < ar.lowerBound);
+        if (d.length === 1) {
+            // apparently deletes can really slow chrome V8 down
+            // delete i.Dilutions;
+            // delete i.LastUpdated;
             const v = (i as unknown as IViewVariableInfuionDrug);
             v.Dilution = d[0];
             returnVar.push(v);
-        } else if (d.length > 1){
+        } else if (d.length > 1) {
             throw Error('Database contains corrupt weight/age ranges for infusion '
              + (i.Abbrev || i.Fullname));
         }

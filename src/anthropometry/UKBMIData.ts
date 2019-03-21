@@ -1,39 +1,34 @@
-import { CentileCollection, GenderRange } from "./CentileCollection";
-import { Lms } from "./Lms";
+import { CentileCollection} from './CentileCollection';
+import { Lms } from './Lms';
+import { GenderRange } from './GenderRange';
 
-export class UKBMIData extends CentileCollection{
-    constructor(){
+export class UKBMIData extends CentileCollection {
+    public static calculateBMI(weightKg: number, heightCm: number) {
+        return weightKg / Math.pow(heightCm / 100, 2);
+    }
+    constructor() {
         super({ gestAgeWeeksRange : new GenderRange({min: 43, max: 43})});
     }
-    static calculateBMI(weightKg:number, heightCm:number){
-        return weightKg/Math.pow(heightCm/100,2);
-    }
-    lmsForGestAgeMale(gestAgeWeeks:number)
-    {
-        switch (gestAgeWeeks)
-        {
+    public lmsForGestAgeMale(gestAgeWeeks: number) {
+        switch (gestAgeWeeks) {
             case 43:
                 return new Lms(0.3449, 14.2241, 0.0923);
             default:
-                throw new RangeError("gestAgeWeeks");
+                throw new RangeError('gestAgeWeeks');
         }
     }
-    lmsForGestAgeFemale(gestAgeWeeks:number)
-    {
-        switch (gestAgeWeeks)
-        {
-            //Female
+    public lmsForGestAgeFemale(gestAgeWeeks: number) {
+        switch (gestAgeWeeks) {
+            // Female
             case 43:
                 return new Lms(0.4263, 13.9505, 0.09647);
             default:
-                throw new RangeError("gestAgeWeeks");
+                throw new RangeError('gestAgeWeeks');
         }
     }
 
-    lmsForAgeWeeksMale(ageWeeks:number)
-    {
-        switch (ageWeeks)
-        {
+    public lmsForAgeWeeksMale(ageWeeks: number) {
+        switch (ageWeeks) {
             case 4:
                 return new Lms(0.2881, 14.7714, 0.09072);
             case 5:
@@ -55,13 +50,11 @@ export class UKBMIData extends CentileCollection{
             case 13:
                 return new Lms(0.0077, 16.895, 0.08496);
             default:
-                throw new RangeError("ageWeeks");
+                throw new RangeError('ageWeeks');
         }
     }
-    lmsForAgeWeeksFemale(ageWeeks:number)
-    {
-        switch (ageWeeks)
-        {
+    public lmsForAgeWeeksFemale(ageWeeks: number) {
+        switch (ageWeeks) {
             case 4:
                 return new Lms(0.3637, 14.4208, 0.09577);
             case 5:
@@ -83,13 +76,11 @@ export class UKBMIData extends CentileCollection{
             case 13:
                 return new Lms(0.0652, 16.3531, 0.09255);
             default:
-                throw new RangeError("ageWeeks");
+                throw new RangeError('ageWeeks');
         }
     }
-    lmsForAgeMonthsMale(ageMonths:number)
-    {
-        switch (ageMonths)
-        {
+    public lmsForAgeMonthsMale(ageMonths: number) {
+        switch (ageMonths) {
             case 3:
                 return new Lms(0.0068, 16.8987, 0.08495);
             case 4:
@@ -567,13 +558,11 @@ export class UKBMIData extends CentileCollection{
             case 240:
                 return new Lms (-1.392, 21.986, 0.11551);
             default:
-                throw new RangeError("ageMonths");
+                throw new RangeError('ageMonths');
         }
     }
-    lmsForAgeMonthsFemale(ageMonths:number)
-    {
-        switch (ageMonths)
-        {
+    public lmsForAgeMonthsFemale(ageMonths: number) {
+        switch (ageMonths) {
             case 3:
                 return new Lms(0.0643, 16.3574, 0.09254);
             case 4:
@@ -1051,7 +1040,7 @@ export class UKBMIData extends CentileCollection{
             case 240:
                 return new Lms (-1.165, 21.735, 0.1253);
             default:
-                throw new RangeError("ageMonths");
+                throw new RangeError('ageMonths');
         }
     }
 }

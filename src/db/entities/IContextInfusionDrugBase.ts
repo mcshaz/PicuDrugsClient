@@ -1,15 +1,15 @@
 
-import { siUnit } from "./enums/siUnit";
-import { ILastUpdated } from "./ILastUpdated";
+import { siUnit } from './enums/siUnit';
+import { ILastUpdated } from './ILastUpdated';
 
-export interface IContextInfusionDrug extends ILastUpdated{
+export interface IContextInfusionDrug extends ILastUpdated {
     InfusionDrugId: number;
     Fullname: string;
     Abbrev: string;
     Note: string;
-    DrugReferenceSource:string;
-    DrugRoute:string;
-    InfusionDiluent: string
+    DrugReferenceSource: string;
+    DrugRoute: string;
+    InfusionDiluent: string;
     SiPrefix: number;
     SiUnit: siUnit;
 }

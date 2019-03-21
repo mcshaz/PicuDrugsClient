@@ -1,7 +1,7 @@
-import { tableName } from "./enums/tableNames";
+import { tableName } from './enums/tableNames';
 
-export interface IEntityDeletion{
-    Id:number
-    Table:tableName,
-    DeletionDate:Date
+export interface IEntityDeletion {
+    Id: number;
+    Table: tableName;
+    DeletionDate: Date;
 }

@@ -1,12 +1,12 @@
-﻿import { CentileCollection } from "./CentileCollection";
-import { Lms } from "./Lms";
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
 
-export class UKWeightData extends CentileCollection{
-    constructor(){
+export class UKWeightData extends CentileCollection {
+    constructor() {
         super();
     }
-    lmsForGestAgeMale(gestAgeWeeks:number){
-            switch (gestAgeWeeks){
+    public lmsForGestAgeMale(gestAgeWeeks: number) {
+            switch (gestAgeWeeks) {
                 case 23:
                     return new Lms (  1.147,  0.6145, 0.15875 );
                 case 24:
@@ -50,12 +50,11 @@ export class UKWeightData extends CentileCollection{
                 case 43:
                     return new Lms (  0.2442,  4.0603, 0.13807 );
                 default:
-                    throw new RangeError("gestAgeWeeks");
+                    throw new RangeError('gestAgeWeeks');
             }
         }
-    lmsForGestAgeFemale(gestAgeWeeks:number) {
-        switch (gestAgeWeeks) //Female
-        {
+    public lmsForGestAgeFemale(gestAgeWeeks: number) {
+        switch (gestAgeWeeks) {
             case 23:
                 return new Lms (  1.326,  0.5589, 0.17378 );
             case 24:
@@ -99,13 +98,11 @@ export class UKWeightData extends CentileCollection{
             case 43:
                 return new Lms (  0.2024,  3.8352, 0.1406 );
             default:
-                throw new RangeError("gestAgeWeeks");
+                throw new RangeError('gestAgeWeeks');
         }
     }
-    lmsForAgeWeeksMale(ageWeeks:number)
-    {
-            switch (ageWeeks)
-            {
+    public lmsForAgeWeeksMale(ageWeeks: number) {
+            switch (ageWeeks) {
                 case 4:
                     return new Lms ( 0.2331,  4.3671, 0.13497 );
                 case 5:
@@ -127,12 +124,11 @@ export class UKWeightData extends CentileCollection{
                 case 13:
                     return new Lms ( 0.174,  6.369, 0.11732 );
                 default:
-                    throw new RangeError("ageWeeks");
+                    throw new RangeError('ageWeeks');
             }
         }
-    lmsForAgeWeeksFemale(ageWeeks:number){
-        switch (ageWeeks) //Female
-        {
+    public lmsForAgeWeeksFemale(ageWeeks: number) {
+        switch (ageWeeks) {
             case 4:
                 return new Lms (  0.1789,  4.0987, 0.13805 );
             case 5:
@@ -154,13 +150,11 @@ export class UKWeightData extends CentileCollection{
             case 13:
                 return new Lms (  0.0407,  5.8393, 0.12622 );
             default:
-                throw new RangeError("ageWeeks");
+                throw new RangeError('ageWeeks');
         }
     }
-    lmsForAgeMonthsMale(ageMonths:number)
-    {
-            switch (ageMonths)
-            {
+    public lmsForAgeMonthsMale(ageMonths: number) {
+            switch (ageMonths) {
                 case 3:
                     return new Lms (  0.1738,  6.3762, 0.11727 );
                 case 4:
@@ -638,12 +632,11 @@ export class UKWeightData extends CentileCollection{
                 case 240:
                     return new Lms (  -0.718,  69.524, 0.13088 );
                 default:
-                    throw new RangeError("ageMonths");
+                    throw new RangeError('ageMonths');
             }
         }
-    lmsForAgeMonthsFemale(ageMonths:number){
-        switch (ageMonths) //Female
-        {
+    public lmsForAgeMonthsFemale(ageMonths: number) {
+        switch (ageMonths) {
             case 3:
                 return new Lms (  0.0402,  5.8458, 0.12619 );
             case 4:
@@ -1121,7 +1114,7 @@ export class UKWeightData extends CentileCollection{
             case 240:
                 return new Lms (  -0.601,  58.104, 0.14117 );
             default:
-                throw new RangeError("ageMonths");
+                throw new RangeError('ageMonths');
         }
     }
 }

@@ -1,8 +1,8 @@
-import { tableName } from "./enums/tableNames";
+import { tableName } from './enums/tableNames';
 
 interface IDeletionDate {
-    table:tableName;
+    table: tableName;
     lastDeletion: Date;
 }
 
-export {IDeletionDate}
+export {IDeletionDate};

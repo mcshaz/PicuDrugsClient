@@ -1,6 +1,6 @@
 
-import { IFixedDilution, IFixedInfusionDrug } from "../entities/IContextFixedInfusionDrug";
+import { IFixedDilution, IFixedInfusionDrug } from '../entities/IContextFixedInfusionDrug';
 
-export interface IViewFixedInfuionDrug extends IFixedInfusionDrug{
+export interface IViewFixedInfuionDrug extends IFixedInfusionDrug {
     Dilution: IFixedDilution;
 }

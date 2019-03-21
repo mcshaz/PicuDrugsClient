@@ -1,5 +1,5 @@
-import { IDefib } from "./IDefib";
-import { ILastUpdated } from "./ILastUpdated";
+import { IDefib } from './IDefib';
+import { ILastUpdated } from './ILastUpdated';
 
 export interface IWard extends ILastUpdated {
     WardId: number;

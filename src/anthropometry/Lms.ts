@@ -1,36 +1,36 @@
 export class Lms {
     constructor(readonly l: number, readonly m: number, readonly s: number) { }
-    linearInterpolate(interpolWith: Lms, fraction:number) {
+    public linearInterpolate(interpolWith: Lms, fraction: number) {
         if (fraction < 0 || fraction > 1) {
-            throw ("fraction must be between 0 and 1");
+            throw new Error(('fraction must be between 0 and 1'));
         }
-        var oppFraction = 1 - fraction;
+        const oppFraction = 1 - fraction;
         return new Lms(
             oppFraction * this.l + fraction * interpolWith.l,
             oppFraction * this.m + fraction * interpolWith.m,
-            oppFraction * this.s + fraction * interpolWith.s
+            oppFraction * this.s + fraction * interpolWith.s,
         );
     }
-    zFromParam(param:number) {
-        if (this.l == 0) {
+    public zFromParam(param: number) {
+        if (this.l === 0) {
             return Math.log(param / this.m) / this.s;
         }
         return (Math.pow(param / this.m, this.l) - 1) / (this.l * this.s);
     }
 
-    cumSnormfromParam(param:number) {
+    public cumSnormfromParam(param: number) {
         return cumSnorm(this.zFromParam(param));
     }
 }
 
-function cumSnorm(zScore:number) {
+function cumSnorm(zScore: number) {
     const zAbs = Math.abs(zScore);
-    let returnVal:number,
-        build:number;
+    let returnVal: number;
+    let build: number;
     if (zAbs > 37) {
         return 0;
     } else {
-        var Exponential = Math.exp(-Math.pow(zAbs, 2) / 2);
+        const Exponential = Math.exp(-Math.pow(zAbs, 2) / 2);
         if (zAbs < 7.07106781186547) {
             build = 3.52624965998911E-02 * zAbs + 0.700383064443688;
             build = build * zAbs + 6.37396220353165;
@@ -47,8 +47,7 @@ function cumSnorm(zScore:number) {
             build = build * zAbs + 793.826512519948;
             build = build * zAbs + 440.413735824752;
             returnVal = returnVal / build;
-        }
-        else {
+        } else {
             build = zAbs + 0.65;
             build = zAbs + 4 / build;
             build = zAbs + 3 / build;

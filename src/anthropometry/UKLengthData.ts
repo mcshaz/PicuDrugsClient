@@ -1,15 +1,14 @@
-import { CentileCollection, GenderRange } from "./CentileCollection";
-import { Lms } from "./Lms";
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
+import { GenderRange } from './GenderRange';
 
-export class UKLengthData extends CentileCollection{
-    constructor(){
-        super({gestAgeWeeksRange: new GenderRange({min:25, max:43})});
+export class UKLengthData extends CentileCollection {
+    constructor() {
+        super({gestAgeWeeksRange: new GenderRange({min: 25, max: 43})});
     }
 
-    lmsForGestAgeMale(gestAgeWeeks:number)
-    {
-            switch (gestAgeWeeks)
-            {
+    public lmsForGestAgeMale(gestAgeWeeks: number) {
+            switch (gestAgeWeeks) {
                 case 25:
                     return new Lms(1, 35.42414, 0.08132453);
                 case 26:
@@ -49,12 +48,11 @@ export class UKLengthData extends CentileCollection{
                 case 43:
                     return new Lms(1, 53.3905, 0.03609);
                 default:
-                    throw new RangeError("gestAgeWeeks");
+                    throw new RangeError('gestAgeWeeks');
             }
     }
-    lmsForGestAgeFemale(gestAgeWeeks:number){
-        switch (gestAgeWeeks) //Female
-        {
+    public lmsForGestAgeFemale(gestAgeWeeks: number) {
+        switch (gestAgeWeeks) {
             case 25:
                 return new Lms(1, 34.59544, 0.08086044);
             case 26:
@@ -94,14 +92,12 @@ export class UKLengthData extends CentileCollection{
             case 43:
                 return new Lms(1, 52.4695, 0.03669);
             default:
-                throw new RangeError("gestAgeWeeks");
+                throw new RangeError('gestAgeWeeks');
         }
     }
 
-    lmsForAgeWeeksMale(ageWeeks:number)
-    {
-            switch (ageWeeks)
-            {
+    public lmsForAgeWeeksMale(ageWeeks: number) {
+            switch (ageWeeks) {
                 case 4:
                     return new Lms(1, 54.3881, 0.0357);
                 case 5:
@@ -123,12 +119,11 @@ export class UKLengthData extends CentileCollection{
                 case 13:
                     return new Lms(1, 61.4013, 0.03329);
                 default:
-                    throw new RangeError("ageWeeks");
+                    throw new RangeError('ageWeeks');
             }
         }
-    lmsForAgeWeeksFemale(ageWeeks:number){
-        switch (ageWeeks)
-        {
+    public lmsForAgeWeeksFemale(ageWeeks: number) {
+        switch (ageWeeks) {
             case 4:
                 return new Lms(1, 53.3809, 0.03647);
             case 5:
@@ -150,14 +145,12 @@ export class UKLengthData extends CentileCollection{
             case 13:
                 return new Lms(1, 59.7773, 0.0352);
             default:
-                throw new RangeError("ageWeeks");
+                throw new RangeError('ageWeeks');
         }
     }
 
-    lmsForAgeMonthsMale(ageMonths:number)
-    {
-            switch (ageMonths)
-            {
+    public lmsForAgeMonthsMale(ageMonths: number) {
+            switch (ageMonths) {
                 case 3:
                     return new Lms(1, 61.4292, 0.03328);
                 case 4:
@@ -635,12 +628,11 @@ export class UKLengthData extends CentileCollection{
                 case 240:
                     return new Lms(1, 177.34, 0.03929);
                 default:
-                    throw new RangeError("ageMonths");
+                    throw new RangeError('ageMonths');
             }
         }
-    lmsForAgeMonthsFemale(ageMonths:number){
-        switch (ageMonths)
-        {
+    public lmsForAgeMonthsFemale(ageMonths: number) {
+        switch (ageMonths) {
             case 3:
                 return new Lms(1, 59.8029, 0.0352);
             case 4:
@@ -1118,7 +1110,7 @@ export class UKLengthData extends CentileCollection{
             case 240:
                 return new Lms(1, 163.64, 0.0369);
             default:
-                throw new RangeError("ageMonths");
+                throw new RangeError('ageMonths');
         }
     }
 }

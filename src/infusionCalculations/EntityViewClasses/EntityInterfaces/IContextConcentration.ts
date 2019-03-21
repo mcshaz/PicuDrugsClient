@@ -1,5 +1,4 @@
-export interface IContextConcentration
-{
-	Volume?: number;
-	Concentration: number;
+export interface IContextConcentration {
+  Volume?: number;
+  Concentration: number;
 }

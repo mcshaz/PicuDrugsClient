@@ -1,19 +1,19 @@
-import { ILastUpdated } from "./ILastUpdated";
+import { ILastUpdated } from './ILastUpdated';
 
 export interface IContextBolusDrug extends ILastUpdated {
     BolusDrugId: number;
     DrugName: string;
-    //DrugName: string;
+    // DrugName: string;
     Conc_ml: number | null;
     Units: string;
     AdultMax: number;
     Min: number;
     SpecificWardId: number | null;
 
-    BolusDoses:IContextBolusDose[]
+    BolusDoses: IContextBolusDose[];
 }
 
-interface IContextBolusDose{
+interface IContextBolusDose {
     MinDosePerKg: number;
     MaxDosePerKg: number;
     WeightMin: number;

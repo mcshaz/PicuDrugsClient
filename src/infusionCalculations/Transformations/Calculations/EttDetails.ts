@@ -1,11 +1,10 @@
-import { NumericRange } from "../../Utilities/NumericRange";
+import { NumericRange } from '../../Utilities/NumericRange';
 
-export class EttDetails
-{
-	InternalDiameter: number;
-	InternalDiameterRange: NumericRange;
-	LengthAtLip: number;
-	LengthAtNose: number;
-	SuctionWith: number;
-	Note: string;
+export class EttDetails {
+  public InternalDiameter: number = 0;
+  public InternalDiameterRange: NumericRange | null = null;
+  public LengthAtLip: number = 0;
+  public LengthAtNose: number = 0;
+  public SuctionWith: number = 0;
+  public Note: string = '';
 }

@@ -1,4 +1,4 @@
-export interface IDefib{
-    Name: string,
-    Joules: number[]
+export interface IDefib {
+    Name: string;
+    Joules: number[];
 }

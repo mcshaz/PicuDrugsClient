@@ -1,3 +1,3 @@
 export interface ILastUpdated {
-    LastUpdated: Date
+    LastUpdated: Date;
 }

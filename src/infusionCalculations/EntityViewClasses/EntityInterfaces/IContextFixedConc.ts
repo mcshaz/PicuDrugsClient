@@ -1,6 +1,5 @@
-import { IContextConcentration } from './IContextConcentration'
-export interface IContextFixedConc extends IContextConcentration
-{
-	StopMins: number;
-	Rate: number;
+import { IContextConcentration } from './IContextConcentration';
+export interface IContextFixedConc extends IContextConcentration {
+  StopMins: number;
+  Rate: number;
 }
