@@ -1,5 +1,5 @@
-import { expect, assert } from 'chai';
-import { NumericRange, roundingMethod } from './../../../src/infusionCalculations';
+import { expect } from 'chai';
+import { NumericRange, roundingMethod } from '../../../src/infusionCalculations';
 
 describe('NumericRange', () => {
     it('can be initialized without an initializer', () => {
@@ -31,19 +31,19 @@ describe('NumericRange', () => {
         expect(ir.toString()).to.equal('3–5');
 
         ir = NumericRange.op_Multiply(ir, 2);
-        assert.strictEqual( ir.toString(), '6–10', 'multiplier');
+        expect( ir.toString(), 'multiplier').to.equal( '6–10');
         ir.upperBound = 6.0;
-        assert.strictEqual( ir.toString(), '6', 'toString lb == ub');
+        expect( ir.toString(), 'toString lb == ub').to.equal( '6');
         ir = new NumericRange(3012, 5859);
         ir.precision = 2;
         ir.rounding = roundingMethod.toPrecision;
-        assert.strictEqual( ir.toString(), '3000–5900', 'precision rounding');
+        expect( ir.toString(), 'precision rounding').to.equal( '3000–5900');
         ir = new NumericRange(5.003, 3.678);
         ir.precision = 2;
         ir.rounding = roundingMethod.toPrecision;
-        assert.strictEqual( ir.toString(), '3.7–5.0', 'precision rounding decimals');
+        expect( ir.toString(), 'precision rounding decimals').to.equal( '3.7–5.0');
         ir.rounding = roundingMethod.fixedDecimalPlaces;
-        assert.strictEqual( ir.toString(), '3.68–5.00', 'fixed decimal rounding');
+        expect( ir.toString(), 'fixed decimal rounding').to.equal( '3.68–5.00');
     });
     it('throws if upperBound < lowerBound', () => {
         const ir = new NumericRange();
