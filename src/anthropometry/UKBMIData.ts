@@ -5,6 +5,9 @@ export class UKBMIData extends CentileCollection{
     constructor(){
         super({ gestAgeWeeksRange : new GenderRange({min: 43, max: 43})});
     }
+    static calculateBMI(weightKg:number, heightCm:number){
+        return weightKg/Math.pow(heightCm/100,2);
+    }
     lmsForGestAgeMale(gestAgeWeeks:number)
     {
         switch (gestAgeWeeks)
