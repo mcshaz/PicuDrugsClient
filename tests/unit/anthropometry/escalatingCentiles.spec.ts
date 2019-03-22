@@ -1,4 +1,4 @@
-import { UKWeightData, CentileCollection, UKLengthData, UKBMIData, UKHeadCircumferenceData, weeksPerMonth } from './../../../src/anthropometry/';
+import { UKWeightData, CentileCollection, UKLengthData, UKBMIData, UKHeadCircumferenceData, weeksPerMonth } from '../../../src/anthropometry';
 import chai from 'chai';
 import chaiAlmost from 'chai-almost';
 

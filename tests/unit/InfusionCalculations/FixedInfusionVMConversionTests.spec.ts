@@ -1,7 +1,7 @@
-import { dilutionMethod, siUnit} from './../../../src/db';
+import { dilutionMethod, siUnit} from '../../../src/db';
 import chai from 'chai'; // import { expect } from 'chai';
 import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolerance of 1 x 10-6
-import {FixedInfusionView, FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit, InfusionPeriodVM, MinutesDuration } from './../../../src/infusionCalculations';
+import {FixedInfusionView, FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit, InfusionPeriodVM, MinutesDuration } from '../../../src/infusionCalculations';
 chai.use(chaiAlmost());
 describe('fixedVMConversion', () => {
     const methodsTested = new Set<dilutionMethod>();

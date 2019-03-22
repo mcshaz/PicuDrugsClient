@@ -21,7 +21,7 @@ export class NumericRange {
     this.pLowerBound = value;
   }
   get upperBound(): number {
-    return this.upperBound || 0;
+    return this.pUpperBound || 0;
   }
   set upperBound(value: number) {
     if (this.pLowerBound! > value) {

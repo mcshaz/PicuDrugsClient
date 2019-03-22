@@ -1,6 +1,6 @@
 import { assert } from 'chai';
-import { DrugDoseUnit, InfusionRateUnit, SiConcentration } from './../../../src/infusionCalculations/';
-import { siUnit } from './../../../src/db';
+import { DrugDoseUnit, InfusionRateUnit, SiConcentration } from '../../../src/infusionCalculations';
+import { siUnit } from '../../../src/db';
 
 describe('DrugDoseUnit', () => {
     it('Converts to string', () => {
