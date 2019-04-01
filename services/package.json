@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/chai-almost": "^1.0.0",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "inversify": "^5.0.1",
+    "mocha": "^6.0.2",
+    "ts-node": "^8.0.3"
+  },
+  "dependencies": {}
+}
