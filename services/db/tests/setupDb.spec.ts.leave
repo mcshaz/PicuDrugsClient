@@ -1,11 +1,13 @@
-import { IEntityWard } from '../../../src/db/entities/IEntityWard';
-import { EmptyLogger } from '@/db/injectableImplementations/EmptyLogger';
-import { fileFetch } from './../../test_resources/FileFetch';
+import { fileFetch } from './../../../test-resources/FileFetch';
 import { expect } from 'chai';
-import { DrugsDBLocal } from '@/db/injectableImplementations/DrugsLocalDb';
+import { DrugsDBLocal } from '../src/injectableImplementations/DrugsLocalDb';
+import { EmptyLogger } from '../src/injectableImplementations/EmptyLogger';
+import { IEntityWard } from '../src/entities/IEntityWard';
+import fakedb from 'fake-indexeddb';
+import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange'
 
 describe('setup local db', () => {
-    const db = new DrugsDBLocal(fileFetch, new EmptyLogger());
+    const db = new DrugsDBLocal(fileFetch, new EmptyLogger(), fakedb, dbKeyRange);
     let wards: IEntityWard[];
     before(async () => {
         wards = await db.wards.toArray();

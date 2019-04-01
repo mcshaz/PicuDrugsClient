@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": { "*": ["types/*"] },
+        "allowSyntheticDefaultImports": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true, 
+        "strictFunctionTypes": true,
+        "target": "ES6",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "lib": ["esnext","dom","dom.iterable"], 
+        "types": ["mocha"],
+        "typeRoots": ["./types","./node_modules/@types"]
+    },
+    "include": [
+        "db/**/*.ts",
+        "infusion-calculations/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules", "Dexie.js", "types"
+    ]
+}

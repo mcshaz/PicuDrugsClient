@@ -1,4 +1,4 @@
-import { searchComparison, binarySearch } from '../../../src/anthropometry/binarySearch';
+import { searchComparison, binarySearch } from '../';
 import { expect } from 'chai';
 
 describe('binarySearch', () => {

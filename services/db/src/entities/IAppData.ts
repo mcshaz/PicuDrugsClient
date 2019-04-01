@@ -1,4 +1,6 @@
+
+import {appDataType} from './enums/appDataType';
 export interface IAppData {
-    dataType: number;
+    dataType: appDataType;
     data: string;
 }

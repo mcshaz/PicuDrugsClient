@@ -1,3 +1,4 @@
+export { IServerChanges } from './src/ServerCommunication/IServerChanges';
 export {getVariableInfusions} from './src/getVariableInfusions';
 export {TYPES} from './src/types';
 export {IContextBolusDrug} from './src/entities/BolusDrugs/IContextBolusDrug';

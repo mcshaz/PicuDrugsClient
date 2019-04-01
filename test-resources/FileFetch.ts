@@ -1,5 +1,5 @@
-import { IServerChanges } from '@/db/ServerCommunication/IServerChanges';
-import { IFetch } from '@/db/Injectables/IFetch';
+import { IServerChanges } from '../services/db';
+import { IFetch } from '../services/db';
 
 const fileFetch: IFetch = {
     async getUpdates(lastServerCheckUtc: Date | null) {

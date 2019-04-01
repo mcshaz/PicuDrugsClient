@@ -1,6 +1,6 @@
 import { IAppData } from './../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
-import Dexie from 'dexie';
+import Dexie from '../../../Dexie.js';//todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
 import { IContextInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
 import { IContextBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
@@ -13,13 +13,11 @@ import { TYPES } from '../types';
 import { IServerChanges } from '../ServerCommunication/IServerChanges';
 import { IFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 import { INewServerDeletions } from '../ServerCommunication/IEntityDeletion';
+import { appDataType } from '../entities/enums/appDataType';
 
 
 // https://caniuse.com/#search=IndexedDB
-if (!window.indexedDB){
-    Dexie.dependencies.indexedDB = require('fake-indexeddb');
-    Dexie.dependencies.IDBKeyRange = require('fake-indexeddb/lib/FDBKeyRange');
-}
+
 @injectable()
 export class DrugsDBLocal extends Dexie {
     // Declare implicit table properties.
@@ -33,13 +31,22 @@ export class DrugsDBLocal extends Dexie {
     public defibModels!: Dexie.Table<IEntityDefibModel, number>;
     public fixedDrugs!: Dexie.Table<IFixedDrug, number>;
     public appData!: Dexie.Table<IAppData, number>;
-
+    private readonly updateProvider: IFetch;
+    private readonly logger: ILogger;
     // ...other tables goes here...
 
-    constructor(@inject(TYPES.IFetch)private readonly updateProvider: IFetch,
-                @inject(TYPES.ILogger)private readonly logger: ILogger,
-                indexedDB?: IDBFactory, IDBKeyRange?: (new () => IDBKeyRange)) {
-        super('drugsDBLocal', { indexedDB, IDBKeyRange });
+    constructor(@inject(TYPES.IFetch) updateProvider: IFetch,
+                @inject(TYPES.ILogger) logger: ILogger,
+                indexedDb?: IDBFactory, dbKeyRange?: typeof IDBKeyRange) {
+        if (indexedDB !== void 0){
+            Dexie.dependencies.indexedDB = indexedDb;
+        }
+        if (dbKeyRange !== void 0){
+            Dexie.dependencies.IDBKeyRange = dbKeyRange;
+        }
+        super('drugsDBLocal');
+        this.updateProvider = updateProvider;
+        this.logger = logger;
         this.version(1).stores({
             wards: 'wardId,abbrev',
             infusionDrugs: 'infusionDrugId,isTitratable',
