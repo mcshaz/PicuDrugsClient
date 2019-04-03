@@ -91,7 +91,7 @@ export class DrugsDBLocal extends Dexie {
 
     private async getPutAndDeleteData(updateChecked: Date | null, vip: boolean = false) {
         const serverData = await this.updateProvider.getUpdates(updateChecked);
-        this.logger.log(`dbdata returned from server @ ${ serverData.updateCheckStart.toString() } consisting of `
+        this.logger.log(`dbdata returned from server @ ${ serverData.updateCheckStart } consisting of `
             + Object.keys(serverData.data).map((k) => `{${k}:length[${(serverData.data as any)[k].length}]}`)
             .join(','));
         if (vip) {

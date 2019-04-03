@@ -23,16 +23,16 @@ interface IDexieTable<Tentity> {
 describe('simple DB tests', () => {
     const emptyFetch = Substitute.for<IFetch>();
     emptyFetch.getUpdates(null).returns(Promise.resolve<IServerChanges>({
-            updateCheckStart: new Date(),
-            data: {
-                deletions: [],
-                wards: [],
-                infusionDrugs: [],
-                bolusDrugs: [],
-                defibModels: [],
-                fixedDrugs: [],
-            },
-        }));
+        updateCheckStart: new Date(),
+        data: {
+            deletions: [],
+            wards: [],
+            infusionDrugs: [],
+            bolusDrugs: [],
+            defibModels: [],
+            fixedDrugs: [],
+        },
+    }));
     let db: DrugsDBLocal;
     before('can initialize db', () => {
         const promise = new Promise((resolve, reject) => {
@@ -42,10 +42,8 @@ describe('simple DB tests', () => {
         });
         return promise;
     });
-    describe ('initialized with appropriate IFetch call', () => {
-        it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getUpdates(Arg.any()));
-        it('called IFetch only with null', () => emptyFetch.received(1).getUpdates(null));
-    });
+    it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getUpdates(Arg.any()));
+    it('called IFetch only with null', () => emptyFetch.received(1).getUpdates(null));
     describe('single DB table items can be added', () => {
         const allTables: Array<IDexieTable<any>> = [{
                 name: 'wards',
@@ -118,5 +116,8 @@ describe('simple DB tests', () => {
                 db.wards.bulkDelete([]);
             });
         });
+    });
+    after('delete db', async() => {
+        await db.delete();
     });
 });

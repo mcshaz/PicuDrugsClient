@@ -45,7 +45,9 @@ describe('setup full local db from JSON', () => {
             const updates = await db.appData.get(appDataType.lastFetchServer) as IAppData;
             expect(updates.data, 'updates.data [date]').to.equal(dbInit.updateCheckStart.toString());
         });
-
+    });
+    after('delete db', async() => {
+        await db.delete();
     });
 });
     /*
