@@ -1,18 +1,18 @@
-import { IFixedDrug } from './../entities/BolusDrugs/IFixedDrug';
+import { IEntityFixedDrug } from './../entities/BolusDrugs/IFixedDrug';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
 import { INewServerDeletions } from './IEntityDeletion';
 import { IEntityWard } from '../entities/IEntityWard';
-import { IContextInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
-import { IContextBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
+import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
+import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
 
 export interface IServerChanges {
     updateCheckStart: Date;
     data: {
         deletions: INewServerDeletions[];
         wards: IEntityWard[];
-        infusionDrugs: IContextInfusionDrug[];
-        bolusDrugs: IContextBolusDrug[];
+        infusionDrugs: IEntityInfusionDrug[];
+        bolusDrugs: IEntityBolusDrug[];
         defibModels: IEntityDefibModel[];
-        fixedDrugs: IFixedDrug[];
+        fixedDrugs: IEntityFixedDrug[];
     };
 }

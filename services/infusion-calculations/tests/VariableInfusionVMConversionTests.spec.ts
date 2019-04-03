@@ -1,9 +1,10 @@
 import chai from 'chai'; // import { expect } from 'chai';
 import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolerance of 1 x 10-6
-import { VariableInfusionView, VariableInfusionDrugVM, transformVariableInfusions, SiUnitMeasure, InfusionRateUnit, VariableConcentrationDetailVM, NumericRange } from '../../../src/infusionCalculations';
+import { VariableInfusionView, VariableInfusionDrugVM, transformVariableInfusions, SiUnitMeasure, InfusionRateUnit, VariableConcentrationDetailVM, NumericRange } from './../';
 import { dilutionMethod, siUnit } from '../../db';
-chai.use(chaiAlmost());
+
 describe('variableVMConversion', () => {
+    chai.use(chaiAlmost());
     const methodsTested = new Set<dilutionMethod>();
     for (const td of getVariableInfusionVMTestData()) {
         const dilMethods = Array.from(new Set(td.viewRows.map((r) => r.DilutionMethod)));

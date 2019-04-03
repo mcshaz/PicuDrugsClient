@@ -1,20 +1,20 @@
 
-import { IContextInfusionDrug } from './IContextInfusionDrugBase';
-import { IContextDilution, IContextConcentration } from './IContextInfusionDrugBase';
+import { IEntityInfusionDrug } from './IContextInfusionDrugBase';
+import { IEntityDilution, IEntityConcentration } from './IContextInfusionDrugBase';
 
-interface IFixedInfusionDrug extends IContextInfusionDrug {
+interface IFixedInfusionDrug extends IEntityInfusionDrug {
     defaultAmpConcentration: number;
 }
 interface IContextFixedInfusionDrug extends IFixedInfusionDrug {
     dilutions: IFixedDilution[];
 }
 
-interface IFixedDilution extends IContextDilution {
+interface IFixedDilution extends IEntityDilution {
     volume: number | null;
     concentrations: IFixedConcentration[];
 }
 
-interface IFixedConcentration extends IContextConcentration {
+interface IFixedConcentration extends IEntityConcentration {
     volume: number | null;
     stopMinutes: number;
     rate: number;

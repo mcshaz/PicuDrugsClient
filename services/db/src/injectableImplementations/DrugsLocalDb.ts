@@ -1,9 +1,9 @@
 import { IAppData } from './../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
-import Dexie from '../../../Dexie.js';//todo - return to node import once fixes released released
+import Dexie, { PromiseExtended } from '../../../../../Dexie.js';//todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
-import { IContextInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
-import { IContextBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
+import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
+import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
 import { tableName } from '../entities/enums/tableNames';
 import { ILogger } from '../Injectables/ILogger';
 import { IFetch } from '../Injectables/IFetch';
@@ -11,7 +11,7 @@ import {  inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { TYPES } from '../types';
 import { IServerChanges } from '../ServerCommunication/IServerChanges';
-import { IFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
+import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 import { INewServerDeletions } from '../ServerCommunication/IEntityDeletion';
 import { appDataType } from '../entities/enums/appDataType';
 
@@ -26,10 +26,10 @@ export class DrugsDBLocal extends Dexie {
     // (just to inform Typescript. Instanciated by Dexie in stores() method)
     public wards!: Dexie.Table<IEntityWard, number>; // number = type of the primkey
  // number = type of the primkey
-    public infusionDrugs!: Dexie.Table<IContextInfusionDrug, number>;
-    public bolusDrugs!: Dexie.Table<IContextBolusDrug, number>;
+    public infusionDrugs!: Dexie.Table<IEntityInfusionDrug, number>;
+    public bolusDrugs!: Dexie.Table<IEntityBolusDrug, number>;
     public defibModels!: Dexie.Table<IEntityDefibModel, number>;
-    public fixedDrugs!: Dexie.Table<IFixedDrug, number>;
+    public fixedDrugs!: Dexie.Table<IEntityFixedDrug, number>;
     public appData!: Dexie.Table<IAppData, number>;
     private readonly updateProvider: IFetch;
     private readonly logger: ILogger;
@@ -38,64 +38,110 @@ export class DrugsDBLocal extends Dexie {
     constructor(@inject(TYPES.IFetch) updateProvider: IFetch,
                 @inject(TYPES.ILogger) logger: ILogger,
                 indexedDb?: IDBFactory, dbKeyRange?: typeof IDBKeyRange) {
-        if (indexedDB !== void 0){
-            Dexie.dependencies.indexedDB = indexedDb;
+        if (indexedDb !== void 0) {
+            Dexie.dependencies.indexedDB = indexedDb as IDBFactory;
         }
-        if (dbKeyRange !== void 0){
+        if (dbKeyRange !== void 0) {
             Dexie.dependencies.IDBKeyRange = dbKeyRange;
         }
-        super('drugsDBLocal');
+        super('DrugsDBLocal');
         this.updateProvider = updateProvider;
         this.logger = logger;
         this.version(1).stores({
             wards: 'wardId,abbrev',
             infusionDrugs: 'infusionDrugId,isTitratable',
             bolusDrugs: 'bolusDrugId',
-            defibModels: 'DefibId',
+            defibModels: 'id',
             fixedDrugs: 'fixedDrugId',
             appData: 'dataType',
             // ...other tables goes here...
         });
-        this.on('ready', this.alignDB);
+        let promiseReject: (ev: PromiseRejectionEvent) => void;
+        promiseReject = (ev) => {
+            window.removeEventListener('unhandledrejection', promiseReject);
+            if (ev.reason instanceof Error) {
+                throw ev.reason;
+            }
+            const reason = 'unhandled rejection initializing DrugLocalDb:' + JSON.stringify(getSimpleProperties(ev.reason));
+            this.logger.fatal(reason);
+        };
+
+        window.addEventListener('unhandledrejection', promiseReject);
+        this.on('ready', async () => {
+            await this.alignDB();
+            window.removeEventListener('unhandledrejection', promiseReject);
+        });
         // window.setInterval(update,1000*60*60*12);//look up every 12 hours (in case browser left open, eg in resus bay)
+        this.open();
     }
 
     private async alignDB() {
         let updateChecked: Date | null = null;
         const updateData = await this.appData.get(appDataType.lastFetchServer);
         if (updateData === void 0) {
-            this.logger.information('db being populated from 0 records');
+            this.logger.info('db being populated from 0 records');
         } else {
-            this.logger.information('db being updated from ' + updateData.data);
+            this.logger.info('db being updated from ' + updateData.data);
             updateChecked = new Date(Date.parse(updateData.data));
         }
         const serverData = await this.updateProvider.getUpdates(updateChecked);
-        this.logger.log(`dbdata returned from server @ ${serverData.updateCheckStart} consisting of `
+        this.logger.debug('typeof updateCheckStart ' + typeof serverData.updateCheckStart);
+        this.logger.debug('value of updateCheckStart ' + serverData.updateCheckStart.toString() );
+        this.logger.log(`dbdata returned from server @ ${ serverData.updateCheckStart.toString() } consisting of `
             + Object.keys(serverData.data).map((k) => `{${k}:length[${(serverData.data as any)[k].length}]}`)
             .join(','));
         await this.putLocalData(serverData);
+        // running delete after in case records were deleted after the table data was populated
         await this.deleteLocalData(serverData.data.deletions);
     }
 
     private async putLocalData(updates: IServerChanges) {
-        await Promise.all([
-            this.transaction('rw', this.wards, () => this.wards.bulkPut(updates.data.wards)),
-            this.transaction('rw', this.infusionDrugs, () => this.infusionDrugs.bulkPut(updates.data.infusionDrugs)),
-            this.transaction('rw', this.bolusDrugs, () => this.bolusDrugs.bulkPut(updates.data.bolusDrugs)),
-            this.transaction('rw', this.defibModels, () => this.defibModels.bulkPut(updates.data.defibModels)),
-            this.transaction('rw', this.fixedDrugs, () => this.fixedDrugs.bulkPut(updates.data.fixedDrugs))]);
-        // running delete after in case records were deleted after the table data was populated
-        const returnVar = this.appData.put({
+        const wardPut = () => this.wards.bulkPut(updates.data.wards);
+        const infPut = () => this.infusionDrugs.bulkPut(updates.data.infusionDrugs);
+        const bolusPut = () => this.bolusDrugs.bulkPut(updates.data.bolusDrugs);
+        const defibPut = () => this.defibModels.bulkPut(updates.data.defibModels);
+        const fixedPut = () => this.fixedDrugs.bulkPut(updates.data.fixedDrugs);
+
+        if (process.env.NODE_ENV !== 'production') {
+            const logSuccess = (value: number) => {
+                this.logger.debug('success ' + JSON.stringify(value));
+                return value;
+            }
+            const logError = (error: any) => {
+                this.logger.error(error);
+                return Promise.reject(error);
+            };
+            this.logger.debug('wards:');
+            await wardPut().then(logSuccess, logError);
+            this.logger.debug('infusions:');
+            await infPut().then(logSuccess, logError);
+            this.logger.debug('bolus:');
+            await bolusPut().then(logSuccess, logError);
+            this.logger.debug('defib:');
+            await defibPut().then(logSuccess, logError);
+            this.logger.debug('fixedDrug:');
+            await fixedPut().then(logSuccess, logError);
+            this.logger.debug('appData:');
+        } else {
+            await Promise.all([
+                this.transaction('rw', this.wards, wardPut),
+                this.transaction('rw', this.infusionDrugs, infPut),
+                this.transaction('rw', this.bolusDrugs, bolusPut),
+                this.transaction('rw', this.defibModels, defibPut),
+                this.transaction('rw', this.fixedDrugs, fixedPut)]);
+        }
+        await this.appData.put({
             dataType: appDataType.lastFetchServer,
             data: updates.updateCheckStart.toString()});
-        this.logger.information(Object.keys(updates.data).filter((d) => d !== 'deletions')
+        this.logger.info(Object.keys(updates.data).filter((d) => d !== 'deletions')
             .reduce<number>((p, k) => p + (updates.data as any)[k].length, 0)
             + ' records updated or inserted');
-        return returnVar;
     }
 
+
+
     private async deleteLocalData(deletions: INewServerDeletions[]) {
-        this.logger.log('data server has deleted :'
+        this.logger.debug('data server has deleted :'
             +  deletions.reduce((n, d) => n + d.deletionIds.length, 0) + ' Entities');
         const delPromises = deletions.map((d) => {
             switch (d.table) {
@@ -113,8 +159,44 @@ export class DrugsDBLocal extends Dexie {
                     throw new Error('unknown tableName to delete from:' + d.table);
             }
         });
-        const returnVar = await Promise.all(delPromises);
+        await Promise.all(delPromises);
         this.logger.log('deletions successful');
+    }
+}
+
+function getSimpleProperties(arg: any, refs = new Set<object>()): any {
+    const simpleTypes = ['number', 'string', 'boolean', 'undefined'];
+    function isSimple(p: any) {
+        const pType = typeof p;
+        return simpleTypes.includes(pType)
+            || (pType === 'object' && (p === null || p instanceof Date));
+    }
+    if (isSimple(arg)) {
+        return arg;
+    }
+    if (typeof arg.map === 'function' && typeof arg.length === 'number') {
+        return arg.map((i: any) => {
+            if (isSimple(i)) {
+                return i;
+            }
+            if (!refs.has(i)) {
+                return getSimpleProperties(i, refs);
+            }
+        });
+    }
+    if (typeof arg === 'object') {
+        const returnVar = {};
+        for (const s in arg) {
+            if (typeof s === 'string' && s.length && s[0] !== '_') {
+                const v = arg[s];
+                if (typeof v !== 'function' && !refs.has(v)) {
+                    refs.add(v);
+                    const sp = getSimpleProperties(v, refs);
+                    (returnVar as any)[s] = sp;
+                }
+            }
+        }
         return returnVar;
     }
 }
+

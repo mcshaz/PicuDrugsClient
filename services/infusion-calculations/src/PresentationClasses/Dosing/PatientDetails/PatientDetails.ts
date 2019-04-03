@@ -1,5 +1,5 @@
 import { ChildAge } from './ChildAge';
-import * as fieldConst from './../../../Utilities/fieldConstants';
+import * as fieldConst from '../../../../../db/src/helpers/fieldConstants';
 
 export class PatientDetails {
   public Age: ChildAge | null = null;

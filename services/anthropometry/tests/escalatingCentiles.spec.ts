@@ -1,12 +1,10 @@
-import { UKWeightData, CentileCollection, UKLengthData, UKBMIData, 
-    UKHeadCircumferenceData, weeksPerMonth } from '../';
-import  { expect } from 'chai';
-import chai from 'chai'
+import { UKWeightData, CentileCollection, UKLengthData, UKBMIData, UKHeadCircumferenceData, weeksPerMonth } from '../';
+import { expect } from 'chai';
+import chai from 'chai';
 import chaiAlmost from 'chai-almost';
 
-chai.use(chaiAlmost());
-
 describe('Centiles', () => {
+    chai.use(chaiAlmost());
     for (const test of [{name: 'weight', centile: new UKWeightData()},
                         {name: 'lengths', centile: new UKLengthData()},
                         {name: 'headCircumference', centile: new UKHeadCircumferenceData()},

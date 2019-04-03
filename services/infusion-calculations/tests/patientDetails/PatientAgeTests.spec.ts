@@ -1,22 +1,23 @@
 import { expect } from 'chai';
 import { ChildAgeFromDob, NumericRange } from '../../';
+import { MockableDate } from './../../src/PresentationClasses/Dosing/PatientDetails/MockableDate';
+
 describe('ChildAgeFromDob', () => {
     // try
   //  const fmt = Intl.DateTimeFormat(['en-NZ','en-AU','en-GB']).format;
     const fmt = (dt: Date) => dt.getDate() + '/' + (dt.getMonth() + 1) + '/' + dt.getFullYear();
     const dtStr = (dob: Date, now: Date) => `born:${fmt(dob)} now:${fmt(now)}`;
-    const getDateProv = (dt: Date) => ({ now : () => dt.getTime() });
 
     for (const d of getData()) {
         const msg = dtStr(d.dob, d.current);
         it('calculates age ' + msg, () => {
-            const age = new ChildAgeFromDob(d.dob, getDateProv(d.current));
+            const age = new ChildAgeFromDob(d.dob, new MockableDate(d.current));
             expect( age.years, 'yrs').to.equal( d.yrOld);
             expect( age.months, 'mths').to.equal( d.mthOld);
             expect( age.days, 'days').to.equal( d.dayOld);
         });
         it('calculates totalDays ' + msg, () => {
-            const age = new ChildAgeFromDob(d.dob, getDateProv(d.current));
+            const age = new ChildAgeFromDob(d.dob, new MockableDate(d.current));
             const ageDays = age.getAgeInDays();
             expect(ageDays).to.equal( d.totalDays);
             const ageRange = age.getAgeRangeInDays();

@@ -1,29 +1,29 @@
 import { IContextVariableInfusionDrug } from './entities/InfusionDrugs/IContextVariableInfusionDrug';
 import 'reflect-metadata';
-import { ChildAge } from './../infusionCalculations';
 import { IEntityWard } from './entities/IEntityWard';
 import { IViewVariableInfuionDrug } from './PatientSpecificViews/IViewVariableInfusionDrug';
 import { drugDbContainer } from './inversify.config';
 import { IDrugDB } from './Injectables/IDrugDB';
 import { TYPES } from './types';
+import { minWeight, maxWeight } from './helpers/fieldConstants';
+import { filterByAgeWeight, IAgeWeightDetails } from './helpers/ageWeightSelectors';
 
-export async function getVariableInfusions(ward: IEntityWard, age: ChildAge, weight: number) {
+export async function getVariableInfusions(ward: IEntityWard, ageMonths: number, weightKg: number) {
     if (ward.infusionDrugIds.length === 0) {
         return [];
     }
+    if (weightKg > maxWeight) { weightKg = maxWeight; }
+    if (weightKg < minWeight) { throw new Error(`weight of ${weightKg * 1000}g below lower limit of ${minWeight * 1000}g`); }
+    const ageWt: IAgeWeightDetails = { ageMonths, weightKg };
     const db = drugDbContainer.get<IDrugDB>(TYPES.IDrugDB);
     const infusions = await db.infusionDrugs.where('infusionDrugId')
         .anyOf(ward.infusionDrugIds)
         .toArray() as IContextVariableInfusionDrug[];
     const returnVar: IViewVariableInfuionDrug[] = [];
     for (const i of infusions) {
-        const ar = age.getAgeRangeInDays();
-        // todo logic goes in here
-        const d = i.dilutions.filter((dil) => dil.ageMinMonths < ar.lowerBound);
+        const d = filterByAgeWeight(ageWt, i.dilutions);
         if (d.length === 1) {
-            // apparently deletes can really slow chrome V8 down
-            // delete i.Dilutions;
-            // delete i.LastUpdated;
+            (i.dilutions as any) = null;
             const v = (i as unknown as IViewVariableInfuionDrug);
             v.Dilution = d[0];
             returnVar.push(v);

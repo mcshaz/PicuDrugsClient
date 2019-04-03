@@ -2,7 +2,7 @@
 import { siUnit } from '../enums/siUnit';
 import { IEntityUpdated } from '../IEntityUpdated';
 
-export interface IContextInfusionDrug extends IEntityUpdated {
+export interface IEntityInfusionDrug extends IEntityUpdated {
     infusionDrugId: number;
     fullname: string;
     abbrev: string;
@@ -14,7 +14,7 @@ export interface IContextInfusionDrug extends IEntityUpdated {
     siUnit: siUnit;
 }
 
-export interface IContextDilution {
+export interface IEntityDilution {
     siPrefixVal: number;
     weightMin: number;
     weightMax: number;
@@ -24,6 +24,6 @@ export interface IContextDilution {
     referencePage: string;
 }
 
-export interface IContextConcentration {
+export interface IEntityConcentration {
     concentration: number;
 }

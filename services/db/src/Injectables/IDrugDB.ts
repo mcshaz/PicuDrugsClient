@@ -1,14 +1,14 @@
-import Dexie from 'dexie';
+import Dexie from '../../../../../Dexie.js'; //todo swap this back to dexie
 import { IEntityWard } from '../entities/IEntityWard';
-import { IContextInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
-import { IContextBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
+import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
+import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
-import { IFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
+import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 
 export interface IDrugDB {
     wards: Dexie.Table<IEntityWard, number>; // number = type of the primkey
-    infusionDrugs: Dexie.Table<IContextInfusionDrug, number>;
-    bolusDrugs: Dexie.Table<IContextBolusDrug, number>;
+    infusionDrugs: Dexie.Table<IEntityInfusionDrug, number>;
+    bolusDrugs: Dexie.Table<IEntityBolusDrug, number>;
     defibModels: Dexie.Table<IEntityDefibModel, number>;
-    fixedDrugs: Dexie.Table<IFixedDrug, number>;
+    fixedDrugs: Dexie.Table<IEntityFixedDrug, number>;
 }

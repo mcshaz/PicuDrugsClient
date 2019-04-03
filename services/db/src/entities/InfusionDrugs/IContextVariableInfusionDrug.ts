@@ -1,10 +1,10 @@
-import { IContextDilution, IContextConcentration, IContextInfusionDrug } from './IContextInfusionDrugBase';
+import { IEntityDilution, IEntityConcentration, IEntityInfusionDrug } from './IContextInfusionDrugBase';
 
-export interface IContextVariableInfusionDrug extends IContextInfusionDrug {
+export interface IContextVariableInfusionDrug extends IEntityInfusionDrug {
     dilutions: IVariableDilution[];
 }
 
-export interface IVariableDilution extends IContextDilution {
+export interface IVariableDilution extends IEntityDilution {
     volume: number | null;
     rateMin: number;
     rateMax: number;
@@ -12,6 +12,6 @@ export interface IVariableDilution extends IContextDilution {
     concentrations: IVariableConcentration[];
 }
 
-interface IVariableConcentration extends IContextConcentration {
+interface IVariableConcentration extends IEntityConcentration {
     doseCat: string;
 }

@@ -1,6 +1,6 @@
 import { IEntityUpdated } from '../IEntityUpdated';
 
-export interface IContextBolusDrug extends IEntityUpdated {
+export interface IEntityBolusDrug extends IEntityUpdated {
     bolusDrugId: number;
     drugName: string;
     // DrugName: string;
@@ -10,10 +10,10 @@ export interface IContextBolusDrug extends IEntityUpdated {
     min: number;
     specificWardId: number | null;
 
-    bolusDoses: IContextBolusDose[];
+    bolusDoses: IEntityBolusDose[];
 }
 
-interface IContextBolusDose {
+interface IEntityBolusDose {
     minDosePerKg: number;
     maxDosePerKg: number;
     weightMin: number;

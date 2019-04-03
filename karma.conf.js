@@ -16,7 +16,7 @@ module.exports = function (config) {
         concurrency: Infinity,
         customLaunchers: {
             FirefoxHeadless: {
-                base: 'Firefox',
+                base: 'FirefoxDeveloper',
                 flags: ['-headless'],
             },
         },

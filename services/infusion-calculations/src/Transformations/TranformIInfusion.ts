@@ -7,7 +7,7 @@ import { IConcentrationDetailVM } from './../PresentationClasses/Interfaces/ICon
 import { getVariableDilutionVolumeMls } from './Calculations/getVariableDilutionVolumeMls';
 import { getDilutionMethod } from './Calculations/getDilutionMethod';
 import { IContextFixedConc } from './../EntityViewClasses/EntityInterfaces/IContextFixedConc';
-import * as fieldConst from './../Utilities/fieldConstants';
+import * as fieldConst from '../../../db/src/helpers/fieldConstants';
 
 export function tranformIInfusion(weight: number, contextDrug: IContextDrug, newDrug: IInfusionDrugVM, makeAndAddNewConcentration: (arg: IContextConcentration) => IConcentrationDetailVM): void {
   if (weight < fieldConst.minWeight || weight > fieldConst.maxWeight) {

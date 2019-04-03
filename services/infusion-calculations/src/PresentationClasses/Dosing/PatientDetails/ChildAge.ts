@@ -1,8 +1,36 @@
 import { NumericRange } from './../../../Utilities/NumericRange';
-
+import { IDateProvider, MockableDate } from './MockableDate';
 const daysPerYear: number = 365.25;
 const daysPerMonth: number = daysPerYear / 12;
+
 export class ChildAge {
+  private static getTotalDays(years: number, months?: number, days?: number): number {
+    return years * daysPerYear + (months || 0) * daysPerMonth + (days || 0);
+  }
+
+  constructor(readonly years: number, readonly months?: number, readonly days?: number, protected readonly dateProv: IDateProvider = new MockableDate()) {
+    if (years < 0 || months! < 0 || days! < 0) {
+      throw new Error('years, months and days must all be positive');
+    }
+    this.days = days;
+    this.months = months;
+    this.years = years;
+
+    if (this.days! > 28) {
+      const workingDate = new Date(dateProv.today);
+      let daysInPriorMonth = MockableDate.daysInPriorMonth(workingDate);
+      while (this.days! >= daysInPriorMonth) {
+        this.days = this.days! - daysInPriorMonth;
+        this.months = (this.months || 0) + 1;
+        workingDate.setMonth(workingDate.getMonth() - 1);
+        daysInPriorMonth = MockableDate.daysInPriorMonth(workingDate);
+      }
+    }
+    if (this.months! > 12) {
+      this.years = this.years + (this.months! / 12);
+      this.months = this.months! % 12;
+    }
+  }
 
   get totalMonthsEstimate(): number {
     return 12 * this.years + (this.months === void 0 ? 6 : this.months);
@@ -13,31 +41,7 @@ export class ChildAge {
     }
     return 12 * this.years + this.months!;
   }
-  private static getTotalDays(years: number, months?: number, days?: number): number {
-    return years * daysPerYear + (months || 0) * daysPerMonth + (days || 0);
-  }
-  constructor(readonly years: number, readonly months?: number, readonly days?: number) {
-    if (years < 0 || months! < 0 || days! < 0) {
-      throw new Error('years, months and days must all be positive');
-    }
-    this.days = days;
-    this.months = months;
-    this.years = years;
-    if (this.days! > 28) {
-      const now = new Date();
-      let daysInMonth = new Date(now.getFullYear(), now.getMonth() - 1, 0).getDate();
-      while (this.days! >= daysInMonth) {
-        this.days = this.days! - daysInMonth;
-        this.months = (this.months || 0) + 1;
-        now.setMonth(now.getMonth() - 1);
-        daysInMonth = new Date(now.getFullYear(), now.getMonth() - 1, 0).getDate();
-      }
-    }
-    if (this.months! > 12) {
-      this.years = this.years + (this.months! / 12);
-      this.months = this.months! % 12;
-    }
-  }
+
   public toString(): string {
     if (this.months === void 0) {
       return `${this.years} years`;
