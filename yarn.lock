@@ -667,10 +667,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@fluffy-spoon/substitute@^1.85.0":
-  version "1.85.0"
-  resolved "https://registry.yarnpkg.com/@fluffy-spoon/substitute/-/substitute-1.85.0.tgz#25f3700a7958032292792ab688dbb955001fb843"
-  integrity sha512-dMbzArD0lsvvKSvPPTNnmhQBpxvWWcQMV1rt6UptA8E3tvDGheLrHQnPKZ+YZU2nyY6SUh3h+uFnwgKQ3BVoBg==
+"@fluffy-spoon/substitute@^1.86.0":
+  version "1.86.0"
+  resolved "https://registry.yarnpkg.com/@fluffy-spoon/substitute/-/substitute-1.86.0.tgz#04ef1fa3c9ae141770034c006694803333f804d8"
+  integrity sha512-E5p5EaOZHJu0LZGIZue0q7OmzWpDtBInKgQ/3wM+Voaaj9mGnLxDZgl05V+wjOUEQp04nO6AClRXwN+OJ4vDng==
 
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"

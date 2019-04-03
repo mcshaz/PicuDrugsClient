@@ -33,17 +33,17 @@ describe('setup full local db from JSON', () => {
     describe('data is added appropriately', () => {
         it('has entities added', async () => {
             const wards = await db.wards.toArray();
-            expect(wards, 'wards').to.have.members(dbInit.data.wards);
+            expect(wards, 'wards').to.have.deep.members(dbInit.data.wards);
             const boluses = await db.bolusDrugs.toArray();
-            expect(boluses, 'boluses').to.have.members(dbInit.data.bolusDrugs);
+            expect(boluses, 'boluses').to.have.deep.members(dbInit.data.bolusDrugs);
             const infusionDrugs = await db.infusionDrugs.toArray();
-            expect(infusionDrugs, 'infusionDrugs').to.have.members(dbInit.data.infusionDrugs);
+            expect(infusionDrugs, 'infusionDrugs').to.have.deep.members(dbInit.data.infusionDrugs);
             const fixedDrugs = await db.fixedDrugs.toArray();
-            expect(fixedDrugs, 'fixedDrugs').to.have.members(dbInit.data.fixedDrugs);
+            expect(fixedDrugs, 'fixedDrugs').to.have.deep.members(dbInit.data.fixedDrugs);
             const defibModels = await db.defibModels.toArray();
-            expect(defibModels, 'defibModels').to.have.members(dbInit.data.defibModels);
+            expect(defibModels, 'defibModels').to.have.deep.members(dbInit.data.defibModels);
             const updates = await db.appData.get(appDataType.lastFetchServer) as IAppData;
-            expect(Date.parse(updates.data), 'updates.date').to.equal(dbInit.updateCheckStart);
+            expect(updates.data, 'updates.data [date]').to.equal(dbInit.updateCheckStart.toString());
         });
 
     });

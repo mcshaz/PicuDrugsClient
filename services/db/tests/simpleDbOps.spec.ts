@@ -22,9 +22,8 @@ interface IDexieTable<Tentity> {
 
 describe('simple DB tests', () => {
     const emptyFetch = Substitute.for<IFetch>();
-    const now = new Date();
-    emptyFetch.getUpdates(null).returns(Promise.resolve({
-            updateCheckStart: now,
+    emptyFetch.getUpdates(null).returns(Promise.resolve<IServerChanges>({
+            updateCheckStart: new Date(),
             data: {
                 deletions: [],
                 wards: [],
@@ -43,7 +42,10 @@ describe('simple DB tests', () => {
         });
         return promise;
     });
-    it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getUpdates(Arg.any()));
+    describe ('initialized with appropriate IFetch call', () => {
+        it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getUpdates(Arg.any()));
+        it('called IFetch only with null', () => emptyFetch.received(1).getUpdates(null));
+    });
     describe('single DB table items can be added', () => {
         const allTables: Array<IDexieTable<any>> = [{
                 name: 'wards',

@@ -76,69 +76,54 @@ export class DrugsDBLocal extends Dexie {
     }
 
     private async alignDB() {
-        let updateChecked: Date | null = null;
         const updateData = await this.appData.get(appDataType.lastFetchServer);
         if (updateData === void 0) {
             this.logger.info('db being populated from 0 records');
+            // block requests & use VIP to place data;
+            await this.getPutAndDeleteData(null, true);
         } else {
             this.logger.info('db being updated from ' + updateData.data);
-            updateChecked = new Date(Date.parse(updateData.data));
+            const updateChecked = new Date(Date.parse(updateData.data));
+            // don't block requests
+            this.getPutAndDeleteData(updateChecked);
         }
+    }
+
+    private async getPutAndDeleteData(updateChecked: Date | null, vip: boolean = false) {
         const serverData = await this.updateProvider.getUpdates(updateChecked);
-        this.logger.debug('typeof updateCheckStart ' + typeof serverData.updateCheckStart);
-        this.logger.debug('value of updateCheckStart ' + serverData.updateCheckStart.toString() );
         this.logger.log(`dbdata returned from server @ ${ serverData.updateCheckStart.toString() } consisting of `
             + Object.keys(serverData.data).map((k) => `{${k}:length[${(serverData.data as any)[k].length}]}`)
             .join(','));
-        await this.putLocalData(serverData);
+        if (vip) {
+            await Dexie.vip(async () => {
+                await this.alignLocalData(serverData);
+            });
+        } else {
+            await this.alignLocalData(serverData);
+        }
+    }
+
+    private async alignLocalData(serverData: IServerChanges) {
+        await Promise.all([
+            this.transaction('rw', this.wards,
+                () => this.wards.bulkPut(serverData.data.wards)),
+            this.transaction('rw', this.infusionDrugs,
+                () => this.infusionDrugs.bulkPut(serverData.data.infusionDrugs)),
+            this.transaction('rw', this.bolusDrugs,
+                () => this.bolusDrugs.bulkPut(serverData.data.bolusDrugs)),
+            this.transaction('rw', this.defibModels,
+                () => this.defibModels.bulkPut(serverData.data.defibModels)),
+            this.transaction('rw', this.fixedDrugs,
+                () => this.fixedDrugs.bulkPut(serverData.data.fixedDrugs))]);
+        this.logger.info(Object.keys(serverData.data).filter((d) => d !== 'deletions')
+            .reduce<number>((p, k) => p + (serverData.data as any)[k].length, 0)
+            + ' records updated or inserted');
         // running delete after in case records were deleted after the table data was populated
         await this.deleteLocalData(serverData.data.deletions);
-    }
-
-    private async putLocalData(updates: IServerChanges) {
-        const wardPut = () => this.wards.bulkPut(updates.data.wards);
-        const infPut = () => this.infusionDrugs.bulkPut(updates.data.infusionDrugs);
-        const bolusPut = () => this.bolusDrugs.bulkPut(updates.data.bolusDrugs);
-        const defibPut = () => this.defibModels.bulkPut(updates.data.defibModels);
-        const fixedPut = () => this.fixedDrugs.bulkPut(updates.data.fixedDrugs);
-
-        if (process.env.NODE_ENV !== 'production') {
-            const logSuccess = (value: number) => {
-                this.logger.debug('success ' + JSON.stringify(value));
-                return value;
-            }
-            const logError = (error: any) => {
-                this.logger.error(error);
-                return Promise.reject(error);
-            };
-            this.logger.debug('wards:');
-            await wardPut().then(logSuccess, logError);
-            this.logger.debug('infusions:');
-            await infPut().then(logSuccess, logError);
-            this.logger.debug('bolus:');
-            await bolusPut().then(logSuccess, logError);
-            this.logger.debug('defib:');
-            await defibPut().then(logSuccess, logError);
-            this.logger.debug('fixedDrug:');
-            await fixedPut().then(logSuccess, logError);
-            this.logger.debug('appData:');
-        } else {
-            await Promise.all([
-                this.transaction('rw', this.wards, wardPut),
-                this.transaction('rw', this.infusionDrugs, infPut),
-                this.transaction('rw', this.bolusDrugs, bolusPut),
-                this.transaction('rw', this.defibModels, defibPut),
-                this.transaction('rw', this.fixedDrugs, fixedPut)]);
-        }
         await this.appData.put({
             dataType: appDataType.lastFetchServer,
-            data: updates.updateCheckStart.toString()});
-        this.logger.info(Object.keys(updates.data).filter((d) => d !== 'deletions')
-            .reduce<number>((p, k) => p + (updates.data as any)[k].length, 0)
-            + ' records updated or inserted');
+            data: serverData.updateCheckStart.toString()});
     }
-
-
 
     private async deleteLocalData(deletions: INewServerDeletions[]) {
         this.logger.debug('data server has deleted :'
@@ -160,7 +145,7 @@ export class DrugsDBLocal extends Dexie {
             }
         });
         await Promise.all(delPromises);
-        this.logger.log('deletions successful');
+        this.logger.debug('deletions successful');
     }
 }
 

@@ -35,7 +35,7 @@
     "vue-router": "^3.0.2"
   },
   "devDependencies": {
-    "@fluffy-spoon/substitute": "^1.85.0",
+    "@fluffy-spoon/substitute": "^1.86.0",
     "@types/chai": "^4.1.7",
     "@types/chai-almost": "^1.0.0",
     "@types/mocha": "^5.2.6",
