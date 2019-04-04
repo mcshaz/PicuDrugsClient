@@ -15,7 +15,7 @@ export interface IDexieTable<Tentity> {
     getId: (entity: Tentity) => number;
 }
 
-export class TestTableHelpers {
+export class DbTestTableHelpers {
     private readonly pAllTables: Map<string, IDexieTable<any>>;
     constructor() {
         this.pAllTables = new Map();

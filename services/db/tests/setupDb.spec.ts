@@ -10,12 +10,12 @@ import { IServerChanges } from '../src/ServerCommunication/IServerChanges';
 import { appDataType } from '../src/entities/enums/appDataType';
 import { IAppData } from '../src/entities/IAppData';
 import { tableName } from '../src/entities/enums/tableNames';
-import { TestTableHelpers } from './TestTableHelpers';
+import { DbTestTableHelpers } from './DbTestTableHelpers';
 
 describe('setup full local db from JSON', () => {
     const takeUpTo = 3;
     let db: DrugsDBLocal;
-    const allTables = new TestTableHelpers();
+    const allTables = new DbTestTableHelpers();
     let updated: Date;
     before('initialize db', () => {
         const fetch: IFetch = {

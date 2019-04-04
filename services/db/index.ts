@@ -16,4 +16,4 @@ export {IDrugDB} from './src/Injectables/IDrugDB';
 export {IFetch } from './src/Injectables/IFetch';
 export {ILogger} from './src/Injectables/ILogger';
 export {IViewFixedInfuionDrug} from './src/PatientSpecificViews/IViewFixedInfusionDrug';
-export {IViewVariableInfuionDrug} from '../../IViewVariableInfusionDrug';
+export {IViewVariableInfuionDrug} from './src/PatientSpecificViews/IViewVariableInfusionDrug';

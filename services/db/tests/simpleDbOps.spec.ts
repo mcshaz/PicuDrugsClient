@@ -7,7 +7,7 @@ import { Substitute, Arg } from '@fluffy-spoon/substitute';
 import { IFetch } from '../src/Injectables/IFetch';
 import { fileFetch } from './../../../test-resources/FileFetch';
 import { IServerChanges } from '../src/ServerCommunication/IServerChanges';
-import { TestTableHelpers } from './TestTableHelpers';
+import { DbTestTableHelpers } from './DbTestTableHelpers';
 import { tableName } from '../src/entities/enums/tableNames';
 
 
@@ -36,7 +36,7 @@ describe('simple DB tests', () => {
     it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getUpdates(Arg.any()));
     it('called IFetch only with null', () => emptyFetch.received(1).getUpdates(null));
     describe('single DB table items can be added', () => {
-        const allTables = new TestTableHelpers();
+        const allTables = new DbTestTableHelpers();
         before('adding single db items', async () => {
             const allData = await fileFetch.getUpdates(null);
             allTables.setDb(db, (e) => {
