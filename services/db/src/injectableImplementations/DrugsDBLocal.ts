@@ -1,6 +1,6 @@
 import { IAppData } from '../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
-import { Dexie } from '../../../../../Dexie.js/dist/dexie.js';//todo - return to node import once fixes released released
+import Dexie from './../../../../../Dexie.js/dist/dexie';//todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
 import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';

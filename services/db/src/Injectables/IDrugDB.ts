@@ -1,4 +1,4 @@
-import { Dexie } from '../../../../../Dexie.js'; //todo swap this back to dexie
+import Dexie from '../../../../../Dexie.js/dist/dexie'; //todo swap this back to dexie
 import { IEntityWard } from '../entities/IEntityWard';
 import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
