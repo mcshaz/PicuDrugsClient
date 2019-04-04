@@ -1,6 +1,6 @@
-import { tableName } from '../entities/enums/tableNames';
+import { dbTableName } from '../entities/enums/tableNames';
 
 export interface INewServerDeletions {
-    table: tableName;
+    table: dbTableName;
     deletionIds: number[];
 }

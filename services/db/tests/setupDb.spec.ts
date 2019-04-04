@@ -1,15 +1,12 @@
-import { INewServerDeletions } from './../src/ServerCommunication/IEntityDeletion';
 import { fileFetch } from './../../../test-resources/FileFetch';
 import { expect } from 'chai';
-import { DrugsDBLocal } from '../src/injectableImplementations/DrugsDBLocal';
-import { ConsoleLogger } from '../src/injectableImplementations/ConsoleLogger';
+import { DrugsDBLocal } from './../src/injectableImplementations/DrugsDBLocal';
+import { ConsoleLogger } from './../src/injectableImplementations/ConsoleLogger';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
-import { IFetch } from '..';
-import { IServerChanges } from '../src/ServerCommunication/IServerChanges';
-import { appDataType } from '../src/entities/enums/appDataType';
-import { IAppData } from '../src/entities/IAppData';
-import { tableName } from '../src/entities/enums/tableNames';
+import { IFetch } from './..';
+import { appDataType } from './../src/entities/enums/appDataType';
+import { IAppData } from './../src/entities/IAppData';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
 
 describe('setup full local db from JSON', () => {
@@ -36,7 +33,7 @@ describe('setup full local db from JSON', () => {
         };
         const promise = new Promise((resolve, reject) => {
             window.addEventListener('unhandledrejection', (ev) => reject(ev.reason)); // throw instead of reject for better error messages
-            db = new DrugsDBLocal(fetch, new ConsoleLogger(), fakedb, dbKeyRange);
+            db = new DrugsDBLocal(fetch, new ConsoleLogger(), true, fakedb, dbKeyRange);
             allTables.setDb(db);
             db.on('ready', () => resolve('db ready'));
         });

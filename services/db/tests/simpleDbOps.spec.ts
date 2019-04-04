@@ -1,14 +1,14 @@
-import { DrugsDBLocal } from '../src/injectableImplementations/DrugsDBLocal';
+import { DrugsDBLocal } from './../src/injectableImplementations/DrugsDBLocal';
 import { expect } from 'chai';
-import { ConsoleLogger } from '../src/injectableImplementations/ConsoleLogger';
+import { ConsoleLogger } from './../src/injectableImplementations/ConsoleLogger';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
 import { Substitute, Arg } from '@fluffy-spoon/substitute';
-import { IFetch } from '../src/Injectables/IFetch';
+import { IFetch } from './../src/Injectables/IFetch';
 import { fileFetch } from './../../../test-resources/FileFetch';
-import { IServerChanges } from '../src/ServerCommunication/IServerChanges';
+import { IServerChanges } from './../src/ServerCommunication/IServerChanges';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
-import { tableName } from '../src/entities/enums/tableNames';
+import { dbTableName } from './../src/entities/enums/tableNames';
 
 
 describe('simple DB tests', () => {
@@ -28,7 +28,7 @@ describe('simple DB tests', () => {
     before('can initialize db', () => {
         const promise = new Promise((resolve, reject) => {
             window.addEventListener('unhandledrejection', (ev) => reject(ev.reason));
-            db = new DrugsDBLocal(emptyFetch, new ConsoleLogger(), fakedb, dbKeyRange);
+            db = new DrugsDBLocal(emptyFetch, new ConsoleLogger(), true, fakedb, dbKeyRange);
             db.on('ready', () => resolve('db ready'));
         });
         return promise;
@@ -41,19 +41,19 @@ describe('simple DB tests', () => {
             const allData = await fileFetch.getUpdates(null);
             allTables.setDb(db, (e) => {
                 switch (e.tableCode) {
-                    case tableName.wards:
+                    case dbTableName.wards:
                         e.entities = allData.data.wards.slice(0, 1);
                         break;
-                    case tableName.bolusDrugs:
+                    case dbTableName.bolusDrugs:
                         e.entities = allData.data.bolusDrugs.slice(0, 1);
                         break;
-                    case tableName.defibModels:
+                    case dbTableName.defibModels:
                         e.entities = allData.data.defibModels.slice(0, 1);
                         break;
-                    case tableName.fixedDrugs:
+                    case dbTableName.fixedDrugs:
                         e.entities = allData.data.fixedDrugs.slice(0, 1);
                         break;
-                    case tableName.infusionDrugs:
+                    case dbTableName.infusionDrugs:
                         e.entities = allData.data.infusionDrugs.slice(0, 1);
                         break;
                 }

@@ -4,7 +4,7 @@ import { Dexie } from '../../../../../Dexie.js/dist/dexie.js';//todo - return to
 import { IEntityWard } from '../entities/IEntityWard';
 import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
-import { tableName } from '../entities/enums/tableNames';
+import { dbTableName } from '../entities/enums/tableNames';
 import { ILogger } from '../Injectables/ILogger';
 import { IFetch } from '../Injectables/IFetch';
 import {  inject, injectable } from 'inversify';
@@ -37,6 +37,7 @@ export class DrugsDBLocal extends Dexie {
 
     constructor(@inject(TYPES.IFetch) updateProvider: IFetch,
                 @inject(TYPES.ILogger) logger: ILogger,
+                isTest: boolean = false,
                 indexedDb?: IDBFactory, dbKeyRange?: typeof IDBKeyRange) {
         if (indexedDb !== void 0) {
             Dexie.dependencies.indexedDB = indexedDb as IDBFactory;
@@ -44,7 +45,7 @@ export class DrugsDBLocal extends Dexie {
         if (dbKeyRange !== void 0) {
             Dexie.dependencies.IDBKeyRange = dbKeyRange;
         }
-        super('DrugsDBLocal');
+        super('DrugsDBLocal' + isTest ? '_test' : '');
         this.updateProvider = updateProvider;
         this.logger = logger;
         this.version(1).stores({
@@ -130,15 +131,15 @@ export class DrugsDBLocal extends Dexie {
             +  deletions.reduce((n, d) => n + d.deletionIds.length, 0) + ' Entities');
         const delPromises = deletions.map((d) => {
             switch (d.table) {
-                case tableName.wards:
+                case dbTableName.wards:
                     return this.transaction('rw', this.wards, () => this.wards.bulkDelete(d.deletionIds));
-                case tableName.bolusDrugs:
+                case dbTableName.bolusDrugs:
                     return this.transaction('rw', this.bolusDrugs, () => this.bolusDrugs.bulkDelete(d.deletionIds));
-                case tableName.defibModels:
+                case dbTableName.defibModels:
                     return this.transaction('rw', this.defibModels, () => this.defibModels.bulkDelete(d.deletionIds));
-                case tableName.fixedDrugs:
+                case dbTableName.fixedDrugs:
                     return this.transaction('rw', this.fixedDrugs, () => this.fixedDrugs.bulkDelete(d.deletionIds));
-                case tableName.infusionDrugs:
+                case dbTableName.infusionDrugs:
                     return this.transaction('rw', this.infusionDrugs, () => this.infusionDrugs.bulkDelete(d.deletionIds));
                 default:
                     throw new Error('unknown tableName to delete from:' + d.table);
