@@ -1,7 +1,7 @@
 import { IContextVariableInfusionDrug } from './entities/InfusionDrugs/IContextVariableInfusionDrug';
 import 'reflect-metadata';
 import { IEntityWard } from './entities/IEntityWard';
-import { IViewVariableInfuionDrug } from './PatientSpecificViews/IViewVariableInfusionDrug';
+import { IViewVariableInfuionDrug } from '../../../IViewVariableInfusionDrug';
 import { drugDbContainer } from './inversify.config';
 import { IDrugDB } from './Injectables/IDrugDB';
 import { TYPES } from './types';

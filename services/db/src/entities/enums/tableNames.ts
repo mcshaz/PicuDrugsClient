@@ -1,2 +1,2 @@
 
-export enum tableName {Wards = 1, infusionDrugs, bolusDrugs, defibModels, fixedDrugs}
+export enum tableName { wards = 1, infusionDrugs, bolusDrugs, defibModels, fixedDrugs }

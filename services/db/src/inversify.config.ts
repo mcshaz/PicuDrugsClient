@@ -3,7 +3,7 @@ import { TYPES } from './types';
 import { IFetch } from './Injectables/IFetch';
 import { ILogger } from './Injectables/ILogger';
 import { IDrugDB } from './Injectables/IDrugDB';
-import { DrugsDBLocal } from './injectableImplementations/DrugsLocalDb';
+import { DrugsDBLocal } from './injectableImplementations/DrugsDBLocal';
 import { BrowserFetch } from './injectableImplementations/BrowserFetch';
 import { EmptyLogger } from './injectableImplementations/EmptyLogger';
 

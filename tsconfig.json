@@ -29,7 +29,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "services/**/*.ts"
+    "services/**/*.ts", "IViewVariableInfusionDrug.ts"
   ],
   "exclude": [
     "node_modules"

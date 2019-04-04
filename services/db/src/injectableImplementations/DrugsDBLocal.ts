@@ -1,6 +1,6 @@
-import { IAppData } from './../entities/IAppData';
+import { IAppData } from '../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
-import Dexie, { PromiseExtended } from '../../../../../Dexie.js';//todo - return to node import once fixes released released
+import { Dexie } from '../../../../../Dexie.js/dist/dexie.js';//todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
 import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
@@ -130,7 +130,7 @@ export class DrugsDBLocal extends Dexie {
             +  deletions.reduce((n, d) => n + d.deletionIds.length, 0) + ' Entities');
         const delPromises = deletions.map((d) => {
             switch (d.table) {
-                case tableName.Wards:
+                case tableName.wards:
                     return this.transaction('rw', this.wards, () => this.wards.bulkDelete(d.deletionIds));
                 case tableName.bolusDrugs:
                     return this.transaction('rw', this.bolusDrugs, () => this.bolusDrugs.bulkDelete(d.deletionIds));
@@ -184,4 +184,3 @@ function getSimpleProperties(arg: any, refs = new Set<object>()): any {
         return returnVar;
     }
 }
-
