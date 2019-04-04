@@ -1,6 +1,5 @@
 import { DrugsDBLocal } from './../src/injectableImplementations/DrugsDBLocal';
 import { expect } from 'chai';
-import { ConsoleLogger } from './../src/injectableImplementations/ConsoleLogger';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
 import { Substitute, Arg } from '@fluffy-spoon/substitute';
@@ -9,6 +8,7 @@ import { fileFetch } from './../../../test-resources/FileFetch';
 import { IServerChanges } from './../src/ServerCommunication/IServerChanges';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
 import { dbTableName } from './../src/entities/enums/tableNames';
+import { EmptyLogger } from '../src/injectableImplementations/EmptyLogger';
 
 
 describe('simple DB tests', () => {
@@ -28,7 +28,7 @@ describe('simple DB tests', () => {
     before('can initialize db', () => {
         const promise = new Promise((resolve, reject) => {
             window.addEventListener('unhandledrejection', (ev) => reject(ev.reason));
-            db = new DrugsDBLocal(emptyFetch, new ConsoleLogger(), true, fakedb, dbKeyRange);
+            db = new DrugsDBLocal(emptyFetch, new EmptyLogger(), true, fakedb, dbKeyRange);
             db.on('ready', () => resolve('db ready'));
         });
         return promise;

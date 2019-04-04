@@ -1,7 +1,7 @@
+import { EmptyLogger } from './../src/injectableImplementations/EmptyLogger';
 import { fileFetch } from './../../../test-resources/FileFetch';
 import { expect } from 'chai';
 import { DrugsDBLocal } from './../src/injectableImplementations/DrugsDBLocal';
-import { ConsoleLogger } from './../src/injectableImplementations/ConsoleLogger';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
 import { IFetch } from './..';
@@ -20,12 +20,11 @@ describe('setup full local db from JSON', () => {
                 const dbInit = await fileFetch.getUpdates(null);
                 dbInit.updateCheckStart = updated = new Date();
                 allTables.forEach((t) => {
-                    const matchedData: any[] = dbInit.data[t.name];
-                    t.entities = matchedData.slice(0, takeUpTo + 1);
+                    t.entities = dbInit.data[t.name] = dbInit.data[t.name].slice(0, takeUpTo + 1);
                     dbInit.data.deletions.push({
                         table: t.tableCode,
-                        deletionIds: matchedData.slice(-1)
-                            .map(t.getId),
+                        deletionIds: t.entities.slice(-1)
+                            .map((d) => t.getId(d)),
                     });
                 });
                 return dbInit;
@@ -33,7 +32,7 @@ describe('setup full local db from JSON', () => {
         };
         const promise = new Promise((resolve, reject) => {
             window.addEventListener('unhandledrejection', (ev) => reject(ev.reason)); // throw instead of reject for better error messages
-            db = new DrugsDBLocal(fetch, new ConsoleLogger(), true, fakedb, dbKeyRange);
+            db = new DrugsDBLocal(fetch, new EmptyLogger(), true, fakedb, dbKeyRange);
             allTables.setDb(db);
             db.on('ready', () => resolve('db ready'));
         });
@@ -45,14 +44,16 @@ describe('setup full local db from JSON', () => {
         });
     });
     describe('data is added appropriately', () => {
-        it('has entities added', async () => {
-            allTables.forEach(async (t) => {
+        allTables.forEach((t) => {
+            it(`has ${t.name} added`, async () => {
                 const removedEntity = t.entities!.pop();
                 const dexieEntities = await t.table!.toArray();
                 expect(dexieEntities).to.have.same.deep.members(t.entities!);
                 expect(dexieEntities).to.not.deep.include(removedEntity);
-                expect(dexieEntities.map(t.getId)).to.not.include(t.getId(removedEntity));
+                expect(dexieEntities.map((e) => t.getId(e))).to.not.include(t.getId(removedEntity));
             });
+        });
+        it('has updated DB with server time', async () => {
             const updates = await db.appData.get(appDataType.lastFetchServer) as IAppData;
             expect(updates.data, 'updates.data [date]').to.equal(updated.toString());
         });
