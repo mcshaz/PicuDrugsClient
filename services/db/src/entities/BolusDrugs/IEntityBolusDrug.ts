@@ -1,6 +1,4 @@
-import { IEntityUpdated } from '../IEntityUpdated';
-
-export interface IEntityBolusDrug extends IEntityUpdated {
+export interface IEntityBolusDrug {
     bolusDrugId: number;
     drugName: string;
     // DrugName: string;

@@ -1,6 +1,6 @@
 export interface IConcentrationDetailVM {
-  IsNeat: boolean;
-  DrawingUpDose: number;
-  OneMlHrDose: number;
-  FinalVolume: number;
+  isNeat: boolean;
+  drawingUpDose: number;
+  oneMlHrDose: number;
+  finalVolume: number;
 }

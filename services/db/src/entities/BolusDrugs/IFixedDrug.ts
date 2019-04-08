@@ -1,13 +1,11 @@
-import { IEntityUpdated } from '../IEntityUpdated';
-
-export interface IEntityFixedDrug extends IEntityUpdated {
+export interface IEntityFixedDrug {
     fixedDrugId: number;
     drugName: string;
 
     fixedDoses: IEntityFixedDose[];
 }
 
-export interface IEntityFixedDose extends IEntityUpdated {
+export interface IEntityFixedDose {
     dose: string;
     minAgeMonths: number;
     maxAgeMonths: number;

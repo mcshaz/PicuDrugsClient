@@ -1,8 +1,8 @@
 import { DrugsDBLocal } from './..';
 import { IEntityFixedDrug } from './../src/entities/BolusDrugs/IFixedDrug';
-import { IEntityBolusDrug } from './../src/entities/BolusDrugs/IContextBolusDrug';
+import { IEntityBolusDrug } from '../src/entities/BolusDrugs/IEntityBolusDrug';
 import { IEntityDefibModel } from './../src/entities/IEntityDefibModel';
-import { IEntityInfusionDrug } from './../src/entities/InfusionDrugs/IContextInfusionDrugBase';
+import { IEntityInfusion } from '../src/entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityWard } from './../src/entities/IEntityWard';
 import { dbTableName } from './../src/entities/enums/tableNames';
 
@@ -23,7 +23,7 @@ export class DbTestTableHelpers {
          new DrugDBTable<IEntityFixedDrug>('fixedDrugs', 'fixedDrugId'),
          new DrugDBTable<IEntityBolusDrug>('bolusDrugs', 'bolusDrugId'),
          new DrugDBTable<IEntityDefibModel>('defibModels', 'id'),
-         new DrugDBTable<IEntityInfusionDrug>('infusionDrugs', 'infusionDrugId')]
+         new DrugDBTable<IEntityInfusion>('infusionDrugs', 'infusionDrugId')]
          .forEach((i) => this.pAllTables.set(i.name, i));
     }
 

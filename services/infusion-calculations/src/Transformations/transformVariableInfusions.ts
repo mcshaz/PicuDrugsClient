@@ -1,33 +1,29 @@
-import { VariableInfusionDrugVM } from './../PresentationClasses/VariableInfusionDrugVM';
+import { IVariableInfusionDrugVM } from './../PresentationClasses/VariableInfusionDrugVM';
 import { NumericRange } from './../Utilities/NumericRange';
-import { IVariableInfusionView } from '../EntityViewClasses/IVariableInfusionView';
 import { tranformIInfusion } from './TranformIInfusion';
-import { VariableConcentrationDetailVM } from './../PresentationClasses/VariableConcentrationDetailVM';
-import { transformViewToRelations } from './transformViewToRelations';
+import { IPatientVariableInfuionDrug } from '../PatientSpecificViews/IPatientVariableInfusionDrug';
+import { IVariableConcentrationDetailVM } from '../PresentationClasses/VariableConcentrationDetailVM';
 
-export function transformVariableInfusions(weight: number, infusions: IVariableInfusionView[]): VariableInfusionDrugVM[] {
-  const returnVar: VariableInfusionDrugVM[] = []; // (infusions.length);
-  for (const i of transformViewToRelations(infusions)) {
-    const Viv = i as IVariableInfusionView;
-
-    const d = new VariableInfusionDrugVM();
-    d.DrugName = Viv.Fullname;
-    d.Link = Viv.HrefBase + Viv.HrefPage;
-    d.DoseRange = new NumericRange(Viv.RateMin, Viv.RateMax);
-    d.Note = Viv.Note || '';
-    d.InfusionDetails = [];
-    returnVar.push(d);
-    tranformIInfusion(weight, i, d, (icc) => {
-      const ic = icc as IVariableInfusionView;
-      const cd = new VariableConcentrationDetailVM();
-      cd.DetailName = ic.Category || ic.Abbrev;
-      d.InfusionDetails.push(cd);
-      return cd;
-    });
-    for (const c of d.InfusionDetails) {
-      c.FlowRange = NumericRange.op_Division(d.DoseRange, c.OneMlHrDose);
+export function transformVariableInfusions(weight: number, infusions: IPatientVariableInfuionDrug[]): IVariableInfusionDrugVM[] {
+  const returnVar: IVariableInfusionDrugVM[] = new Array(infusions.length);
+  let nextIndex = 0;
+  for (const inf of infusions) {
+    const d = {
+      drugName: inf.fullname,
+      link: inf.drugReferenceSource.hyperlink + inf.dilution.referencePage,
+      doseRange: new NumericRange(inf.dilution.rateMin, inf.dilution.rateMax),
+      note: inf.note || '',
+      concentrations: [] as IVariableConcentrationDetailVM[],
+    } as IVariableInfusionDrugVM;
+    returnVar[nextIndex++] = d;
+    tranformIInfusion(weight, inf, d);
+    for (let i = 0; i < d.concentrations.length; i++) {
+      const c = d.concentrations[i];
+      c.flowRange = NumericRange.op_Division(d.doseRange, c.oneMlHrDose);
+      c.detailName = inf.dilution.concentrations[i].doseCat || inf.abbrev;
     }
   }
+  returnVar.length = nextIndex;
   return returnVar;
 }
 

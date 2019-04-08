@@ -1,7 +1,6 @@
 import { IEntityDefibModel } from './IEntityDefibModel';
-import { IEntityUpdated } from './IEntityUpdated';
 
-export interface IEntityWard extends IEntityUpdated {
+export interface IEntityWard {
     wardId: number;
     abbrev: string;
     fullname: string;
@@ -16,5 +15,5 @@ export interface IEntityWard extends IEntityUpdated {
     lastUpdated: Date;
 
     infusionDrugIds: number[];
-    bolusDrugIds: number[];
+    bolusDrugIds: Array<number | string>;
 }

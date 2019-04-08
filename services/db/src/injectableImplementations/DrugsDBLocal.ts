@@ -2,8 +2,8 @@ import { IAppData } from '../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
 import Dexie from './../../../../../Dexie.js/dist/dexie';//todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
-import { IEntityInfusionDrug } from '../entities/InfusionDrugs/IContextInfusionDrugBase';
-import { IEntityBolusDrug } from '../entities/BolusDrugs/IContextBolusDrug';
+import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug';
+import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
 import { dbTableName } from '../entities/enums/tableNames';
 import { ILogger } from '../Injectables/ILogger';
 import { IFetch } from '../Injectables/IFetch';
@@ -14,6 +14,7 @@ import { IServerChanges } from '../ServerCommunication/IServerChanges';
 import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 import { INewServerDeletions } from '../ServerCommunication/IEntityDeletion';
 import { appDataType } from '../entities/enums/appDataType';
+import { IEntityFixedInfusionDrug } from '../entities/InfusionDrugs/IEntityFixedInfusionDrug';
 
 
 // https://caniuse.com/#search=IndexedDB
@@ -26,7 +27,7 @@ export class DrugsDBLocal extends Dexie {
     // (just to inform Typescript. Instanciated by Dexie in stores() method)
     public wards!: Dexie.Table<IEntityWard, number>; // number = type of the primkey
  // number = type of the primkey
-    public infusionDrugs!: Dexie.Table<IEntityInfusionDrug, number>;
+    public infusionDrugs!: Dexie.Table<IEntityInfusion, number>;
     public bolusDrugs!: Dexie.Table<IEntityBolusDrug, number>;
     public defibModels!: Dexie.Table<IEntityDefibModel, number>;
     public fixedDrugs!: Dexie.Table<IEntityFixedDrug, number>;
@@ -74,6 +75,11 @@ export class DrugsDBLocal extends Dexie {
         });
         // window.setInterval(update,1000*60*60*12);//look up every 12 hours (in case browser left open, eg in resus bay)
         this.open();
+    }
+
+    public async allFixedInfusionDrugs() {
+        return this.infusionDrugs.where('isTitratable').equals(false)
+            .toArray() as Dexie.Promise<IEntityFixedInfusionDrug[]>;
     }
 
     private async alignDB() {

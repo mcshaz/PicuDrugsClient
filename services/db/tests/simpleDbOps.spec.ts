@@ -10,7 +10,6 @@ import { DbTestTableHelpers } from './DbTestTableHelpers';
 import { dbTableName } from './../src/entities/enums/tableNames';
 import { EmptyLogger } from '../src/injectableImplementations/EmptyLogger';
 
-
 describe('simple DB tests', () => {
     const emptyFetch = Substitute.for<IFetch>();
     emptyFetch.getUpdates(null).returns(Promise.resolve<IServerChanges>({

@@ -1,7 +1,9 @@
 import {InfusionRateUnit} from './../Dosing/InfusionRateUnit';
 import {SiUnitMeasure} from './../Dosing/SiUnitMeasure';
+import { IConcentrationDetailVM } from './IConcentrationDetailVM';
 
 export interface IInfusionDrugVM {
-  RateUnit: InfusionRateUnit | null;
-  DrawingUpUnits: SiUnitMeasure | null;
+  rateUnit: InfusionRateUnit | null;
+  drawingUpUnits: SiUnitMeasure | null;
+  concentrations: IConcentrationDetailVM[];
 }

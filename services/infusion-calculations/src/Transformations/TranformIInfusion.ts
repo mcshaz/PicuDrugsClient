@@ -1,23 +1,23 @@
 import { SiUnitMeasure } from './../PresentationClasses/Dosing/SiUnitMeasure';
 import { InfusionRateUnit } from './../PresentationClasses/Dosing/InfusionRateUnit';
-import { IContextDrug } from './../EntityViewClasses/EntityInterfaces/IContextDrug';
-import { IContextConcentration } from './../EntityViewClasses/EntityInterfaces/IContextConcentration';
 import { IInfusionDrugVM } from './../PresentationClasses/Interfaces/IInfusionDrugVM';
 import { IConcentrationDetailVM } from './../PresentationClasses/Interfaces/IConcentrationDetailVM';
 import { getVariableDilutionVolumeMls } from './Calculations/getVariableDilutionVolumeMls';
 import { getDilutionMethod } from './Calculations/getDilutionMethod';
-import { IContextFixedConc } from './../EntityViewClasses/EntityInterfaces/IContextFixedConc';
 import * as fieldConst from '../../../db/src/helpers/fieldConstants';
+import { IVariableDilutionInfo } from './../../../db';
+import { IPatientInfuionDrug } from './../PatientSpecificViews/IPatientInfusionDrug';
+import { IPatientFixedConcentration } from '../PatientSpecificViews/IPatientFixedInfusionDrug';
 
-export function tranformIInfusion(weight: number, contextDrug: IContextDrug, newDrug: IInfusionDrugVM, makeAndAddNewConcentration: (arg: IContextConcentration) => IConcentrationDetailVM): void {
+export function tranformIInfusion(weight: number, drug: IPatientInfuionDrug, newDrug: IInfusionDrugVM): void {
   if (weight < fieldConst.minWeight || weight > fieldConst.maxWeight) {
     throw new Error(fieldConst.wtErr);
   }
 
-  newDrug.DrawingUpUnits = new SiUnitMeasure(contextDrug.AmpulePrefix, contextDrug.SiUnit);
-  const method = getDilutionMethod(contextDrug.DilutionMethod);
-  newDrug.RateUnit = new InfusionRateUnit(contextDrug.InfusionPrefix, contextDrug.SiUnit, method.isPerKg, contextDrug.IsPerMin);
-  const ampConvFact = Math.pow(10, contextDrug.InfusionPrefix - contextDrug.AmpulePrefix);
+  newDrug.drawingUpUnits = new SiUnitMeasure(drug.siPrefix, drug.siUnit);
+  const method = getDilutionMethod(drug.dilution.dilutionMethodId);
+  newDrug.rateUnit = new InfusionRateUnit(drug.siPrefix, drug.siUnit, method.isPerKg, drug.dilution.isPerMin);
+  const ampConvFact = Math.pow(10, drug.siPrefix - drug.dilution.siPrefix);
 
   let workingWt = 0;
   let dilVol = 0;
@@ -30,35 +30,41 @@ export function tranformIInfusion(weight: number, contextDrug: IContextDrug, new
     }
   }
 
-  for (const contextConcentration of contextDrug.Concentrations!) {
-    const newConc = makeAndAddNewConcentration(contextConcentration);
-    newConc.IsNeat = method.isNeat;
+  const volume = (drug.dilution as any as IVariableDilutionInfo).volume;
+  for (const c of drug.dilution.concentrations) {
+    const getVolume = () => volume === void 0
+      ? (c as any as IPatientFixedConcentration).volume // volume === 0 not valid, so falsey fine
+      : volume;
+    const newConc = {
+      isNeat: method.isNeat,
+    } as IConcentrationDetailVM;
+    newDrug.concentrations.push(newConc);
     if (method.isVaryConcentration) {
       if (!method.isVaryVolume) {
-        dilVol = contextConcentration.Volume!;
+        dilVol = getVolume()!;
       }
-      newConc.FinalVolume = Math.round(dilVol);
+      newConc.finalVolume = Math.round(dilVol);
       // uses conc
-      newConc.DrawingUpDose = contextConcentration.Concentration * dilVol * workingWt * (contextDrug.IsPerMin ? 60 : 1) * ampConvFact;
-      newConc.OneMlHrDose = contextConcentration.Concentration;
+      newConc.drawingUpDose = c.concentration * dilVol * workingWt * (drug.dilution.isPerMin ? 60 : 1) * ampConvFact;
+      newConc.oneMlHrDose = c.concentration;
     } else {
       if (method.isVaryVolume) {
         // vary Volume && !vary Concentration = Volume in mL per kg
-        newConc.FinalVolume = contextConcentration.Volume! * weight;
-        newConc.DrawingUpDose = contextConcentration.Concentration * (contextDrug.IsPerMin ? 60 : 1) * newConc.FinalVolume;
-        newConc.OneMlHrDose = contextConcentration.Concentration / weight;
+        newConc.finalVolume = getVolume()! * weight;
+        newConc.drawingUpDose = c.concentration * (drug.dilution.isPerMin ? 60 : 1) * newConc.finalVolume;
+        newConc.oneMlHrDose = c.concentration / weight;
       } else {
-        newConc.OneMlHrDose = method.isPerKg
-          ? (contextConcentration.Concentration / weight)
-          : contextConcentration.Concentration;
-        if (contextConcentration.Volume) {
-          newConc.FinalVolume = contextConcentration.Volume;
-          newConc.DrawingUpDose = newConc.FinalVolume * contextConcentration.Concentration * ampConvFact * (contextDrug.IsPerMin ? 60 : 1);
+        newConc.oneMlHrDose = method.isPerKg
+          ? (c.concentration / weight)
+          : c.concentration;
+        if (getVolume()) {
+          newConc.finalVolume = getVolume()!;
+          newConc.drawingUpDose = newConc.finalVolume * c.concentration * ampConvFact * (drug.dilution.isPerMin ? 60 : 1);
         } else {
-          const fixConc = contextConcentration as IContextFixedConc;
+          const fixConc = c as any as IPatientFixedConcentration;
           // ??final concentration rather than concentration
-          newConc.DrawingUpDose = fixConc.Rate * ampConvFact * fixConc.StopMins * (method.isPerKg ? weight : 1) / (contextDrug.IsPerMin ? 1 : 60);
-          newConc.FinalVolume = newConc.DrawingUpDose / (fixConc.Concentration * ampConvFact);
+          newConc.drawingUpDose = fixConc.rate * ampConvFact * fixConc.durationMinutes * (method.isPerKg ? weight : 1) / (drug.dilution.isPerMin ? 1 : 60);
+          newConc.finalVolume = newConc.drawingUpDose / (fixConc.concentration * ampConvFact);
         }
       }
     }
