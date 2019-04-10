@@ -1,7 +1,7 @@
 import chai from 'chai'; // import { expect } from 'chai';
 import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolerance of 1 x 10-6
 import { dilutionMethod, IEntityVariableInfusionDrug, siUnit } from '../../db';
-import { ToArrayMap, concatSets } from './utilities/toMap';
+import { ToArrayMap, concatSets, toMap } from './utilities/toMap';
 import { fileFetch } from './../../../test-resources/FileFetch';
 import { getVariableInfusionsForPt } from '../src/Transformations/Calculations/getVariableInfusionsForPatient';
 import { VariableInfusionDrugVM, NumericRange, InfusionRateUnit, SiUnitMeasure } from '..';
@@ -9,26 +9,34 @@ import { transformVariableInfusions } from '../src/Transformations/transformVari
 
 chai.use(chaiAlmost());
 describe('variableVMConversion', () => {
-    let vals: ToArrayMap<IVariableVMTestData, IEntityVariableInfusionDrug>;
+    let dbDatum: IEntityVariableInfusionDrug[][];
+    const testDatum = getVariableInfusionVMTestData();
     before('get data', async () => {
-        vals = new ToArrayMap<IVariableVMTestData, IEntityVariableInfusionDrug>(getVariableInfusionVMTestData(), (d) => d.infusionDrugIds);
+        const am = new ToArrayMap<IVariableVMTestData, IEntityVariableInfusionDrug>(testDatum, (d) => d.infusionDrugIds);
         const dbInit = await fileFetch.getUpdates(null);
-        vals.match(dbInit.data.infusionDrugs as IEntityVariableInfusionDrug[], (d) => d.infusionDrugId);
+        dbDatum = am.match(dbInit.data.infusionDrugs as IEntityVariableInfusionDrug[], (d) => d.infusionDrugId)
+            .map((m) => m[1] as IEntityVariableInfusionDrug[]);
     });
     it('has all variable drugs', () => {
-        chai.expect(vals.matched.every((v) => (v[1] as any).isTitratable === true),
+        chai.expect(dbDatum.every((d) => d.every((v) => (v as any).isTitratable === true)),
             'every isTitratable === true').to.equal(true);
+    });
+    it('has matched test data appropriately', () => {
+        const dbIds = dbDatum.map((d) => d.map((i) => i.infusionDrugId));
+        const expectIds = testDatum.map((d) => d.infusionDrugIds);
+        chai.expect(dbIds).to.have.same.deep.ordered.members(expectIds);
     });
     describe('can produce views from test data', () => {
         const methodsTested = new Set<dilutionMethod>();
-        for (const td of vals.matched) {
-            const expected = td[0];
-            const selected = getVariableInfusionsForPt(td[1], expected.ageMth, expected.wt);
-            const dilMethods = [...new Set(selected.map((s) => s.dilution.dilutionMethodId))];
-            concatSets(methodsTested, dilMethods);
-            it(`${expected.vm.map((v) => v.drugName).join(',')} (${expected.wt}kg) - dilMethod [${dilMethods.join(',')}]`, () => {
+        for (let i = 0; i < testDatum.length; i++) {
+            const expected = testDatum[i];
+            it(`${expected.vm.map((d) => d.drugName).join(',')} (${expected.wt}kg)`, () => {
+                debugger;
+                const selected = getVariableInfusionsForPt(dbDatum[i], expected.ageMth, expected.wt);
+                const dilMethods = [...new Set(selected.map((s) => s.dilution.dilutionMethodId))];
+                concatSets(methodsTested, dilMethods);
                 const testOut = transformVariableInfusions(expected.wt, selected);
-                chai.expect(testOut).to.deep.almost.equal(expected.vm);
+                chai.expect(testOut, `dilMethod [${dilMethods.join(',')}]`).to.deep.almost.equal(expected.vm);
             });
         }
         it('has tested relevant methods', () => {
@@ -132,7 +140,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                 }],
             }],
         }, {
-            wt: 3.6, ageMth: 0, infusionDrugIds:[16],  vm: [{
+            wt: 3.6, ageMth: 0, infusionDrugIds: [16], vm: [{
                 drugName: 'Actrapid Insulin',
                 link: 'http://www.adhb.govt.nz/picu/Protocols/Paediatric%20Drug%20Infusion%20Chart.pdf',
                 doseRange: new NumericRange(0.05, 0.1),
@@ -145,7 +153,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     drawingUpDose: 50,
                     oneMlHrDose: 1.0 / 3.6,
                     flowRange: new NumericRange(0.18, 0.36),
-                    isNeat: false
+                    isNeat: false,
                 }],
             }],
         }, {

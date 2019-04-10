@@ -17,8 +17,8 @@ export class MinutesDuration {
   public readonly totalMins: number;
   public readonly hours: number;
   public readonly mins: number;
-  constructor(totalMins?: number) {
-    this.totalMins = totalMins === void 0 ? 0 : Math.floor(totalMins);
+  constructor(totalMins: number = 0) {
+    this.totalMins = Math.floor(totalMins);
     this.hours = Math.floor(this.totalMins / 60);
     this.mins = this.totalMins - this.hours * 60;
   }

@@ -6,19 +6,15 @@ export interface IInfusionInfo {
     abbrev: string;
     note: string;
     siPrefix: number;
-    siUnit: siUnit;
+    siUnitId: siUnit;
 
     drugReferenceSource: IDrugReference;
     drugRoute: IDrugRoute;
     infusionDiluent: IDiluent;
 }
 
-export interface IEntityInfusionBase extends IInfusionInfo {
+export interface IEntityInfusion extends IInfusionInfo {
     infusionDrugId: number;
-}
-
-export interface IEntityInfusion extends IEntityInfusionBase {
-    dilutions: IEntityDilution[];
 }
 
 export interface IAgeWeightSelectable {
@@ -36,10 +32,6 @@ export interface IDilutionInfo {
 }
 
 export interface IEntityDilutionBase extends IAgeWeightSelectable, IDilutionInfo {
-}
-
-export interface IEntityDilution extends IEntityDilutionBase {
-    concentrations: IEntityConcentration[];
 }
 
 export interface IEntityConcentration {

@@ -38,8 +38,8 @@ export class NumericRange {
 
   public rounding: roundingMethod = roundingMethod.noRounding;
   public separator: string = '–';
-  private pLowerBound: number | undefined ;
-  private pUpperBound: number | undefined ;
+  private pLowerBound?: number;
+  private pUpperBound?: number;
   private pPrecision: number = 2;
   constructor(val1?: number, val2?: number) {
     if (val1 !== void 0) {

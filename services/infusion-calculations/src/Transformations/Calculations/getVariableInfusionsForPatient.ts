@@ -11,10 +11,11 @@ export function getVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug
     const returnVar = new Array<IPatientVariableInfuionDrug>(infusions.length);
     let insert = 0;
     for (const i of infusions) {
-        const d = filterByAgeWeight(ageWt, i.dilutions);
+        const d = filterByAgeWeight(ageWt, i.variableTimeDilutions);
         if (d.length === 1) {
-            const newVar = mapProperties({} as IPatientVariableInfuionDrug, i, ['abbrev', 'drugReferenceSource', 'drugRoute', 'fullname', 'infusionDiluent', 'note', 'siPrefix', 'siUnit']);
+            const newVar = mapProperties({} as IPatientVariableInfuionDrug, i, ['abbrev', 'drugReferenceSource', 'drugRoute', 'fullname', 'infusionDiluent', 'note', 'siPrefix', 'siUnitId']);
             newVar.dilution = d[0];
+            newVar.dilution.concentrations = d[0].variableTimeConcentrations;
             returnVar[insert++] = newVar;
         } else if (d.length > 1) {
             throw Error('Database contains corrupt weight/age ranges for infusion '

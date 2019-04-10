@@ -13,11 +13,10 @@ export function tranformIInfusion(weight: number, drug: IPatientInfuionDrug, new
   if (weight < fieldConst.minWeight || weight > fieldConst.maxWeight) {
     throw new Error(fieldConst.wtErr);
   }
-
-  newDrug.drawingUpUnits = new SiUnitMeasure(drug.siPrefix, drug.siUnit);
+  newDrug.drawingUpUnits = new SiUnitMeasure(drug.siPrefix, drug.siUnitId);
   const method = getDilutionMethod(drug.dilution.dilutionMethodId);
-  newDrug.rateUnit = new InfusionRateUnit(drug.siPrefix, drug.siUnit, method.isPerKg, drug.dilution.isPerMin);
-  const ampConvFact = Math.pow(10, drug.siPrefix - drug.dilution.siPrefix);
+  newDrug.rateUnit = new InfusionRateUnit(drug.dilution.siPrefix, drug.siUnitId, method.isPerKg, drug.dilution.isPerMin);
+  const ampConvFact = Math.pow(10, drug.dilution.siPrefix - drug.siPrefix);
 
   let workingWt = 0;
   let dilVol = 0;

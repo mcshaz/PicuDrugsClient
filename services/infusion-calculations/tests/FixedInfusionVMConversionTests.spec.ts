@@ -3,37 +3,40 @@ import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolera
 import { FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit,  MinutesDuration } from '../';
 import chai from 'chai';
 import { fileFetch } from './../../../test-resources/FileFetch';
-import { toMap } from './utilities/toMap';
+import { toMap, ToArrayMap } from './utilities/toMap';
 import { getFixedDilutionsForPt } from '../src/Transformations/Calculations/getFixedDilutionsForPt';
 chai.use(chaiAlmost());
 
-interface ITestSet { dbData: IEntityFixedInfusionDrug; result: IFixedVMTestData; }
 describe('fixedVMConversion', () => {
-    let vals: ITestSet[];
+    let dbDatum: IEntityFixedInfusionDrug[];
+    const expectedDatum = getFixedInfusionVMTestData();
     before('get data', async () => {
-        const m = toMap(getFixedInfusionVMTestData(), (d) => d.infusionDrugId);
+        const m = new ToArrayMap<IFixedVMTestData, IEntityFixedInfusionDrug>(expectedDatum,
+            (d) => [d.infusionDrugId]);
         const dbInit = await fileFetch.getUpdates(null);
-        vals = dbInit.data.infusionDrugs
-            .reduce((reduced: ITestSet[], id) => {
-                const val = m.get(id.infusionDrugId);
-                if (val !== void 0) {
-                    reduced.push({dbData: id as IEntityFixedInfusionDrug, result: val});
-                }
-                return reduced;
-            }, []);
+        dbDatum = m.match(dbInit.data.infusionDrugs as IEntityFixedInfusionDrug[], (d) => d.infusionDrugId)
+            .map((d) => d[1][0]);
     });
     it('has all fixed drugs', () => {
-        chai.expect(vals.every((v) => (v.dbData as any).isTitratable === false),
+        chai.expect(dbDatum.every((v) => (v as any).isTitratable === false),
             'every isTitratable === false').to.equal(true);
+    });
+    it('has matched test data appropriately', () => {
+        const dbIds = dbDatum.map((d) => d.infusionDrugId);
+        const expectIds = expectedDatum.map((d) => d.infusionDrugId);
+        chai.expect(dbIds).to.have.same.ordered.members(expectIds);
     });
     describe('can produce views from test data', () => {
         const methodsTested = new Set<dilutionMethod>();
-        for (const td of vals) {
-            const selected = getFixedDilutionsForPt(td.dbData, td.result.ageMth, td.result.wt)!;
-            methodsTested.add(selected.dilution.dilutionMethodId);
-            it(`${td.result.vm.drugName} (${td.result.wt}kg) - dilMethods [${selected.dilution.dilutionMethodId}]`, () => {
-                const testOut = transformFixedInfusions(td.result.wt, selected);
-                chai.expect(testOut).to.be.deep.almost.equal(td.result.vm);
+        for (let i = 0; i < expectedDatum.length; i++) {
+            const expected = expectedDatum[i];
+            it(`${expected.vm.drugName} (${expected.wt}kg)`, () => {
+                const dbData = dbDatum[i];
+                const selectedDil = getFixedDilutionsForPt(dbData, expected.ageMth, expected.wt)!;
+                selectedDil.selectedAmpule = dbData.drugAmpuleConcentrations[0];
+                methodsTested.add(selectedDil.dilution.dilutionMethodId);
+                const testOut = transformFixedInfusions(expected.wt, selectedDil);
+                chai.expect(testOut, `dilMethod ${selectedDil.dilution.dilutionMethodId}`).to.be.deep.almost.equal(expected.vm);
             });
         }
         it('has tested relevant methods', () => {
@@ -61,7 +64,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             f.concentrations = [{
                 ampuleMl: 7.5,
                 calculatedDose: 150,
-                cumulativeStartTime: new MinutesDuration(),
+                cumulativeStartTime: new MinutesDuration(0),
                 duration: new MinutesDuration(15),
                 diluentVolume: 22.5,
                 drawingUpDose: 1500,

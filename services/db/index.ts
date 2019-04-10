@@ -1,7 +1,7 @@
 export { IServerChanges } from './src/ServerCommunication/IServerChanges';
 export { TYPES } from './src/types';
 export { IEntityBolusDrug } from './src/entities/BolusDrugs/IEntityBolusDrug';
-export { IEntityInfusion, IInfusionInfo, IEntityInfusionBase, IEntityDilution , IEntityConcentration, IDilutionInfo } from './src/entities/InfusionDrugs/IEntityInfusionDrug';
+export { IEntityInfusion, IInfusionInfo, IEntityInfusion as IEntityInfusionBase, IEntityConcentration, IDilutionInfo } from './src/entities/InfusionDrugs/IEntityInfusionDrug';
 export { IEntityVariableInfusionDrug, IEntityVariableDilution, IVariableDilutionInfo } from './src/entities/InfusionDrugs/IEntityVariableInfusionDrug';
 export { IEntityFixedDilution , IEntityFixedInfusionDrug , IEntityDrugAmpuleConcentration, IEntityFixedConcentration } from './src/entities/InfusionDrugs/IEntityFixedInfusionDrug';
 export { IEntityDefibModel } from './src/entities/IEntityDefibModel';
