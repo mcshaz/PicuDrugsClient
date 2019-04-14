@@ -1,51 +1,54 @@
 <template>
   <div>
-    <div class="form-group row">
+    <div class="form-group form-row">
       <label for="dob" class="col-sm-2 col-form-label">DOB</label>
       <div class="col-sm-10">
-        <input class="form-control" type="date" id="dob" v-model="dob" :min="minDate" :max="maxDate">
+        <div class="input-group">
+          <input class="form-control col" type="date" id="dob" v-model="dob" :min="minDate" :max="maxDate">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <font-awesome-icon icon="calendar" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <fieldset class="form-group">
       <div class="form-row">
         <legend class="col-form-label col-sm-2 col-form-label">Age</legend>
         <div class="col-sm-10">
-          <div class="input-group col">
-            <input class="form-control" id="years" v-model.number="years" placeholder="years" type="number"
-              min="0" :max="maxYears" >
-            <div class="input-group-append">
-              <span class="input-group-text" >years</span>
+          <div class="form-row">
+            <div class="input-group col">
+              <input class="form-control" id="years" v-model.number="years" placeholder="years" type="number"
+                min="0" :max="maxYears" >
+              <div class="input-group-append">
+                <label class="input-group-text" for="years" >years</label>
+              </div>
             </div>
-          </div>
-          <div class="input-group col">
-            <input class="form-control" id="months" v-model.number="months" placeholder="months" type="number" 
-              min="0" max="36">
-            <div class="input-group-append">
-              <span class="input-group-text" >months</span>
+            <div class="input-group col">
+              <input class="form-control" id="months" v-model.number="months" placeholder="months" type="number" 
+                min="0" max="72">
+              <div class="input-group-append">
+                <label class="input-group-text" for="months">months</label>
+              </div>
             </div>
-          </div>
-          <div class="input-group col">
-            <input class="form-control" id="days" v-model.number="days" placeholder="days" type="number" 
-              min="0" max="120">
-            <div class="input-group-append">
-              <span class="input-group-text" >days</span>
+            <div class="input-group col">
+              <input class="form-control" id="days" v-model.number="days" placeholder="days" type="number" 
+                min="0" max="1200">
+              <div class="input-group-append">
+                <label class="input-group-text" for="days">days</label>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </fieldset>
-    <div>
-      <p>{{years}}y{{months}}m{{days}}d dob:{{dob}}</p>
-      <p>private <p>{{pYears}}y{{pMonths}}m{{pDays}}d dob:{{pDob}}</p>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { ChildAge } from '@/services/infusion-calculations/';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import { doesNotThrow } from 'assert';
-import { clearLine } from 'readline';
 
 const ageDataChangeStr = 'age-data-change';
 @Component
@@ -54,6 +57,8 @@ export default class PatientAgeData extends Vue {
   public minDate: string = '';
   public maxDate: string = '';
 
+  @Prop({default: false})
+  private exact!: boolean;
   private pYears: number | null = null;
   private pMonths: number | null = null;
   private pDays: number | null = null;
@@ -145,7 +150,7 @@ export default class PatientAgeData extends Vue {
         this.pDob = null;
         return;
     }
-    if (dob.getHours() !== 0 || dob.getMinutes() !== 0) {
+    if (dob.getHours() !== 0 || dob.getMinutes() !== 0) { // because it is interpreted as utc midnight
       dob.setMinutes(dob.getMinutes() + dob.getTimezoneOffset());
     }
     const now = new Date();
@@ -181,14 +186,14 @@ export default class PatientAgeData extends Vue {
   }
 
   public destroyed() {
-    switch(typeof this.timeout) {
+    switch (typeof this.timeout) {
       case 'number':
         clearTimeout(this.timeout);
         break;
       case 'object':
-        this.timeout.unref()
+        this.timeout.unref();
         if ((this.timeout as any).id && clearTimeout) {
-          clearTimeout((this.timeout as any).id)
+          clearTimeout((this.timeout as any).id);
         }
         break;
     }
@@ -221,14 +226,15 @@ export default class PatientAgeData extends Vue {
 
   private ageDataChange() {
     if (this.pYears === null || (this.pYears === 0 && this.pMonths === null)
-        || this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0 || this.pYears > this.maxYears) {
-      if (this.childAge){
+        || this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0 || this.pYears > this.maxYears
+        || (this.exact && (this.pMonths === null || this.pDays === null))) {
+      if (this.childAge) {
         this.$emit(ageDataChangeStr, this.childAge = null);
       }
       return;
     }
     if (this.childAge) {
-      if (this.childAge.years === this.pYears && this.childAge.months === this.pMonths && this.childAge.days === this.pDays){
+      if (this.childAge.years === this.pYears && this.childAge.months === this.pMonths && this.childAge.days === this.pDays) {
         return;
       }
       this.childAge.years = this.pYears;
@@ -242,10 +248,10 @@ export default class PatientAgeData extends Vue {
 }
 
 function ymdFormat(d: Date) {
-  const month = '0' + (d.getMonth() + 1);
-  const day = '0' + d.getDate();
-  const year = '000' + d.getFullYear();
-  return `${year.slice(-4)}-${month.slice(-2)}-${day.slice(-2)}`;
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  const year = d.getFullYear().toString().padStart(4, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function daysInPriorMonth(d: Date) {

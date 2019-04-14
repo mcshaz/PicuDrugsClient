@@ -2,14 +2,12 @@ import { expect } from 'chai';
 import { ChildAge } from '@/services/infusion-calculations';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import { shallowMount, Wrapper } from '@vue/test-utils';
-import { getData } from './../test-resources/DobTestData';
+import { getData, dmyFormat, ymdFormat } from './../test-resources/DobTestData';
 import lolex from 'lolex';
 import { CombinedVueInstance } from 'vue/types/vue';
 
 describe('PatientAgeData.vue', () => {
-    const fmt = (dt: Date) => dt.getDate() + '/' + (dt.getMonth() + 1) + '/' + dt.getFullYear();
-    const dtStr = (dob: Date, now: Date) => `born:${fmt(dob)} now:${fmt(now)}`;
-    const ymd = (dt: Date) => `${dt.getFullYear()}-${('0' + (dt.getMonth() + 1)).slice(-2)}-${('0' + dt.getDate()).slice(-2)}`;
+    const dtStr = (dob: Date, now: Date) => `born:${dmyFormat(dob)} now:${dmyFormat(now)}`;
     let wrapper: Wrapper<CombinedVueInstance<PatientAgeData, object, object, object, Record<never, any>>>;
     const createExpect = (el: string) => expect((wrapper.find('#' + el).element as HTMLInputElement).value, el);
     let clock: lolex.InstalledClock<lolex.Clock>;
@@ -29,7 +27,7 @@ describe('PatientAgeData.vue', () => {
         const msg = dtStr(d.dob, d.current);
         it('calculates age ' + msg, () => {
             clock = lolex.install({now: d.current, toFake: ['Date']});
-            const ymdStr = ymd(d.dob);
+            const ymdStr = ymdFormat(d.dob);
             wrapper.find('#dob').setValue(ymdStr);
             createExpect('dob').to.equal(ymdStr);
             createExpect('years').to.equal(d.yrOld.toString());
@@ -41,14 +39,24 @@ describe('PatientAgeData.vue', () => {
     it('no emit if a future date', () => {
         const tomorrow = new Date(Date.now() + 1000 * 60 * 60 * 24);
         tomorrow.setHours(0, 0, 0, 0);
-        wrapper.find('#dob').setValue(ymd(tomorrow));
+        wrapper.find('#dob').setValue(ymdFormat(tomorrow));
+        const emitted = wrapper.emitted()['age-data-change'];
+        expect(emitted, 'ageDataChange emits').to.equal(void 0);
+    });
+    it('no emit if an old date', () => {
+        const partialDate = '0001-05-01';
+        wrapper.find('#dob').setValue(partialDate);
+        createExpect('dob').to.equal(partialDate);
+        createExpect('years').to.equal('');
+        createExpect('months').to.equal('');
+        createExpect('days').to.equal('');
         const emitted = wrapper.emitted()['age-data-change'];
         expect(emitted, 'ageDataChange emits').to.equal(void 0);
     });
     it('emits with native dob yesterday', () => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        wrapper.find('#dob').setValue(ymd(yesterday));
+        wrapper.find('#dob').setValue(ymdFormat(yesterday));
         const emitted = wrapper.emitted()['age-data-change'];
         expect(emitted.length, 'ageDataChange emits.length').to.equal(1);
         expect(emitted[0].length, 'ageDataChange emits[0].length').to.equal(1);
@@ -68,7 +76,7 @@ describe('PatientAgeData.vue', () => {
     it('unsets dob when age years set', () => {
         const lastYr = new Date();
         lastYr.setFullYear(lastYr.getFullYear() - 1);
-        wrapper.find('#dob').setValue(ymd(lastYr));
+        wrapper.find('#dob').setValue(ymdFormat(lastYr));
         createExpect('dob').to.not.equal('');
         wrapper.find('#years').setValue('2');
         createExpect('years').to.equal('2');
@@ -77,7 +85,7 @@ describe('PatientAgeData.vue', () => {
     it('unsets dob when age months set', () => {
         const lastYr = new Date();
         lastYr.setFullYear(lastYr.getFullYear() - 1);
-        wrapper.find('#dob').setValue(ymd(lastYr));
+        wrapper.find('#dob').setValue(ymdFormat(lastYr));
         createExpect('dob').to.not.equal('');
         wrapper.find('#months').setValue('2');
         createExpect('months').to.equal('2');
@@ -86,7 +94,7 @@ describe('PatientAgeData.vue', () => {
     it('unsets dob when age days set', () => {
         const lastYr = new Date();
         lastYr.setFullYear(lastYr.getFullYear() - 1);
-        wrapper.find('#dob').setValue(ymd(lastYr));
+        wrapper.find('#dob').setValue(ymdFormat(lastYr));
         createExpect('dob').to.not.equal('');
         wrapper.find('#days').setValue('2');
         createExpect('days').to.equal('2');
@@ -132,7 +140,6 @@ describe('PatientAgeData.vue', () => {
             expect(emitted[0].length, 'ageDataChange emits[0].length').to.equal(1);
             expect(emitted[1].length, 'ageDataChange emits[1].length').to.equal(1);
             expect(emitted[1][0], 'emit data [1]').to.deep.equal(new ChildAge(0, 0, 1));
-            debugger;
             wrapper.destroy();
             expect(clock.countTimers(), 'countTimers').to.equal(0);
         });
