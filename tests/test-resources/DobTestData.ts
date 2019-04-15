@@ -22,14 +22,3 @@ export function getData(): IDobTestData[] {
             yrOld: 0, mthOld: 0, dayOld: 0, totalDays: 0},
     ];
 }
-
-export function ymdFormat(d: Date) {
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    const year = d.getFullYear().toString().padStart(4, '0');
-    return `${year}-${month}-${day}`;
-}
-
-export function dmyFormat(dt: Date) {
-    return dt.getDate() + '/' + (dt.getMonth() + 1) + '/' + dt.getFullYear();
-}

@@ -2,7 +2,8 @@ import { expect } from 'chai';
 import { ChildAge } from '@/services/infusion-calculations';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import { shallowMount, Wrapper } from '@vue/test-utils';
-import { getData, dmyFormat, ymdFormat } from './../test-resources/DobTestData';
+import { getData } from './../test-resources/DobTestData';
+import { dmyFormat, ymdFormat } from '@/services/utilities/dateHelpers';
 import lolex from 'lolex';
 import { CombinedVueInstance } from 'vue/types/vue';
 

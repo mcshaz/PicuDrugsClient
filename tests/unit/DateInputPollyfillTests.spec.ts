@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import DateInputPollyfill from '@/components/DateInputPollyfill.vue';
 import { shallowMount, Wrapper } from '@vue/test-utils';
-import { dmyFormat, ymdFormat } from './../test-resources/DobTestData';
+import { dmyFormat } from '@/services/utilities/dateHelpers';
 import { CombinedVueInstance } from 'vue/types/vue';
 
 interface IDData { dmyDate: string; keystrokes: string[]; }

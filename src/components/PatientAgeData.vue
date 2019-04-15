@@ -3,14 +3,7 @@
     <div class="form-group form-row">
       <label for="dob" class="col-sm-2 col-form-label">DOB</label>
       <div class="col-sm-10">
-        <div class="input-group">
-          <input class="form-control col" type="date" id="dob" v-model="dob" :min="minDate" :max="maxDate">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <font-awesome-icon icon="calendar" />
-            </div>
-          </div>
-        </div>
+        <DateInput v-model="dob" />
       </div>
     </div>
     <fieldset class="form-group">
@@ -43,55 +36,58 @@
         </div>
       </div>
     </fieldset>
+    <p>{{ dob ? dob.toString() : 'null' }}</p>
   </div>
 </template>
 
 <script lang="ts">
 import { ChildAge } from '@/services/infusion-calculations/';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
+import DateInput from '@/components/DateInput.vue';
 
-const ageDataChangeStr = 'age-data-change';
-@Component
+type vueNumber = number | '';
+
+@Component({
+    components: {
+        DateInput,
+    },
+})
 export default class PatientAgeData extends Vue {
   public readonly maxYears = 122;
-  public minDate: string = '';
-  public maxDate: string = '';
+  public minDate!: Date;
+  public maxDate!: Date;
 
   @Prop({default: false})
   private exact!: boolean;
-  private pYears: number | null = null;
-  private pMonths: number | null = null;
-  private pDays: number | null = null;
+  private pYears: vueNumber = '';
+  private pMonths: vueNumber = '';
+  private pDays: vueNumber = '';
   private pDob: Date | null = null;
   // non vue properties = start with undefined
   private timeout?: number | NodeJS.Timer;
   private childAge?: ChildAge | null;
 
-  public get years() { return this.pYears === null
-    ? ''
-    : this.pYears; }
-  public set years(years: number | string) {
-    if (years === this.years) {
+  public get years() { return this.pYears; }
+  public set years(years: vueNumber) {
+    if (years === this.pYears) {
       return;
     }
     if (typeof years === 'number') {
       this.pYears = Math.floor(years);
       this.pDob = null;
     } else {
-      this.pYears = null;
+      this.pYears = '';
     }
     this.ageDataChange();
   }
 
-  public get months() { return this.pMonths === null
-  ? ''
-  : this.pMonths; }
-  public set months(months: number | string) {
-    if (months === this.months) {
+  public get months() { return this.pMonths; }
+  public set months(months: vueNumber) {
+    if (months === this.pMonths) {
       return;
     }
     if (typeof months === 'number') {
-      if (this.pYears === null) {
+      if (this.pYears === '') {
         this.pYears = 0;
       }
       if (months > 12) {
@@ -101,23 +97,21 @@ export default class PatientAgeData extends Vue {
       this.pMonths = Math.floor(months);
       this.pDob = null;
     } else {
-      this.pMonths = null;
+      this.pMonths = '';
     }
     this.ageDataChange();
   }
 
-  public get days() { return this.pDays === null
-    ? ''
-    : this.pDays; }
-  public set days(days: number | string) {
-    if (days === this.days) {
+  public get days() { return this.pDays; }
+  public set days(days: vueNumber) {
+    if (days === this.pDays) {
       return;
     }
     if (typeof days === 'number') {
-      if (this.pMonths === null) {
+      if (this.pMonths === '') {
         this.pMonths = 0;
       }
-      if (this.pYears === null) {
+      if (this.pYears === '') {
         this.pYears = 0;
       }
       if (days > 28) {
@@ -133,51 +127,40 @@ export default class PatientAgeData extends Vue {
       this.pDays = days;
       this.pDob = null;
     } else {
-        this.pDays = null;
+        this.pDays = '';
     }
     this.ageDataChange();
   }
 
   public get dob() {
-    return this.pDob === null
-      ? ''
-      : ymdFormat(this.pDob);
+    return this.pDob;
   }
 
-  public set dob(dobStr: string) {
-    let dob!: Date;
-    if (dobStr === '' || isNaN((dob = new Date(dobStr)).valueOf())) {
-        this.pDob = null;
-        return;
-    }
-    if (dob.getHours() !== 0 || dob.getMinutes() !== 0) { // because it is interpreted as utc midnight
-      dob.setMinutes(dob.getMinutes() + dob.getTimezoneOffset());
-    }
+  public set dob(dob: Date | null) {
+    this.pDob = dob;
+    if (dob === null) { return; }
     const now = new Date();
     let years = now.getFullYear() - dob.getFullYear();
-    if (years < 0 || years > this.maxYears) {
-      this.pYears = this.pMonths = this.pDays = null;
-    } else {
-      let months = now.getMonth() - dob.getMonth();
-      let days = now.getDate() - dob.getDate();
-      if (months < 0) { months += 12; }
-      if (days < 0) {
-        days += daysInPriorMonth(now);
-        if (months === 0) {
-          months = 11;
-          years--;
-        } else {
-          months--;
-        }
+    // if (years < 0 || years > this.maxYears) { //should now be handled by min and max
+    // this.pYears = this.pMonths = this.pDays = '';
+    let months = now.getMonth() - dob.getMonth();
+    let days = now.getDate() - dob.getDate();
+    if (months < 0) { months += 12; }
+    if (days < 0) {
+      days += daysInPriorMonth(now);
+      if (months === 0) {
+        months = 11;
+        years--;
+      } else {
+        months--;
       }
-      const workingDate = new Date(now);
-      workingDate.setFullYear(workingDate.getFullYear() - years);
-      if (dob > workingDate) { years--; }
-      this.pYears = years;
-      this.pMonths = months;
-      this.pDays = days;
     }
-    this.pDob = dob;
+    const workingDate = new Date(now);
+    workingDate.setFullYear(workingDate.getFullYear() - years);
+    if (dob > workingDate) { years--; }
+    this.pYears = years;
+    this.pMonths = months;
+    this.pDays = days;
     this.ageDataChange();
   }
 
@@ -201,11 +184,11 @@ export default class PatientAgeData extends Vue {
 
   private setDates() {
     const now = new Date();
-    this.maxDate = ymdFormat(now);
+    this.maxDate = new Date(now);
     const minDate = new Date(now);
     minDate.setFullYear(minDate.getFullYear() - this.maxYears);
     minDate.setDate(minDate.getDate() + 1);
-    this.minDate = ymdFormat(minDate);
+    this.minDate = minDate;
     const nextMidnight = new Date(now);
     nextMidnight.setHours(0, 0, 0, 0);
     nextMidnight.setDate(nextMidnight.getDate() + 1);
@@ -225,33 +208,32 @@ export default class PatientAgeData extends Vue {
   }
 
   private ageDataChange() {
-    if (this.pYears === null || (this.pYears === 0 && this.pMonths === null)
+    if (this.pYears === '' || (this.pYears === 0 && this.pMonths === '')
         || this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0 || this.pYears > this.maxYears
-        || (this.exact && (this.pMonths === null || this.pDays === null))) {
+        || (this.exact && (this.pMonths === '' || this.pDays === ''))) {
       if (this.childAge) {
-        this.$emit(ageDataChangeStr, this.childAge = null);
+        this.$emit('value', this.childAge = null);
       }
       return;
     }
+    const mm = typeof this.pMonths === 'number'
+      ? this.pMonths
+      : null;
+    const dd = typeof this.pDays === 'number'
+      ? this.pDays
+      : null;
     if (this.childAge) {
-      if (this.childAge.years === this.pYears && this.childAge.months === this.pMonths && this.childAge.days === this.pDays) {
+      if (this.childAge.years === this.pYears && this.childAge.months === mm && this.childAge.days === dd) {
         return;
       }
       this.childAge.years = this.pYears;
-      this.childAge.months = this.pMonths;
-      this.childAge.days = this.pDays;
+      this.childAge.months = mm;
+      this.childAge.days = dd;
     } else {
-      this.childAge = new ChildAge(this.pYears, this.pMonths, this.pDays);
+      this.childAge = new ChildAge(this.pYears, mm, dd);
     }
-    this.$emit(ageDataChangeStr, this.childAge);
+    this.$emit('value', this.childAge);
   }
-}
-
-function ymdFormat(d: Date) {
-  const month = (d.getMonth() + 1).toString().padStart(2, '0');
-  const day = d.getDate().toString().padStart(2, '0');
-  const year = d.getFullYear().toString().padStart(4, '0');
-  return `${year}-${month}-${day}`;
 }
 
 function daysInPriorMonth(d: Date) {

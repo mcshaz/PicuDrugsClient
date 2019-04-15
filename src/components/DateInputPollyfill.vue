@@ -1,76 +1,97 @@
 <template>
-  <div
-    class="FormDate"
-    @keydown.capture.passive="keydown"
-  ><!-- :value-as-date.prop -->
-    <input
-      ref="first"
-      class="FormDate__input FormDate__input--day"
-      type="number"
-      :placeholder="pIsMonthFirst?'mm':'dd'"
-      v-model="first"
-      @blur="pFirst = pFirst.padStart(2, 0)">
-    <span class="FormDate__divider">/</span>
-    <input
-      ref="second"
-      class="FormDate__input FormDate__input--month"
-      type="number"
-      :placeholder="pIsMonthFirst?'dd':'mm'"
-      v-model="second"
-      @blur="pSecond = pSecond.padStart(2, 0)">
-    <span
-      class="FormDate__divider"
-    >/</span>
-    <input
-      ref="year"
-      v-model="year"
-      class="FormDate__input FormDate__input--year"
-      type="number"
-      placeholder="yyyy"
-      @blur="year = year.padStart(4, 0)">
-  </div>
+    <div>
+        <div
+            class="FormDate"
+            @keydown.capture.passive="keydown"
+        >
+            <input
+                ref="first"
+                class="FormDate__input FormDate__input--day"
+                type="number"
+                :placeholder="pIsMonthFirst?'mm':'dd'"
+                v-model="first">
+            <span class="FormDate__divider">/</span>
+            <input
+                ref="second"
+                class="FormDate__input FormDate__input--month"
+                type="number"
+                :placeholder="pIsMonthFirst?'dd':'mm'"
+                v-model="second">
+            <span
+                class="FormDate__divider"
+            >/</span>
+            <input
+                ref="year"
+                v-model="year"
+                class="FormDate__input FormDate__input--year"
+                type="number"
+                placeholder="yyyy">
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
+import { parseDate, dateInRange } from '@/services/utilities/dateHelpers';
 
 @Component
 export default class DateInputPollyfill extends Vue {
-// formatting https://github.com/maoberlehner/building-a-date-input-component-with-vue
     private readonly pIsMonthFirst: boolean;
-    private readonly pIsDateSupported: boolean;
 
     private pFirst: string = '';
     private pSecond: string = '';
     private pYear: string = '';
-    
-    @Prop()
-    private value!: Date | null;
+    private pInternalValue!: Date | null;
+
+    @Prop({default: null})
+    private readonly value!: Date | null;
+     @Prop({default: null})
+    private readonly min!: Date | null;
+    @Prop({default: null})
+    private readonly max!: Date | null;
 
     constructor() {
         super();
-        this.pIsMonthFirst = isNaN(Date.parse('23/05/2017'));
-        this.pIsDateSupported = isDateSupported();
+        this.pIsMonthFirst = isMonthFirst();
+    }
+
+    public created() {
+        if (this.min! > this.max!) {
+            throw new RangeError('min must be <= max');
+        }
+        if (this.value && dateInRange(this.value, this.min, this.max)) {
+            const mm = this.value.getMonth().toString().padStart(2, '0');
+            const dd = this.value.getDay().toString().padStart(2, '0');
+            if (this.pIsMonthFirst) {
+                this.pFirst = mm;
+                this.pSecond = dd;
+            } else {
+                this.pFirst = dd;
+                this.pSecond = mm;
+            }
+            this.pYear = this.value.getFullYear().toString().padStart(4, '0');
+        }
+        this.pInternalValue = this.value;
     }
 
     public get first() { return this.pFirst; }
     public set first(value: string) {
-        let move = this.pIsMonthFirst
+        const move = this.pIsMonthFirst
             ? this.moveMonth(value)
             : this.moveDay(value);
         if (typeof move === 'boolean') {
-            this.pFirst = value;
+            this.pFirst = formatNo(value);
+            if (move) {
+                (this.$refs.second as HTMLInputElement).select();
+            }
         } else {
-            this.pFirst = move[0];
-            this.second = move[1];
+            this.pFirst = formatNo(move[0]);
+            this.second = formatNo(move[1]);
             // ?has had activeElement moved by call to second onto year
             // if so, leave it there
-            if (this.$refs.first !== document.activeElement) {
-                move = false;
+            if (this.$refs.first === document.activeElement) {
+                (this.$refs.second as HTMLInputElement).focus();
             }
-        }
-        if (move) {
-            (this.$refs.second as HTMLInputElement).select();
         }
         this.emitValue();
     }
@@ -81,20 +102,21 @@ export default class DateInputPollyfill extends Vue {
             ? this.moveDay(value)
             : this.moveMonth(value);
         if (typeof move === 'boolean') {
-            this.pSecond = value;
+            this.pSecond = formatNo(value);
+            if (move) {
+                (this.$refs.year as HTMLInputElement).select();
+            }
         } else {
-            this.pSecond = move[0];
-            this.pYear = move[1];
-        }
-        if (move) {
-            (this.$refs.year as HTMLInputElement).select();
+            this.pSecond = formatNo(move[0]);
+            this.pYear = formatNo(move[1], 4);
+            (this.$refs.year as HTMLInputElement).focus();
         }
         this.emitValue();
     }
 
     public get year() { return this.pYear; }
     public set year(value: string) {
-        this.pYear = value.slice(-4);
+        this.pYear = formatNo(value, 4);
         this.emitValue();
     }
 
@@ -102,7 +124,7 @@ export default class DateInputPollyfill extends Vue {
         if (!day.length) {
             return false;
         }
-        if (day.length === 2 && day[0] === '0') {
+        if (day.length === 2 && day[0] === '0' && day[1] !== '0') {
             return true;
         }
         const dVal = parseInt(day, 10);
@@ -118,24 +140,11 @@ export default class DateInputPollyfill extends Vue {
         return false;
     }
 
-    private keydown(evt: KeyboardEvent) {
-        if (evt.key === '/' || evt.key === '-') {
-            // evt.preventDefault(); // we woll hope number input does this
-            if ((evt.target as HTMLInputElement).value.length) {
-                if (evt.target === this.$refs.first) {
-                    (this.$refs.second as HTMLInputElement).select();
-                } else if (evt.target === this.$refs.second) {
-                    (this.$refs.year as HTMLInputElement).select();
-                }
-            }
-        }
-    }
-
     private moveMonth(month: string) {
         if (!month.length) {
             return false;
         }
-        if (month.length === 2 && month[0] === '0') {
+        if (month.length === 2 && month[0] === '0' && month[1] !== '0') {
             return true;
         }
         const mVal = parseInt(month, 10);
@@ -151,31 +160,51 @@ export default class DateInputPollyfill extends Vue {
         return false;
     }
 
-    private emitValue() {
-        const mm = parseFloat(this.pIsMonthFirst ? this.pFirst : this.pSecond) - 1;
-        const dd = parseFloat(this.pIsMonthFirst ? this.pSecond : this.pFirst);
-        const yyyy = parseFloat(this.pYear);
-        const timestamp = new Date(yyyy, mm, dd);
-        if (timestamp.getFullYear() !== yyyy || timestamp.getMonth() !== mm || timestamp.getDate() !== dd) {
-            if (this.value) {
-                this.$emit('input', this.value = null);
+    private keydown(evt: KeyboardEvent) {
+        if (evt.key === '/' || evt.key === '-') {
+            // evt.preventDefault(); // we will hope number input does this - if changing, remove .passive from binding
+            if ((evt.target as HTMLInputElement).value.length) {
+                if (evt.target === this.$refs.first) {
+                    (this.$refs.second as HTMLInputElement).select();
+                } else if (evt.target === this.$refs.second) {
+                    (this.$refs.year as HTMLInputElement).select();
+                }
             }
-        } else if (!this.value || this.value.getTime() !== timestamp.getTime()) {
-            this.$emit('input', this.value = timestamp);
+        }
+    }
+
+    private emitValue() {
+        const timestamp = this.pIsMonthFirst
+            ? parseDate(this.pYear, this.pFirst, this.pSecond)
+            : parseDate(this.pYear, this.pSecond, this.pFirst);
+        if (!timestamp || !dateInRange(timestamp, this.min, this.max)) {
+            if (this.pInternalValue) {
+                this.$emit('input', this.pInternalValue = null);
+            }
+        } else if (!this.pInternalValue || this.pInternalValue.getTime() !== timestamp.getTime()) {
+            this.$emit('input', this.pInternalValue = timestamp);
         }
     }
 }
 
-function isDateSupported() {
-    const input = document.createElement('input');
-    const value = 'a';
-    input.setAttribute('type', 'date');
-    input.setAttribute('value', value);
-    return (input.value !== value);
+function isMonthFirst() {
+    const indexOf = (search: string, searchFor: number) =>
+                        search.search(new RegExp('\\b' + searchFor.toString().padStart(2, '0') + '\\b'));
+    const mm = 3;
+    const dd = 28;
+    const testDate = new Date(1974, mm - 1, dd);
+    const dateStr = testDate.toLocaleDateString(void 0, { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return indexOf(dateStr, mm) < indexOf(dateStr, dd);
+}
+
+function formatNo(no: string, len: number = 2) {
+    if (no === '' || no === '0' ) { return no; }
+    return no.slice(-len).padStart(len, '0');
 }
 </script>
 
 <style lang="scss">
+// formatting https://github.com/maoberlehner/building-a-date-input-component-with-vue
 .FormDate {
   $spacing: 0.75em;
   display: inline-flex;
