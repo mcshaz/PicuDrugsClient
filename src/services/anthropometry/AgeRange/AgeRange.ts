@@ -13,20 +13,16 @@ export interface IRangeMatchResult {
     result?: Lms;
 }
 
-export interface ILookupRange {min: number; max: number; }
-
 export abstract class AgeRange {
-
     public readonly minLookup: number;
     public readonly maxLookup: number;
-    constructor(range: ILookupRange, readonly lookupAge: (age: number) => Lms) {
-        if (!Number.isInteger(range.min) || !Number.isInteger(range.max)) {
-            throw new Error('min and max must both be integers');
+    constructor(minAge: number, readonly lookup: ReadonlyArray<Lms>) {
+        if (!Number.isInteger(minAge)) {
+            throw new Error('min must be an integer');
         }
-        if (range.min < 0) { throw new RangeError('min must be >=0'); }
-        if (range.max < range.min) { throw new RangeError('max must be >= min'); }
-        this.minLookup = range.min;
-        this.maxLookup = range.max;
+        if (minAge < 0) { throw new RangeError('min must be >=0'); }
+        this.minLookup = minAge;
+        this.maxLookup = minAge + lookup.length - 1;
     }
     public isValueInRange(value: number): IRangeMatchResult {
         if (value < this.minLookup) {
@@ -41,20 +37,21 @@ export abstract class AgeRange {
     public abstract lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer): IRangeMatchResult;
 
     public minLms() {
-        return this.lookupAge(this.minLookup);
+        return this.lookup[0];
     }
 
     public maxLms() {
-        return this.lookupAge(this.maxLookup);
+        return this.lookup[this.lookup.length - 1];
     }
 
     protected linearInterpolate(lookupValue: number) {
-        if (Number.isInteger(lookupValue)) {
-            return this.lookupAge(lookupValue);
+        const min = lookupValue - this.minLookup;
+        if (Number.isInteger(min)) {
+            return this.lookup[min];
         }
-        const lower = Math.floor(lookupValue);
-        return this.lookupAge(lower)
-            .linearInterpolate(this.lookupAge(lower + 1), lookupValue - lower);
+        const minInt = Math.floor(min);
+        return this.lookup[minInt]
+            .linearInterpolate(this.lookup[minInt + 1], min - minInt);
     }
 }
 

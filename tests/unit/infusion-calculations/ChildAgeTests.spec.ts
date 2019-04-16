@@ -13,8 +13,8 @@ describe('ChildAge', () => {
         it('calculates totalDays ' + msg, () => {
             const clock = lolex.install({now: d.current});
             const age = new ChildAge(d.yrOld, d.mthOld, d.dayOld);
-            const ageDays = age.getAgeInDays();
-            expect(ageDays).to.equal( d.totalDays);
+            const ageDays = ChildAge.getMinTotalDays(age);
+            expect(ageDays).to.equal(d.totalDays);
             const ageRange = age.getAgeRangeInDays();
             expect(ageRange).to.deep.equal(new NumericRange(d.totalDays));
             clock.uninstall();

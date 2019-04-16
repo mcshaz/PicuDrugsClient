@@ -5,6 +5,7 @@ import { LmsForGestAge } from './AgeRange/LmsForGestAge';
 import { LmsForAgeWeeks } from './AgeRange/LmsForAgeWeeks';
 import { LmsForAgeMonths } from './AgeRange/LmsForAgeMonths';
 import { Lms } from './Lms';
+import { linearInterpolate } from './linearInterpolate';
 
 export const weeksPerMonth = daysPerMonth / 7;
 export const maximumGestationalCorrection = 42;
@@ -13,7 +14,6 @@ export const maximumGestationalCorrection = 42;
 interface IMedianMatchResult {ageDays: number; matchType: searchComparison; gestation: number; }
 
 export class CentileRange {
-
     constructor(readonly gestAgeData: LmsForGestAge, readonly ageWeeksData: LmsForAgeWeeks, readonly ageMonthsData: LmsForAgeMonths) {
     }
 
@@ -61,10 +61,11 @@ export class CentileRange {
     }
     public ageDaysForMedian(median: number): IMedianMatchResult {
         let currentRange: AgeRange = this.gestAgeData;
-        const currentDelegate = (v: number) => currentRange.lookupAge(v).m;
-        let currentHit = binarySearch(currentDelegate,
-                median, currentRange.minLookup, currentRange.maxLookup);
-        switch (currentHit.comparison) {
+        const currentDelegate = (v: number) => currentRange.lookup[v].m;
+        const search = () => binarySearch(currentDelegate,
+                median, 0, currentRange.lookup.length - 1);
+        let hit = search();
+        switch (hit.comparison) {
             case searchComparison.lessThanMin:
                 return {
                     matchType: searchComparison.lessThanMin,
@@ -72,7 +73,7 @@ export class CentileRange {
                     gestation: currentRange.minLookup,
                 };
             case searchComparison.inRange:
-                const interpol = this.linearInterpolateOnDelegate(currentDelegate, currentHit, median);
+                const interpol = currentRange.minLookup + this.linearInterpolateOnDelegate(currentDelegate, hit, median);
                 if (interpol <= termGestationWeeks) {
                     const exactWeeks = Math.floor(interpol);
                     return {
@@ -88,21 +89,18 @@ export class CentileRange {
                 };
         }
         currentRange = this.ageWeeksData;
-        currentHit = binarySearch(currentDelegate,
-                median, currentRange.minLookup, currentRange.maxLookup);
-        switch (currentHit.comparison) {
+        hit = search();
+        switch (hit.comparison) {
             case searchComparison.lessThanMin:
-                const maxMedian = this.ageWeeksData.minLms().m;
-                const minMedian = this.gestAgeData.maxLms().m;
-                const fraction = (median - minMedian) / (maxMedian - minMedian);
-                const minWeeks = this.gestAgeData.maxLookup - termGestationWeeks;
                 return {
                     matchType: searchComparison.inRange,
-                    ageDays: (minWeeks + fraction * (currentRange.minLookup - minWeeks)) * 7,
+                    ageDays: 7 * linearInterpolate([this.gestAgeData.maxLms().m, this.gestAgeData.maxLookup - termGestationWeeks],
+                                                   [this.ageWeeksData.minLms().m, this.ageWeeksData.minLookup],
+                                                   median),
                     gestation: termGestationWeeks,
                 };
             case searchComparison.inRange:
-                const interpol = this.linearInterpolateOnDelegate(currentDelegate, currentHit, median);
+                const interpol = currentRange.minLookup + this.linearInterpolateOnDelegate(currentDelegate, hit, median);
                 return {
                     matchType: searchComparison.inRange,
                     ageDays: interpol * 7,
@@ -110,22 +108,18 @@ export class CentileRange {
                 };
         }
         currentRange = this.ageMonthsData;
-        currentHit = binarySearch(currentDelegate,
-                median, currentRange.minLookup, currentRange.maxLookup);
-        switch (currentHit.comparison) {
+        hit = search();
+        switch (hit.comparison) {
             case searchComparison.lessThanMin:
-                const maxMedian = this.ageMonthsData.minLms().m;
-                const minMedian = this.ageWeeksData.maxLms().m;
-                const fraction = (median - minMedian) / (maxMedian - minMedian);
-                const minWeeks = this.ageWeeksData.maxLookup;
-                const maxWeeks = this.ageMonthsData.minLookup * weeksPerMonth;
                 return {
                     matchType: searchComparison.inRange,
-                    ageDays: (minWeeks + fraction * (maxWeeks - minWeeks)) * 7,
+                    ageDays: 7 * linearInterpolate([this.ageWeeksData.maxLms().m, this.ageWeeksData.maxLookup],
+                                                   [this.ageMonthsData.minLms().m, this.ageMonthsData.minLookup * weeksPerMonth],
+                                                   median),
                     gestation: termGestationWeeks,
                 };
             case searchComparison.inRange:
-                const interpol = this.linearInterpolateOnDelegate(currentDelegate, currentHit, median);
+                const interpol = currentRange.minLookup + this.linearInterpolateOnDelegate(currentDelegate, hit, median);
                 return {
                     matchType: searchComparison.inRange,
                     ageDays: interpol * daysPerMonth,
@@ -143,9 +137,8 @@ export class CentileRange {
         if (bounds.lowerBound === bounds.upperBound) {
             return bounds.lowerBound as number;
         }
-        const min = delegate(bounds.lowerBound!);
-        const max = delegate(bounds.upperBound!);
-        const fraction = (target - min) / (max - min);
-        return bounds.lowerBound! + fraction; // should be fraction / (bounds.upperBound - bounds.lowerBound), but this always equals 1
+        return linearInterpolate([delegate(bounds.lowerBound!), bounds.lowerBound!],
+                                 [delegate(bounds.upperBound!), bounds.upperBound!],
+                                 target);
     }
 }

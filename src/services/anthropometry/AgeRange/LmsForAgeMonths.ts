@@ -1,9 +1,9 @@
-import { AgeRange, ILookupRange, integer, ceaseCorrectingAtDaysOfAge, termGestationWeeks, daysPerMonth } from './AgeRange';
+import { AgeRange, integer, ceaseCorrectingAtDaysOfAge, termGestationWeeks, daysPerMonth } from './AgeRange';
 import { Lms } from '../Lms';
 
 export class LmsForAgeMonths extends AgeRange {
-    constructor(ageRange: ILookupRange, readonly lmsForAgeMonths: (lookupAgeMonthsPostBirth: integer) => Lms) {
-        super (ageRange, lmsForAgeMonths);
+    constructor(ageMin: number, lmsForAgeMonths: ReadonlyArray<Lms>) {
+        super (ageMin, lmsForAgeMonths);
     }
     public lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
         const ageDaysSinceTerm = ageDaysSinceBirth > ceaseCorrectingAtDaysOfAge

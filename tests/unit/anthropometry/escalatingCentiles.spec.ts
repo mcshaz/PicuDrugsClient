@@ -28,23 +28,23 @@ describe('Centiles', () => {
             if (!(centiles instanceof UKBMIData)) {
                 it(description + ' medians escalate with age', () => {
                     let last = currentRange.gestAgeData.minLms().m;
-                    for (let i = currentRange.gestAgeData.minLookup + 1; i <= currentRange.gestAgeData.maxLookup; i++) {
-                        const cur = currentRange.gestAgeData.lmsForGestAge(i).m;
+                    for (let i = 1; i < currentRange.gestAgeData.lookup.length; i++) {
+                        const cur = currentRange.gestAgeData.lookup[i].m;
                         expect(cur).to.be.greaterThan(last);
                         last = cur;
                     }
-                    for (let i = currentRange.ageWeeksData.minLookup; i <= currentRange.ageWeeksData.maxLookup; i++) {
-                        const cur = currentRange.ageWeeksData.lmsForAgeWeeks(i).m;
+                    for (const lookup of currentRange.ageWeeksData.lookup) {
+                        const cur = lookup.m;
                         expect(cur).to.be.greaterThan(last);
                         last = cur;
                     }
-                    for (let i = currentRange.ageMonthsData.minLookup; i < currentRange.ageMonthsData.maxLookup; i++) {
-                        const cur = currentRange.ageMonthsData.lmsForAgeMonths(i).m;
+                    for (const lookup of currentRange.ageMonthsData.lookup) {
+                        const cur = lookup.m;
                         expect(cur).to.be.greaterThan(last);
                     }
                 });
             }
-            it(description + 'does not overlap age definitions', () => {
+            it(description + ' does not overlap age definitions', () => {
                 expect(currentRange.gestAgeData.maxLookup - 40)
                     .to.be.lessThan(currentRange.ageWeeksData.minLookup);
 

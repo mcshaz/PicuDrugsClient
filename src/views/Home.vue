@@ -1,18 +1,18 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
-    <PatientAgeData/>
+    <PatientAgeWeightData/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
-import PatientAgeData from '@/components/PatientAgeData.vue';
+import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 
 @Component({
   components: {
-    PatientAgeData,
+    PatientAgeWeightData,
   },
 })
 export default class Home extends Vue {}

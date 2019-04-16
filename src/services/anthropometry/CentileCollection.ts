@@ -1,12 +1,19 @@
 import { Lms } from './Lms';
-import { ILookupRange, integer, termGestationWeeks } from './AgeRange/AgeRange';
+import { termGestationWeeks } from './AgeRange/AgeRange';
 import { CentileRange } from './CentileRange';
 import { GenderRange } from './GenderRange';
 import { LmsForGestAge } from './AgeRange/LmsForGestAge';
 import { LmsForAgeWeeks } from './AgeRange/LmsForAgeWeeks';
 import { LmsForAgeMonths } from './AgeRange/LmsForAgeMonths';
 
-interface ICentileArgs {
+interface ILmsForAges {
+    lmsForGestAgeMale: ReadonlyArray<Lms>;
+    lmsForGestAgeFemale: ReadonlyArray<Lms>;
+    lmsForAgeWeeksMale: ReadonlyArray<Lms>;
+    lmsForAgeMonthsMale: ReadonlyArray<Lms>;
+    lmsForAgeWeeksFemale: ReadonlyArray<Lms>;
+    lmsForAgeMonthsFemale: ReadonlyArray<Lms>;
+
     gestAgeWeeksRange?: GenderRange;
     ageWeeksSinceTermRange?: GenderRange;
     ageMonthsSinceTermRange?: GenderRange;
@@ -15,17 +22,17 @@ interface ICentileArgs {
 export abstract class CentileCollection {
     public readonly maleRange: CentileRange;
     public readonly femaleRange: CentileRange;
-    constructor(argObj?: ICentileArgs) {
-        argObj = argObj || {};
-        argObj.gestAgeWeeksRange = argObj.gestAgeWeeksRange || new GenderRange({min: 23, max: 43});
-        argObj.ageWeeksSinceTermRange = argObj.ageWeeksSinceTermRange || new GenderRange({min: 4, max: 13});
-        argObj.ageMonthsSinceTermRange = argObj.ageMonthsSinceTermRange || new GenderRange({min: 3, max: 240});
-        this.maleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.maleRange, this.lmsForGestAgeMale),
-            new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.maleRange, this.lmsForAgeWeeksMale),
-            new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.maleRange, this.lmsForAgeMonthsMale));
-        this.femaleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.femaleRange, this.lmsForGestAgeFemale),
-            new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.femaleRange, this.lmsForAgeWeeksFemale),
-            new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.femaleRange, this.lmsForAgeMonthsFemale));
+
+    constructor(argObj: ILmsForAges) {
+        argObj.gestAgeWeeksRange = argObj.gestAgeWeeksRange || new GenderRange(23);
+        argObj.ageWeeksSinceTermRange = argObj.ageWeeksSinceTermRange || new GenderRange(4);
+        argObj.ageMonthsSinceTermRange = argObj.ageMonthsSinceTermRange || new GenderRange(3);
+        this.maleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.maleMin, argObj.lmsForGestAgeMale),
+            new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.maleMin, argObj.lmsForAgeWeeksMale),
+            new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.maleMin, argObj.lmsForAgeMonthsMale));
+        this.femaleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.femaleMin, argObj.lmsForGestAgeFemale),
+            new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.femaleMin, argObj.lmsForAgeWeeksFemale),
+            new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.femaleMin, argObj.lmsForAgeMonthsFemale));
     }
 
     public cumSnormForAge(measure: number, daysOfAge: number, isMale: boolean, totalWeeksGestAtBirth: number = termGestationWeeks) {
@@ -37,10 +44,5 @@ export abstract class CentileCollection {
     public lmsForAge(daysSinceBirth: number, isMale: boolean, weeksGestAtBirth: number = termGestationWeeks) {
         const range = isMale ? this.maleRange : this.femaleRange;
         return range.lmsForAge(daysSinceBirth, weeksGestAtBirth);
-    }    protected abstract lmsForGestAgeMale(lookupGestAgeWeeks: integer): Lms;
-    protected abstract lmsForAgeWeeksMale(lookupAgeWeeksPostBirth: integer): Lms;
-    protected abstract lmsForAgeMonthsMale(lookupAgeMonthsPostBirth: integer): Lms;
-    protected abstract lmsForGestAgeFemale(lookupGestAgeWeeks: integer): Lms;
-    protected abstract lmsForAgeWeeksFemale(lookupAgeWeeksPostBirth: integer): Lms;
-    protected abstract lmsForAgeMonthsFemale(lookupAgeMonthsPostBirth: integer): Lms;
+    }
 }

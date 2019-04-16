@@ -1,10 +1,10 @@
 <template>
     <div>
-        <DateInputPollyfill :min="min" :max="max" @input="internalValue=$event" :value="value" v-if="isDateSupported===dateElSupport.noSupport"/>
+        <date-input-pollyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" v-if="isDateSupported===dateElSupport.noSupport"/>
         <div class="input-group" v-else>
-            <input class="form-control col" type="date" :min="min" :max="max" :value-as-date="value"
-                @input="internalValue=$event.target.valueAsDate" v-if="isDateSupported===dateElSupport.valueAsDateSupport">
-            <input class="form-control col" type="date" :min="min" :max="max" v-model="dateStr" v-else>
+            <input class="form-control col" type="date" :min="minStr" :max="maxStr" :value-as-date.prop="value"
+                @input="$emit('input',$event.target.valueAsDate)" v-if="isDateSupported===dateElSupport.valueAsDateSupport">
+            <input class="form-control col" type="date" :min="minStr" :max="maxStr" v-model="dateStr" v-else>
             <div class="input-group-append">
                 <div class="input-group-text">
                 <font-awesome-icon icon="calendar" />
@@ -32,8 +32,6 @@ export default class DateInput extends Vue {
     public readonly dateElSupport: object;
     private pDateStr!: string;
 
-    private pInternalValue: Date | null = null;
-
     @Prop({default: null})
     private readonly value!: Date | null;
     @Prop({default: null})
@@ -50,39 +48,38 @@ export default class DateInput extends Vue {
         }
     }
 
+    public get minStr() {
+        return this.min
+            ? ymdFormat(this.min)
+            : '';
+    }
+
+    public get maxStr() {
+        return this.max
+            ? ymdFormat(this.max)
+            : '';
+    }
+
     public created() {
         if (this.isDateSupported === dateElSupport.elSupport && this.value) {
             this.pDateStr = ymdFormat(this.value);
         }
-        this.pInternalValue = this.value;
     }
 
     public get dateStr() {
-        return this.value
-            ? ymdFormat(this.value)
-            : '';
+        return this.pDateStr;
     }
     public set dateStr(value: string) {
+        this.pDateStr = value;
         let dt!: Date;
         if (value === '' || isNaN((dt = new Date(value)).valueOf())) {
-            this.internalValue = null;
+            this.$emit('input', null);
             return;
         }
         if (dt.getHours() !== 0 || dt.getMinutes() !== 0) { // because it is interpreted as utc midnight
             dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset());
         }
-        this.internalValue = dt;
-    }
-
-    public get internalValue() { return this.pInternalValue; }
-    public set internalValue(value: Date | null) {
-        if (!value || !dateInRange(value, this.min, this.max)) {
-            if (this.pInternalValue) {
-                this.$emit('input', this.pInternalValue = null);
-            }
-        } else if (!this.pInternalValue || this.pInternalValue.getTime() !== value.getTime()) {
-            this.$emit('input', this.pInternalValue = value);
-        }
+        this.$emit('input', dt);
     }
 }
 

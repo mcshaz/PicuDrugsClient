@@ -3,7 +3,7 @@
     <div class="form-group form-row">
       <label for="dob" class="col-sm-2 col-form-label">DOB</label>
       <div class="col-sm-10">
-        <DateInput v-model="dob" />
+        <date-input v-model="dob" />
       </div>
     </div>
     <fieldset class="form-group">
@@ -36,7 +36,6 @@
         </div>
       </div>
     </fieldset>
-    <p>{{ dob ? dob.toString() : 'null' }}</p>
   </div>
 </template>
 
@@ -44,8 +43,7 @@
 import { ChildAge } from '@/services/infusion-calculations/';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import DateInput from '@/components/DateInput.vue';
-
-type vueNumber = number | '';
+export type vueNumber = number | ''; //todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
 @Component({
     components: {
@@ -67,6 +65,10 @@ export default class PatientAgeData extends Vue {
   private timeout?: number | NodeJS.Timer;
   private childAge?: ChildAge | null;
 
+  public created() {
+    this.setDates();
+  }
+
   public get years() { return this.pYears; }
   public set years(years: vueNumber) {
     if (years === this.pYears) {
@@ -74,10 +76,10 @@ export default class PatientAgeData extends Vue {
     }
     if (typeof years === 'number') {
       this.pYears = Math.floor(years);
-      this.pDob = null;
     } else {
       this.pYears = '';
     }
+    this.pDob = null;
     this.ageDataChange();
   }
 
@@ -95,10 +97,10 @@ export default class PatientAgeData extends Vue {
         months = months % 12;
       }
       this.pMonths = Math.floor(months);
-      this.pDob = null;
     } else {
       this.pMonths = '';
     }
+    this.pDob = null;
     this.ageDataChange();
   }
 
@@ -125,10 +127,10 @@ export default class PatientAgeData extends Vue {
         }
       }
       this.pDays = days;
-      this.pDob = null;
     } else {
         this.pDays = '';
     }
+    this.pDob = null;
     this.ageDataChange();
   }
 
@@ -162,10 +164,6 @@ export default class PatientAgeData extends Vue {
     this.pMonths = months;
     this.pDays = days;
     this.ageDataChange();
-  }
-
-  public created() {
-    this.setDates();
   }
 
   public destroyed() {
@@ -212,27 +210,27 @@ export default class PatientAgeData extends Vue {
         || this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0 || this.pYears > this.maxYears
         || (this.exact && (this.pMonths === '' || this.pDays === ''))) {
       if (this.childAge) {
-        this.$emit('value', this.childAge = null);
+        this.$emit('input', this.childAge = null);
       }
       return;
     }
-    const mm = typeof this.pMonths === 'number'
+    const mo = typeof this.pMonths === 'number'
       ? this.pMonths
       : null;
-    const dd = typeof this.pDays === 'number'
+    const dyo = typeof this.pDays === 'number'
       ? this.pDays
       : null;
     if (this.childAge) {
-      if (this.childAge.years === this.pYears && this.childAge.months === mm && this.childAge.days === dd) {
+      if (this.childAge.years === this.pYears && this.childAge.months === mo && this.childAge.days === dyo) {
         return;
       }
       this.childAge.years = this.pYears;
-      this.childAge.months = mm;
-      this.childAge.days = dd;
+      this.childAge.months = mo;
+      this.childAge.days = dyo;
     } else {
-      this.childAge = new ChildAge(this.pYears, mm, dd);
+      this.childAge = new ChildAge(this.pYears, mo, dyo);
     }
-    this.$emit('value', this.childAge);
+    this.$emit('input', this.childAge);
   }
 }
 

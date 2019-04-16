@@ -1,5 +1,6 @@
 export class Lms {
     constructor(readonly l: number, readonly m: number, readonly s: number) { }
+    /// fraction = fraction to apply to supplied lms - eg currentLMS.interpolWith(interpolLMS,0.9) = 0.9*interpolLMS + 0.1*currentlLMS;
     public linearInterpolate(interpolWith: Lms, fraction: number) {
         if (fraction < 0 || fraction > 1) {
             throw new Error(('fraction must be between 0 and 1'));
