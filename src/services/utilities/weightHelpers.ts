@@ -8,14 +8,14 @@ export function minWeightRecord(ageMonths?: number) {
     if (!ageMonths) {
         return minRecords[0][1];
     }
-    return interpolWt(ageMonths, minRecords);
+    return Number(interpolWt(ageMonths, minRecords).toPrecision(2));
 }
 
 export function maxWeightRecord(ageMonths?: number) {
     if (!ageMonths) {
         return maxRecords[maxRecords.length - 1][1];
     }
-    return interpolWt(ageMonths, maxRecords);
+    return Number(interpolWt(ageMonths, maxRecords).toPrecision(2));
 }
 
 function interpolWt(ageMonths: number, weightList: Array<[number, number]>) {

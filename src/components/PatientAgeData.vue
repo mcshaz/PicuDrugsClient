@@ -1,41 +1,24 @@
 <template>
   <div>
-    <div class="form-group form-row">
-      <label for="dob" class="col-sm-2 col-form-label">DOB</label>
-      <div class="col-sm-10">
-        <date-input v-model="dob" />
-      </div>
-    </div>
-    <fieldset class="form-group">
-      <div class="form-row">
-        <legend class="col-form-label col-sm-2 col-form-label">Age</legend>
-        <div class="col-sm-10">
-          <div class="form-row">
-            <div class="input-group col">
-              <input class="form-control" id="years" v-model.number="years" placeholder="years" type="number"
-                min="0" :max="maxYears" >
-              <div class="input-group-append">
-                <label class="input-group-text" for="years" >years</label>
-              </div>
-            </div>
-            <div class="input-group col">
-              <input class="form-control" id="months" v-model.number="months" placeholder="months" type="number" 
-                min="0" max="72">
-              <div class="input-group-append">
-                <label class="input-group-text" for="months">months</label>
-              </div>
-            </div>
-            <div class="input-group col">
-              <input class="form-control" id="days" v-model.number="days" placeholder="days" type="number" 
-                min="0" max="1200">
-              <div class="input-group-append">
-                <label class="input-group-text" for="days">days</label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </fieldset>
+    <b-form-group label="DOB:" for="dob" label-cols-md="2">
+        <date-input id="dob" @change="dob=$event" :min="minDate" :max="maxDate" @blur="setAgeTabs()" />
+    </b-form-group>
+    <b-form-group id="ageymd" label="Age:" label-cols-md="2">
+      <b-form-row>
+        <b-input-group append="years" class="col">
+          <input class="form-control" id="years" v-model.number="years" placeholder="years" type="number"
+            min="0" :max="maxYears" ref="years" />
+        </b-input-group>
+        <b-input-group append="months" class="col">
+          <input class="form-control" id="months" v-model.number="months" placeholder="months" type="number" 
+            min="0" max="160" ref="months" />
+        </b-input-group>
+        <b-input-group append="days" class="col">
+          <input class="form-control" id="days" v-model.number="days" placeholder="days" type="number" 
+            min="0" max="1200" ref="days" />
+        </b-input-group>
+      </b-form-row>
+    </b-form-group>
   </div>
 </template>
 
@@ -52,8 +35,9 @@ export type vueNumber = number | ''; //todo https://stackoverflow.com/questions/
 })
 export default class PatientAgeData extends Vue {
   public readonly maxYears = 122;
-  public minDate!: Date;
-  public maxDate!: Date;
+
+  private minDate!: Date;
+  private maxDate!: Date;
 
   @Prop({default: false})
   private exact!: boolean;
@@ -141,6 +125,10 @@ export default class PatientAgeData extends Vue {
   public set dob(dob: Date | null) {
     this.pDob = dob;
     if (dob === null) { return; }
+    if (dob < this.minDate || dob > this.maxDate) {
+      this.pYears = this.pMonths = this.pDays = '';
+      return;
+    }
     const now = new Date();
     let years = now.getFullYear() - dob.getFullYear();
     // if (years < 0 || years > this.maxYears) { //should now be handled by min and max
@@ -178,6 +166,12 @@ export default class PatientAgeData extends Vue {
         }
         break;
     }
+  }
+
+  public setAgeTabs() {
+    const indx = this.pDob === null ? 0 : -1;
+    (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
+      (this.$refs.days as HTMLInputElement).tabIndex = indx;
   }
 
   private setDates() {

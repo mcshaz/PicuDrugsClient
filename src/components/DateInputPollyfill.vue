@@ -3,11 +3,13 @@
         <div
             class="FormDate"
             @keydown.capture.passive="keydown"
-        >
+            @blur.capture.passive="emitBlur($event)" >
             <input
                 ref="first"
                 class="FormDate__input FormDate__input--day"
                 type="number"
+                min="1"
+                :max="firstMax"
                 :placeholder="pIsMonthFirst?'mm':'dd'"
                 v-model="first">
             <span class="FormDate__divider">/</span>
@@ -15,6 +17,8 @@
                 ref="second"
                 class="FormDate__input FormDate__input--month"
                 type="number"
+                min="1"
+                :max="secondMax"
                 :placeholder="pIsMonthFirst?'dd':'mm'"
                 v-model="second">
             <span
@@ -37,29 +41,38 @@ import { parseDate, dateInRange } from '@/services/utilities/dateHelpers';
 @Component
 export default class DateInputPollyfill extends Vue {
     private readonly pIsMonthFirst: boolean;
+    private readonly firstMax: number;
+    private readonly secondMax: number;
 
     private pFirst: string = '';
     private pSecond: string = '';
     private pYear: string = '';
-    private pInternalValue!: Date | null;
+    private pDate!: Date | null;
 
     @Prop({default: null})
-    private readonly value!: Date | null;
-     @Prop({default: null})
-    private readonly min!: Date | null;
+    private value!: Date | null;
     @Prop({default: null})
-    private readonly max!: Date | null;
+    private min!: Date | null;
+    @Prop({default: null})
+    private max!: Date | null;
 
     constructor() {
         super();
         this.pIsMonthFirst = isMonthFirst();
+        if (this.pIsMonthFirst) {
+            this.firstMax = 12;
+            this.secondMax = 31;
+        } else {
+            this.firstMax = 31;
+            this.secondMax = 12;
+        }
     }
 
     public created() {
-        if (this.min! > this.max!) {
+        if (this.min && this.max && this.min > this.max) {
             throw new RangeError('min must be <= max');
         }
-        if (this.value && dateInRange(this.value, this.min, this.max)) {
+        if (this.value) {
             const mm = this.value.getMonth().toString().padStart(2, '0');
             const dd = this.value.getDay().toString().padStart(2, '0');
             if (this.pIsMonthFirst) {
@@ -71,7 +84,7 @@ export default class DateInputPollyfill extends Vue {
             }
             this.pYear = this.value.getFullYear().toString().padStart(4, '0');
         }
-        this.pInternalValue = this.value;
+        this.pDate = this.value;
     }
 
     public get first() { return this.pFirst; }
@@ -93,7 +106,7 @@ export default class DateInputPollyfill extends Vue {
                 (this.$refs.second as HTMLInputElement).focus();
             }
         }
-        this.emitValue();
+        this.setValue();
     }
 
     public get second() { return this.pSecond; }
@@ -111,13 +124,13 @@ export default class DateInputPollyfill extends Vue {
             this.pYear = formatNo(move[1], 4);
             (this.$refs.year as HTMLInputElement).focus();
         }
-        this.emitValue();
+        this.setValue();
     }
 
     public get year() { return this.pYear; }
     public set year(value: string) {
         this.pYear = formatNo(value, 4);
-        this.emitValue();
+        this.setValue();
     }
 
     private moveDay(day: string) {
@@ -173,16 +186,27 @@ export default class DateInputPollyfill extends Vue {
         }
     }
 
-    private emitValue() {
+    private emitBlur(evt: FocusEvent) {
+        const relatedTarget = evt.relatedTarget;
+        if (relatedTarget !== this.$refs.year && relatedTarget !== this.$refs.month && relatedTarget !== this.$refs.year) {
+            // tslint:disable-next-line:triple-equals
+            if (this.pDate != this.value) {
+                this.$emit('change', this.pDate);
+            }
+            this.$emit('blur', evt);
+        }
+    }
+
+    private setValue() {
         const timestamp = this.pIsMonthFirst
             ? parseDate(this.pYear, this.pFirst, this.pSecond)
             : parseDate(this.pYear, this.pSecond, this.pFirst);
-        if (!timestamp || !dateInRange(timestamp, this.min, this.max)) {
-            if (this.pInternalValue) {
-                this.$emit('input', this.pInternalValue = null);
+        if (!timestamp) {
+            if (this.pDate) {
+                this.$emit('input', this.pDate = null);
             }
-        } else if (!this.pInternalValue || this.pInternalValue.getTime() !== timestamp.getTime()) {
-            this.$emit('input', this.pInternalValue = timestamp);
+        } else if (!this.pDate || this.pDate.getTime() !== timestamp.getTime()) {
+            this.$emit('input', this.pDate = timestamp);
         }
     }
 }

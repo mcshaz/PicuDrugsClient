@@ -1,82 +1,61 @@
 <template>
-  <div class="hello">
-    <div class="form-group row">
-      <label for="name" class="col-sm-2 col-form-label">Name</label>
-      <div class="col-sm-10">
-        <input class="form-control" type="text" id="name" v-model="name" placeholder="Patient Name" >
-      </div>
-    </div>
-    <div class="form-group row">
-      <label for="nhi" class="col-sm-2 col-form-label">NHI</label>
-      <div class="col-sm-10">
-        <input class="form-control" type="text" id="nhi" v-model="nhi" placeholder="NHI" >
-      </div>
-    </div>
+  <b-form  class="needs-validation" novalidate>
+    <b-form-group for="name" label-cols-md="2" label="Name:">
+      <input class="form-control" type="text" id="name" v-model.trim="name" placeholder="Patient Name" autocomplete="off" />
+    </b-form-group>
+    <b-form-group for="nhi" label-cols-md="2" label="NHI:" :state="nhiState"
+        valid-feedback="conforms to NZ NHI" >
+      <template slot="invalid-feedback">
+        Must be 3 letters (NOT 'I' or 'O') + 4 numbers
+      </template>
+      <template slot="invalid-feedback">
+        A letter or number is mistyped <font-awesome-icon icon="question" />
+      </template>
+      <input class="form-control" type="text" id="nhi" v-model.trim="nhi" placeholder="NHI" autocomplete="off" />
+    </b-form-group>
     <patient-age-data v-model="age" />
-    <div class="form-group row">
-      <label for="weight" class="col-sm-2 col-form-label">Weight</label>
-      <div class="col-sm-10">
-        <div class="input-group">
-          <input class="form-control" id="weight" v-model.number="weightKg" placeholder="Weight" type="number" :min="minWeight()" :max="maxWeight()" >
-          <div class="input-group-append">
-            <span class="input-group-text" >kg</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row">
-      <label class="col-sm-2 col-form-label">Gender</label>
-      <fieldset class="col-sm-10">
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" id="maleRadio" v-model="isMale" :value="true">
-          <label class="form-check-label" for="maleRadio">Male</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" id="femaleRadio" v-model="isMale" :value="false">
-          <label class="form-check-label" for="femaleRadio">Female</label>
-        </div>
-      </fieldset>
-    </div>
-    <div class="form-group row">
-      <div class="col-sm-2">
-        <label for="weeksGestation" class="col-form-label">Gestation</label>
-        <small class="form-text text-muted">weeks @ birth</small>
-      </div>
-      <div class="col-sm-10">
-        <div class="input-group">
-          <input class="form-control" id="weeksGestation" v-model.number="weeksGestation" placeholder="Weeks Gestation" type="number" min="22" max="23">
-          <div class="input-group-append">
-            <span class="input-group-text" >weeks</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <transition name="bounce">
-      <div class="alert" :class="alertLevel?'alert-'+alertLevel:''" v-if="lbWtCentile!==null" >
-        <p>
-          <span class="prefix">{{lbWtCentile.prefix}}</span>&nbsp;<span class="val">{{lbWtCentile.val}}</span><sup class="suffix">{{lbWtCentile.suffix}}</sup>
+    <b-form-group for="weight" label-cols-md="2" label="Weight:">
+      <b-input-group append="kg">
+        <input class="form-control" id="weight" v-model.number="weightKg" placeholder="Weight" type="number" required 
+            :min="minWeight()" :max="maxWeight()" autocomplete="off" />
+      </b-input-group>
+    </b-form-group>
+    <b-form-group label-cols-md="2" label="Gender:">
+        <b-form-radio-group>
+          <b-form-radio id="maleRadio" v-model="isMale" :value="true">
+            Male
+          </b-form-radio>
+          <b-form-radio id="femaleRadio" v-model="isMale" :value="false">
+            Female
+          </b-form-radio>
+        </b-form-radio-group>
+    </b-form-group>
+    <b-form-group for="weeksGestation" label-cols-md="2" label="Gestation:">
+      <b-input-group append="weeks">
+        <input class="form-control" id="weeksGestation" v-model.number="weeksGestation" placeholder="Weeks Gestation" type="number" min="22" max="43" />
+      </b-input-group>
+    </b-form-group>
+    <p>{{lbWtCentile!==null}}</p>
+    <!--<transition name="bounce">-->
+      <b-alert fade show="lbWtCentile!==null" :variant="alertLevel" >
+        <output v-if="lbWtCentile!==null" name="centile">
+          <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span><span class="val">{{lbWtCentile.val}}</span><sup class="suffix">{{lbWtCentile.suffix}}</sup>
           <span v-if="ubWtCentile">
             –
-            <span class="prefix">{{ubWtCentile.prefix}}</span>&nbsp;<span class="val">{{ubWtCentile.val}}</span><sup class="suffix">{{ubWtCentile.suffix}}</sup>
+            <span class="prefix">{{ubWtCentile.prefix}}&nbsp;</span><span class="val">{{ubWtCentile.val}}</span><sup class="suffix">{{ubWtCentile.suffix}}</sup>
           </span>
           centile
-        </p>
-        <transition name="bounce">
+        </output>
           <div v-if="alertLevel==='warning'||alertLevel==='danger'">
             <hr>
-            <div class="mb-0" >
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" v-model="acceptWtWarn" id="acceptWtWarn">
-                <label class="form-check-label" for="acceptWtWarn">
+            <b-form-checkbox v-model="acceptWtWarn" id="acceptWtWarn" :value="true" required>
                   I confirm this is the correct weight
-                </label>
-              </div>
-            </div>
+            </b-form-checkbox>
           </div>
-        </transition>
-      </div>
-    </transition>
-  </div>
+      </b-alert>
+    <!--</transition>-->
+    <b-button class="ml-md-5" type="submit" :variant="alertLevel">Submit</b-button>
+  </b-form>
 </template>
 
 <script lang="ts">
@@ -94,6 +73,8 @@ type vueNumber = number | '';
   components: { PatientAgeData },
 })
 export default class PatientAgeWeightData extends Vue {
+  public validateNhiREx!: string;
+  public nhiState: null | boolean = null;
   public name: string = '';
   public nhi: string = '';
   public age: ChildAge | null = null;
@@ -110,6 +91,7 @@ export default class PatientAgeWeightData extends Vue {
 
   public created() {
     this.wtData = new UKWeightData();
+    this.validateNhiREx = createNHIRx(true);
   }
 
   public get weightKg() { return this.pWeightKg; }
@@ -123,7 +105,20 @@ export default class PatientAgeWeightData extends Vue {
   }
 
   public maxWeight() {
-    return minWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age) / daysPerMonth : void 0);
+    return maxWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age) / daysPerMonth : void 0);
+  }
+
+  public validateNhi() {
+    if (!this.nhi || this.nhi.length < 7) {
+      this.nhiState = null;
+      return '';
+    }
+    let returnVar = '';
+    // tslint:disable-next-line:quotemark
+    if (!new RegExp(this.validateNhiREx).test(this.nhi)) { returnVar = "";
+    } else if (!mod11check(this.nhi)) { returnVar = ''; }
+    this.nhiState = returnVar === '';
+    return returnVar;
   }
 
   private updateCentiles() {
@@ -145,6 +140,9 @@ export default class PatientAgeWeightData extends Vue {
         this.alertLevel = alertLevel(this.lbWtCentile.alarm);
       } else {
         this.ubWtCentile = ucs;
+        if (ucs.prefix === this.lbWtCentile.prefix) {
+          ucs.prefix = this.lbWtCentile.prefix = '';
+        }
         this.alertLevel = alertLevel(Math.round((this.lbWtCentile.alarm + this.ubWtCentile.alarm) / 2));
       }
     }
@@ -154,7 +152,7 @@ export default class PatientAgeWeightData extends Vue {
 function alertLevel(level: alarmLevel) {
   switch (level) {
     case alarmLevel.none:
-      return '';
+      return 'success';
     case alarmLevel.minorWarning:
       return 'dark';
     case alarmLevel.warning:
@@ -163,10 +161,51 @@ function alertLevel(level: alarmLevel) {
       return 'danger';
   }
 }
+
+function createNHIRx(ignoreCase: boolean = false) {
+  let allowedChars = 'A-HJ-NP-Z';
+  if (ignoreCase) {
+    allowedChars = allowedChars + allowedChars.toLowerCase();
+  }
+  allowedChars = '[' + allowedChars + ']';
+  return '^AAANNNC$'
+    .split('')
+    .map((c) => {
+      switch (c) {
+        case 'A':
+          return allowedChars;
+        case 'N':
+        case 'C':
+          return '\\d';
+        default:
+          return c;
+      }
+    })
+    .join('');
+}
+
+function mod11check(str: string) {
+  const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const checkSum = parseInt(str.slice(-1), 10);
+  str = str.slice(0, -1).toUpperCase();
+  let cum = 0;
+  let multiplier = str.length + 1;
+  for (const c of str) {
+    let val = parseInt(c, 10);
+    if (isNaN(val)) {
+      val = alphaLookup.indexOf(c) + 1;
+    }
+    cum += val * multiplier--;
+  }
+  return checkSum === 11 - cum % 11;
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#nhi {
+  text-transform: uppercase;
+}
 h3 {
   margin: 40px 0 0;
 }

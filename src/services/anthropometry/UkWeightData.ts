@@ -547,7 +547,7 @@ export class UKWeightData extends CentileCollection {
                 new Lms (  -0.599,  58.072, 0.1412),
                 new Lms (  -0.6,  58.0833, 0.14119),
                 new Lms (  -0.6,  58.0936, 0.14118),
-                new Lms (  -0.601,  58.104, 0.14117)
+                new Lms (  -0.601,  58.104, 0.14117),
             ],
         });
     }

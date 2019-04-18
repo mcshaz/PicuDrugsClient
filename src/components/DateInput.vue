@@ -1,16 +1,15 @@
 <template>
     <div>
-        <date-input-pollyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" v-if="isDateSupported===dateElSupport.noSupport"/>
-        <div class="input-group" v-else>
-            <input class="form-control col" type="date" :min="minStr" :max="maxStr" :value-as-date.prop="value"
-                @input="$emit('input',$event.target.valueAsDate)" v-if="isDateSupported===dateElSupport.valueAsDateSupport">
-            <input class="form-control col" type="date" :min="minStr" :max="maxStr" v-model="dateStr" v-else>
-            <div class="input-group-append">
-                <div class="input-group-text">
-                <font-awesome-icon icon="calendar" />
-                </div>
-            </div>
-        </div>
+        <date-input-pollyfill :min="min" :max="max" @input="date=$event" :value="value"
+                v-if="isDateSupported===dateElSupport.noSupport" @blur="$emit('blur', $event)"/>
+        <b-input-group v-else>
+            <input class="form-control" type="date" :min="minStr" :max="maxStr" :value-as-date.prop="value" @blur="$emit('blur', $event)"
+                @input.passive="date=$event.target.valueAsDate" v-if="isDateSupported===dateElSupport.valueAsDateSupport" />
+            <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr" @blur="$emit('blur', $event)" v-else />
+            <b-input-group-append :is-text="true">
+                <font-awesome-icon icon="calendar-alt" />
+            </b-input-group-append>
+        </b-input-group>
     </div>
 </template>
 
@@ -31,18 +30,20 @@ export default class DateInput extends Vue {
     public readonly isDateSupported: dateElSupport;
     public readonly dateElSupport: object;
     private pDateStr!: string;
+    private pDate: Date | null = null;
 
     @Prop({default: null})
-    private readonly value!: Date | null;
+    private value!: Date | null;
     @Prop({default: null})
-    private readonly min!: Date | null;
+    private min!: Date | null;
     @Prop({default: null})
-    private readonly max!: Date | null;
+    private max!: Date | null;
 
     constructor() {
         super();
         this.isDateSupported = isDateSupported();
         this.dateElSupport = dateElSupport;
+        this.pDate = this.value;
         if (this.isDateSupported === dateElSupport.elSupport) {
             this.pDateStr = '';
         }
@@ -73,13 +74,24 @@ export default class DateInput extends Vue {
         this.pDateStr = value;
         let dt!: Date;
         if (value === '' || isNaN((dt = new Date(value)).valueOf())) {
-            this.$emit('input', null);
+            this.date = null;
             return;
         }
         if (dt.getHours() !== 0 || dt.getMinutes() !== 0) { // because it is interpreted as utc midnight
             dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset());
         }
-        this.$emit('input', dt);
+        this.date = dt;
+    }
+
+    public get date() {
+        return this.pDate;
+    }
+    public set date(value: Date | null) {
+        this.pDate = value;
+        // tslint:disable-next-line:triple-equals
+        if (value != this.value) {
+            this.$emit('input', value);
+        }
     }
 }
 

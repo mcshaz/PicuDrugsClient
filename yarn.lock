@@ -5278,6 +5278,11 @@ lodash.create@3.1.1:
     lodash._basecreate "^3.0.0"
     lodash._isiterateecall "^3.0.0"
 
+lodash.debounce@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+  integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
 lodash.defaultsdeep@4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/lodash.defaultsdeep/-/lodash.defaultsdeep-4.3.2.tgz#6c1a586e6c5647b0e64e2d798141b8836158be8a"
@@ -8928,10 +8933,10 @@ vue-property-decorator@^8.1.0:
   dependencies:
     vue-class-component "^7.0.1"
 
-vue-router@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.4.tgz#d6023e9db64d0b335771f0316c8bde8956f2d75d"
-  integrity sha512-wjirAFeMR53FFTRIM2ofLKH5BJte6Q9+MUiOj6fLzqhgerjVyQVeMmvgiQDslPJJHSqFfQ559EDvIi0lA1Lr6g==
+vue-router@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.5.tgz#24636923c7f1a62da3a577cf75a058f9fa328581"
+  integrity sha512-DGU+7+eeiSq/oNZ6epA/rcNkAd0m2+uugR5i4Eh4KBvclUmorvNJ6iForYjQkgvKi9GdamybaMpl85eDgxM2eQ==
 
 vue-style-loader@^4.1.0:
   version "4.1.2"
