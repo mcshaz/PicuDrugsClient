@@ -3,16 +3,8 @@
     <b-form-group for="name" label-cols-md="2" label="Name:">
       <input class="form-control" type="text" id="name" v-model.trim="name" placeholder="Patient Name" autocomplete="off" />
     </b-form-group>
-    <b-form-group for="nhi" label-cols-md="2" label="NHI:" :state="nhiState"
-        valid-feedback="conforms to NZ NHI" >
-      <template slot="invalid-feedback">
-        Must be 3 letters (NOT 'I' or 'O') + 4 numbers
-      </template>
-      <template slot="invalid-feedback">
-        A letter or number is mistyped <font-awesome-icon icon="question" />
-      </template>
-      <input class="form-control" type="text" id="nhi" v-model.trim="nhi" placeholder="NHI" autocomplete="off" />
-    </b-form-group>
+    <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
+    {{nhiValidState}}
     <patient-age-data v-model="age" />
     <b-form-group for="weight" label-cols-md="2" label="Weight:">
       <b-input-group append="kg">
@@ -62,23 +54,23 @@
 import 'reflect-metadata';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import PatientAgeData from '@/components/PatientAgeData.vue';
+import NhiInput from '@/components/NhiInput.vue';
 import { ChildAge, daysPerMonth } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
 import { UKWeightData } from '@/services/anthropometry/';
 import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString';
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 
 type vueNumber = number | '';
+type nullBool = null | boolean;
 
 @Component({
-  components: { PatientAgeData },
+  components: { PatientAgeData, NhiInput },
 })
 export default class PatientAgeWeightData extends Vue {
-  public validateNhiREx!: string;
-  public nhiState: null | boolean = null;
   public name: string = '';
   public nhi: string = '';
   public age: ChildAge | null = null;
-  public isMale: boolean | null = null;
+  public isMale: nullBool = null;
   public weeksGestation: vueNumber = 40;
   public alertLevel: string = '';
   public lbWtCentile: ICentileVal | null = null;
@@ -86,12 +78,12 @@ export default class PatientAgeWeightData extends Vue {
   public isErrorWt: boolean = false;
   public acceptWtWarn: boolean = false;
 
-  private pWeightKg: vueNumber = '';
   private wtData!: UKWeightData;
+  private pWeightKg: vueNumber = '';
+  private nhiValidState: nullBool = null;
 
   public created() {
     this.wtData = new UKWeightData();
-    this.validateNhiREx = createNHIRx(true);
   }
 
   public get weightKg() { return this.pWeightKg; }
@@ -106,19 +98,6 @@ export default class PatientAgeWeightData extends Vue {
 
   public maxWeight() {
     return maxWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age) / daysPerMonth : void 0);
-  }
-
-  public validateNhi() {
-    if (!this.nhi || this.nhi.length < 7) {
-      this.nhiState = null;
-      return '';
-    }
-    let returnVar = '';
-    // tslint:disable-next-line:quotemark
-    if (!new RegExp(this.validateNhiREx).test(this.nhi)) { returnVar = "";
-    } else if (!mod11check(this.nhi)) { returnVar = ''; }
-    this.nhiState = returnVar === '';
-    return returnVar;
   }
 
   private updateCentiles() {
@@ -160,44 +139,6 @@ function alertLevel(level: alarmLevel) {
     case alarmLevel.danger:
       return 'danger';
   }
-}
-
-function createNHIRx(ignoreCase: boolean = false) {
-  let allowedChars = 'A-HJ-NP-Z';
-  if (ignoreCase) {
-    allowedChars = allowedChars + allowedChars.toLowerCase();
-  }
-  allowedChars = '[' + allowedChars + ']';
-  return '^AAANNNC$'
-    .split('')
-    .map((c) => {
-      switch (c) {
-        case 'A':
-          return allowedChars;
-        case 'N':
-        case 'C':
-          return '\\d';
-        default:
-          return c;
-      }
-    })
-    .join('');
-}
-
-function mod11check(str: string) {
-  const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const checkSum = parseInt(str.slice(-1), 10);
-  str = str.slice(0, -1).toUpperCase();
-  let cum = 0;
-  let multiplier = str.length + 1;
-  for (const c of str) {
-    let val = parseInt(c, 10);
-    if (isNaN(val)) {
-      val = alphaLookup.indexOf(c) + 1;
-    }
-    cum += val * multiplier--;
-  }
-  return checkSum === 11 - cum % 11;
 }
 </script>
 

@@ -1,19 +1,20 @@
 <template>
-    <div>
+    <div :class="nhiState===null?'':'was-validated'" >
         <b-form-group for="nhi" label-cols-md="2" label="NHI:" :state="nhiState"
             valid-feedback="conforms to NZ NHI" >
             <input class="form-control" type="text" id="nhi" v-model.trim="nhi" placeholder="NHI" 
                    autocomplete="off" :pattern="nhiPattern" :minlength="nhiLength" :maxlength="nhiLength" 
-                   ref="nhi"/>
+                   ref="nhi" @blur="validate()" />
             <template slot="invalid-feedback" v-if="!explainChecksum">
-                Must be 3 letters (NOT 'I' or 'O') followed by 4 numbers
+                Must be 3 letters (NO 'I's or 'O's) followed by 4 numbers
             </template>
             <template slot="invalid-feedback" v-else>
-                A letter or number is mistyped <b-button v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
+                A letter or number is mistyped 
+                <b-button class="btn-link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
             </template>
         </b-form-group>
         <!-- Modal Component -->
-        <b-modal id="nhi-explain" title="Info on NZ NHI">
+        <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true" >
             <p class="my-4">
                 The NHI contains information within the 7 characters which
                 allow computers to check if it is a valid value. This validation check is <em>failing</em>.
@@ -38,40 +39,59 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 type vueNumber = number | '';
 const nhiLength = 7;
-const simNHI = 'SIM1111'
-enum nhiValidationResult { pass=0, length, regExp, checkSum }
+const simNHI = 'SIM0000';
+enum nhiValidationResult { na, pass, simPass, length, regExp, checkSum }
 
 @Component
-export default class PatientAgeWeightData extends Vue {
+export default class NhiInput extends Vue {
     public nhiState: null | boolean = null;
     public explainChecksum = false;
-    private pNhi: string = '';
-    public nhiPattern!:string;
+    public nhiPattern!: string;
     public readonly simNHI = simNHI;
     public readonly nhiLength = nhiLength;
 
-    public created(){
-        this.nhiPattern = createNHIRx(true);
+    @Prop() private readonly value!: string;
+    private pNhi: string = '';
+
+    public created() {
+        this.nhiPattern = createNHIRx();
+        this.pNhi = this.value;
     }
 
     public get nhi() { return this.pNhi; }
     public set nhi(value: string) {
-        this.pNhi = value;
+        this.pNhi = value.toUpperCase();
+        this.$emit('input', value);
         if (value.length < nhiLength) {
-            this.nhiState = null;
+            if (this.nhiState !== null) {
+                this.setCustomValidity(nhiValidationResult.na);
+                this.$emit('valid-state-change', this.nhiState = null);
+            }
         } else {
             this.validate();
         }
-        this.$emit('input', value);
     }
 
     public validate() {
         const valResult = validateNhi(this.nhi, this.nhiPattern);
         this.explainChecksum = valResult === nhiValidationResult.checkSum;
-        const newState = valResult === nhiValidationResult.pass;
+        let newState: boolean | null;
+        switch (valResult) {
+          case nhiValidationResult.pass:
+          case nhiValidationResult.simPass:
+            newState = true;
+            break;
+          case nhiValidationResult.na:
+            newState = null;
+            break;
+          default:
+            newState = false;
+            break;
+        }
         if (this.nhiState !== newState) {
             this.nhiState = newState;
-            this.$emit('validationStateChange', newState);
+            this.$emit('valid-state-change', newState);
+            this.setCustomValidity(valResult);
         }
     }
 
@@ -82,12 +102,13 @@ export default class PatientAgeWeightData extends Vue {
     }
 }
 function validateNhi(nhi: string, pattern: string = createNHIRx()) {
-    if (!nhi) { return nhiValidationResult.pass; }
+    if (!nhi) { return nhiValidationResult.na; }
     if (nhi.length !== nhiLength) { return nhiValidationResult.length; }
-    if (nhi === simNHI) { return nhiValidationResult.pass; }
     if (!new RegExp(pattern).test(nhi)) {
         return nhiValidationResult.regExp;
     }
+    nhi = nhi.toUpperCase();
+    if (nhi === simNHI) { return nhiValidationResult.simPass; }
     if (!mod11check(nhi)) {
         return nhiValidationResult.checkSum;
     }
@@ -96,11 +117,17 @@ function validateNhi(nhi: string, pattern: string = createNHIRx()) {
 
 function createNHIRx(ignoreCase: boolean = false) {
   let allowedChars = 'A-HJ-NP-Z';
+  let sim = simNHI;
   if (ignoreCase) {
-    allowedChars = allowedChars + allowedChars.toLowerCase();
+    allowedChars += allowedChars.toLowerCase();
+    sim = sim.split('')
+      .map((c) => isNaN(Number(c))
+        ? `[${c}${c.toLowerCase()}]`
+        : c)
+      .join('');
   }
   allowedChars = '[' + allowedChars + ']';
-  return '^AAANNNC$'
+  let returnVar = 'AAANNNC'
     .split('')
     .map((c) => {
       switch (c) {
@@ -114,6 +141,7 @@ function createNHIRx(ignoreCase: boolean = false) {
       }
     })
     .join('');
+    return `^(${returnVar}|${sim})$`;
 }
 
 function mod11check(str: string) {
