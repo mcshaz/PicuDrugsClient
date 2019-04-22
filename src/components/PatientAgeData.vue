@@ -1,21 +1,21 @@
 <template>
   <div>
-    <b-form-group label="DOB:" for="dob" label-cols-md="2">
-        <date-input id="dob" @change="dob=$event" :min="minDate" :max="maxDate" @blur="setAgeTabs()" />
-    </b-form-group>
-    <b-form-group id="ageymd" label="Age:" label-cols-md="2">
-      <b-form-row>
+    <dob-input v-model="dob" @min-change="minDate=$event" />
+    <b-form-group id="ageymd" label="Age:" label-cols-md="2" 
+      :state="errMsg===null?null:(errMsg==='')"
+      :invalid-feedback="errMsg" >
+      <b-form-row :class="errMsg===null?'':'was-validated'">
         <b-input-group append="years" class="col">
           <input class="form-control" id="years" v-model.number="years" placeholder="years" type="number"
-            min="0" :max="maxYears" ref="years" />
+            min="0" :max="maxYears" ref="years" :required="exact||months!==''"/>
         </b-input-group>
         <b-input-group append="months" class="col">
           <input class="form-control" id="months" v-model.number="months" placeholder="months" type="number" 
-            min="0" max="160" ref="months" />
+            min="0" max="160" ref="months" :required="exact||years===0" />
         </b-input-group>
         <b-input-group append="days" class="col">
           <input class="form-control" id="days" v-model.number="days" placeholder="days" type="number" 
-            min="0" max="1200" ref="days" />
+            min="0" max="1200" ref="days" :required="exact" />
         </b-input-group>
       </b-form-row>
     </b-form-group>
@@ -25,19 +25,17 @@
 <script lang="ts">
 import { ChildAge } from '@/services/infusion-calculations/';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import DateInput from '@/components/DateInput.vue';
-export type vueNumber = number | ''; //todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
+import DobInput from '@/components/DobInput.vue';
+export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
 @Component({
     components: {
-        DateInput,
+        DobInput,
     },
 })
 export default class PatientAgeData extends Vue {
   public readonly maxYears = 122;
-
-  private minDate!: Date;
-  private maxDate!: Date;
+  public errMsg: string | null = null;
 
   @Prop({default: false})
   private exact!: boolean;
@@ -45,14 +43,9 @@ export default class PatientAgeData extends Vue {
   private pMonths: vueNumber = '';
   private pDays: vueNumber = '';
   private pDob: Date | null = null;
-  // non vue properties = start with undefined
-  private timeout?: number | NodeJS.Timer;
+  private pMinDate: Date | null = null;
+
   private childAge?: ChildAge | null;
-
-  public created() {
-    this.setDates();
-  }
-
   public get years() { return this.pYears; }
   public set years(years: vueNumber) {
     if (years === this.pYears) {
@@ -124,14 +117,18 @@ export default class PatientAgeData extends Vue {
 
   public set dob(dob: Date | null) {
     this.pDob = dob;
-    if (dob === null) { return; }
-    if (dob < this.minDate || dob > this.maxDate) {
-      this.pYears = this.pMonths = this.pDays = '';
+    if (dob === null) {
+      this.setAgeTabs(false);
       return;
     }
     const now = new Date();
+    if (dob < this.minDate || dob > now) { // not handling 122yr 11mo 30d on tickover of night as edge case & irrelevant
+      this.pDays = this.pMonths = this.pYears = '';
+      this.setAgeTabs(false);
+      return;
+    }
     let years = now.getFullYear() - dob.getFullYear();
-    // if (years < 0 || years > this.maxYears) { //should now be handled by min and max
+    // if (years < 0 || years > this.maxYears) { // should now be handled by min and max
     // this.pYears = this.pMonths = this.pDays = '';
     let months = now.getMonth() - dob.getMonth();
     let days = now.getDate() - dob.getDate();
@@ -152,57 +149,32 @@ export default class PatientAgeData extends Vue {
     this.pMonths = months;
     this.pDays = days;
     this.ageDataChange();
+    this.setAgeTabs(true);
   }
 
-  public destroyed() {
-    switch (typeof this.timeout) {
-      case 'number':
-        clearTimeout(this.timeout);
-        break;
-      case 'object':
-        this.timeout.unref();
-        if ((this.timeout as any).id && clearTimeout) {
-          clearTimeout((this.timeout as any).id);
-        }
-        break;
-    }
-  }
-
-  public setAgeTabs() {
-    const indx = this.pDob === null ? 0 : -1;
+  public setAgeTabs(isValidDOB: boolean) {
     (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
-      (this.$refs.days as HTMLInputElement).tabIndex = indx;
-  }
-
-  private setDates() {
-    const now = new Date();
-    this.maxDate = new Date(now);
-    const minDate = new Date(now);
-    minDate.setFullYear(minDate.getFullYear() - this.maxYears);
-    minDate.setDate(minDate.getDate() + 1);
-    this.minDate = minDate;
-    const nextMidnight = new Date(now);
-    nextMidnight.setHours(0, 0, 0, 0);
-    nextMidnight.setDate(nextMidnight.getDate() + 1);
-    const msToMidnight = nextMidnight.getTime() - now.getTime();
-    this.timeout = setTimeout(() => {
-      this.setDates();
-      this.onNewDay();
-    }, msToMidnight);
-  }
-
-  private onNewDay() {
-    if (this.pDob !== null) {
-      this.dob = this.dob;
-    } else if (typeof this.days === 'number') {
-      this.days++;
-    }
+      (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0;
   }
 
   private ageDataChange() {
-    if (this.pYears === '' || (this.pYears === 0 && this.pMonths === '')
-        || this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0 || this.pYears > this.maxYears
-        || (this.exact && (this.pMonths === '' || this.pDays === ''))) {
+    if (this.pYears === '' && this.pMonths === '' && this.pDays === '' ||
+        this.exact && (this.pMonths === '' || this.pDays === '')) {
+      this.errMsg = this.exact
+        ? 'exact age is required'
+        : null;
+    } else if (this.pYears === '') {
+      this.errMsg = 'years required (enter 0 if < 1year)';
+    } else if (this.pYears === 0 && this.pMonths === '') {
+      this.errMsg = 'months are required if 0 years';
+    } else if (this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0) {
+      this.errMsg = 'negative values are not allowed';
+    } else if (this.pYears > this.maxYears) {
+      this.errMsg = `age must be <= ${this.maxYears} years old (oldest person to have lived)`;
+    } else {
+      this.errMsg = '';
+    }
+    if (this.errMsg === null || this.errMsg !== '' || this.pYears === '') {
       if (this.childAge) {
         this.$emit('input', this.childAge = null);
       }
@@ -225,6 +197,18 @@ export default class PatientAgeData extends Vue {
       this.childAge = new ChildAge(this.pYears, mo, dyo);
     }
     this.$emit('input', this.childAge);
+  }
+
+  private get minDate() { return this.pMinDate!; }
+  private set minDate(value: Date) {
+    if (this.pMinDate) { // must be a new day
+      if (this.pDob !== null) {
+        this.dob = this.pDob;
+      } else if (this.days !== '') {
+        this.days++;
+      }
+    }
+    this.pMinDate = value;
   }
 }
 

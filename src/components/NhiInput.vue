@@ -1,7 +1,6 @@
 <template>
     <div :class="nhiState===null?'':'was-validated'" >
-        <b-form-group for="nhi" label-cols-md="2" label="NHI:" :state="nhiState"
-            valid-feedback="conforms to NZ NHI" >
+        <b-form-group for="nhi" label-cols-md="2" label="NHI:" :state="nhiState" >
             <input class="form-control" type="text" id="nhi" v-model.trim="nhi" placeholder="NHI" 
                    autocomplete="off" :pattern="nhiPattern" :minlength="nhiLength" :maxlength="nhiLength" 
                    ref="nhi" @blur="validate()" />
@@ -127,7 +126,7 @@ function createNHIRx(ignoreCase: boolean = false) {
       .join('');
   }
   allowedChars = '[' + allowedChars + ']';
-  let returnVar = 'AAANNNC'
+  const returnVar = 'AAANNNC'
     .split('')
     .map((c) => {
       switch (c) {
@@ -141,7 +140,7 @@ function createNHIRx(ignoreCase: boolean = false) {
       }
     })
     .join('');
-    return `^(${returnVar}|${sim})$`;
+  return `^(${returnVar}|${sim})$`;
 }
 
 function mod11check(str: string) {

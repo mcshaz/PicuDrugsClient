@@ -45,6 +45,7 @@
     "@fluffy-spoon/substitute": "^1.87.0",
     "@types/chai": "^4.1.7",
     "@types/chai-almost": "^1.0.0",
+    "@types/lodash.debounce": "^4.0.6",
     "@types/lolex": "^3.1.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.4",

@@ -4,14 +4,7 @@
       <input class="form-control" type="text" id="name" v-model.trim="name" placeholder="Patient Name" autocomplete="off" />
     </b-form-group>
     <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
-    {{nhiValidState}}
     <patient-age-data v-model="age" />
-    <b-form-group for="weight" label-cols-md="2" label="Weight:">
-      <b-input-group append="kg">
-        <input class="form-control" id="weight" v-model.number="weightKg" placeholder="Weight" type="number" required 
-            :min="minWeight()" :max="maxWeight()" autocomplete="off" />
-      </b-input-group>
-    </b-form-group>
     <b-form-group label-cols-md="2" label="Gender:">
         <b-form-radio-group>
           <b-form-radio id="maleRadio" v-model="isMale" :value="true">
@@ -24,28 +17,35 @@
     </b-form-group>
     <b-form-group for="weeksGestation" label-cols-md="2" label="Gestation:">
       <b-input-group append="weeks">
-        <input class="form-control" id="weeksGestation" v-model.number="weeksGestation" placeholder="Weeks Gestation" type="number" min="22" max="43" />
+        <input class="form-control" id="weeksGestation" v-model.number="weeksGestation" 
+            placeholder="Weeks Gestation" type="number" min="22" max="43" required
+            :disabled="!age||age.years>=2"
+        />
       </b-input-group>
     </b-form-group>
-    <p>{{lbWtCentile!==null}}</p>
-    <!--<transition name="bounce">-->
-      <b-alert fade show="lbWtCentile!==null" :variant="alertLevel" >
-        <output v-if="lbWtCentile!==null" name="centile">
-          <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span><span class="val">{{lbWtCentile.val}}</span><sup class="suffix">{{lbWtCentile.suffix}}</sup>
-          <span v-if="ubWtCentile">
-            –
-            <span class="prefix">{{ubWtCentile.prefix}}&nbsp;</span><span class="val">{{ubWtCentile.val}}</span><sup class="suffix">{{ubWtCentile.suffix}}</sup>
-          </span>
-          centile
-        </output>
-          <div v-if="alertLevel==='warning'||alertLevel==='danger'">
-            <hr>
-            <b-form-checkbox v-model="acceptWtWarn" id="acceptWtWarn" :value="true" required>
-                  I confirm this is the correct weight
+    <b-form-group for="weight" label-cols-md="2" label="Weight:" :state="alertLevel===''?null:(alertLevel==='success')"
+          :class="alertLevel===''?'':'was-validated'" @blur="debounceCentiles.flush()" >
+        <template :slot="alertLevel==='success'?'valid-feedback':'invalid-feedback'">
+          <output v-if="lbWtCentile!==null" name="centile">
+            <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span><span class="val">{{lbWtCentile.val}}</span><sup class="suffix">{{lbWtCentile.suffix}}</sup>
+            <span v-if="ubWtCentile">
+              –
+              <span class="prefix">{{ubWtCentile.prefix}}&nbsp;</span><span class="val">{{ubWtCentile.val}}</span><sup class="suffix">{{ubWtCentile.suffix}}</sup>
+            </span>
+            centile
+          </output>
+          <div>
+            <b-form-checkbox v-model="acceptWtWarn" id="acceptWtWarn" :value="true" required
+                 v-if="alertLevel==='warning'||alertLevel==='danger'">
+              I confirm this is the correct weight
             </b-form-checkbox>
           </div>
-      </b-alert>
-    <!--</transition>-->
+        </template>
+      <b-input-group append="kg">
+        <input class="form-control" id="weight" v-model.number="weightKg" placeholder="Weight" type="number" required 
+            :min="minWeight()" :max="maxWeight()" autocomplete="off" />
+      </b-input-group>
+    </b-form-group>
     <b-button class="ml-md-5" type="submit" :variant="alertLevel">Submit</b-button>
   </b-form>
 </template>
@@ -59,6 +59,7 @@ import { ChildAge, daysPerMonth } from '@/services/infusion-calculations/Present
 import { UKWeightData } from '@/services/anthropometry/';
 import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString';
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
+import _ from 'lodash';
 
 type vueNumber = number | '';
 type nullBool = null | boolean;
@@ -69,8 +70,6 @@ type nullBool = null | boolean;
 export default class PatientAgeWeightData extends Vue {
   public name: string = '';
   public nhi: string = '';
-  public age: ChildAge | null = null;
-  public isMale: nullBool = null;
   public weeksGestation: vueNumber = 40;
   public alertLevel: string = '';
   public lbWtCentile: ICentileVal | null = null;
@@ -78,9 +77,14 @@ export default class PatientAgeWeightData extends Vue {
   public isErrorWt: boolean = false;
   public acceptWtWarn: boolean = false;
 
-  private wtData!: UKWeightData;
+  private pAge: ChildAge | null = null;
+  private pIsMale: nullBool = null;
   private pWeightKg: vueNumber = '';
   private nhiValidState: nullBool = null;
+  private debounceCentiles = _.debounce(this.updateCentiles.bind(this), 333);
+
+//not to be watched
+  private wtData!: UKWeightData;
 
   public created() {
     this.wtData = new UKWeightData();
@@ -89,6 +93,20 @@ export default class PatientAgeWeightData extends Vue {
   public get weightKg() { return this.pWeightKg; }
   public set weightKg(value: vueNumber) {
     this.pWeightKg = value;
+    this.debounceCentiles();
+  }
+
+  public get isMale() { return this.pIsMale; }
+  public set isMale(value: nullBool) {
+    if (value !== this.pIsMale) {
+      this.pIsMale = value;
+      this.updateCentiles();
+    }
+  }
+
+  public get age() { return this.pAge; }
+  public set age(value: ChildAge | null) {
+    this.pAge = value;
     this.updateCentiles();
   }
 
@@ -101,18 +119,18 @@ export default class PatientAgeWeightData extends Vue {
   }
 
   private updateCentiles() {
-    if (!this.pWeightKg || !this.age) {
+    if (!this.pWeightKg || !this.pAge) {
       this.ubWtCentile = this.lbWtCentile = null;
       return;
     }
-    const ageDays = this.age.getAgeRangeInDays();
-    const lbWtCentile = this.wtData.cumSnormForAge(this.pWeightKg, ageDays.upperBound, this.isMale === null ? true : this.isMale, this.weeksGestation || 40) * 100;
+    const ageDays = this.pAge.getAgeRangeInDays();
+    const lbWtCentile = this.wtData.cumSnormForAge(this.pWeightKg, ageDays.upperBound, this.pIsMale === null ? true : this.pIsMale, this.weeksGestation || 40) * 100;
     this.lbWtCentile = centileString(lbWtCentile);
     if (this.isMale !== null && ageDays.lowerBound === ageDays.upperBound) {
       this.ubWtCentile = null;
       this.alertLevel = alertLevel(this.lbWtCentile.alarm);
     } else {
-      const ubWtCentile = this.wtData.cumSnormForAge(this.pWeightKg, ageDays.lowerBound, this.isMale === null ? false : this.isMale, this.weeksGestation || 40) * 100;
+      const ubWtCentile = this.wtData.cumSnormForAge(this.pWeightKg, ageDays.lowerBound, this.pIsMale === null ? false : this.pIsMale, this.weeksGestation || 40) * 100;
       const ucs = centileString(ubWtCentile);
       if (ucs.val === this.lbWtCentile.val) {
         this.ubWtCentile = null;
