@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts">
+import 'reflect-metadata';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import { parseDate, dateInRange } from '@/services/utilities/dateHelpers';
 

@@ -7,6 +7,8 @@ module.exports = {
   }
 }
 /*
+process.env.VUE_APP_VERSION = require('./package.json').version;
+
 const nodeExternals = require('webpack-node-externals')
 module.exports = {
   // ...

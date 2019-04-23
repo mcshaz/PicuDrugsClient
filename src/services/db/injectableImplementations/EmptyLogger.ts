@@ -1,5 +1,8 @@
+import 'reflect-metadata';
+import { injectable } from 'inversify';
 import { ILogger } from '../Injectables/ILogger';
 
+@injectable()
 export class EmptyLogger implements ILogger {
     public debug(s: string): boolean {
         return true;

@@ -4,6 +4,7 @@ export const daysPerYear = 365.25;
 export const daysPerMonth = daysPerYear / 12;
 
 export interface IChildAge { years: number; months: number | null; days: number | null; }
+export interface IChildExactAge { years: number; months: number; days: number; }
 
 export class ChildAge implements IChildAge {
   public static getAgeRangeInDays(age: IChildAge, now?: Date): NumericRange;
@@ -42,6 +43,35 @@ export class ChildAge implements IChildAge {
     workingDate.setDate(workingDate.getDate() - (days || 0));
     return Math.floor((now.getTime() - workingDate.getTime()) / msPerDay);
     */
+  }
+
+  public static daysInPriorMonth(d: Date) {
+    return new Date(d.getFullYear(), d.getMonth(), 0).getDate();
+  }
+
+  public static ageOnDate(dob: Date, current: Date = new Date()) {
+    if (dob > current) {
+      throw new RangeError('DOB must bo on or before current');
+    }
+    const returnVar: IChildExactAge = {
+      years: current.getFullYear() - dob.getFullYear(),
+      months: current.getMonth() - dob.getMonth(),
+      days: current.getDate() - dob.getDate(),
+    };
+    if (returnVar.months < 0) { returnVar.months += 12; }
+    if (returnVar.days < 0) {
+      returnVar.days += ChildAge.daysInPriorMonth(current);
+      if (returnVar.months === 0) {
+        returnVar.months = 11;
+        returnVar.years--;
+      } else {
+        returnVar.months--;
+      }
+    }
+    const workingDate = new Date(current);
+    workingDate.setFullYear(workingDate.getFullYear() - returnVar.years);
+    if (dob > workingDate) { returnVar.years--; }
+    return returnVar;
   }
 
   constructor(public years: number,

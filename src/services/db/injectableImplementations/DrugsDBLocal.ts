@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { IAppData } from '../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
 import Dexie from './../../../../../Dexie.js/dist/dexie'; //todo - return to node import once fixes released released
@@ -7,20 +8,20 @@ import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
 import { dbTableName } from '../entities/enums/dbTableName';
 import { ILogger } from '../Injectables/ILogger';
 import { IFetch } from '../Injectables/IFetch';
-import 'reflect-metadata';
-import { inject, injectable } from 'inversify';
+import { inject, injectable, decorate } from 'inversify';
 import { TYPES } from '../types';
 import { IServerChanges } from '../ServerCommunication/IServerChanges';
 import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 import { INewServerDeletions } from '../ServerCommunication/IEntityDeletion';
 import { appDataType } from '../entities/enums/appDataType';
-import { IEntityFixedInfusionDrug } from '../entities/InfusionDrugs/IEntityFixedInfusionDrug';
+import { IDrugDB } from '../Injectables/IDrugDB';
+// import { IEntityFixedInfusionDrug } from '../entities/InfusionDrugs/IEntityFixedInfusionDrug';
 
-
+decorate(injectable(), Dexie);
 // https://caniuse.com/#search=IndexedDB
 
 @injectable()
-export class DrugsDBLocal extends Dexie {
+export class DrugsDBLocal extends Dexie implements IDrugDB {
     // Declare implicit table properties.
     // (just to inform Typescript. Instanciated by Dexie in stores() method)
     // Declare implicit table properties.
@@ -49,9 +50,9 @@ export class DrugsDBLocal extends Dexie {
         super('DrugsDBLocal' + isTest ? '_test' : '');
         this.updateProvider = updateProvider;
         this.logger = logger;
-        this.version(1).stores({
-            wards: 'wardId,abbrev',
-            infusionDrugs: 'infusionDrugId,isTitratable',
+        this.version(2).stores({
+            wards: 'wardId',
+            infusionDrugs: 'infusionDrugId',
             bolusDrugs: 'bolusDrugId',
             defibModels: 'id',
             fixedDrugs: 'fixedDrugId',
@@ -74,13 +75,12 @@ export class DrugsDBLocal extends Dexie {
             window.removeEventListener('unhandledrejection', promiseReject);
         });
         // window.setInterval(update,1000*60*60*12);//look up every 12 hours (in case browser left open, eg in resus bay)
-        this.open();
+        // this.open();
     }
-
-    public async allFixedInfusionDrugs() {
-        return this.infusionDrugs.where('isTitratable').equals(false)
-            .toArray() as Dexie.Promise<IEntityFixedInfusionDrug[]>;
-    }
+//    public async allFixedInfusionDrugs() {
+//        return this.infusionDrugs.where('isTitratable').equals(false) // boolean not a valid key
+//            .toArray() as Promise<IEntityInfusion[]>;
+//    }
 
     private async alignDB() {
         const updateData = await this.appData.get(appDataType.lastFetchServer);

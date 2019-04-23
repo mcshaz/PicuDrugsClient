@@ -1,7 +1,10 @@
 <template>
-  <b-form  class="needs-validation" novalidate>
-    <b-form-group for="name" label-cols-md="2" label="Name:">
-      <input class="form-control" type="text" id="name" v-model.trim="name" placeholder="Patient Name" autocomplete="off" />
+  <b-form :class="isFormSubmitted?'was-validated':''" novalidate 
+      @submit="submit" ref="form" class="card p-2">
+    <slot>
+    </slot>
+    <b-form-group label-for="name" label-cols-md="2" label="Name:">
+      <input class="form-control" type="text" name="name" id="name" v-model.trim="name" placeholder="Patient Name" autocomplete="off" />
     </b-form-group>
     <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
     <patient-age-data v-model="age" />
@@ -15,18 +18,24 @@
           </b-form-radio>
         </b-form-radio-group>
     </b-form-group>
-    <b-form-group for="weeksGestation" label-cols-md="2" label="Gestation:">
-      <b-input-group append="weeks">
-        <input class="form-control" id="weeksGestation" v-model.number="weeksGestation" 
+    <b-form-group label-for="weeksGestation" label-cols-md="2" label="Gestation:">
+      <b-input-group append="weeks" invalid-feedback="a number between 22 &amp; 43 weeks is required" >
+        <input class="form-control" name="weeksGestation" id="weeksGestation" v-model.number="weeksGestation" 
             placeholder="Weeks Gestation" type="number" min="22" max="43" required
             :disabled="!age||age.years>=2"
         />
       </b-input-group>
     </b-form-group>
-    <b-form-group for="weight" label-cols-md="2" label="Weight:" :state="alertLevel===''?null:(alertLevel==='success')"
+    <b-form-group label-for="weight" label-cols-md="2" label="Weight:" :state="wtState()"
           :class="alertLevel===''?'':'was-validated'" @blur="debounceCentiles.flush()" >
-        <template :slot="alertLevel==='success'?'valid-feedback':'invalid-feedback'">
-          <output v-if="lbWtCentile!==null" name="centile">
+        <template slot="invalid-feedback" v-if="pWeightKg===''&&wtTouched">
+          Weight is required
+        </template>
+        <template slot="invalid-feedback" v-else-if="pWeightKg<minWeight||pWeightKg>maxWeight">
+          Weight must be {{minWeight}} – {{maxWeight}} kg
+        </template>
+        <template :slot="alertLevel==='success'?'valid-feedback':'invalid-feedback'" v-else>
+          <output v-if="lbWtCentile!==null" name="centile" id="centile" ref="centile">
             <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span><span class="val">{{lbWtCentile.val}}</span><sup class="suffix">{{lbWtCentile.suffix}}</sup>
             <span v-if="ubWtCentile">
               –
@@ -35,18 +44,19 @@
             centile
           </output>
           <div>
-            <b-form-checkbox v-model="acceptWtWarn" id="acceptWtWarn" :value="true" required
+            <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn" :value="true" required
                  v-if="alertLevel==='warning'||alertLevel==='danger'">
               I confirm this is the correct weight
             </b-form-checkbox>
           </div>
         </template>
       <b-input-group append="kg">
-        <input class="form-control" id="weight" v-model.number="weightKg" placeholder="Weight" type="number" required 
-            :min="minWeight()" :max="maxWeight()" autocomplete="off" />
+        <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" type="number" required ref="weight"
+            :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
       </b-input-group>
     </b-form-group>
-    <b-button class="ml-md-5" type="submit" :variant="alertLevel">Submit</b-button>
+    <hr />
+    <b-button type="submit" :variant="alertLevel" >Submit</b-button>
   </b-form>
 </template>
 
@@ -68,22 +78,25 @@ type nullBool = null | boolean;
   components: { PatientAgeData, NhiInput },
 })
 export default class PatientAgeWeightData extends Vue {
-  public name: string = '';
-  public nhi: string = '';
+  public name = '';
+  public nhi = '';
   public weeksGestation: vueNumber = 40;
-  public alertLevel: string = '';
+  public alertLevel = '';
   public lbWtCentile: ICentileVal | null = null;
   public ubWtCentile: ICentileVal | null = null;
-  public isErrorWt: boolean = false;
-  public acceptWtWarn: boolean = false;
+  public wtTouched = false;
+  public isFormSubmitted = false;
+  public minWeight = minWeightRecord();
+  public maxWeight = maxWeightRecord();
 
+  private pAcceptWtWarn = false;
   private pAge: ChildAge | null = null;
   private pIsMale: nullBool = null;
   private pWeightKg: vueNumber = '';
   private nhiValidState: nullBool = null;
-  private debounceCentiles = _.debounce(this.updateCentiles.bind(this), 333);
+  private debounceCentiles = _.debounce(this.updateCentiles.bind(this), 400);
 
-//not to be watched
+// not to be watched
   private wtData!: UKWeightData;
 
   public created() {
@@ -93,7 +106,13 @@ export default class PatientAgeWeightData extends Vue {
   public get weightKg() { return this.pWeightKg; }
   public set weightKg(value: vueNumber) {
     this.pWeightKg = value;
-    this.debounceCentiles();
+    this.wtTouched = true;
+    if (value === '') {
+      this.debounceCentiles.cancel();
+      this.updateCentiles();
+    } else {
+      this.debounceCentiles();
+    }
   }
 
   public get isMale() { return this.pIsMale; }
@@ -110,17 +129,44 @@ export default class PatientAgeWeightData extends Vue {
     this.updateCentiles();
   }
 
-  public minWeight() {
-    return minWeightRecord(this.age ? ChildAge.getMinTotalDays(this.age) / daysPerMonth : void 0);
+  public get acceptWtWarn() { return this.pAcceptWtWarn; }
+  public set acceptWtWarn(value: boolean) {
+    this.pAcceptWtWarn = value;
+    (this.$refs.weight as HTMLInputElement).setCustomValidity(value ? '' : 'centiles');
+    if (value && this.alertLevel === 'danger') {
+      this.alertLevel = 'warning';
+    }
   }
 
-  public maxWeight() {
-    return maxWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age) / daysPerMonth : void 0);
+  public wtState() {
+    if (!this.wtTouched) {
+      return null;
+    }
+    return (this.$refs.weight as HTMLInputElement).checkValidity();
+  }
+
+  public submit(evt: Event) {
+    this.isFormSubmitted = this.wtTouched = true;
+    evt.preventDefault();
+    evt.stopPropagation();
+    if ((this.$refs.form as HTMLFormElement).checkValidity()) {
+      this.$emit('valid-submit', {
+        name: this.name,
+        nhi: this.nhi,
+        weeksGestation: this.weeksGestation,
+        age: this.pAge,
+        isMale: this.pIsMale,
+        weightKg: this.pWeightKg,
+        centileHTML: this.$refs.centile ? (this.$refs.centile as HTMLOutputElement).innerHTML : '',
+      });
+    }
   }
 
   private updateCentiles() {
     if (!this.pWeightKg || !this.pAge) {
       this.ubWtCentile = this.lbWtCentile = null;
+      this.minWeight = minWeightRecord();
+      this.maxWeight = maxWeightRecord();
       return;
     }
     const ageDays = this.pAge.getAgeRangeInDays();
@@ -143,17 +189,18 @@ export default class PatientAgeWeightData extends Vue {
         this.alertLevel = alertLevel(Math.round((this.lbWtCentile.alarm + this.ubWtCentile.alarm) / 2));
       }
     }
+    this.acceptWtWarn = this.alertLevel === 'success';
+    this.minWeight = minWeightRecord(ChildAge.getMinTotalDays(this.pAge) / daysPerMonth);
+    this.maxWeight = maxWeightRecord(ChildAge.getMaxTotalDays(this.pAge) / daysPerMonth);
   }
 }
 
 function alertLevel(level: alarmLevel) {
   switch (level) {
     case alarmLevel.none:
-      return 'success';
     case alarmLevel.minorWarning:
-      return 'dark';
+      return 'success';
     case alarmLevel.warning:
-      return 'warning';
     case alarmLevel.danger:
       return 'danger';
   }
@@ -161,22 +208,11 @@ function alertLevel(level: alarmLevel) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-#nhi {
-  text-transform: uppercase;
+<style>
+input.form-control.warning:valid {
+  border-color: #fd7e14;
 }
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+input[type='number'] {
+  max-width: 7.5em;
 }
 </style>

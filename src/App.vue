@@ -42,10 +42,27 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <router-view/>
+    <b-container>
+      <router-view/>
+    </b-container>
   </div>
 </template>
+<script lang="ts">
+import 'reflect-metadata';
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { drugDbContainer, IDrugDB, TYPES } from '@/services/db';
 
+@Component({
+  name: 'App',
+  // Provides IoC container at the top level of VueComponent
+  provide: {
+    db: drugDbContainer.get<IDrugDB>(TYPES.IDrugDB),
+  },
+})
+export default class App extends Vue {
+}
+</script>
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

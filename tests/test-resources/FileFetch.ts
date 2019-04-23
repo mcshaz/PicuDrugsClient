@@ -2,7 +2,7 @@ import { IServerChanges, IFetch  } from '@/services/db';
 
 const fileFetch: IFetch = {
     async getUpdates(lastServerCheckUtc: Date | null) {
-        let fileName = './tests/test-resources/newdb.json';
+        let fileName = process.env.VUE_APP_BASE_URL! + process.env.VUE_APP_DBJSON!;
         if (new Function('try {return this===global;}catch(e){return false;}')()) {
             const fs = await import('fs');
             const path = await import('path');

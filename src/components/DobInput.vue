@@ -1,6 +1,6 @@
 <template>
     <div :class="pState===null?'':'was-validated'" >
-        <b-form-group label="DOB:" for="dob" label-cols-md="2" :state="pState" >
+        <b-form-group label="DOB:" label-for="dob" label-cols-md="2" :state="pState" >
             <template slot="invalid-feedback">
                 must be between {{min.toLocaleDateString()}} and {{max.toLocaleDateString()}}
             </template>
@@ -9,9 +9,9 @@
             <b-input-group v-else>
                 <input class="form-control" type="date" :min="minStr" :max="maxStr" :value-as-date.prop="value" 
                     @blur="onBlur()" @input.passive="dob=$event.target.valueAsDate" 
-                    v-if="isDateSupported===dateElSupport.valueAsDateSupport" id="dob" />
+                    v-if="isDateSupported===dateElSupport.valueAsDateSupport" name="dob" id="dob" />
                 <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dobStr" 
-                    @blur="onBlur()" v-else id="dob" />
+                    @blur="onBlur()" v-else name="dob" id="dob" />
                 <b-input-group-append :is-text="true">
                     <font-awesome-icon icon="calendar-alt" />
                 </b-input-group-append>
@@ -21,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 import DateInputPollyfill from '@/components/DateInputPollyfill.vue';
 import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
@@ -34,7 +35,7 @@ enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 })
 export default class DobInput extends Vue {
     public readonly isDateSupported: dateElSupport;
-    public readonly dateElSupport: object;
+    public readonly dateElSupport: typeof dateElSupport;
     private pDateStr!: string;
     private pDob: Date | null = null;
     private pState: boolean | null = null;
@@ -175,4 +176,7 @@ function isDateSupported() {
 </script>
 
 <style>
+input[type='date'] {
+    max-width: 12em;
+}
 </style>

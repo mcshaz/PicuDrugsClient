@@ -1,15 +1,15 @@
 <template>
     <div :class="nhiState===null?'':'was-validated'" >
-        <b-form-group for="nhi" label-cols-md="2" label="NHI:" :state="nhiState" >
-            <input class="form-control" type="text" id="nhi" v-model.trim="nhi" placeholder="NHI" 
+        <b-form-group label-for="nhi" label-cols-md="2" label="NHI:" :state="nhiState" >
+            <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI" 
                    autocomplete="off" :pattern="nhiPattern" :minlength="nhiLength" :maxlength="nhiLength" 
                    ref="nhi" @blur="validate()" />
-            <template slot="invalid-feedback" v-if="!explainChecksum">
+            <template slot="invalid-feedback" v-if="validationResult===validationResults.regExp||validationResult===validationResults.length">
                 Must be 3 letters (NO 'I's or 'O's) followed by 4 numbers
             </template>
-            <template slot="invalid-feedback" v-else>
+            <template slot="invalid-feedback" v-else-if="validationResult===validationResults.checkSum">
                 A letter or number is mistyped 
-                <b-button class="btn-link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
+                <b-button variant="link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
             </template>
         </b-form-group>
         <!-- Modal Component -->
@@ -44,10 +44,11 @@ enum nhiValidationResult { na, pass, simPass, length, regExp, checkSum }
 @Component
 export default class NhiInput extends Vue {
     public nhiState: null | boolean = null;
-    public explainChecksum = false;
     public nhiPattern!: string;
     public readonly simNHI = simNHI;
     public readonly nhiLength = nhiLength;
+    public validationResult = nhiValidationResult.na;
+    public validationResults = nhiValidationResult;
 
     @Prop() private readonly value!: string;
     private pNhi: string = '';
@@ -61,21 +62,13 @@ export default class NhiInput extends Vue {
     public set nhi(value: string) {
         this.pNhi = value.toUpperCase();
         this.$emit('input', value);
-        if (value.length < nhiLength) {
-            if (this.nhiState !== null) {
-                this.setCustomValidity(nhiValidationResult.na);
-                this.$emit('valid-state-change', this.nhiState = null);
-            }
-        } else {
-            this.validate();
-        }
+        this.validate(value.length < nhiLength);
     }
 
-    public validate() {
-        const valResult = validateNhi(this.nhi, this.nhiPattern);
-        this.explainChecksum = valResult === nhiValidationResult.checkSum;
+    public validate(isBeingEntered = false) {
+        this.validationResult = validateNhi(this.nhi, this.nhiPattern);
         let newState: boolean | null;
-        switch (valResult) {
+        switch (this.validationResult) {
           case nhiValidationResult.pass:
           case nhiValidationResult.simPass:
             newState = true;
@@ -83,30 +76,29 @@ export default class NhiInput extends Vue {
           case nhiValidationResult.na:
             newState = null;
             break;
+          case nhiValidationResult.length:
+            newState = isBeingEntered ? null : false;
+            break;
           default:
             newState = false;
             break;
         }
+        (this.$refs.nhi as HTMLInputElement).setCustomValidity(this.validationResult === nhiValidationResult.checkSum
+              ? 'Checksum Error'
+              : '');
         if (this.nhiState !== newState) {
             this.nhiState = newState;
             this.$emit('valid-state-change', newState);
-            this.setCustomValidity(valResult);
         }
     }
-
-    private setCustomValidity(valResult: nhiValidationResult) {
-        (this.$refs.nhi as HTMLInputElement).setCustomValidity(valResult === nhiValidationResult.checkSum
-            ? 'Checksum Error'
-            : '');
-    }
 }
+
 function validateNhi(nhi: string, pattern: string = createNHIRx()) {
-    if (!nhi) { return nhiValidationResult.na; }
+    if (!nhi || nhi.length === 0) { return nhiValidationResult.na; }
     if (nhi.length !== nhiLength) { return nhiValidationResult.length; }
     if (!new RegExp(pattern).test(nhi)) {
         return nhiValidationResult.regExp;
     }
-    nhi = nhi.toUpperCase();
     if (nhi === simNHI) { return nhiValidationResult.simPass; }
     if (!mod11check(nhi)) {
         return nhiValidationResult.checkSum;
@@ -156,7 +148,10 @@ function mod11check(str: string) {
     }
     cum += val * multiplier--;
   }
-  return checkSum === 11 - cum % 11;
+  const modulus = cum % 11;
+  return modulus > 1
+    ? (checkSum === 11 - modulus)
+    : (modulus + checkSum === 11);
 }
 </script>
 
@@ -164,19 +159,6 @@ function mod11check(str: string) {
 <style scoped>
 #nhi {
   text-transform: uppercase;
-}
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+  max-width: 12em;
 }
 </style>

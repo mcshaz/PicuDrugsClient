@@ -1,5 +1,5 @@
-import { IEntityInfusion } from './entities/InfusionDrugs/IEntityInfusionDrug';
 import 'reflect-metadata';
+import { IEntityInfusion } from './entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityWard } from './entities/IEntityWard';
 import { IDrugDB } from './Injectables/IDrugDB';
 import { TYPES } from './types';
