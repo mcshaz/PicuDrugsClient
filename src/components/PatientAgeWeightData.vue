@@ -22,8 +22,7 @@
       <b-input-group append="weeks" invalid-feedback="a number between 22 &amp; 43 weeks is required" >
         <input class="form-control" name="weeksGestation" id="weeksGestation" v-model.number="weeksGestation" 
             placeholder="Weeks Gestation" type="number" min="22" max="43" required
-            :disabled="!age||age.years>=2"
-        />
+            :disabled="!age||age.years>=2" />
       </b-input-group>
     </b-form-group>
     <b-form-group label-for="weight" label-cols-md="2" label="Weight:" :state="wtState()"

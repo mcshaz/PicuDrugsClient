@@ -4,18 +4,22 @@
         lead="Rescitation ± ICU infusion charts" />
     <PatientAgeWeightData>
       <b-form-group label-for="ward" label-cols-md="2" label="Ward:" invalid-feedback="Please select a ward">
-        <b-form-select v-model="ward" :options="wards" required>
+        <b-form-select v-model="selectedWardId" :options="wardOptions" required>
           <template slot="first">
-            <option :value="-1" disabled>Please select a ward</option>
+            <option :value="null" disabled>Please select a ward</option>
           </template>
         </b-form-select>
       </b-form-group>
-      <b-form-group label-cols-md="2" label="chart type:" invalid-feedback="Please select at least 1 chart"
+      <b-form-group label-cols-md="2" label="Chart type:" invalid-feedback="Please select at least 1 chart"
           :state="boluses||infusions">
-        <b-form-checkbox-group id="chart-type-group" name="charts">
-          <b-form-checkbox v-model="boluses">Bolus Drugs</b-form-checkbox>
-          <b-form-checkbox v-model="infusions" :disabled="!infusionsAvailable">Infusions</b-form-checkbox>
-        </b-form-checkbox-group>>
+        <div role="group" tabindex="-1">
+          <b-form-checkbox class="custom-control-inline" v-model="boluses" name="boluses" :required="!infusions" :state="boluses||infusions">
+            Bolus Drugs
+          </b-form-checkbox>
+          <b-form-checkbox class="custom-control-inline" v-model="infusions" :disabled="!infusionsAvailable" name="infusions" :required="!boluses" :state="boluses||infusions">
+            Infusions
+          </b-form-checkbox>
+        </div>
       </b-form-group>
     </PatientAgeWeightData>
   </div>
@@ -67,10 +71,10 @@ export default class Home extends Vue {
   public get selectedWardId() {
     return this.pSelectedWard
       ? this.pSelectedWard.wardId
-      : -1;
+      : null;
   }
-  public set selectedWardId(value: number) {
-    this.pSelectedWard = value === -1
+  public set selectedWardId(value: number | null) {
+    this.pSelectedWard = value === null
       ? void 0
       : this.wards.find((w) => w.wardId === value);
     if (this.pSelectedWard) {

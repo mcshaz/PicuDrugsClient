@@ -50,7 +50,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
         super('DrugsDBLocal' + isTest ? '_test' : '');
         this.updateProvider = updateProvider;
         this.logger = logger;
-        this.version(2).stores({
+        this.version(1).stores({
             wards: 'wardId',
             infusionDrugs: 'infusionDrugId',
             bolusDrugs: 'bolusDrugId',

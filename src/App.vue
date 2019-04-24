@@ -16,7 +16,7 @@
               <font-awesome-icon icon="file-prescription" />
               Resus Charts
             </b-dropdown-item>
-            <b-dropdown-item href="#">
+            <b-dropdown-item to="/infusions">
               <font-awesome-icon icon="syringe" />
               Infusions
               <font-awesome-icon icon="calculator" /></b-dropdown-item>

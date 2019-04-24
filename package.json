@@ -39,7 +39,8 @@
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
-    "vue-router": "^3.0.5"
+    "vue-router": "^3.0.5",
+    "vue-single-select": "^1.0.29"
   },
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.87.0",
