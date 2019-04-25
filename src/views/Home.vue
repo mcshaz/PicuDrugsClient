@@ -4,7 +4,7 @@
         lead="Rescitation ± ICU infusion charts" />
     <PatientAgeWeightData @valid-submit="submit" >
       <b-form-group label-for="ward" label-cols-md="2" label="Ward:" invalid-feedback="Please select a ward">
-        <b-form-select v-model="selectedWardId" :options="wardOptions" required>
+        <b-form-select v-model="selectedWardId" :options="wardOptions" required name="ward" >
           <template slot="first">
             <option :value="null" disabled>Please select a ward</option>
           </template>

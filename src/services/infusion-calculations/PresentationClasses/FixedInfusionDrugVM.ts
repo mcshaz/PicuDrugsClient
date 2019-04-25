@@ -6,29 +6,23 @@ import { SiUnitMeasure } from './Dosing/SiUnitMeasure';
 import { IFixedInfusionPeriodVM } from './IFixedInfusionPeriodVM';
 
 export class FixedInfusionDrugVM implements IInfusionDrugVM {
-  public drugName: string = '';
+  public drugName!: string;
   public sourceDescription: string = '';
   public sourceHref: string = '';
   public route: string = '';
   public note: string = '';
-  public ampuleConcentration: number = 0;
-  public ampuleUnits: SiConcentration | null = null;
+  public ampuleConcentration!: number;
+  public ampuleUnits!: SiConcentration;
   public diluentFluid: string = '';
   public concentrations: IFixedInfusionPeriodVM[] = [];
-  get CalculatedDoseUnit(): DrugDoseUnit | null {
-    if (!this.rateUnit) {
-      return null;
-    }
+  get CalculatedDoseUnit(): DrugDoseUnit {
     return this.rateUnit.toDrugDoseUnit();
   }
-  public rateUnit: InfusionRateUnit | null = null;
-  set drawingUpUnits(value: SiUnitMeasure | null) {
-    this.ampuleUnits = value ? null : new SiConcentration(value!);
+  public rateUnit!: InfusionRateUnit;
+  set drawingUpUnits(value: SiUnitMeasure) {
+    this.ampuleUnits = new SiConcentration(value);
   }
-  get drawingUpUnits(): SiUnitMeasure | null {
-    if (this.ampuleUnits === null) {
-      return null;
-    }
+  get drawingUpUnits(): SiUnitMeasure {
     return this.ampuleUnits;
   }
 }

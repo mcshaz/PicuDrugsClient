@@ -15,6 +15,13 @@ export interface IInfusionInfo {
 
 export interface IEntityInfusion extends IInfusionInfo {
     infusionDrugId: number;
+    drugAmpuleConcentrations: IEntityDrugAmpuleConcentration[];
+}
+
+
+export interface IEntityDrugAmpuleConcentration {
+    concentration: number;
+    volume: number;
 }
 
 export interface IAgeWeightSelectable {

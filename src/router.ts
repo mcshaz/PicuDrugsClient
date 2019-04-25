@@ -14,7 +14,7 @@ export default new Router({
       name: 'home',
       component: Home,
     }, {
-      path: '/infusions',
+      path: '/infusions/:abbrev?',
       name: 'infusions',
       component: Infusions,
     },
