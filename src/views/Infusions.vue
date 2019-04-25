@@ -3,16 +3,11 @@
     <b-jumbotron header="Drug Calculator" 
         lead="Individual drug infusions" />
     <PatientAgeWeightData>
-      <b-form-group label-for="drug" label-cols-md="2" label="Drug:" invalid-feedback="Please select a drug">
-          <vue-bootstrap-typeahead
-            required
-            v-model="drugName"
-            :serializer="d=>d.fullname"
-            :data="drugs"
-            :minMatchingChars="1"
-            @hit="setSelected($event)"
-            placeholder="Search for infusion"
-          />
+      <b-form-group label-for="drug" label-cols-md="2" label="Drug:" 
+          invalid-feedback="Please select a drug" :state="!!selectedDrugVM">
+        <vue-single-select placeholder="please select a drug" 
+            label="fullname" v-model="selectedDrugVM" textField="label" keyField="id"
+            :filterBy="filterSearch" :options="searchableDrugs" :required="true" />
       </b-form-group>
     </PatientAgeWeightData>
   </div>
@@ -22,48 +17,50 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject } from 'vue-property-decorator';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
-import { IEntityFixedInfusionDrug, IDrugDB, appDataType, IWardDefaults } from '@/services/db';
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
+import { IEntityInfusion, IDrugDB, appDataType, IWardDefaults } from '@/services/db';
+import VueSingleSelect from '@/components/vendor/VueSingleSelect.vue';
+
+interface ISearchableDrug { label: string; id: number; searchable: string; }
 
 @Component({
   components: {
     PatientAgeWeightData,
-    VueBootstrapTypeahead,
+    VueSingleSelect,
   },
 })
-export default class Home extends Vue {
-  public drugs: IEntityFixedInfusionDrug[] = [];
+export default class Infusions extends Vue {
+  public searchableDrugs: ISearchableDrug[] = [];
+  public pSelectedDrugVM: ISearchableDrug | null = null;
 
-  private selectedDrug?: IEntityFixedInfusionDrug;
-  private pDrugName = '';
-
+  private drugs!: IEntityInfusion[];
+  private selectedDrug?: IEntityInfusion;
   @Inject('db')
   private db!: IDrugDB;
 
   public created() {
     const drugsReady = this.db.infusionDrugs.toArray().then((data) => {
-      this.drugs = data.filter((i) => !(i as any).isTitratable) as IEntityFixedInfusionDrug[];
+      this.drugs = data; // data.filter((i) => !(i as any).isTitratable) as IEntityFixedInfusionDrug[];
+      this.searchableDrugs = data.map((d) => ({
+        label: d.fullname,
+        id: d.infusionDrugId,
+        searchable: (d.fullname + '|' + (d.abbrev || '')).toLowerCase() } as ISearchableDrug));
     });
     if (this.$route.query.drug) {
-      drugsReady.then(() => { this.setSelected(this.drugs.find((d) => d.fullname === this.$route.query.drug)); });
+      drugsReady.then(() => {
+        this.selectedDrug = this.drugs.find((d) => d.fullname === this.$route.query.drug);
+      });
     }
   }
 
-  public get drugName() { return this.pDrugName; }
-  public set drugName(value: string) {
-    this.pDrugName = value;
-    const matches = this.drugs.filter((d) => d.fullname === value);
-    this.selectedDrug = (matches.length === 1)
-      ? matches[0]
-      : void 0;
+  public get selectedDrugVM() { return this.pSelectedDrugVM; }
+  public set selectedDrugVM(value: ISearchableDrug | null) {
+    this.pSelectedDrugVM = value;
+    this.selectedDrug = value ? this.drugs.find((d) => d.infusionDrugId === value.id) : void 0;
   }
 
-  public setSelected(selectedDrug?: IEntityFixedInfusionDrug) {
-    this.selectedDrug = selectedDrug;
-    this.pDrugName = selectedDrug
-      ? selectedDrug.fullname
-      : '';
+  public filterSearch(option: ISearchableDrug, searchText: string) {
+    return option.searchable
+      .includes(searchText.toString().toLowerCase());
   }
-
 }
 </script>

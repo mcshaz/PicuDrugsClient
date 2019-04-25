@@ -2,7 +2,7 @@
   <div class="home">
     <b-jumbotron header="Drug Calculator" 
         lead="Rescitation ± ICU infusion charts" />
-    <PatientAgeWeightData>
+    <PatientAgeWeightData @valid-submit="submit" >
       <b-form-group label-for="ward" label-cols-md="2" label="Ward:" invalid-feedback="Please select a ward">
         <b-form-select v-model="selectedWardId" :options="wardOptions" required>
           <template slot="first">
@@ -29,6 +29,7 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject } from 'vue-property-decorator';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
+import { IPatientData } from '@/components/ComponentCommunication';
 import { IEntityWard, IDrugDB, appDataType, IWardDefaults } from '@/services/db';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
@@ -80,6 +81,12 @@ export default class Home extends Vue {
     if (this.pSelectedWard) {
       this.infusions = !this.pSelectedWard.defaultBolusOnly;
       this.infusionsAvailable = this.pSelectedWard.infusionDrugIds.length > 0;
+    }
+  }
+
+  public submit(data: IPatientData) {
+    if (this.infusions) {
+      this.$router.push('');
     }
   }
 }

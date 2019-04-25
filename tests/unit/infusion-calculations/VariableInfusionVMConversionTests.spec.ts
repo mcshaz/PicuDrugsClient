@@ -3,7 +3,7 @@ import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolera
 import { dilutionMethod, IEntityVariableInfusionDrug, siUnit } from '@/services/db';
 import { ToArrayMap, concatSets, toMap } from './utilities/toMap';
 import { fileFetch } from '../../test-resources/FileFetch';
-import { getVariableInfusionsForPt } from '@/services/infusion-calculations/Transformations/Calculations/getVariableInfusionsForPatient';
+import { getVariableInfusionsForPt } from '@/services/infusion-calculations/Transformations/Calculations/getVariableInfusionsForPt';
 import { IVariableInfusionDrugVM, NumericRange, InfusionRateUnit, SiUnitMeasure } from '@/services/infusion-calculations';
 import { transformVariableInfusions } from '@/services/infusion-calculations/Transformations/transformVariableInfusions';
 

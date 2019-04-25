@@ -18,3 +18,4 @@ export { EttDetails } from './Transformations/Calculations/EttDetails';
 export { NumericRange } from './Utilities/NumericRange';
 export { roundingMethod } from './Utilities/roundingMethod';
 export { getFixedDilutionsForPt } from './Transformations/Calculations/getFixedDilutionsForPt';
+export { getVariableInfusionsForPt } from './Transformations/Calculations/getVariableInfusionsForPt';

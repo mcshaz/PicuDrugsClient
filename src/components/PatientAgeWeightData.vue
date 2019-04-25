@@ -4,16 +4,17 @@
     <slot>
     </slot>
     <b-form-group label-for="name" label-cols-md="2" label="Name:">
-      <input class="form-control" type="text" name="name" id="name" v-model.trim="name" placeholder="Patient Name" autocomplete="off" />
+      <input class="form-control" type="text" name="name" id="name" v-model.trim="name" 
+          placeholder="Patient Name" autocomplete="off" :required="required" />
     </b-form-group>
     <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
-    <patient-age-data v-model="age" />
+    <patient-age-data v-model="age" :exact="required" />
     <b-form-group label-cols-md="2" label="Gender:">
-        <b-form-radio-group>
-          <b-form-radio id="maleRadio" v-model="isMale" :value="true">
+        <b-form-radio-group name="gender" >
+          <b-form-radio id="maleRadio" @change="isMale=$event" :value="true">
             Male
           </b-form-radio>
-          <b-form-radio id="femaleRadio" v-model="isMale" :value="false">
+          <b-form-radio id="femaleRadio" @change="isMale=$event" :value="false">
             Female
           </b-form-radio>
         </b-form-radio-group>
@@ -50,7 +51,8 @@
           </div>
         </template>
       <b-input-group append="kg">
-        <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" type="number" required ref="weight"
+        <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" 
+            type="number" required ref="weight"
             :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
       </b-input-group>
     </b-form-group>
@@ -88,6 +90,8 @@ export default class PatientAgeWeightData extends Vue {
   public minWeight = minWeightRecord();
   public maxWeight = maxWeightRecord();
 
+  @Prop({default: false})
+  private required!: boolean;
   private pAcceptWtWarn = false;
   private pAge: ChildAge | null = null;
   private pIsMale: nullBool = null;

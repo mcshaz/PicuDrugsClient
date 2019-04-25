@@ -3,7 +3,7 @@
         <div
             class="FormDate"
             @keydown.capture.passive="keydown"
-            @blur.capture.passive="emitBlur($event)" >
+            @blur.capture.passive="emitBlur" >
             <input
                 ref="first"
                 class="FormDate__input FormDate__input--day"
