@@ -22,15 +22,19 @@
         </div>
       </b-form-group>
     </PatientAgeWeightData>
+    <p v-if="link">
+      to provide a hyperlink to this ward in protocols etc., copy the link <a href="#">{{link}}</a>
+    </p>
   </div>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject } from 'vue-property-decorator';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 import { IPatientData } from '@/components/ComponentCommunication';
 import { IEntityWard, IDrugDB, appDataType, IWardDefaults } from '@/services/db';
+import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
@@ -45,42 +49,54 @@ export default class Home extends Vue {
   public infusionsAvailable = true;
   public wardOptions: ISelectOption[] = [];
 
-  private pSelectedWard?: IEntityWard;
+  private selectedWard: IEntityWard | null = null;
   private wards!: IEntityWard[];
   @Inject('db')
   private db!: IDrugDB;
+  @Prop({default: ''})
+  private wardName!: string;
+  private baseRef!: string;
 
   public created() {
     const wardsReady = this.db.wards.toArray().then((data) => {
       this.wards = data.filter((w) => w.isLive);
+      sortByStringProp(this.wards, 'fullname');
       this.wardOptions = this.wards.map((w) => ({ value: w.wardId, text: w.fullname } as ISelectOption));
     });
-    if (this.$route.query.ward) {
-      wardsReady.then(() => { this.pSelectedWard = this.wards.find((w) => w.abbrev === this.$route.query.ward); });
+    this.baseRef = window.location.origin + this.$route.path;
+    if (!this.baseRef.endsWith('/')) {
+      this.baseRef += '/';
+    }
+    if (this.wardName) {
+      this.baseRef = this.baseRef.slice(0, -1 - this.wardName.length);
+      wardsReady.then(() => {
+        const searchFor = this.wardName.toLowerCase();
+        this.selectedWard = this.wards.find((w) => w.abbrev.toLowerCase() === searchFor) || null;
+        });
     } else {
       this.db.appData.get(appDataType.wardDefaults).then((ad) => {
         if (ad) {
           const defaults = JSON.parse(ad.data) as IWardDefaults;
           this.boluses = defaults.boluses;
           this.infusions = defaults.infusions;
-          wardsReady.then(() => { this.pSelectedWard = this.wards.find((w) => w.wardId === defaults.wardId); });
+          wardsReady.then(() => { this.selectedWard = this.wards.find((w) => w.wardId === defaults.wardId) || null; });
         }
       });
     }
   }
 
   public get selectedWardId() {
-    return this.pSelectedWard
-      ? this.pSelectedWard.wardId
+    return this.selectedWard
+      ? this.selectedWard.wardId
       : null;
   }
   public set selectedWardId(value: number | null) {
-    this.pSelectedWard = value === null
-      ? void 0
-      : this.wards.find((w) => w.wardId === value);
-    if (this.pSelectedWard) {
-      this.infusions = !this.pSelectedWard.defaultBolusOnly;
-      this.infusionsAvailable = this.pSelectedWard.infusionDrugIds.length > 0;
+    this.selectedWard = value === null
+      ? null
+      : (this.wards.find((w) => w.wardId === value) || null);
+    if (this.selectedWard) {
+      this.infusions = !this.selectedWard.defaultBolusOnly;
+      this.infusionsAvailable = this.selectedWard.infusionDrugIds.length > 0;
     }
   }
 
@@ -88,6 +104,12 @@ export default class Home extends Vue {
     if (this.infusions) {
       this.$router.push('');
     }
+  }
+
+  public get link() {
+    return this.selectedWard
+      ? this.baseRef + encodeURIComponent(this.selectedWard.abbrev)
+      : '';
   }
 }
 </script>

@@ -7,7 +7,7 @@
       <div class="form-inline" :class="errMsg===null?'':'was-validated'">
         <b-input-group append="years" class="mr-2">
           <input class="form-control" name="years" id="years" v-model.number="years" placeholder="years" type="number"
-            min="0" :max="maxYears" ref="years" :required="exact||months!==''" step="1" />
+            min="0" :max="maxYears" ref="years" :required="exact||required||months!==''" step="1" />
         </b-input-group>
         <b-input-group append="months" class="mr-2">
           <input class="form-control" name="months" id="months" v-model.number="months" placeholder="months" type="number" 
@@ -40,6 +40,8 @@ export default class PatientAgeData extends Vue {
 
   @Prop({default: false})
   private exact!: boolean;
+  @Prop({default: false})
+  private required!: boolean;
   private pYears: vueNumber = '';
   private pMonths: vueNumber = '';
   private pDays: vueNumber = '';
@@ -142,11 +144,12 @@ export default class PatientAgeData extends Vue {
   }
 
   private ageDataChange() {
-    if (this.pYears === '' && this.pMonths === '' && this.pDays === '' ||
-        this.exact && (this.pMonths === '' || this.pDays === '')) {
-      this.errMsg = this.exact
-        ? 'exact age is required'
+    if (this.pYears === '' && this.pMonths === '' && this.pDays === '') {
+      this.errMsg = this.required || this.exact
+        ? 'age is required'
         : null;
+    } else if (this.exact && (this.pMonths === '' || this.pDays === '')) {
+      this.errMsg = 'exact age is required';
     } else if (this.pYears === '') {
       this.errMsg = 'years required (enter 0 if < 1year)';
     } else if (this.pYears === 0 && this.pMonths === '') {

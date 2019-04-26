@@ -5,10 +5,10 @@
     </slot>
     <b-form-group label-for="name" label-cols-md="2" label="Name:">
       <input class="form-control" type="text" name="name" id="name" v-model.trim="name" 
-          placeholder="Patient Name" autocomplete="off" :required="required" />
+          placeholder="Patient Name" autocomplete="off" />
     </b-form-group>
     <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
-    <patient-age-data v-model="age" :exact="required" />
+    <patient-age-data v-model="age" :exact="exactAge" :required="requireAnyAge" />
     <b-form-group label-cols-md="2" label="Gender:">
         <b-form-radio-group name="gender" >
           <b-form-radio id="maleRadio" @change="isMale=$event" :value="true">
@@ -91,7 +91,9 @@ export default class PatientAgeWeightData extends Vue {
   public maxWeight = maxWeightRecord();
 
   @Prop({default: false})
-  private required!: boolean;
+  private exactAge!: boolean;
+  @Prop({default: false})
+  private requireAnyAge!: boolean;
   private pAcceptWtWarn = false;
   private pAge: ChildAge | null = null;
   private pIsMale: nullBool = null;
