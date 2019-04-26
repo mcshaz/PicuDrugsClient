@@ -2,7 +2,7 @@
   <div class="home">
     <b-jumbotron header="Drug Calculator" 
         lead="Rescitation ± ICU infusion charts" />
-    <PatientAgeWeightData @valid-submit="submit" >
+    <PatientAgeWeightData @valid-submit="submit" :requireAnyAge="infusions">
       <b-form-group label-for="ward" label-cols-md="2" label="Ward:" invalid-feedback="Please select a ward">
         <b-form-select v-model="selectedWardId" :options="wardOptions" required name="ward" >
           <template slot="first">
@@ -32,7 +32,7 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
-import { IPatientData } from '@/components/ComponentCommunication';
+import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
 import { IEntityWard, IDrugDB, appDataType, IWardDefaults } from '@/services/db';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
@@ -56,6 +56,7 @@ export default class Home extends Vue {
   @Prop({default: ''})
   private wardName!: string;
   private baseRef!: string;
+  private defaultInfusion!: boolean;
 
   public created() {
     const wardsReady = this.db.wards.toArray().then((data) => {
@@ -78,7 +79,7 @@ export default class Home extends Vue {
         if (ad) {
           const defaults = JSON.parse(ad.data) as IWardDefaults;
           this.boluses = defaults.boluses;
-          this.infusions = defaults.infusions;
+          this.defaultInfusion = this.infusions = defaults.infusions;
           wardsReady.then(() => { this.selectedWard = this.wards.find((w) => w.wardId === defaults.wardId) || null; });
         }
       });
@@ -95,15 +96,20 @@ export default class Home extends Vue {
       ? null
       : (this.wards.find((w) => w.wardId === value) || null);
     if (this.selectedWard) {
-      this.infusions = !this.selectedWard.defaultBolusOnly;
-      this.infusionsAvailable = this.selectedWard.infusionDrugIds.length > 0;
+      this.infusionsAvailable = this.selectedWard.infusionSortOrderings.length > 0;
+      this.infusions = this.infusionsAvailable && !this.selectedWard.defaultBolusOnly;
     }
   }
 
   public submit(data: IPatientData) {
-    if (this.infusions) {
-      this.$router.push('');
+    if (this.selectedWard === null) {
+      throw new Error('validation failing - selectedWard was null but valid submit reached');
     }
+    const chartData = data as IWardChartData;
+    chartData.boluses = this.boluses;
+    chartData.infusions = this.infusions;
+    chartData.ward = this.selectedWard;
+    this.$router.push({ name: 'ward-chart', params: { chartData }} as any);
   }
 
   public get link() {

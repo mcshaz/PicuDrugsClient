@@ -17,3 +17,4 @@ export { ILogger} from './Injectables/ILogger';
 export { drugDbContainer } from './inversify.config';
 export { appDataType, IWardDefaults } from './entities/enums/appDataType';
 export { WardLists } from './WardLists';
+export { IEntityFixedDrug } from './entities/BolusDrugs/IFixedDrug';

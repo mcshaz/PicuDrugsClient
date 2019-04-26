@@ -35,8 +35,11 @@ export class NumericRange {
   public static op_Division(rng: NumericRange, divisor: number): NumericRange {
     return new NumericRange(rng.lowerBound / divisor, rng.upperBound / divisor);
   }
+  public static sigFigures(val: number, precision = 2) {
+    return Number((val).toPrecision(precision));
+  }
 
-  public rounding: roundingMethod = roundingMethod.noRounding;
+  public rounding: roundingMethod = roundingMethod.toPrecision;
   public separator: string = '–';
   private pLowerBound?: number;
   private pUpperBound?: number;
@@ -75,10 +78,7 @@ export class NumericRange {
       case roundingMethod.fixedDecimalPlaces:
         return val.toFixed(this.precision);
       case roundingMethod.toPrecision:
-        const returnVar = val.toPrecision(this.precision);
-        return returnVar.includes('e')
-          ? parseFloat(returnVar).toString()
-          : returnVar;
+        return NumericRange.sigFigures(val, this.precision).toString();
       default:
         throw new Error('unknown Rounding type');
     }

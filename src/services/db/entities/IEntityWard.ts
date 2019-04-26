@@ -14,6 +14,6 @@ export interface IEntityWard {
     isNicu: boolean;
     lastUpdated: Date;
 
-    infusionDrugIds: number[];
-    bolusDrugIds: Array<number | string>;
+    infusionSortOrderings: number[];
+    bolusSortOrderings: Array<number | string>;
 }

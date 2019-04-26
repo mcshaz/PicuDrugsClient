@@ -2,6 +2,7 @@ import { NumericRange } from '../../../Utilities/NumericRange';
 const msPerDay = 86400000; // 1000*60*60*24;
 export const daysPerYear = 365.25;
 export const daysPerMonth = daysPerYear / 12;
+const weeksPerMonth = daysPerMonth / 7;
 
 export interface IChildAge { years: number; months: number | null; days: number | null; }
 export interface IChildExactAge { years: number; months: number; days: number; }
@@ -83,8 +84,13 @@ export class ChildAge implements IChildAge {
     return ChildAge.getAgeRangeInDays(this);
   }
 
-  public totalMonthsEstimate() {
-    return this.years + (typeof this.months === 'number' ? this.months : 6);
+  public totalMonthsEstimate(gestAge = 40) {
+    const returnVar = this.years + (typeof this.months === 'number' ? this.months : 6)
+        + (typeof this.days === 'number' ? this.days : 0 ) / daysPerMonth
+        - (this.years >= 2 ? 0 : ((40 - gestAge) / weeksPerMonth));
+    return returnVar < 0
+      ? 0
+      : Math.round(returnVar);
   }
 
 
