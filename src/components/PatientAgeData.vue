@@ -5,11 +5,11 @@
       :state="errMsg===null?null:(errMsg==='')"
       :invalid-feedback="errMsg" >
       <div class="form-inline" :class="errMsg===null?'':'was-validated'">
-        <b-input-group append="years" class="mr-2">
+        <b-input-group append="years" class="mr-1">
           <input class="form-control" name="years" id="years" v-model.number="years" placeholder="years" type="number"
             min="0" :max="maxYears" ref="years" :required="exact||required||months!==''" step="1" />
         </b-input-group>
-        <b-input-group append="months" class="mr-2">
+        <b-input-group append="months" class="mr-1">
           <input class="form-control" name="months" id="months" v-model.number="months" placeholder="months" type="number" 
             min="0" max="160" ref="months" :required="exact||years===0" step="1" />
         </b-input-group>

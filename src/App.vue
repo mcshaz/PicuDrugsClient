@@ -42,7 +42,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <b-container>
+    <b-container fluid>
       <router-view/>
     </b-container>
   </div>
@@ -51,13 +51,14 @@
 import 'reflect-metadata';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { drugDbContainer, IDrugDB, TYPES } from '@/services/db';
+import { drugDbContainer, IDrugDB, TYPES, IAppData } from '@/services/db';
 
 @Component({
   name: 'App',
   // Provides IoC container at the top level of VueComponent
   provide: {
     db: drugDbContainer.get<IDrugDB>(TYPES.IDrugDB),
+    appData: drugDbContainer.get<IAppData>(TYPES.IAppData),
   },
 })
 export default class App extends Vue {

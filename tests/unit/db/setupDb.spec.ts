@@ -6,7 +6,7 @@ import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
 import { IFetch } from '@/services/db';
 import { appDataType } from '@/services/db/entities/enums/appDataType';
-import { IAppData } from '@/services/db/entities/IAppData';
+import { IDbAppData } from '@/services/db/entities/IAppData';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
 
 describe('setup full local db from JSON', () => {
@@ -54,7 +54,7 @@ describe('setup full local db from JSON', () => {
             });
         });
         it('has updated DB with server time', async () => {
-            const updates = await db.appData.get(appDataType.lastFetchServer) as IAppData;
+            const updates = await db.appData.get(appDataType.lastFetchServer) as IDbAppData;
             expect(updates.data, 'updates.data [date]').to.equal(updated.toString());
         });
     });

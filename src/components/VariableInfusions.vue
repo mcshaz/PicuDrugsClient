@@ -13,22 +13,22 @@
         </b-card-header>
         <b-collapse :id="'accordion'+indx" visible accordion="my-accordion" role="tabpanel">
             <b-card-body>
-            <b-card-text v-for="(conc) in drug.concentrations" :key="conc.oneMlHrDose">
-                <span>{{conc.detailName}}</span>
-                <span>{{round(conc.drawingUpDose)}}</span>
-                <span>{{drug.drawingUpUnits}}</span>
-                <span>{{conc.isNeat?'neat, total':'diluted to'}}</span>
-                <span>{{conc.finalVolume}}</span>
-                <span>ml</span>
-                <span>
-                    (<span>1ml/h = </span>
-                    <span>{{round(conc.oneMlHrDose)}}</span>
-                    <span>{{drug.rateUnit}}</span>)
-                </span>
-                <span>@</span>
-                <span>{{conc.flowRange}}</span>
-                <span>ml/h</span>
-            </b-card-text>
+                <b-card-text v-for="(conc) in drug.concentrations" :key="conc.oneMlHrDose">
+                    <span>{{conc.detailName}}</span>
+                    <span>{{round(conc.drawingUpDose)}}</span>
+                    <span>{{drug.drawingUpUnits}}</span>
+                    <span>{{conc.isNeat?'neat, total':'diluted to'}}</span>
+                    <span>{{conc.finalVolume}}</span>
+                    <span>ml</span>
+                    <span>
+                        (<span>1ml/h = </span>
+                        <span>{{round(conc.oneMlHrDose)}}</span>
+                        <span>{{drug.rateUnit}}</span>)
+                    </span>
+                    <span>@</span>
+                    <span>{{conc.flowRange}}</span>
+                    <span>ml/h</span>
+                </b-card-text>
             </b-card-body>
         </b-collapse>
       </div>
@@ -48,9 +48,11 @@ export default class VariableInfusions extends Vue {
     private chartPromise!: Promise<IVariableInfusionDrugVM[]>;
 
     public created() {
-        this.chartPromise.then((data) => {
-            this.chart = data;
-        });
+        if (this.chartPromise!) {
+            this.chartPromise.then((data) => {
+                this.chart = data;
+            });
+        }
     }
 
     public round(val: number) {

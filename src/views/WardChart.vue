@@ -22,19 +22,19 @@ export default class WardChart extends Vue {
   public infusions: Promise<IVariableInfusionDrugVM[]> | null = null;
   public boluses: Array<IEntityBolusDrug | IEntityFixedDrug | string> = [];
   @Prop({required: true})
-  private chartData?: IWardChartData;
+  private chartData!: IWardChartData;
   @Inject('db')
   private db!: IDrugDB;
   public created() {
     if (!this.chartData) {
-      this.$router.push({name: 'home'});
+      this.$router.replace({name: 'home'});
       return;
     }
     const wardList = new WardLists(this.db);
-    if (this.chartData.infusions) {
+    if (this.chartData!.infusions) {
       this.infusions = wardList.getVariableInfusions(this.chartData.ward).then((data) => {
-        const selected = getVariableInfusionsForPt(data, this.chartData!.age.totalMonthsEstimate(this.chartData!.weeksGestation), this.chartData!.weightKg);
-        return transformVariableInfusions(this.chartData!.weightKg, selected);
+        const selected = getVariableInfusionsForPt(data, this.chartData.age.totalMonthsEstimate(this.chartData.weeksGestation), this.chartData.weightKg);
+        return transformVariableInfusions(this.chartData.weightKg, selected);
       });
     }
     if (this.chartData.boluses) {
@@ -42,6 +42,7 @@ export default class WardChart extends Vue {
         this.boluses = data;
       });
     }
+    this.db.close();
   }
 }
 </script>

@@ -4,7 +4,7 @@ import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
 import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
-import { IAppData } from '../entities/IAppData';
+import { IDbAppData } from '../entities/IAppData';
 // import { IEntityFixedInfusionDrug } from '../entities/InfusionDrugs/IEntityFixedInfusionDrug';
 
 export interface IDrugDB {
@@ -13,6 +13,7 @@ export interface IDrugDB {
     bolusDrugs: Dexie.Table<IEntityBolusDrug, number>;
     defibModels: Dexie.Table<IEntityDefibModel, number>;
     fixedDrugs: Dexie.Table<IEntityFixedDrug, number>;
-    appData: Dexie.Table<IAppData, number>;
+    appData: Dexie.Table<IDbAppData, number>;
+    close: () => void;
     // allFixedInfusionDrugs: () => Promise<IEntityFixedInfusionDrug[]>;
 }

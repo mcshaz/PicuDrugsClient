@@ -4,8 +4,10 @@ module.exports = {
   },
   configureWebpack: {
     devtool: 'source-map',
-  }
+  },
+
 }
+// https://cli.vuejs.org/config/#publicpath
 /*
 process.env.VUE_APP_VERSION = require('./package.json').version;
 

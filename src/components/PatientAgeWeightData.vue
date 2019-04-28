@@ -1,6 +1,6 @@
 <template>
-  <b-form :class="isFormSubmitted?'was-validated':''" novalidate 
-      @submit="submit" ref="form" class="card p-2">
+  <form :class="isFormSubmitted?'was-validated':''" novalidate 
+      @submit.prevent="submit" ref="form" class="card p-2">
     <slot>
     </slot>
     <b-form-group label-for="name" label-cols-md="2" label="Name:">
@@ -57,8 +57,8 @@
       </b-input-group>
     </b-form-group>
     <hr />
-    <b-button type="submit" :variant="alertLevel" >Submit</b-button>
-  </b-form>
+    <b-button type="submit" :variant="alertLevel" >Create Chart</b-button>
+  </form>
 </template>
 
 <script lang="ts">
@@ -99,7 +99,7 @@ export default class PatientAgeWeightData extends Vue {
   private pIsMale: nullBool = null;
   private pWeightKg: vueNumber = '';
   private nhiValidState: nullBool = null;
-  private debounceCentiles = _.debounce(this.updateCentiles.bind(this), 400);
+  private debounceCentiles = _.debounce(this.updateCentiles.bind(this), 450);
 
 // not to be watched
   private wtData!: UKWeightData;
@@ -152,8 +152,6 @@ export default class PatientAgeWeightData extends Vue {
 
   public submit(evt: Event) {
     this.isFormSubmitted = this.wtTouched = true;
-    evt.preventDefault();
-    evt.stopPropagation();
     if ((this.$refs.form as HTMLFormElement).checkValidity()) {
       this.$emit('valid-submit', {
         name: this.name,

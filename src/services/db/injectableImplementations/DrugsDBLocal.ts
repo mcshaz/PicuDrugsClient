@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { IAppData } from '../entities/IAppData';
+import { IDbAppData } from '../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
 import Dexie from './../../../../../Dexie.js/dist/dexie'; // todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
@@ -32,7 +32,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
     public bolusDrugs!: Dexie.Table<IEntityBolusDrug, number>;
     public defibModels!: Dexie.Table<IEntityDefibModel, number>;
     public fixedDrugs!: Dexie.Table<IEntityFixedDrug, number>;
-    public appData!: Dexie.Table<IAppData, number>;
+    public appData!: Dexie.Table<IDbAppData, number>;
     private readonly updateProvider: IFetch;
     private readonly logger: ILogger;
     // ...other tables goes here...
