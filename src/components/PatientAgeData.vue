@@ -1,7 +1,7 @@
 <template>
   <div>
     <dob-input v-model="dob" @min-change="minDate=$event" />
-    <b-form-group id="ageymd" label="Age:" label-cols-md="2" 
+    <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2" 
       :state="errMsg===null?null:(errMsg==='')"
       :invalid-feedback="errMsg" >
       <div class="form-inline" :class="errMsg===null?'':'was-validated'">

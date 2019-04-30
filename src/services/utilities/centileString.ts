@@ -1,7 +1,7 @@
 
 type gtlt = '<' | '>' | '';
 type suffix =  'th' | 'st' | 'nd' | 'rd' | '';
-export interface ICentileVal { prefix: gtlt; val: number; suffix: suffix; alarm: alarmLevel; }
+export interface ICentileVal { prefix: gtlt; val: number; suffix: suffix; alarm: alarmLevel; note: string; }
 export enum alarmLevel { none, minorWarning, warning, danger }
 export function centileString(val: number): ICentileVal {
     if (val < 1) {
@@ -21,6 +21,7 @@ export function centileString(val: number): ICentileVal {
             suffix: val === 1 ? 'st' : '',
             val,
             alarm,
+            note: '',
         };
     }
     if (val > 99) {
@@ -40,6 +41,7 @@ export function centileString(val: number): ICentileVal {
             suffix: val === 99 ? 'th' : '',
             val,
             alarm,
+            note: '',
         };
     }
     val = Math.round(val);
@@ -48,6 +50,7 @@ export function centileString(val: number): ICentileVal {
         suffix: getSuffix(val),
         val,
         alarm: alarmLevel.none,
+        note: '',
     };
 }
 

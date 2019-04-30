@@ -1,5 +1,5 @@
 import { NumericRange } from '../../../Utilities/NumericRange';
-const msPerDay = 86400000; // 1000*60*60*24;
+export const msPerDay = 86400000; // 1000*60*60*24;
 export const daysPerYear = 365.25;
 export const daysPerMonth = daysPerYear / 12;
 const weeksPerMonth = daysPerMonth / 7;
@@ -52,7 +52,7 @@ export class ChildAge implements IChildAge {
 
   public static ageOnDate(dob: Date, current: Date = new Date()) {
     if (dob > current) {
-      throw new RangeError('DOB must bo on or before current');
+      throw new RangeError('DOB must be on or before current');
     }
     const returnVar: IChildExactAge = {
       years: current.getFullYear() - dob.getFullYear(),

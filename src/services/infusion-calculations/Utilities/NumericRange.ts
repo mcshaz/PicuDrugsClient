@@ -29,6 +29,9 @@ export class NumericRange {
     }
     this.pUpperBound = value;
   }
+  public get isEmpty(): boolean {
+    return this.pLowerBound === void 0 && this.pUpperBound === void 0;
+  }
   public static op_Multiply(rng: NumericRange, multiplier: number): NumericRange {
     return new NumericRange(rng.lowerBound * multiplier, rng.upperBound * multiplier);
   }
@@ -60,7 +63,7 @@ export class NumericRange {
     }
   }
   public toString(): string {
-    if (this.lowerBound === void 0 && this.upperBound === void 0) {
+    if (this.isEmpty) {
       throw new Error('toString called without upper or lower set');
     }
     if (this.lowerBound === void 0  || this.upperBound === this.lowerBound) {
@@ -70,6 +73,23 @@ export class NumericRange {
       return this.makeString(this.lowerBound as number);
     }
     return this.makeString(this.lowerBound as number) + this.separator + this.makeString(this.upperBound as number);
+  }
+  public avg(round = false) {
+    if (this.isEmpty) {
+      throw new Error('avg called without upper or lower set');
+    }
+    let returnVar: number;
+    if (this.lowerBound === void 0  || this.upperBound === this.lowerBound) {
+      returnVar = this.upperBound;
+    }
+    if (this.upperBound === void 0) {
+      returnVar = this.lowerBound;
+    } else {
+      returnVar =  (this.upperBound + this.lowerBound) / 2;
+    }
+    return round
+      ? Math.round(returnVar)
+      : returnVar;
   }
   private makeString(val: number): string {
     switch (this.rounding) {

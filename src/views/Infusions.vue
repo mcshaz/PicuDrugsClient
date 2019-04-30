@@ -3,13 +3,13 @@
     <b-jumbotron header="Drug Calculator" 
         lead="Individual drug infusions" />
     <PatientAgeWeightData :exactAge="selectedDrug&&!selectedDrug.isTitratable">
-      <b-form-group label-cols-md="2" label="Drug:" 
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Drug:" 
           invalid-feedback="Please select a drug" :state="!!selectedDrugVM">
         <vue-single-select placeholder="please select a drug" 
             label="fullname" v-model="selectedDrugVM" textField="label" keyField="id"
             :filterBy="filterSearch" :options="searchableDrugs" :required="true" />
       </b-form-group>
-      <b-form-group label-for="ampule" label-cols-md="2" label="Ampule:" 
+      <b-form-group label-for="ampule" label-cols-lg="2" label-cols-xl="2" label="Ampule:" 
             invalid-feedback="Please select an ampule">
         <b-form-select v-model="selectedAmpuleIndx" :options="ampules" required 
             :disabled="!ampules.length">

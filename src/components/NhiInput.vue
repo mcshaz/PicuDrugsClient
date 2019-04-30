@@ -1,6 +1,6 @@
 <template>
     <div :class="nhiState===null?'':'was-validated'" >
-        <b-form-group label-for="nhi" label-cols-md="2" label="NHI:" :state="nhiState" >
+        <b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="nhiState" >
             <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI" 
                    autocomplete="off" :pattern="nhiPattern" :minlength="nhiLength" :maxlength="nhiLength" 
                    ref="nhi" @blur="validate()" />

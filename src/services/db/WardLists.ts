@@ -32,15 +32,14 @@ export class WardLists {
         const boluses = await this.db.bolusDrugs.where('bolusDrugId')
             .anyOf(bolusIdsGt0.get(true)!)
             .toArray();
+        const returnVar = new Map<number, IEntityBolusDrug | IEntityFixedDrug>();
         if (bolusIdsGt0.get(false)) {
             const fixed = await this.db.fixedDrugs.where('fixedDrugId')
                     .anyOf(bolusIdsGt0.get(false)!.map((id) => -id))
                     .toArray();
             fixed.forEach((f) => returnVar.set(-f.fixedDrugId, f));
         }
-        const returnVar = new Map<number, IEntityBolusDrug | IEntityFixedDrug>();
         boluses.forEach((b) => returnVar.set(b.bolusDrugId, b));
-
 
         return ward.bolusSortOrderings.map((id) => typeof id === 'string'
             ? id

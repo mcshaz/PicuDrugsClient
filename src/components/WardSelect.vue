@@ -1,13 +1,13 @@
 <template>
   <div>
-    <b-form-group label-for="ward" label-cols-md="2" label="Ward:" invalid-feedback="Please select a ward">
+    <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:" invalid-feedback="Please select a ward">
       <b-form-select v-model="abbrev" :options="wardOptions" :required="true" name="ward" >
         <template slot="first">
           <option :value="''" disabled>Please select a ward</option>
         </template>
       </b-form-select>
     </b-form-group>
-    <b-form-group label-cols-md="2" label="Chart type:" invalid-feedback="Please select at least 1 chart"
+    <b-form-group label-cols-lg="2" label-cols-xl="2" label="Chart type:" invalid-feedback="Please select at least 1 chart"
         :state="boluses||infusions">
       <div role="group" tabindex="-1">
         <b-form-checkbox class="custom-control-inline" @change="$emit('boluses', $event)" 

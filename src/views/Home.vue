@@ -2,15 +2,15 @@
   <div class="home">
     <b-jumbotron header="Drug Calculator" 
         lead="Rescitation ± ICU infusion charts" />
-    <b-row>
-      <b-col lg="8">
+    <b-row align-h="end">
+      <b-col xl="6" lg="7" >
         <PatientAgeWeightData @valid-submit="submit" :requireAnyAge="infusions">
           <ward-select @ward="ward=$event" :ward-abbrev="wardName||defaultWardAbbrev"
               @boluses="boluses=$event" :boluses="boluses"
-              @infusions="infusions=$event" :infusions="boluses" />
+              @infusions="infusions=$event" :infusions="infusions" />
         </PatientAgeWeightData>
       </b-col>
-      <b-col lg="4">
+      <b-col xl="5" lg="5" >
         <b-card header="Did you know:">
           <b-card-body>
             <ul>
@@ -18,7 +18,7 @@
                 you can permanently set the <router-link to="/browser-defaults">default selections for this page</router-link>.
               </li>
               <li v-if="link">
-                to provide a hyperlink to this ward in protocols etc., copy the link <a href="#" @click.prevent >{{link}}</a>
+                to provide a hyperlink to this ward in protocols etc., copy the link <a href="#" target="_self" >{{link}}</a>
               </li>
             </ul>
           </b-card-body>
@@ -88,6 +88,8 @@ export default class Home extends Vue {
     chartData.boluses = this.boluses;
     chartData.infusions = this.infusions;
     chartData.ward = this.ward;
+    this.appData.setWardDefaults(
+        { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false});
     this.$router.push({ name: 'ward-chart', params: { chartData }} as any);
   }
 

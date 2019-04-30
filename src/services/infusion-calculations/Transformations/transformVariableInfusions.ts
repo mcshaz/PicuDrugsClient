@@ -10,6 +10,7 @@ export function transformVariableInfusions(weight: number, infusions: IPatientVa
   for (const inf of infusions) {
     const d = {
       drugName: inf.fullname,
+      diluent: inf.infusionDiluent.abbrev,
       link: inf.drugReferenceSource.hyperlink + inf.dilution.referencePage,
       doseRange: new NumericRange(inf.dilution.rateMin, inf.dilution.rateMax),
       note: inf.note || '',

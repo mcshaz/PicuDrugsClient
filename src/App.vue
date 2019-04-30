@@ -20,7 +20,7 @@
               <font-awesome-icon icon="syringe" />
               Infusions
               <font-awesome-icon icon="calculator" /></b-dropdown-item>
-            <b-dropdown-item href="#">
+            <b-dropdown-item to="/centiles">
               <font-awesome-icon icon="ruler" />
               Centiles
             </b-dropdown-item>

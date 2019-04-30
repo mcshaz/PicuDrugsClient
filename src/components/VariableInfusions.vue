@@ -13,7 +13,8 @@
         </b-card-header>
         <b-collapse :id="'accordion'+indx" visible accordion="my-accordion" role="tabpanel">
             <b-card-body>
-                <b-card-text v-for="(conc) in drug.concentrations" :key="conc.oneMlHrDose">
+                
+                <b-card-text v-for="(conc, cIndx) in drug.concentrations" :key="conc.oneMlHrDose" :class="cIndx%2===0?'even':'odd'" >
                     <span>{{conc.detailName}}</span>
                     <span>{{round(conc.drawingUpDose)}}</span>
                     <span>{{drug.drawingUpUnits}}</span>
@@ -60,3 +61,11 @@ export default class VariableInfusions extends Vue {
     }
 }
 </script>
+<style>
+a[aria-expanded="true"] {
+    background-color: green;
+}
+.even {
+    background-color: lightgray;
+}
+</style>

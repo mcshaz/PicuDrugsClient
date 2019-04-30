@@ -42,7 +42,6 @@ export default class WardChart extends Vue {
         this.boluses = data;
       });
     }
-    this.db.close();
   }
 }
 </script>

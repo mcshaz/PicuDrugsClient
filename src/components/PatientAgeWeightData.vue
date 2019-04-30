@@ -3,30 +3,15 @@
       @submit.prevent="submit" ref="form" class="card p-2">
     <slot>
     </slot>
-    <b-form-group label-for="name" label-cols-md="2" label="Name:">
+    <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:">
       <input class="form-control" type="text" name="name" id="name" v-model.trim="name" 
           placeholder="Patient Name" autocomplete="off" />
     </b-form-group>
     <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
     <patient-age-data v-model="age" :exact="exactAge" :required="requireAnyAge" />
-    <b-form-group label-cols-md="2" label="Gender:">
-        <b-form-radio-group name="gender" >
-          <b-form-radio id="maleRadio" @change="isMale=$event" :value="true">
-            Male
-          </b-form-radio>
-          <b-form-radio id="femaleRadio" @change="isMale=$event" :value="false">
-            Female
-          </b-form-radio>
-        </b-form-radio-group>
-    </b-form-group>
-    <b-form-group label-for="weeksGestation" label-cols-md="2" label="Gestation:">
-      <b-input-group append="weeks" invalid-feedback="a number between 22 &amp; 43 weeks is required" >
-        <input class="form-control" name="weeksGestation" id="weeksGestation" v-model.number="weeksGestation" 
-            placeholder="Weeks Gestation" type="number" min="22" max="43" required
-            :disabled="!age||age.years>=2" />
-      </b-input-group>
-    </b-form-group>
-    <b-form-group label-for="weight" label-cols-md="2" label="Weight:" :state="wtState()"
+    <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
+    <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
+    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" :state="wtState()"
           :class="alertLevel===''?'':'was-validated'" @blur="debounceCentiles.flush()" >
         <template slot="invalid-feedback" v-if="pWeightKg===''&&wtTouched">
           Weight is required
@@ -36,10 +21,17 @@
         </template>
         <template :slot="alertLevel==='success'?'valid-feedback':'invalid-feedback'" v-else>
           <output v-if="lbWtCentile!==null" name="centile" id="centile" ref="centile">
-            <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span><span class="val">{{lbWtCentile.val}}</span><sup class="suffix">{{lbWtCentile.suffix}}</sup>
+            <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span>
+            <span class="val">{{lbWtCentile.val}}</span>
+            <sup class="suffix">{{lbWtCentile.suffix}}</sup>
+            <span class="note">{{lbWtCentile.note}}</span>
             <span v-if="ubWtCentile">
-              –
-              <span class="prefix">{{ubWtCentile.prefix}}&nbsp;</span><span class="val">{{ubWtCentile.val}}</span><sup class="suffix">{{ubWtCentile.suffix}}</sup>
+            –
+            <span class="prefix">{{ubWtCentile.prefix}}
+            &nbsp;
+            </span><span class="val">{{ubWtCentile.val}}</span>
+            <sup class="suffix">{{ubWtCentile.suffix}}</sup>
+            <span class="note">{{ubWtCentile.note}}</span>
             </span>
             centile
           </output>
@@ -55,6 +47,19 @@
             type="number" required ref="weight"
             :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
       </b-input-group>
+      <b-button variant="outline-primary" :disabled="!!weightKg||!age" @click="wt4age" >
+          Median Weight For Age
+      </b-button>
+    </b-form-group>
+    <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
+        <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate" >
+          <b-form-radio id="estimate" :value="true">
+            estimated weight
+          </b-form-radio>
+          <b-form-radio id="exact" :value="false">
+            exact weight
+          </b-form-radio>
+        </b-form-radio-group>
     </b-form-group>
     <hr />
     <b-button type="submit" :variant="alertLevel" >Create Chart</b-button>
@@ -66,8 +71,10 @@ import 'reflect-metadata';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import NhiInput from '@/components/NhiInput.vue';
-import { ChildAge, daysPerMonth } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
-import { UKWeightData } from '@/services/anthropometry/';
+import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
+import WeeksGestation from '@/components/WeeksGestation.vue';
+import { ChildAge, daysPerMonth, GenericRange } from '@/services/infusion-calculations';
+import { UKWeightData, Lms } from '@/services/anthropometry/';
 import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString';
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import _ from 'lodash';
@@ -76,7 +83,7 @@ type vueNumber = number | '';
 type nullBool = null | boolean;
 
 @Component({
-  components: { PatientAgeData, NhiInput },
+  components: { PatientAgeData, NhiInput, TrueFalseRadio, WeeksGestation },
 })
 export default class PatientAgeWeightData extends Vue {
   public name = '';
@@ -89,6 +96,7 @@ export default class PatientAgeWeightData extends Vue {
   public isFormSubmitted = false;
   public minWeight = minWeightRecord();
   public maxWeight = maxWeightRecord();
+  public isWeightEstimate = false;
 
   @Prop({default: false})
   private exactAge!: boolean;
@@ -150,6 +158,19 @@ export default class PatientAgeWeightData extends Vue {
     return (this.$refs.weight as HTMLInputElement).checkValidity();
   }
 
+  public wt4age() {
+    const rng = this.lmsRange();
+    if (!rng.lowerBound) {
+      throw new Error('cannot get lms for age - no data');
+    }
+    this.isWeightEstimate = true;
+    if (!rng.upperBound) {
+      this.weightKg = Math.round(rng.lowerBound.m);
+    } else {
+      this.weightKg = Math.round((rng.lowerBound.m + rng.upperBound.m) / 2);
+    }
+  }
+
   public submit(evt: Event) {
     this.isFormSubmitted = this.wtTouched = true;
     if ((this.$refs.form as HTMLFormElement).checkValidity()) {
@@ -161,25 +182,26 @@ export default class PatientAgeWeightData extends Vue {
         isMale: this.pIsMale,
         weightKg: this.pWeightKg,
         centileHTML: this.$refs.centile ? (this.$refs.centile as HTMLOutputElement).innerHTML : '',
+        isWeightEstimate: this.isWeightEstimate,
       });
     }
   }
 
   private updateCentiles() {
-    if (!this.pWeightKg || !this.pAge) {
+    const rng = this.lmsRange();
+    if (this.pWeightKg === '' || rng.lowerBound === void 0) {
       this.ubWtCentile = this.lbWtCentile = null;
       this.minWeight = minWeightRecord();
       this.maxWeight = maxWeightRecord();
       return;
     }
-    const ageDays = this.pAge.getAgeRangeInDays();
-    const lbWtCentile = this.wtData.cumSnormForAge(this.pWeightKg, ageDays.upperBound, this.pIsMale === null ? true : this.pIsMale, this.weeksGestation || 40) * 100;
+    const lbWtCentile = rng.lowerBound.cumSnormfromParam(this.pWeightKg) * 100;
     this.lbWtCentile = centileString(lbWtCentile);
-    if (this.isMale !== null && ageDays.lowerBound === ageDays.upperBound) {
+    if (rng.upperBound === void 0) {
       this.ubWtCentile = null;
       this.alertLevel = alertLevel(this.lbWtCentile.alarm);
     } else {
-      const ubWtCentile = this.wtData.cumSnormForAge(this.pWeightKg, ageDays.lowerBound, this.pIsMale === null ? false : this.pIsMale, this.weeksGestation || 40) * 100;
+      const ubWtCentile = rng.upperBound.cumSnormfromParam(this.pWeightKg) * 100;
       const ucs = centileString(ubWtCentile);
       if (ucs.val === this.lbWtCentile.val) {
         this.ubWtCentile = null;
@@ -189,12 +211,30 @@ export default class PatientAgeWeightData extends Vue {
         if (ucs.prefix === this.lbWtCentile.prefix) {
           ucs.prefix = this.lbWtCentile.prefix = '';
         }
+        if (this.pIsMale === null) {
+          this.lbWtCentile.note = '♂';
+          ucs.note = '♀';
+        }
         this.alertLevel = alertLevel(Math.round((this.lbWtCentile.alarm + this.ubWtCentile.alarm) / 2));
       }
     }
     this.acceptWtWarn = this.alertLevel === 'success';
-    this.minWeight = minWeightRecord(ChildAge.getMinTotalDays(this.pAge) / daysPerMonth);
-    this.maxWeight = maxWeightRecord(ChildAge.getMaxTotalDays(this.pAge) / daysPerMonth);
+    this.minWeight = minWeightRecord(ChildAge.getMinTotalDays(this.pAge!) / daysPerMonth);
+    this.maxWeight = maxWeightRecord(ChildAge.getMaxTotalDays(this.pAge!) / daysPerMonth);
+  }
+
+  private lmsRange() {
+    const returnVar = new GenericRange<Lms>();
+    if (!this.pAge) {
+      return returnVar;
+    }
+    const ageDays = this.pAge.getAgeRangeInDays();
+    returnVar.lowerBound = this.wtData.lmsForAge(ageDays.upperBound, this.pIsMale === null ? true : this.pIsMale, this.weeksGestation || 40);
+    if (this.isMale !== null && ageDays.lowerBound === ageDays.upperBound) {
+      return returnVar;
+    }
+    returnVar.upperBound = this.wtData.lmsForAge(ageDays.lowerBound, this.pIsMale === null ? false : this.pIsMale, this.weeksGestation || 40);
+    return returnVar;
   }
 }
 
@@ -216,6 +256,6 @@ input.form-control.warning:valid {
   border-color: #fd7e14;
 }
 input[type='number'] {
-  max-width: 7.5em;
+  max-width: 7.3em;
 }
 </style>

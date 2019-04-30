@@ -5,6 +5,7 @@ import { IVariableConcentrationDetailVM } from './VariableConcentrationDetailVM'
 
 export interface IVariableInfusionDrugVM {
   drugName: string;
+  diluent?: string;
   doseRange: NumericRange;
   rateUnit: InfusionRateUnit;
   link: string;
