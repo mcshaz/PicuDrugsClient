@@ -19,6 +19,13 @@ export class Lms {
         return (Math.pow(param / this.m, this.l) - 1) / (this.l * this.s);
     }
 
+    public paramFromZ(zScore: number) {
+        if (this.l === 0) {
+            return Math.exp(this.s * zScore);
+        }
+        return this.m * Math.pow(1 + (this.l * this.s * zScore), 1 / this.l);
+    }
+
     public cumSnormfromParam(param: number) {
         return cumSnorm(this.zFromParam(param));
     }
