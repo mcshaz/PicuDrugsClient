@@ -5,10 +5,10 @@ export class LmsForAgeMonths extends AgeRange {
     constructor(ageMin: number, lmsForAgeMonths: ReadonlyArray<Lms>) {
         super (ageMin, lmsForAgeMonths);
     }
-    public lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
+    public toAgeUnits(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
         const ageDaysSinceTerm = ageDaysSinceBirth > ceaseCorrectingAtDaysOfAge
             ? ageDaysSinceBirth
             : ageDaysSinceBirth - 7 * (termGestationWeeks - gestAgeWeeksAtBirth);
-        return this.isValueInRange(ageDaysSinceTerm / daysPerMonth);
+        return ageDaysSinceTerm / daysPerMonth;
     }
 }

@@ -54,5 +54,4 @@ export class MassData {
         const lbm = this.leanBodyMass();
         return lbm + fSex * (this.massKg - lbm);
     }
-
 }

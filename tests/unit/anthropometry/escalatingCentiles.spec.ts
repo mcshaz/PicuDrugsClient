@@ -45,11 +45,11 @@ describe('Centiles', () => {
                 });
             }
             it(description + ' does not overlap age definitions', () => {
-                expect(currentRange.gestAgeData.maxLookup - 40)
-                    .to.be.lessThan(currentRange.ageWeeksData.minLookup);
+                expect(currentRange.gestAgeData.maxAge - 40)
+                    .to.be.lessThan(currentRange.ageWeeksData.minAge);
 
-                expect(currentRange.ageWeeksData.maxLookup)
-                    .to.be.lessThan(currentRange.ageMonthsData.minLookup * weeksPerMonth);
+                expect(currentRange.ageWeeksData.maxAge)
+                    .to.be.lessThan(currentRange.ageMonthsData.minAge * weeksPerMonth);
             });
         }
     }

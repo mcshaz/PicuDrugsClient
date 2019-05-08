@@ -8,7 +8,7 @@ export class LmsForAgeWeeks extends AgeRange {
             throw new Error('This class does not yet account for cease correcting for gest age - change code to account');
         }
     }
-    public lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
-        return this.isValueInRange(ageDaysSinceBirth / 7 - (termGestationWeeks - gestAgeWeeksAtBirth));
+    public toAgeUnits(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
+        return ageDaysSinceBirth / 7 - (termGestationWeeks - gestAgeWeeksAtBirth);
     }
 }

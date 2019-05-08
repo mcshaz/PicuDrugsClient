@@ -14,27 +14,25 @@ export interface IRangeMatchResult {
 }
 
 export abstract class AgeRange {
-    public readonly minLookup: number;
-    public readonly maxLookup: number;
+    public readonly minAge: number;
+    public readonly maxAge: number;
     constructor(minAge: number, readonly lookup: ReadonlyArray<Lms>) {
         if (!Number.isInteger(minAge)) {
             throw new Error('min must be an integer');
         }
         if (minAge < 0) { throw new RangeError('min must be >=0'); }
-        this.minLookup = minAge;
-        this.maxLookup = minAge + lookup.length - 1;
+        this.minAge = minAge;
+        this.maxAge = minAge + lookup.length - 1;
     }
-    public isValueInRange(value: number): IRangeMatchResult {
-        if (value < this.minLookup) {
-            return { matchResult: searchComparison.lessThanMin, lookupValue: value };
-        }
-        if (value > this.maxLookup) {
-            return { matchResult: searchComparison.greaterThanMax, lookupValue: value };
-        }
-        return { matchResult: searchComparison.inRange, result: this.linearInterpolate(value) } ;
+    public abstract toAgeUnits(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer): number;
+    public lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
+        const ageUnits = this.toAgeUnits(ageDaysSinceBirth, gestAgeWeeksAtBirth);
+        return this.findStats(ageUnits);
     }
-
-    public abstract lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer): IRangeMatchResult;
+    public isAgeIncluded(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
+        const ageUnits = this.toAgeUnits(ageDaysSinceBirth, gestAgeWeeksAtBirth);
+        return this.isValueInRange(ageUnits);
+    }
 
     public minLms() {
         return this.lookup[0];
@@ -43,15 +41,32 @@ export abstract class AgeRange {
     public maxLms() {
         return this.lookup[this.lookup.length - 1];
     }
-
-    protected linearInterpolate(lookupValue: number) {
-        const min = lookupValue - this.minLookup;
-        if (Number.isInteger(min)) {
-            return this.lookup[min];
+    protected findStats(value: number): IRangeMatchResult {
+        const returnVar = { matchResult: this.isValueInRange(value) } as IRangeMatchResult;
+        if (returnVar.matchResult === searchComparison.inRange) {
+            returnVar.result = this.findAndlinearInterpolate(value);
+        } else {
+            returnVar.lookupValue = value;
         }
-        const minInt = Math.floor(min);
+        return returnVar;
+    }
+    protected isValueInRange(value: number): searchComparison {
+        if (value < this.minAge) {
+            return searchComparison.lessThanMin;
+        }
+        if (value > this.maxAge) {
+            return searchComparison.greaterThanMax;
+        }
+        return searchComparison.inRange;
+    }
+    protected findAndlinearInterpolate(age: number) {
+        const minLookup = age - this.minAge;
+        if (Number.isInteger(minLookup)) {
+            return this.lookup[minLookup];
+        }
+        const minInt = Math.floor(minLookup);
         return this.lookup[minInt]
-            .linearInterpolate(this.lookup[minInt + 1], min - minInt);
+            .linearInterpolate(this.lookup[minInt + 1], minLookup - minInt);
     }
 }
 
