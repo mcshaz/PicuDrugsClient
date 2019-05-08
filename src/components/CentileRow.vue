@@ -125,7 +125,7 @@ export default class CentileRow extends Vue implements ICentileVals {
             returnVar = UKBMIData.calculateBMI(this.wtKg, this.lengthCm);
             returnVar = Number(returnVar.toFixed(1));
         }
-        this.$emit('bmi', returnVar);
+        this.$emit('bmi-change', returnVar);
         return returnVar;
     }
     public get wtCentile() {
