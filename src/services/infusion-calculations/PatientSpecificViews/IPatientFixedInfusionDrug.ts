@@ -1,5 +1,5 @@
 
-import { IEntityDrugAmpuleConcentration, IInfusionInfo, IEntityFixedConcentration, IDilutionInfo } from '@/services/db';
+import { IEntityDrugAmpuleConcentration, IInfusionInfo, IEntityFixedConcentration, IDilutionInfo } from '@/services/drugDb';
 
 export interface IPatientFixedConcentration extends IEntityFixedConcentration {
     durationMinutes: number;

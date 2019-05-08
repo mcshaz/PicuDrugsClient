@@ -1,4 +1,4 @@
-import * as fieldConst from '@/services/db/helpers/fieldConstants';
+import * as fieldConst from '@/services/drugDb/helpers/fieldConstants';
 import { ChildAge } from './ChildAge';
 
 export class PatientDetails {

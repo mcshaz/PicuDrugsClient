@@ -1,7 +1,7 @@
-import { minWeight, maxWeight } from '@/services/db/helpers/fieldConstants';
+import { minWeight, maxWeight } from '@/services/drugDb/helpers/fieldConstants';
 import { filterByAgeWeight, IAgeWeightDetails } from '../../helpers/ageWeightSelectors';
 import { IPatientVariableInfuionDrug } from '../../PatientSpecificViews/IPatientVariableInfusionDrug';
-import { IEntityVariableInfusionDrug } from '@/services/db';
+import { IEntityVariableInfusionDrug } from '@/services/drugDb';
 import { mapProperties } from '../../helpers/mapProperties';
 
 export function getVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug[], ageMonths: number, weightKg: number): IPatientVariableInfuionDrug[] {

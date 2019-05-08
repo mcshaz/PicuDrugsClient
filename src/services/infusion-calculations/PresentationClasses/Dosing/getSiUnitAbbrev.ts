@@ -1,4 +1,4 @@
-import { siUnit } from '@/services/db';
+import { siUnit } from '@/services/drugDb';
 
 const unitAbbreviations: string[] = [
   'g', 'unit', 'mol', 'J', 'L',

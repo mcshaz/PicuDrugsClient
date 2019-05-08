@@ -16,7 +16,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import WardSelect from '@/components/WardSelect.vue';
 import { IPatientData } from '@/components/ComponentCommunication';
-import { IAppData } from '@/services/db';
+import { IAppData } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }

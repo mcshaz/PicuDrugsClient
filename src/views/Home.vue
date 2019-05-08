@@ -34,7 +34,7 @@ import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 import WardSelect from '@/components/WardSelect.vue';
 import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
-import { IEntityWard, IDrugDB, IAppData } from '@/services/db';
+import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }

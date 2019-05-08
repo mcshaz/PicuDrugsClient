@@ -190,8 +190,7 @@ export default class DateInputPollyfill extends Vue {
     private emitBlur(evt: FocusEvent) {
         const relatedTarget = evt.relatedTarget;
         if (relatedTarget !== this.$refs.year && relatedTarget !== this.$refs.month && relatedTarget !== this.$refs.year) {
-            // tslint:disable-next-line:triple-equals
-            if (this.pDate != this.value) {
+            if ((this.pDate && this.pDate.getTime()) !== (this.value && this.value.getTime())) {
                 this.$emit('change', this.pDate);
             }
             this.$emit('blur', evt);

@@ -30,7 +30,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { SiUnitMeasure } from '@/services/infusion-calculations';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
-import { IEntityInfusion, IDrugDB, appDataType } from '@/services/db';
+import { IEntityInfusion, IDrugDB, appDataType } from '@/services/drugDb';
 import VueSingleSelect from '@/components/vendor/VueSingleSelect.vue';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 

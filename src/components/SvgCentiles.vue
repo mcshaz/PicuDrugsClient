@@ -175,7 +175,6 @@ export default class SvgCentiles extends Mixins(Ready) {
         const lab = this.centileLines.yLabels;
         const transform = this.centileLines.transformY;
         const y0 = transform(0);
-        console.log('x-axis');
         return {
             labels: new Array(lab.count).fill(0).map((u, indx) => {
                 const val = lab.start + indx * lab.increment;
@@ -195,7 +194,6 @@ export default class SvgCentiles extends Mixins(Ready) {
         if (!this.centileLines) { return this.emptyArray; }
         const transform = this.centileLines.transformX;
         const x0 = transform(0);
-        console.log('y-axes');
         return this.centileLines.xLabels.map((l) => ({
             title: labelAgeUnits[l.units],
             labels: new Array(l.count).fill(0).map((u, indx) => {

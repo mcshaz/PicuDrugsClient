@@ -1,4 +1,4 @@
-import { IServerChanges, IFetch  } from '@/services/db';
+import { IServerChanges, IFetch  } from '@/services/drugDb';
 
 const fileFetch: IFetch = {
     async getUpdates(lastServerCheckUtc: Date | null) {

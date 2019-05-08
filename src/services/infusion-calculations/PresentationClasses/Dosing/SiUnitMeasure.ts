@@ -1,7 +1,7 @@
 
 import { getPrefix } from './getPrefix';
 import { getSiUnitAbbrev} from './getSiUnitAbbrev';
-import { siUnit } from '@/services/db';
+import { siUnit } from '@/services/drugDb';
 export class SiUnitMeasure {
   get isUserSafePrefix(): boolean {
     return this.logSi === -3;

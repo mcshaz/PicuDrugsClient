@@ -4,8 +4,8 @@ import { IInfusionDrugVM } from '../PresentationClasses/Interfaces/IInfusionDrug
 import { IConcentrationDetailVM } from '../PresentationClasses/Interfaces/IConcentrationDetailVM';
 import { getVariableDilutionVolumeMls } from './Calculations/getVariableDilutionVolumeMls';
 import { getDilutionMethod } from './Calculations/getDilutionMethod';
-import * as fieldConst from '@/services/db/helpers/fieldConstants';
-import { IVariableDilutionInfo } from '@/services/db';
+import * as fieldConst from '@/services/drugDb/helpers/fieldConstants';
+import { IVariableDilutionInfo } from '@/services/drugDb';
 import { IPatientInfuionDrug } from '../PatientSpecificViews/IPatientInfusionDrug';
 import { IPatientFixedConcentration } from '../PatientSpecificViews/IPatientFixedInfusionDrug';
 

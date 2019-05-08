@@ -1,10 +1,10 @@
-import { DrugsDBLocal  } from '@/Services/db';
-import { IEntityFixedDrug } from '@/Services/db/entities/BolusDrugs/IFixedDrug';
-import { IEntityBolusDrug } from '@/Services/db/entities/BolusDrugs/IEntityBolusDrug';
-import { IEntityDefibModel } from '@/Services/db/entities/IEntityDefibModel';
-import { IEntityInfusion } from '@/Services/db/entities/InfusionDrugs/IEntityInfusionDrug';
-import { IEntityWard } from '@/Services/db/entities/IEntityWard';
-import { dbTableName } from '@/services/db/entities/enums/dbTableName';
+import { DrugsDBLocal  } from '@/services/drugDb';
+import { IEntityFixedDrug } from '@/services/drugDb/entities/BolusDrugs/IFixedDrug';
+import { IEntityBolusDrug } from '@/services/drugDb/entities/BolusDrugs/IEntityBolusDrug';
+import { IEntityDefibModel } from '@/services/drugDb/entities/IEntityDefibModel';
+import { IEntityInfusion } from '@/services/drugDb/entities/InfusionDrugs/IEntityInfusionDrug';
+import { IEntityWard } from '@/services/drugDb/entities/IEntityWard';
+import { dbTableName } from '@/services/drugDb/entities/enums/dbTableName';
 import Dexie from './../../../../Dexie.js/dist/dexie';
 
 export interface IDexieTable<Tentity> {

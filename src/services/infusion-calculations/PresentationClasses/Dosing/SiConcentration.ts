@@ -1,5 +1,5 @@
 import { SiUnitMeasure } from './SiUnitMeasure';
-import { siUnit } from '@/services/db';
+import { siUnit } from '@/services/drugDb';
 export class SiConcentration extends SiUnitMeasure {
   public perSeperator: string;
   constructor(measure: SiUnitMeasure);

@@ -1,4 +1,4 @@
-import { dilutionMethod, siUnit, IEntityFixedInfusionDrug} from '@/services/db';
+import { dilutionMethod, siUnit, IEntityFixedInfusionDrug} from '@/services/drugDb';
 import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolerance of 1 x 10-6
 import { FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit,  MinutesDuration, getFixedDilutionsForPt } from '@/services/infusion-calculations';
 import chai from 'chai';

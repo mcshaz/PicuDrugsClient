@@ -3,11 +3,14 @@
     <b-jumbotron header="Drug Calculator" 
             lead="Centile Data" />
     <form @submit.prevent ref="base-data" class="card p-2" id="patientData-data">
+        <nhi-input v-model="nhi" @valid-state-change="lookupNhi($event)" />
         <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
         <weeks-gestation v-model="weeksGestation" />
         <dob-input v-model="dob" />
         <b-container fluid>
             <b-row class="justify-content-md-left">
+              <b-col>
+              </b-col>
               <b-col>
                   Date
               </b-col>
@@ -53,12 +56,31 @@
               @length-change="m.lengthCm=$event"
               @bmi-change="m.bmi=$event"
               @date-change="m.measureDate=$event"
+              @delete-row="deleteRow(m.rowId)"
               class="was-validated"
           />
         </b-container>
         <b-button-group>
-          <b-button :disabled="!canAdd" :variant="canAdd?'success':'warning'" @click="addRow" >Add measurements</b-button>
-          <b-button @click="sort" >Sort</b-button>
+          <b-button :disabled="!canAdd" :variant="canAdd?'success':'warning'" @click="addRow" >
+            <font-awesome-icon icon="calendar-plus" />
+            Add data
+            <font-awesome-icon icon="ruler" />
+          </b-button>
+          <b-button @click="sort" >
+            <font-awesome-icon icon="sort-amount-down" />
+            Sort
+          </b-button>
+          <b-button :disabled="disableSave" :variant="disableSave?'warning':'success'" @click="save">
+            <font-awesome-icon icon="save" />
+            Save
+              <transition name="fade">
+                <font-awesome-icon v-if="saved" icon="check" />
+              </transition>
+          </b-button>
+          <b-button variant="danger" @click="clear">
+            <font-awesome-icon icon="eraser" />
+            Clear All
+          </b-button>
         </b-button-group>
     </form>
     <b-modal id="centile-modal" ref="centile-modal" hide-footer ok-only :title="chartType+' centiles'" :lazy="true">
@@ -79,8 +101,10 @@ import CentileRow from '@/components/CentileRow.vue';
 import { ICentileVals } from '@/components/CentileRow.vue';
 import { sortByDateProp } from '@/services/utilities/sortByProp';
 import SvgCentiles from '@/components/SvgCentiles.vue';
+import NhiInput from '@/components/NhiInput.vue';
 import { chartType } from '@/components/SvgCentiles.vue';
 import { msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
+import { PatientDBLocal, IGrowthMeasures, IPatient } from '@/services/patientDb';
 
 type vueNumber = number | '';
 interface IIdCentileVals extends ICentileVals { rowId: number; }
@@ -94,13 +118,16 @@ interface IIdCentileVals extends ICentileVals { rowId: number; }
     bmiCentiles: new UKBMIData(),
   },
   components: {
-    DobInput, WeeksGestation, TrueFalseRadio, CentileRow, SvgCentiles,
+    DobInput, WeeksGestation, TrueFalseRadio, CentileRow, SvgCentiles, NhiInput,
   },
 })
 export default class Centiles extends Vue {
+  public nhi = '';
+  public isNhiValid = false;
   public isMale: null | boolean = null;
   public weeksGestation: vueNumber = 40;
   public dob: Date | null = null;
+  public saved = false;
   public today = new Date();
   public measurements: IIdCentileVals[] = [];
   // graph properties
@@ -108,9 +135,12 @@ export default class Centiles extends Vue {
   public plotPoints: IAnthropometry[] = [];
 
   private rowId!: number;
+  private patientDb!: PatientDBLocal;
 
   public created() {
-    this.rowId = 0;
+    this.rowId = 1197;
+    this.patientDb = new PatientDBLocal();
+    this.today.setHours(0, 0, 0, 0);
   }
 
   public get canAdd() {
@@ -120,7 +150,7 @@ export default class Centiles extends Vue {
   public addRow() {
     this.measurements.push({
       rowId: this.rowId++,
-      measureDate: this.measurements.length ? null : this.today,
+      measureDate: this.measurements.some((m) => (m.measureDate && m.measureDate.getTime()) === this.today.getTime()) ? null : this.today,
       today: this.today,
       wtKg: '',
       hcCm: '',
@@ -131,6 +161,75 @@ export default class Centiles extends Vue {
 
   public sort() {
     sortByDateProp(this.measurements, 'measureDate');
+  }
+
+  public clear() {
+    this.nhi = '';
+    this.isMale = null;
+    this.weeksGestation = 40;
+    this.dob = null;
+    this.measurements = [];
+  }
+
+  public get disableSave() {
+    return !this.isNhiValid || this.dob === null || this.isMale === null;
+  }
+
+  public async save() {
+    this.sort();
+    const saveData = {
+      weeksGestation: this.weeksGestation || 40,
+      dob: this.dob!,
+      isMale: this.isMale!,
+      measurements: this.measurements.reduce((prev, m) => {
+        if (m.measureDate && (m.wtKg || m.hcCm || m.lengthCm)) {
+          prev.push({
+            date: m.measureDate,
+            weightKg: m.wtKg || void 0,
+            hcCm: m.hcCm || void 0,
+            lengthCm: m.lengthCm || void 0,
+          });
+        }
+        return prev;
+      }, [] as IGrowthMeasures[]),
+    }  as IPatient;
+    // not doing a put here in case in the future we have saved other details such as name we did not wish to overwrite
+    if (!await this.patientDb.patients.update(this.nhi, saveData)) {
+      saveData.nhi = this.nhi;
+      await this.patientDb.patients.add(saveData);
+    }
+    this.saved = true;
+    const self = this;
+    setTimeout(() => self.saved = false, 2000);
+  }
+
+  public deleteRow(rowId: number) {
+    const indx = this.measurements.findIndex((m) => m.rowId === rowId);
+    if (indx !== -1) {
+      this.measurements.splice(indx, 1);
+    }
+  }
+
+  public async lookupNhi(isNhiValid: boolean) {
+    this.isNhiValid = isNhiValid;
+    if (isNhiValid) {
+      const data = await this.patientDb.patients.get(this.nhi);
+      if (data) {
+        this.weeksGestation = data.weeksGestation;
+        this.dob = data.dob;
+        this.isMale = data.isMale;
+        this.measurements = data.measurements.map((m) => ({
+            rowId: this.rowId++,
+            measureDate: m.date,
+            today: this.today,
+            wtKg: m.weightKg || '' as vueNumber,
+            hcCm: m.hcCm || '' as vueNumber,
+            lengthCm: m.lengthCm || '' as vueNumber,
+            bmi: '' as vueNumber,
+        }));
+        this.addRow();
+      }
+    }
   }
 
   public chart(chartName: chartType) {
@@ -185,5 +284,14 @@ function chartTypeToMeasurement(chartName: chartType): keyof IIdCentileVals {
     border: 0;
     min-height: 100%;
     height: auto;
+}
+.fade-enter-active {
+  transition: opacity 0.5s;
+}
+.fade-leave-active {
+  transition: opacity 1.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

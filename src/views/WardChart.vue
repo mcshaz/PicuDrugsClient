@@ -10,7 +10,7 @@ import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
 import VariableInfusions from '@/components/VariableInfusions.vue';
 import { IWardChartData } from '@/components/ComponentCommunication';
-import { WardLists, IDrugDB, IEntityBolusDrug, IEntityFixedDrug } from '@/services/db';
+import { WardLists, IDrugDB, IEntityBolusDrug, IEntityFixedDrug } from '@/services/drugDb';
 import { getVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM } from '@/services/infusion-calculations';
 
 @Component({

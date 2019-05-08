@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { IDbAppData } from '../entities/IAppData';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
-import Dexie from './../../../../../Dexie.js/dist/dexie'; // todo - return to node import once fixes released released
+import Dexie from '../../../../../Dexie.js/dist/dexie'; // todo - return to node import once fixes released released
 import { IEntityWard } from '../entities/IEntityWard';
 import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
@@ -39,15 +39,15 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
 
     constructor(@inject(TYPES.IFetch) updateProvider: IFetch,
                 @inject(TYPES.ILogger) logger: ILogger,
-                isTest: boolean = false,
-                indexedDb?: IDBFactory, dbKeyRange?: typeof IDBKeyRange) {
+                indexedDb: IDBFactory | undefined = void 0,
+                dbKeyRange: typeof IDBKeyRange | undefined = void 0) {
         if (indexedDb !== void 0) {
             Dexie.dependencies.indexedDB = indexedDb as IDBFactory;
         }
         if (dbKeyRange !== void 0) {
             Dexie.dependencies.IDBKeyRange = dbKeyRange;
         }
-        super('DrugsDBLocal' + isTest ? '_test' : '');
+        super('DrugsDBLocal' + process.env.NODE_ENV);
         this.updateProvider = updateProvider;
         this.logger = logger;
         this.version(1).stores({
@@ -166,7 +166,7 @@ function getSimpleProperties(arg: any, refs = new Set<object>()): any {
     if (isSimple(arg)) {
         return arg;
     }
-    if (typeof arg.map === 'function' && typeof arg.length === 'number') {
+    if (typeof arg.map === 'function') {
         return arg.map((i: any) => {
             if (isSimple(i)) {
                 return i;

@@ -1,12 +1,12 @@
-import { EmptyLogger } from '@/services/db/injectableImplementations/EmptyLogger';
+import { EmptyLogger } from '@/services/drugDb/injectableImplementations/EmptyLogger';
 import { fileFetch } from '../../test-resources/FileFetch';
 import { expect } from 'chai';
-import { DrugsDBLocal } from '@/services/db/injectableImplementations/DrugsDBLocal';
+import { DrugsDBLocal } from '@/services/drugDb/injectableImplementations/DrugsDBLocal';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
-import { IFetch } from '@/services/db';
-import { appDataType } from '@/services/db/entities/enums/appDataType';
-import { IDbAppData } from '@/services/db/entities/IAppData';
+import { IFetch } from '@/services/drugDb';
+import { appDataType } from '@/services/drugDb/entities/enums/appDataType';
+import { IDbAppData } from '@/services/drugDb/entities/IAppData';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
 
 describe('setup full local db from JSON', () => {
@@ -32,7 +32,7 @@ describe('setup full local db from JSON', () => {
         };
         const promise = new Promise((resolve, reject) => {
             window.addEventListener('unhandledrejection', (ev) => reject(ev.reason)); // throw instead of reject for better error messages
-            db = new DrugsDBLocal(fetch, new EmptyLogger(), true, fakedb, dbKeyRange);
+            db = new DrugsDBLocal(fetch, new EmptyLogger(), fakedb, dbKeyRange);
             allTables.setDb(db);
             db.on('ready', () => resolve('db ready'));
         });

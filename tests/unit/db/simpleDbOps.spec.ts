@@ -1,14 +1,14 @@
-import { DrugsDBLocal } from '@/services/db/injectableImplementations/DrugsDBLocal';
+import { DrugsDBLocal } from '@/services/drugDb/injectableImplementations/DrugsDBLocal';
 import { expect } from 'chai';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
 import { Substitute, Arg } from '@fluffy-spoon/substitute';
-import { IFetch } from '@/services/db/Injectables/IFetch';
+import { IFetch } from '@/services/drugDb/Injectables/IFetch';
 import { fileFetch } from '../../test-resources/FileFetch';
-import { IServerChanges } from '@/services/db/ServerCommunication/IServerChanges';
+import { IServerChanges } from '@/services/drugDb/ServerCommunication/IServerChanges';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
-import { dbTableName } from '@/services/db/entities/enums/dbTableName';
-import { EmptyLogger } from '@/services/db/injectableImplementations/EmptyLogger';
+import { dbTableName } from '@/services/drugDb/entities/enums/dbTableName';
+import { EmptyLogger } from '@/services/drugDb/injectableImplementations/EmptyLogger';
 
 describe('simple DB tests', () => {
     const emptyFetch = Substitute.for<IFetch>();
@@ -27,7 +27,7 @@ describe('simple DB tests', () => {
     before('can initialize db', () => {
         const promise = new Promise((resolve, reject) => {
             window.addEventListener('unhandledrejection', (ev) => reject(ev.reason));
-            db = new DrugsDBLocal(emptyFetch, new EmptyLogger(), true, fakedb, dbKeyRange);
+            db = new DrugsDBLocal(emptyFetch, new EmptyLogger(), fakedb, dbKeyRange);
             db.on('ready', () => resolve('db ready'));
         });
         return promise;

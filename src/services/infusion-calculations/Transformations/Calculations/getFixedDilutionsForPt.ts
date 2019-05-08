@@ -1,5 +1,5 @@
-import { IEntityFixedInfusionDrug } from '@/services/db';
-import { maxWeight, minWeight } from '@/services/db/helpers/fieldConstants';
+import { IEntityFixedInfusionDrug } from '@/services/drugDb';
+import { maxWeight, minWeight } from '@/services/drugDb/helpers/fieldConstants';
 import { IAgeWeightDetails, filterByAgeWeight } from '../../helpers/ageWeightSelectors';
 import { IPatientFixedInfusionDrug, IPatientFixedDilution, IPatientFixedConcentration } from '../../PatientSpecificViews/IPatientFixedInfusionDrug';
 import { mapProperties } from '../../helpers/mapProperties';

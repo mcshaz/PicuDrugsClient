@@ -44,7 +44,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-import { IEntityWard, IDrugDB } from '@/services/db';
+import { IEntityWard, IDrugDB } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: string; text: string; disabled?: boolean; }

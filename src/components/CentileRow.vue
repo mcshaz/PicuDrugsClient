@@ -1,6 +1,11 @@
 <template>
   <b-row class="justify-content-md-left">
       <b-col>
+          <b-button @click="$emit('delete-row')">
+              <font-awesome-icon icon="trash" />
+          </b-button>
+      </b-col>
+      <b-col>
           <date-input 
             :value="measureDate" 
             :min="dob" 

@@ -1,5 +1,5 @@
 import { MethodLogic } from '../../PresentationClasses/Dosing/MethodLogic';
-import { dilutionMethod } from '@/services/db';
+import { dilutionMethod } from '@/services/drugDb';
 const methodLogics: ReadonlyArray<MethodLogic> = [
     new MethodLogic(true, false, false, false),
     new MethodLogic(true, false, false, true),

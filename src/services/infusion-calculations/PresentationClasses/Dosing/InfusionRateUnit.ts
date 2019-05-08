@@ -1,5 +1,5 @@
 import { DrugDoseUnit } from './DrugDoseUnit';
-import { siUnit } from '@/services/db';
+import { siUnit } from '@/services/drugDb';
 
 export class InfusionRateUnit extends DrugDoseUnit {
   constructor(logSi: number, unit: siUnit, isPerKg: boolean, readonly isPerMin: boolean) {

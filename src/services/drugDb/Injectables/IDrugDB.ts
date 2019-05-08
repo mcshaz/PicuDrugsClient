@@ -1,4 +1,4 @@
-import Dexie from './../../../../../Dexie.js/dist/dexie'; // todo swap this back to dexie
+import Dexie from '../../../../../Dexie.js/dist/dexie'; // todo swap this back to dexie
 import { IEntityWard } from '../entities/IEntityWard';
 import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
@@ -14,6 +14,5 @@ export interface IDrugDB {
     defibModels: Dexie.Table<IEntityDefibModel, number>;
     fixedDrugs: Dexie.Table<IEntityFixedDrug, number>;
     appData: Dexie.Table<IDbAppData, number>;
-    close: () => void;
     // allFixedInfusionDrugs: () => Promise<IEntityFixedInfusionDrug[]>;
 }
