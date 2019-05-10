@@ -24,6 +24,10 @@
               <font-awesome-icon icon="ruler" />
               Centiles
             </b-dropdown-item>
+            <b-dropdown-item to="/weight-calculations">
+              <font-awesome-icon icon="tape" />
+              Under/Overweight calculators
+            </b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item to="/about"><font-awesome-icon icon="info-circle" /> About</b-nav-item>
         </b-navbar-nav>

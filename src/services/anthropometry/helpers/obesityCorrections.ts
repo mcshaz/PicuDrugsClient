@@ -1,4 +1,3 @@
-import { CentileCollection } from '../CentileCollection';
 import { UKWeightData } from '../UkWeightData';
 import { UKLengthData } from '../UKLengthData';
 import { searchComparison } from '../binarySearch';

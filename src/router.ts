@@ -5,6 +5,7 @@ import Infusions from './views/Infusions.vue';
 import WardChart from './views/WardChart.vue';
 import SetDefaults from './views/SetDefaults.vue';
 import Centiles from './views/Centiles.vue';
+import WeightCalculations from './views/WeightCalculations.vue';
 
 Vue.use(Router);
 
@@ -41,6 +42,14 @@ export default new Router({
       path: '/centiles',
       name: 'centiles',
       component: Centiles,
+    }, {
+      path: '/weight-calculations',
+      name: 'weight-calculations',
+      component: WeightCalculations,
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      // component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
     }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',
