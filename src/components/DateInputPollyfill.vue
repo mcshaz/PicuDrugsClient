@@ -4,7 +4,7 @@
             class="FormDate"
             @keydown.capture.passive="keydown"
             @blur.capture.passive="emitBlur" >
-            <input
+            <input :required="required"
                 ref="first"
                 class="FormDate__input FormDate__input--day"
                 type="number"
@@ -13,7 +13,7 @@
                 :placeholder="pIsMonthFirst?'mm':'dd'"
                 v-model="first">
             <span class="FormDate__divider">/</span>
-            <input
+            <input :required="required"
                 ref="second"
                 class="FormDate__input FormDate__input--month"
                 type="number"
@@ -24,7 +24,7 @@
             <span
                 class="FormDate__divider"
             >/</span>
-            <input
+            <input :required="required"
                 ref="year"
                 v-model="year"
                 class="FormDate__input FormDate__input--year"
@@ -56,6 +56,8 @@ export default class DateInputPollyfill extends Vue {
     private min!: Date | null;
     @Prop({default: null})
     private max!: Date | null;
+    @Prop({default: false})
+    private required!: boolean;
 
     constructor() {
         super();

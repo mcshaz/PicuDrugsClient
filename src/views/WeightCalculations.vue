@@ -10,19 +10,29 @@
                 please consider using <a href="https://www.nextdose.org/">nextdose</a>, which accounts for fat mass, creatinine clearance and the patient's previous
                 response to medications in a bayesian analysis.
             </p>
+            <p>
+                Similarly, when calculating target weight for people with eating disorders, the calculations here may be useful - however it may be more appropriate to use the 
+                <router-link to="/centiles">centile charting tools</router-link> to look at the weight centile band the patient was tracking along prior to the development of an eating disorder
+                (with the caveats that data is available and the prior centile band could reasonably be considered healthy for the individual).
+            </p>
             <form @submit.prevent :class="formula?'was-validated':''">
                 <b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula" >
                     <template slot="description">
                         <span v-html="description"> </span>
                     </template>
-                    <b-form-select v-model="formula" :options="formulaOptions" :required="true" name="formula" >
+                    <b-form-select v-model="formula" :required="true" name="formula" >
                         <template slot="first">
                             <option :value="''" disabled>Select a formula to see details</option>
+                            <optgroup v-for="(group, key) in formulaGroups" :key="key" :label="key">
+                                <option v-for="opt in group" :key="opt" :value="opt">
+                                    {{opt}}
+                                </option>
+                            </optgroup>
                         </template>
                     </b-form-select>
                 </b-form-group>
                 <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender" />
-                <patient-age-data v-model="age" :exact="true" :required="requireAge" />
+                <patient-age-data v-model="age" :required="requireAge" />
                 <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" >
                     <b-input-group append="kg">
                     <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" :required="requireWeight"
@@ -36,11 +46,15 @@
                     </b-input-group>
                 </b-form-group>
             </form>
-            <b-alert variant="info" show v-if="!!value">
-                <output>
-                    {{value.toFixed(isBsa ? 2 : (value < 10) ? 1 : 0)}}
+            <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
+                <output v-if="!!value">
+                    {{value.toFixed(isBsa?2:(value<10)?1:0)}}
                     <span v-if="isBsa">m<sup>2</sup></span><span v-else>kg</span>
                 </output>
+                <div class="formula" v-if="!!texFormulae.length>0">
+                    using the formula:
+                    <katex-element v-for="f in texFormulae" :key="f" :expression="f" :display-mode="true"/>
+                </div>
             </b-alert>
         </section>
         <footer>
@@ -71,12 +85,16 @@ import { anthroCalculations, applyAnthropometry } from '@/services/pharmacokinet
 import { mcLarenObesityCorrection, mooreObesityCorrection, bmiObesityCorrection } from '@/services/anthropometry/helpers/obesityCorrections';
 import { UKWeightData, UKBMIData, UKLengthData } from '@/services/anthropometry/';
 import { ChildAge } from '@/services/infusion-calculations';
+import { toGrouping } from '@/services/drugDb/helpers/toGrouping';
+import KatexElement from 'vue-katex/src/components/KatexElement.vue';
+
 type vueNumber = number | '';
 enum centileCorrections { BMI = 'Body Mass Index Method', Moore = 'Moore Method', McLaren = 'McLaren Method' }
+const emptyArray: string[] = [];
 
 @Component({
   components: {
-    TrueFalseRadio, PatientAgeData,
+    TrueFalseRadio, PatientAgeData, KatexElement,
   },
 })
 export default class Obesity extends Vue {
@@ -84,7 +102,7 @@ export default class Obesity extends Vue {
     public heightCm: vueNumber = '';
     public weightKg: vueNumber = '';
     public age: ChildAge | null = null;
-    public formulaOptions: string[] = [];
+    public formulaGroups: any = {};
     public formula = '';
 
     // non-reactive
@@ -93,7 +111,10 @@ export default class Obesity extends Vue {
     private pBmiCentiles?: UKBMIData;
 
     public created() {
-        this.formulaOptions = Object.values(centileCorrections).concat(Array.from(anthroCalculations.keys()));
+        this.formulaGroups['Centile Chart Based'] = Object.values(centileCorrections);
+        const bsa = toGrouping(Array.from(anthroCalculations.keys()), isBsa);
+        this.formulaGroups['Body Surface Area'] = bsa.get(true);
+        this.formulaGroups.Allometry = bsa.get(false);
     }
     // computed
     public get description() {
@@ -128,8 +149,12 @@ export default class Obesity extends Vue {
         }
         return applyAnthropometry(anthroCalculations.get(this.formula)!, this.weightKg, this.heightCm, this.isMale) || '';
     }
+    public get texFormulae() {
+        if (!this.formula || this.isCentileCalc) { return emptyArray; }
+        return anthroCalculations.get(this.formula)!.katex;
+    }
     public get requireAge() {
-        return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren;
+        return this.formula === centileCorrections.Moore || this.formula === centileCorrections.BMI;
     }
     public get requireWeight() {
         const calc = anthroCalculations.get(this.formula);
@@ -146,7 +171,7 @@ export default class Obesity extends Vue {
         return calc === void 0 ? false : !!calc.requiresGender;
     }
     public get isBsa() {
-        return this.formula.startsWith('body surface area');
+        return isBsa(this.formula);
     }
     public get isCentileCalc() {
         return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren || this.formula === centileCorrections.BMI;
@@ -162,9 +187,13 @@ export default class Obesity extends Vue {
         return this.pBmiCentiles || (this.pBmiCentiles = new UKBMIData());
     }
 }
+function isBsa(test: string) {
+    return test.startsWith('body surface area');
+}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '~katex/dist/katex.min.css';
     .volume-no {
         font-weight: bold;
     }

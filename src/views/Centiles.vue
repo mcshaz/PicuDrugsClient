@@ -107,7 +107,7 @@ import { msPerDay } from '@/services/infusion-calculations/PresentationClasses/D
 import { PatientDBLocal, IGrowthMeasures, IPatient } from '@/services/patientDb';
 
 type vueNumber = number | '';
-interface IIdCentileVals extends ICentileVals { rowId: number; }
+interface IIdCentileVals extends ICentileVals { rowId: symbol; }
 
 @Component({
   // Provides IoC container at the top level of VueComponent
@@ -134,11 +134,9 @@ export default class Centiles extends Vue {
   public chartType: chartType | '' = '';
   public plotPoints: IAnthropometry[] = [];
 
-  private rowId!: number;
   private patientDb!: PatientDBLocal;
 
   public created() {
-    this.rowId = 1197;
     this.patientDb = new PatientDBLocal();
     this.today.setHours(0, 0, 0, 0);
   }
@@ -149,7 +147,7 @@ export default class Centiles extends Vue {
 
   public addRow() {
     this.measurements.push({
-      rowId: this.rowId++,
+      rowId: Symbol(),
       measureDate: this.measurements.some((m) => (m.measureDate && m.measureDate.getTime()) === this.today.getTime()) ? null : this.today,
       today: this.today,
       wtKg: '',
@@ -203,7 +201,7 @@ export default class Centiles extends Vue {
     setTimeout(() => self.saved = false, 2000);
   }
 
-  public deleteRow(rowId: number) {
+  public deleteRow(rowId: symbol) {
     const indx = this.measurements.findIndex((m) => m.rowId === rowId);
     if (indx !== -1) {
       this.measurements.splice(indx, 1);
@@ -219,7 +217,7 @@ export default class Centiles extends Vue {
         this.dob = data.dob;
         this.isMale = data.isMale;
         this.measurements = data.measurements.map((m) => ({
-            rowId: this.rowId++,
+            rowId: Symbol(m.date.toString()),
             measureDate: m.date,
             today: this.today,
             wtKg: m.weightKg || '' as vueNumber,

@@ -1,32 +1,36 @@
 
 export enum bsaFormulas { DuBois, Mosteller }
-export interface IAnthroCalculation { description: string; formula: (...args: any[]) => number; requiresMassKg?: boolean; requiresHeightCm?: boolean; requiresGender?: boolean; }
+export interface IAnthroCalculation { description: string; formula: (...args: any[]) => number; katex: string[]; requiresMassKg?: boolean; requiresHeightCm?: boolean; requiresGender?: boolean; }
 
 const anthroCalculations = new Map<string, IAnthroCalculation>();
-anthroCalculations.set('body surface area (Du Bois)', {
+anthroCalculations.set('body surface area (Mostellar)', {
+    description: 'simplified (and most commonly used) BSA calculation',
+    formula: bodySurfaceArea.bind(void 0, bsaFormulas.Mosteller),
+    requiresMassKg: true,
+    requiresHeightCm: true,
+    katex: ['BSA=\\sqrt{\\frac{massKg * heightCm} { 3600 }}'],
+});
+anthroCalculations.set('body surface area (Du Bois, 1916)', {
     description: 'original BSA calculation',
     formula: bodySurfaceArea.bind(void 0, bsaFormulas.DuBois),
     requiresMassKg: true,
     requiresHeightCm: true,
-});
-anthroCalculations.set('body surface area (Mostellar)', {
-    description: 'simplified (and most commonly used) BSA calculation',
-    formula: bodySurfaceArea.bind(void 0, bsaFormulas.DuBois),
-    requiresMassKg: true,
-    requiresHeightCm: true,
+    katex: ['BSA=0.007184*massKg^{0.425}*heightCm^{0.725}'],
 });
 anthroCalculations.set('ideal body mass', {
-    description: 'The standard weight measurement in many clinical calculations, such as tidal volume. Note: this formula is only an approximation, and is generally only applicable for people over 150 cm',
+    description: 'The standard weight measurement in many clinical calculations, such as tidal volume (Pai and Paloucek 2000). Note: this formula is only an approximation, and is generally only applicable for people over 150 cm',
     formula: idealBodyMass,
     requiresHeightCm: true,
     requiresGender: true,
+    katex: ['IBM_♂=49.9+0.89*(heightCm-152.4), heightCm>=152.4', 'IBM_♀=45.4+0.89*(heightCm-152.4), heightCm>=152.4'],
 });
 anthroCalculations.set('lean body mass', {
-    description: 'Component of total body mass that excludes fat mass but includes fat in nonfat mass cell membranes, bone marrow and the central nervous system.',
+    description: 'Component of total body mass that excludes fat mass but includes fat in nonfat mass cell membranes, bone marrow and the central nervous system. (Green and Duffull, 2002)',
     formula: leanBodyMass,
     requiresMassKg: true,
     requiresHeightCm: true,
     requiresGender: true,
+    katex: ['LBM_♂=1.1*massKg-0.0128*\\frac{massKg^2}{heightM^2}', 'LBM_♀=1.07*massKg-0.0148*\\frac{massKg^2}{heightM^2}'],
 });
 anthroCalculations.set('fat free mass', {
     description: 'Component of total body mass that does not include any fat mass (i.e. excludes fat in cell membranes, bone marrow etc.).',
@@ -34,6 +38,7 @@ anthroCalculations.set('fat free mass', {
     requiresMassKg: true,
     requiresHeightCm: true,
     requiresGender: true,
+    katex: ['FFM=\\frac{whs_{max} * heightM^2*massKg}{whs_{50}*heightM^2+massKg}', '\\text{female:}whs_{max}=37.99, whs_{50}=35.98', '\\text{male:}whs_{max}=42.92, whs_{50}=30.93'],
 });
 anthroCalculations.set('adjusted body mass', {
     description: 'Mass that normalizes non-ideal body mass to ideal body mass',
@@ -41,11 +46,13 @@ anthroCalculations.set('adjusted body mass', {
     requiresMassKg: true,
     requiresHeightCm: true,
     requiresGender: true,
+    katex: ['AdjBM = IBM + 0.4 * (massKg - IBM)'],
 });
 anthroCalculations.set('pharmakokinetic mass', {
     description: 'Mass used to predict fentanyl dosing.',
     formula: pharmakoKineticMass,
     requiresMassKg: true,
+    katex: ['PkM = \\frac{52} {1 + \\frac{(196.4 * e^{-0.025} * massKg - 53.66)} {100}}'],
 });
 anthroCalculations.set('predicted body mass', {
     description: 'Mass that normalizes non-lean body mass to lean body mass with a sex specific factor',
@@ -53,7 +60,15 @@ anthroCalculations.set('predicted body mass', {
     requiresMassKg: true,
     requiresHeightCm: true,
     requiresGender: true,
+    katex: ['PredBM = LBM + f_{sex} * (massKg - LBM)', 'f_{sex} ♂ = 0.43, ♀ = 0.64'],
 });
+
+const massRx = /massKg/g;
+const heightRx = /height([CM]m?)/g;
+const prodRx = /\*/g;
+const wrapPascalRx = /[A-Z][a-zA-Z]+/g;
+const pascalRx = /[A-Z][a-z]*/g;
+anthroCalculations.forEach((ac) => ac.katex = ac.katex.map(preprocessKatex));
 
 export { anthroCalculations, applyAnthropometry };
 type falsey = boolean | number | null | '';
@@ -123,3 +138,11 @@ function  predictedBodyMass(massKg: number, heightCm: number, isMale: boolean) {
     return lbm + fSex * (massKg - lbm);
 }
 
+function preprocessKatex(katex: string) {
+    katex = katex.replace(massRx, '\\text{mass}_\\text{kg}');
+    katex = katex.replace(heightRx, (match, c1) => `\\text{height}_\\text{${c1.toLowerCase()}}`);
+    katex = katex.replace(prodRx, '\\cdot ');
+    katex = katex.replace(wrapPascalRx, (match) => `\\text{${match}}`);
+    katex = katex.replace(pascalRx, (match) => match + '.');
+    return katex;
+}

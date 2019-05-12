@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dob-input v-model="dob" @min-change="minDate=$event" />
+    <dob-input v-model="dob" @min-change="minDate=$event" :required="(exact||required)&&errMsg!==''" />
     <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2" 
       :state="errMsg===null?null:(errMsg==='')"
       :invalid-feedback="errMsg" >
@@ -36,7 +36,6 @@ export type vueNumber = number | ''; // todo https://stackoverflow.com/questions
 })
 export default class PatientAgeData extends Vue {
   public readonly maxYears = 122;
-  public errMsg: string | null = null;
 
   @Prop({default: false})
   private exact!: boolean;
@@ -143,24 +142,26 @@ export default class PatientAgeData extends Vue {
       (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0;
   }
 
-  private ageDataChange() {
+  public get errMsg() {
     if (this.pYears === '' && this.pMonths === '' && this.pDays === '') {
-      this.errMsg = this.required || this.exact
-        ? 'age is required'
+      return this.required || this.exact
+        ? 'age or DOB is required'
         : null;
     } else if (this.exact && (this.pMonths === '' || this.pDays === '')) {
-      this.errMsg = 'exact age is required';
+      return 'exact age or DOB is required';
     } else if (this.pYears === '') {
-      this.errMsg = 'years required (enter 0 if < 1year)';
+      return 'years required (enter 0 if < 1year)';
     } else if (this.pYears === 0 && this.pMonths === '') {
-      this.errMsg = 'months are required if 0 years';
+      return 'months are required if 0 years';
     } else if (this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0) {
-      this.errMsg = 'negative values are not allowed';
+      return 'negative values are not allowed';
     } else if (this.pYears > this.maxYears) {
-      this.errMsg = `age must be <= ${this.maxYears} years old (oldest person to have lived)`;
-    } else {
-      this.errMsg = '';
+      return `age must be <= ${this.maxYears} years old (oldest person to have lived)`;
     }
+    return '';
+  }
+
+  private ageDataChange() {
     if (this.errMsg === null || this.errMsg !== '' || this.pYears === '') {
       if (this.childAge) {
         this.$emit('input', this.childAge = null);

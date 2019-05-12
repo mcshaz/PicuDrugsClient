@@ -1,11 +1,11 @@
 <template>
     <div :class="pState===null?'':'was-validated'" >
         <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState" >
-            <template slot="invalid-feedback">
+            <template slot="invalid-feedback" v-if="dob!==null">
                 must be between {{min.toLocaleDateString()}} and {{max.toLocaleDateString()}}
             </template>
             <date-input :min="min" :max="max" v-model="dob"
-                    @blur="onBlur()" :id="dob"/>
+                    @blur="onBlur()" :id="dob" :required="required" />
         </b-form-group>
     </div>
 </template>
@@ -32,6 +32,8 @@ export default class DobInput extends Vue {
     // non vue properties = start with undefined
     private timeout?: number | NodeJS.Timer;
 
+    @Prop({default: false})
+    private required!: boolean;
     @Prop({default: null})
     private value!: Date | null;
     @Prop({default: 122}) // current longest lifespan in modern history

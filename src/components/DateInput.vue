@@ -1,14 +1,14 @@
 <template>
     <div class="date-input">
         <date-input-pollyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" 
-                v-if="isDateSupported===dateElSupport.noSupport" @blur="onBlur()" :id="id"/>
+                v-if="isDateSupported===dateElSupport.noSupport" @blur="onBlur()" :id="id" :required="required"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr" 
-                :value-as-date.prop="value" 
+                :value-as-date.prop="value" :required="required"
                 @blur="$emit('blur')" @input.passive="$emit('input', $event.target.valueAsDate)"
                 v-if="isDateSupported===dateElSupport.valueAsDateSupport" :name="name" :id="id" />
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr" 
-                @blur="$emit('blur')" v-else :name="name" :id="id" />
+                @blur="$emit('blur')" v-else :name="name" :id="id" :required="required" />
             <b-input-group-append :is-text="true">
                 <font-awesome-icon icon="calendar-alt" />
             </b-input-group-append>
@@ -29,7 +29,7 @@ enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
         DateInputPollyfill,
     },
 })
-export default class DobInput extends Vue {
+export default class DateInput extends Vue {
     public readonly isDateSupported: dateElSupport;
     public readonly dateElSupport: typeof dateElSupport;
     private pDateStr!: string;
@@ -45,6 +45,8 @@ export default class DobInput extends Vue {
     private name?: string;
     @Prop({default: void 0})
     private id?: string;
+    @Prop({default: false})
+    private required!: boolean;
 
     constructor() {
         super();

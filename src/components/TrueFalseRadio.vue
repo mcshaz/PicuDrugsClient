@@ -1,6 +1,8 @@
 <template>
-    <b-form-group label-cols-lg="2" label-cols-xl="2" :label="label">
-        <b-form-radio-group :name="labelName" :checked="value" @change="$emit('change', $event)" >
+    <b-form-group label-cols-lg="2" label-cols-xl="2" :label="label"
+          :invalid-feedback="`either ${trueLabel} or ${falseLabel} must be selected`" >
+        <b-form-radio-group :name="labelName" :checked="value" @change="$emit('change', $event)" 
+             :required="required">
           <b-form-radio :id="trueName" :name="trueName" :value="true">
             {{trueLabel}}
           </b-form-radio>
@@ -18,7 +20,7 @@ type vueNumber = number | '';
 type nullBool = null | boolean;
 
 @Component({})
-export default class PatientAgeWeightData extends Vue {
+export default class TrueFalseRadio extends Vue {
   @Model('change')
   private value!: boolean | null;
   @Prop({required: true})
