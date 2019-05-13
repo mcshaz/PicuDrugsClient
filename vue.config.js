@@ -5,7 +5,6 @@ module.exports = {
   configureWebpack: {
     devtool: 'source-map',
   },
-
 }
 // https://cli.vuejs.org/config/#publicpath
 /*

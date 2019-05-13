@@ -247,7 +247,7 @@ export default class SvgCentiles extends Mixins(Ready) {
     }
 
     private setSize() {
-         const container = (this.$refs.svg as SVGImageElement).parentElement!;
+        const container = (this.$refs.svg as SVGImageElement).parentElement!;
         this.RMargin = container.offsetWidth - padR;
         this.lowerMargin = container.offsetHeight - this.padBottom;
     }

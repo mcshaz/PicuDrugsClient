@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'whatwg-fetch';
 import { injectable } from 'inversify';
 import { IFetch } from '../Injectables/IFetch';
 import { IServerChanges } from '../ServerCommunication/IServerChanges';
