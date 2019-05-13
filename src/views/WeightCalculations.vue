@@ -97,7 +97,7 @@ const emptyArray: string[] = [];
     TrueFalseRadio, PatientAgeData, KatexElement,
   },
 })
-export default class Obesity extends Vue {
+export default class WeightCalculations extends Vue {
     public isMale: boolean | null = null;
     public heightCm: vueNumber = '';
     public weightKg: vueNumber = '';

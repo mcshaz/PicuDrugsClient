@@ -8,7 +8,7 @@ import { Lms } from './Lms';
 import { linearInterpolate } from './linearInterpolate';
 
 export const weeksPerMonth = daysPerMonth / 7;
-export const maximumGestationalCorrection = 42;
+export const maximumGestationalCorrection = 40;
 
 
 interface IMedianMatchResult {ageDays: number; matchType: searchComparison; gestation: number; }

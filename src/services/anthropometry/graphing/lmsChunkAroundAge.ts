@@ -51,7 +51,7 @@ function getMOHDefaultChart(boundary: fixedChartBoundaries, centiles: CentileRan
             const startGest = centiles.gestAgeData.minAge - 40;
             return {
                 units: ageUnits.weeksOfAge,
-                data: centiles.gestAgeData.lookup.map((lms, indx) => [indx + startGest, lms]),
+                data: centiles.gestAgeData.lookup.map((lms, indx) => [(indx + startGest) * 7, lms]),
             };
         case fixedChartBoundaries.zeroTo52Weeks:
             return mergeGestAgeToSubsequent(centiles, ageUnits.weeksOfAge);

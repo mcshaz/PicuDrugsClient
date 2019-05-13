@@ -1,7 +1,6 @@
 <template>
   <div class="centiles">
-    <b-jumbotron header="Drug Calculator" 
-            lead="Centile Data" />
+    <h2>Drug Calculator - Centile Data</h2>
     <form @submit.prevent ref="base-data" class="card p-2" id="patientData-data">
         <nhi-input v-model="nhi" @valid-state-change="lookupNhi($event)" />
         <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
@@ -57,7 +56,6 @@
               @bmi-change="m.bmi=$event"
               @date-change="m.measureDate=$event"
               @delete-row="deleteRow(m.rowId)"
-              class="was-validated"
           />
         </b-container>
         <b-button-group>
@@ -192,10 +190,12 @@ export default class Centiles extends Vue {
       }, [] as IGrowthMeasures[]),
     }  as IPatient;
     // not doing a put here in case in the future we have saved other details such as name we did not wish to overwrite
+
     if (!await this.patientDb.patients.update(this.nhi, saveData)) {
       saveData.nhi = this.nhi;
       await this.patientDb.patients.add(saveData);
     }
+
     this.saved = true;
     const self = this;
     setTimeout(() => self.saved = false, 2000);

@@ -1,14 +1,14 @@
 <template>
     <div class="date-input">
         <date-input-pollyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" 
-                v-if="isDateSupported===dateElSupport.noSupport" @blur="onBlur()" :id="id" :required="required"/>
+                v-if="isDateSupported===dateElSupport.noSupport" @blur="$emit('blur', $event)" :id="id" :required="required"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr" 
-                :value-as-date.prop="value" :required="required"
-                @blur="$emit('blur')" @input.passive="$emit('input', $event.target.valueAsDate)"
+                :value-as-date.prop="value?new Date(value.getTime()-offset):null" :required="required"
+                @blur="$emit('blur', $event)" @input.passive="$emit('input', $event.target.valueAsDate?new Date($event.target.valueAsDate.getTime()+offset):null)"
                 v-if="isDateSupported===dateElSupport.valueAsDateSupport" :name="name" :id="id" />
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr" 
-                @blur="$emit('blur')" v-else :name="name" :id="id" :required="required" />
+                @blur="$emit('blur', $event)" v-else :name="name" :id="id" :required="required" />
             <b-input-group-append :is-text="true">
                 <font-awesome-icon icon="calendar-alt" />
             </b-input-group-append>
@@ -32,6 +32,7 @@ enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 export default class DateInput extends Vue {
     public readonly isDateSupported: dateElSupport;
     public readonly dateElSupport: typeof dateElSupport;
+    public offset = 0;
     private pDateStr!: string;
     private wasDate?: boolean;
 
@@ -60,6 +61,8 @@ export default class DateInput extends Vue {
     public created() {
         if (this.isDateSupported === dateElSupport.elSupport && this.value) {
             this.pDateStr = ymdFormat(this.value);
+        } else if (this.isDateSupported === dateElSupport.valueAsDateSupport) {
+            this.offset = (this.value || new Date()).getTimezoneOffset() * 60000;
         }
     }
 

@@ -18,6 +18,7 @@ export interface ICentileLines {
     transformY: (y: number) => number;
     xLabels: ITimeAxisLabel[];
     yLabels: IAxisLabel;
+    minX: number;
 }
 
 export function svgPaths(dataPoints: IAnthropometry[],
@@ -43,6 +44,7 @@ export function svgPaths(dataPoints: IAnthropometry[],
         const returnVar = {
             transformX: (x: number) => padL + xRatio * (x - minX),
             transformY: (y: number) => height - yRatio * (y - minY),
+            minX,
             xLabels: centileChart.units === ageUnits.weeksOfAge
                 ? [ weekLabels(minX, maxX) ]
                 : [ yearLabels(minX, maxX) ],
@@ -114,7 +116,7 @@ function weekLabels(startDays: number, endDays: number): ITimeAxisLabel {
     const returnVar = getLabel(startDays, endDays, 7 * 4) as ITimeAxisLabel;
     returnVar.units = labelAgeUnits.weeks;
     returnVar.minorTickIncrement = 7;
-    returnVar.incrementLabelBy = 1;
+    returnVar.incrementLabelBy = 4;
     returnVar.startLabelAt = returnVar.start / 7;
     return returnVar;
 }

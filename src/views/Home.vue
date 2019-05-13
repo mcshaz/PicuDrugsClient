@@ -3,7 +3,7 @@
     <b-jumbotron header="Drug Calculator" 
         lead="Rescitation ± ICU infusion charts" />
     <b-row align-h="end">
-      <b-col xl="6" lg="7" >
+      <b-col lg="7" >
         <PatientAgeWeightData @valid-submit="submit" :requireAnyAge="infusions">
           <ward-select @ward="ward=$event" :ward-abbrev="wardName||defaultWardAbbrev"
               @boluses="boluses=$event" :boluses="boluses"

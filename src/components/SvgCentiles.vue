@@ -7,7 +7,8 @@
                 <pattern id="smallGrid" :width="minorTickParams.width" :height="minorTickParams.height" patternUnits="userSpaceOnUse">
                     <path :d="minorTickParams.path" fill="none" stroke="gray" stroke-width="0.5"/>
                 </pattern>
-                <pattern v-if="yAxis&&xAxes.length" id="grid" :width="xAxes[0].majorTick" :height="yAxis.majorTick" patternUnits="userSpaceOnUse">
+                <pattern v-if="yAxis&&xAxes.length" id="grid" :width="xAxes[0].majorTick" :height="yAxis.majorTick" patternUnits="userSpaceOnUse"
+                    :patternTransform="xAxes[0].majorTickOffset?`translate(-${xAxes[0].majorTickOffset},0)`:null" >
                     <rect v-if="minorTickParams" :width="xAxes[0].majorTick" :height="yAxis.majorTick" fill="url(#smallGrid)"/>
                     <path :d="`M ${xAxes[0].majorTick} 0 L 0 0 0 ${yAxis.majorTick}`" 
                             fill="none" stroke="gray" stroke-width="1"/>
@@ -26,7 +27,7 @@
                 </text>
             </g>
             <g v-if="yAxis" >
-                <text class="y-label left" v-for="yl in yAxis.labels" :key="yl.hash" :x="padL-textClearance" :y="yl.position">
+                <text :class="['y-label','left',yl.lgOnly?'large-only':'']" v-for="yl in yAxis.labels" :key="yl.hash" :x="padL-textClearance" :y="yl.position">
                     {{yl.label}}
                 </text>
             </g>
@@ -60,11 +61,11 @@ import { svgPaths, pathTypes, ICentileLine, ICentileLines, CentileCollection, la
         UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, IAnthropometry } from '@/services/anthropometry';
 import Ready from '@/mixins/Ready';
 import { hash } from '@/services/utilities/hash';
-interface IAxisLabel { position: number; label: string; hash: number; }
-interface IAxis { labels: IAxisLabel[]; majorTick: number; minorTick?: number; }
+interface IAxisLabel { position: number; label: string; hash: number; lgOnly?: boolean; }
+interface IAxis { labels: IAxisLabel[]; majorTick: number; minorTick?: number; majorTickOffset: number; }
 
 export type chartType = 'weight' | 'length' | 'head-circumference' | 'BMI';
-const padR = 40;
+const padR = 37;
 
 @Component
 export default class SvgCentiles extends Mixins(Ready) {
@@ -78,15 +79,13 @@ export default class SvgCentiles extends Mixins(Ready) {
     public gestAgeWeeks!: number;
 
     public pathType = pathTypes.polyline;
-    public yAxisTitle = '';
 
     private RMargin = 300; // values to prevent negative rect dimensions
     private lowerMargin = 300; // values to prevent negative rect dimensions
-    private padL = 34;
+    private padL = 45;
     private padBottom = 40;
     private padTop = 20;
     private textClearance = 5;
-    private centileLines: ICentileLines | null = null;
     private emptyArray!: any[];
 
     @Inject('wtCentiles')
@@ -106,34 +105,28 @@ export default class SvgCentiles extends Mixins(Ready) {
         const container = (this.$refs.svg as SVGImageElement).parentElement!;
         this.RMargin = container.offsetWidth - padR;
         this.lowerMargin = container.offsetHeight - this.padBottom;
-        this.calculatePositions();
     }
 
-    @Watch('chartType')
-    public calculatePositions() {
+    public get centileLines() {
         let centiles: CentileCollection;
         switch (this.chartType) {
             case 'weight':
                 centiles = this.wtCentiles;
-                this.yAxisTitle = 'kg';
                 break;
             case 'length':
                 centiles = this.lengthCentiles;
-                this.yAxisTitle = 'cm';
                 break;
             case 'head-circumference':
                 centiles = this.hcCentiles;
-                this.yAxisTitle = 'cm';
                 break;
             case 'BMI':
                 centiles = this.bmiCentiles;
-                this.yAxisTitle = 'kg/m<sup>2</sup>';
                 break;
             default:
                 throw new Error(`unrecognised chart type:'${this.chartType}'`);
         }
         const centileRange = this.isMale ? centiles.maleRange : centiles.femaleRange;
-        this.centileLines = svgPaths( this.measurements,
+        return svgPaths( this.measurements,
                                 this.gestAgeWeeks,
                                 centileRange,
                                 this.padL,
@@ -143,12 +136,27 @@ export default class SvgCentiles extends Mixins(Ready) {
                                 this.pathType);
     }
 
+    public get yAxisTitle() {
+        switch (this.chartType) {
+            case 'weight':
+                return 'kg';
+            case 'length':
+            case 'head-circumference':
+                return 'cm';
+            case 'BMI':
+                return 'kg/m<sup>2</sup>';
+            default:
+                throw new Error(`unrecognised chart type:'${this.chartType}'`);
+        }
+    }
+
     // computed
     public get dataPoints(): Array<[number, number]> {
         if (this.centileLines === null) {
             return this.emptyArray;
         }
-        return this.measurements.map((p) => [this.centileLines!.transformX!(p.ageDays), this.centileLines!.transformY!(p.measure)] as [number, number]);
+        const premCorrect = this.gestAgeWeeks < 40 ? (40 - this.gestAgeWeeks) * 7 : 0;
+        return this.measurements.map((p) => [this.centileLines!.transformX!(p.ageDays - premCorrect), this.centileLines!.transformY!(p.measure)] as [number, number]);
     }
     public get minorTickParams() {
         const yAxis = this.yAxis;
@@ -175,29 +183,34 @@ export default class SvgCentiles extends Mixins(Ready) {
         const lab = this.centileLines.yLabels;
         const transform = this.centileLines.transformY;
         const y0 = transform(0);
+        let lgOnly = lab.start % (lab.increment * 2) === 0; // begin loop with not, so actually determining notLg
         return {
             labels: new Array(lab.count).fill(0).map((u, indx) => {
                 const val = lab.start + indx * lab.increment;
+                lgOnly = !lgOnly;
                 return {
                     label: val.toString(),
                     position: transform(val),
                     hash: hash('y', val),
+                    lgOnly,
                 };
             }),
             majorTick: y0 - transform(lab.increment),
             minorTick: lab.minorTickIncrement
                 ? (y0 - transform(lab.minorTickIncrement))
                 : void 0,
+            majorTickOffset: 0,
         };
     }
     public get xAxes(): IAxis[] {
         if (!this.centileLines) { return this.emptyArray; }
         const transform = this.centileLines.transformX;
         const x0 = transform(0);
-        return this.centileLines.xLabels.map((l) => ({
+        let majorTickOffset = 0;
+        return this.centileLines.xLabels.map((l, lIndx) => ({
             title: labelAgeUnits[l.units],
-            labels: new Array(l.count).fill(0).map((u, indx) => {
-                        const labelVal = l.startLabelAt + indx * l.incrementLabelBy;
+            labels: new Array(l.count).fill(0).map((u, uIndx) => {
+                        const labelVal = l.startLabelAt + uIndx * l.incrementLabelBy;
                         let label: string;
                         if (l.units === labelAgeUnits.weeks && labelVal <= 0) {
                             label = labelVal === 0 ? 'term' : (40 + labelVal).toString();
@@ -207,9 +220,18 @@ export default class SvgCentiles extends Mixins(Ready) {
                                 label += '½';
                             }
                         }
+                        let position = transform(l.start + uIndx * l.increment);
+                        if (lIndx === 0 && uIndx === 0) {
+                            const remainder = this.centileLines!.minX % l.increment;
+                            if (remainder < 0) {
+                                majorTickOffset = transform(l.increment + remainder) - x0;
+                            } else if (remainder > 0) {
+                                majorTickOffset = transform(l.increment - remainder) - x0;
+                            }
+                        }
                         return {
                             label,
-                            position: transform(l.start + indx * l.increment),
+                            position,
                             hash: hash('x', labelVal),
                         };
                     }),
@@ -217,6 +239,7 @@ export default class SvgCentiles extends Mixins(Ready) {
             minorTick: l.minorTickIncrement
                 ? transform(l.minorTickIncrement) - x0
                 : void 0,
+            majorTickOffset,
         }));
     }
 
@@ -235,6 +258,11 @@ function hashAxis(...axes: IAxis[]) {
 }
 .y-label {
     dominant-baseline: central;
+}
+@media (max-height: 350px) {
+    .large-only.y-label {
+        visibility: hidden;
+    }
 }
 .right {
     text-anchor: start;

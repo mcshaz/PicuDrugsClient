@@ -1,11 +1,11 @@
 <template>
     <div :class="pState===null?'':'was-validated'" >
         <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState" >
-            <template slot="invalid-feedback" v-if="dob!==null">
+            <template slot="invalid-feedback">
                 must be between {{min.toLocaleDateString()}} and {{max.toLocaleDateString()}}
             </template>
             <date-input :min="min" :max="max" v-model="dob"
-                    @blur="onBlur()" :id="dob" :required="required" />
+                    @blur="onBlur($event)" :id="dob" :required="required" />
         </b-form-group>
     </div>
 </template>
@@ -54,9 +54,9 @@ export default class DobInput extends Vue {
         }
     }
 
-    public onBlur() {
+    public onBlur(evt: any) {
         this.setState();
-        this.$emit('blur');
+        this.$emit('blur', evt);
     }
 
     public setState(dateBeingEntered = false) {
