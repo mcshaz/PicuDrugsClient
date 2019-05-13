@@ -147,9 +147,15 @@ export default class CentileRow extends Vue implements ICentileVals {
     }
 
     private getCentile(value: vueNumber, cc: CentileCollection) {
-        return value && this.pAgeDays && this.weeksGestation && this.weeksGestation > 23 && this.weeksGestation <= 43
-            ? centileString(cc.cumSnormForAge(value, this.pAgeDays, this.isMale, this.weeksGestation) * 100)
-            : null;
+        if (value && this.pAgeDays && this.weeksGestation && this.weeksGestation >= 0 && this.weeksGestation <= 43) {
+            const genderData = this.isMale ? cc.maleRange : cc.femaleRange;
+            const cga = this.weeksGestation + this.pAgeDays / 7;
+            if (cga < genderData.gestAgeData.minAge) {
+                return `data begins ${genderData.gestAgeData.minAge}/40`;
+            }
+            return centileString(cc.cumSnormForAge(value, this.pAgeDays, this.isMale, this.weeksGestation) * 100);
+        }
+        return void 0;
     }
 }
 </script>

@@ -220,7 +220,7 @@ export default class SvgCentiles extends Mixins(Ready) {
                                 label += '½';
                             }
                         }
-                        let position = transform(l.start + uIndx * l.increment);
+                        const position = transform(l.start + uIndx * l.increment);
                         if (lIndx === 0 && uIndx === 0) {
                             const remainder = this.centileLines!.minX % l.increment;
                             if (remainder < 0) {
