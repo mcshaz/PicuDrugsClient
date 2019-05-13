@@ -1,39 +1,37 @@
 <template>
   <b-row class="justify-content-md-left">
-      <b-col>
+      <b-col cols="1">
           <b-button @click="$emit('delete-row')">
               <font-awesome-icon icon="trash" />
           </b-button>
       </b-col>
-      <b-col>
+      <b-col cols="3">
           <date-input 
             :value="measureDate" 
             :min="dob" 
             :max="today"
             @input="$emit('date-change', $event)" />
+            age: {{ageString}}
       </b-col>
-      <b-col>
-            <input class="form-control" type="text" :value="ageString" readonly="readonly" />
-      </b-col>
-      <CentileCell 
+      <centile-cell 
             measure="wt"
             :value="wtKg"
             @debounced-input="$emit('wt-change', $event)"
             units="kg"
             :centile="wtCentile" />
-      <CentileCell 
+      <centile-cell 
             measure="length"
             :value="lengthCm"
             @debounced-input="$emit('length-change', $event)" 
             units="cm"
             :centile="lengthCentile" />
-      <CentileCell
+      <centile-cell
             measure="head-circ"
             :value="hcCm"
             @debounced-input="$emit('hc-change', $event)" 
             units="cm"
             :centile="hcCentile" />
-      <CentileCell
+      <centile-cell
             measure="bmi"
             :value="bmi"
             :centile="bmiCentile" 
@@ -41,7 +39,7 @@
           <span>
               kg/m<sup>2</sup>
           </span>
-      </CentileCell>
+      </centile-cell>
   </b-row>
 </template>
 
@@ -104,7 +102,10 @@ export default class CentileRow extends Vue implements ICentileVals {
             return '';
         }
         const age = ChildAge.ageOnDate(this.dob, this.measureDate);
-        return age.years + 'y' + age.months + 'm' + (age.years < 2 ? (age.days + 'd') : '');
+        let returnVar = age.years ? age.years + ' yr' : '';
+        returnVar += age.months ? age.months + ' mth' : '';
+        returnVar += age.years < 2 ? (age.days + ' day') : '';
+        return returnVar;
     }
 
     public get ageDays() {

@@ -102,9 +102,7 @@ export default class SvgCentiles extends Mixins(Ready) {
     }
     public async mounted() {
         await this.$ready();
-        const container = (this.$refs.svg as SVGImageElement).parentElement!;
-        this.RMargin = container.offsetWidth - padR;
-        this.lowerMargin = container.offsetHeight - this.padBottom;
+        this.setSize();
     }
 
     public get centileLines() {
@@ -246,6 +244,12 @@ export default class SvgCentiles extends Mixins(Ready) {
     // methods
     public hash(...args: Array<string | number | Array<number | undefined | null> | null | undefined>) {
         return hash(...args);
+    }
+
+    private setSize() {
+         const container = (this.$refs.svg as SVGImageElement).parentElement!;
+        this.RMargin = container.offsetWidth - padR;
+        this.lowerMargin = container.offsetHeight - this.padBottom;
     }
 }
 function hashAxis(...axes: IAxis[]) {

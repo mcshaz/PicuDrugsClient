@@ -8,33 +8,30 @@
         <dob-input v-model="dob" />
         <b-container fluid>
             <b-row class="justify-content-md-left">
-              <b-col>
+              <b-col cols="1">
               </b-col>
-              <b-col>
-                  Date
+              <b-col cols="3">
+                  Date <small class="small">+ age</small>
               </b-col>
-              <b-col>
-                  Age
-              </b-col>
-              <b-col>
+              <b-col cols="2">
                   Weight
                   <b-button variant="outline-primary" @click="chart('weight')" :disabled="isMale===null">
                     <font-awesome-icon icon="chart-line" />
                   </b-button>
               </b-col>
-              <b-col>
+              <b-col cols="2">
                   length
                   <b-button variant="outline-primary" @click="chart('length')">
                     <font-awesome-icon icon="chart-line" />
                   </b-button>
               </b-col>
-              <b-col>
+              <b-col cols="2">
                   head-circ
                   <b-button variant="outline-primary" @click="chart('head-circumference')">
                     <font-awesome-icon icon="chart-line" />
                   </b-button>
               </b-col>
-              <b-col>
+              <b-col cols="2">
                   bmi
                   <b-button variant="outline-primary" @click="chart('BMI')">
                     <font-awesome-icon icon="chart-line" />

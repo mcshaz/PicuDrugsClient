@@ -1,5 +1,5 @@
 <template>
-    <b-col>
+    <b-col cols="2">
         <b-input-group >
             <input
                 class="form-control"
