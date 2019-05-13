@@ -90,7 +90,6 @@ export default class CentileRow extends Vue implements ICentileVals {
     public lengthCm!: vueNumber;
     @Prop({required: true})
     public measureDate!: Date | null;
-    private pAgeDays: number | null = null;
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
     @Inject('bmiCentiles')
@@ -100,10 +99,6 @@ export default class CentileRow extends Vue implements ICentileVals {
     @Inject('hcCentiles')
     private hcCentiles!: UKHeadCircumferenceData;
 
-    public created() {
-        this.setAgeDays();
-    }
-
     public get ageString() {
         if (!this.dob || !this.measureDate) {
             return '';
@@ -112,12 +107,8 @@ export default class CentileRow extends Vue implements ICentileVals {
         return age.years + 'y' + age.months + 'm' + (age.years < 2 ? (age.days + 'd') : '');
     }
 
-    @Watch('measureDate')
-    @Watch('isMale')
-    @Watch('weeksGestation')
-    @Watch('dob')
-    public setAgeDays() {
-        this.pAgeDays = (!this.dob || !this.measureDate || this.dob > this.measureDate)
+    public get ageDays() {
+        return (!this.dob || !this.measureDate || this.dob > this.measureDate)
             ? null
             : Math.floor((this.measureDate.getTime() - this.dob.getTime()) / msPerDay);
     }
@@ -147,13 +138,13 @@ export default class CentileRow extends Vue implements ICentileVals {
     }
 
     private getCentile(value: vueNumber, cc: CentileCollection) {
-        if (value && this.pAgeDays && this.weeksGestation && this.weeksGestation >= 0 && this.weeksGestation <= 43) {
+        if (value && this.ageDays !== null && this.ageDays >= 0 && this.weeksGestation && this.weeksGestation >= 0 && this.weeksGestation <= 43) {
             const genderData = this.isMale ? cc.maleRange : cc.femaleRange;
-            const cga = this.weeksGestation + this.pAgeDays / 7;
+            const cga = this.weeksGestation + this.ageDays / 7;
             if (cga < genderData.gestAgeData.minAge) {
                 return `data begins ${genderData.gestAgeData.minAge}/40`;
             }
-            return centileString(cc.cumSnormForAge(value, this.pAgeDays, this.isMale, this.weeksGestation) * 100);
+            return centileString(cc.cumSnormForAge(value, this.ageDays, this.isMale, this.weeksGestation) * 100);
         }
         return void 0;
     }
