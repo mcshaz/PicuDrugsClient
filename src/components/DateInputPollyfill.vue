@@ -10,6 +10,7 @@
                 type="number"
                 autocomplete="off"
                 min="1"
+                step="1"
                 :max="firstMax"
                 :placeholder="pIsMonthFirst?'mm':'dd'"
                 v-model="first">
@@ -20,6 +21,7 @@
                 type="number"
                 autocomplete="off"
                 min="1"
+                step="1"
                 :max="secondMax"
                 :placeholder="pIsMonthFirst?'dd':'mm'"
                 v-model="second">
@@ -31,6 +33,7 @@
                 v-model="year"
                 class="FormDate__input FormDate__input--year"
                 type="number"
+                step="1"
                 autocomplete="off"
                 placeholder="yyyy">
         </div>

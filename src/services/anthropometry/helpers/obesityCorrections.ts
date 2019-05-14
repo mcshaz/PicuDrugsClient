@@ -16,7 +16,7 @@ export function mcLarenObesityCorrection(
         case searchComparison.inRange:
             return genderWtData.lmsForAge(match.ageDays!).m;
         default:
-            throw new Error('weight less than smallest median!');
+            return NaN; // throw new Error('weight less than smallest median!');
     }
 }
 

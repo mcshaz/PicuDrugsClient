@@ -6,6 +6,7 @@ import WardChart from './views/WardChart.vue';
 import SetDefaults from './views/SetDefaults.vue';
 import Centiles from './views/Centiles.vue';
 import WeightCalculations from './views/WeightCalculations.vue';
+import MultiWeight from './views/MultiWeight.vue';
 
 Vue.use(Router);
 
@@ -50,7 +51,12 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       // component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
-    }, { // NB THIS MUST COME LAST
+    }, {
+      path: '/booklet/:wardName?',
+      name: 'booklet',
+      component: MultiWeight,
+      props: true,
+    }, {
       path: '/:wardName?',
       name: 'home',
       component: Home,

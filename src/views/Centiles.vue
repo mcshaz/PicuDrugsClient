@@ -105,7 +105,6 @@ type vueNumber = number | '';
 interface IIdCentileVals extends ICentileVals { rowId: symbol; }
 
 @Component({
-  // Provides IoC container at the top level of VueComponent
   provide: {
     wtCentiles: new UKWeightData(),
     lengthCentiles: new UKLengthData(),

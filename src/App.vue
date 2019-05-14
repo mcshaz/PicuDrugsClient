@@ -28,6 +28,10 @@
               <font-awesome-icon icon="tape" />
               Under/Overweight calculators
             </b-dropdown-item>
+            <b-dropdown-item to="/booklet">
+              <font-awesome-icon icon="book-medical" />
+              create booklet
+            </b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item to="/about"><font-awesome-icon icon="info-circle" /> About</b-nav-item>
         </b-navbar-nav>

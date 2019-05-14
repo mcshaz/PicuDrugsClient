@@ -253,7 +253,7 @@ export default class SvgCentiles extends Mixins(Ready) {
     }
 }
 function hashAxis(...axes: IAxis[]) {
-    hash(axes.map((a) => [a.minorTick, ...a.labels.map((l) => l.hash)]).flat());
+    hash(axes.flatMap((a) => [a.minorTick, ...a.labels.map((l) => l.hash)]));
 }
 </script>
 <style scoped>

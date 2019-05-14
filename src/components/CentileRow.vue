@@ -2,7 +2,7 @@
   <b-row class="justify-content-md-left">
       <b-col cols="1">
           <b-button @click="$emit('delete-row')">
-              <font-awesome-icon icon="trash" />
+              <font-awesome-icon icon="trash-alt" />
           </b-button>
       </b-col>
       <b-col cols="3">
