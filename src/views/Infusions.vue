@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <b-jumbotron header="Drug Calculator" 
-        lead="Individual drug infusions" />
+    <h2>Drug Calculator - Individual drug infusions </h2>
     <PatientAgeWeightData :exactAge="selectedDrug&&!selectedDrug.isTitratable">
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Drug:" 
           invalid-feedback="Please select a drug" :state="!!selectedDrugVM">

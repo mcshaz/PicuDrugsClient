@@ -1,13 +1,13 @@
 <template>
   <div class="home">
-    <b-jumbotron header="Drug Calculator" 
-        lead="Rescitation ± ICU infusion charts" />
+    <h2>Drug Calculator - Rescitation ± ICU infusion charts </h2>
     <b-row align-h="end">
       <b-col lg="7" >
-        <PatientAgeWeightData @valid-submit="submit" :requireAnyAge="infusions">
+        <PatientAgeWeightData @valid-submit="submit" :requireAnyAge="infusions&&infusionsAvailable">
           <ward-select @ward="ward=$event" :ward-abbrev="wardName||defaultWardAbbrev"
               @boluses="boluses=$event" :boluses="boluses"
-              @infusions="infusions=$event" :infusions="infusions" />
+              @infusions="infusions=$event" :infusions="infusions" 
+              @infusions-available="infusionsAvailable=$event" />
         </PatientAgeWeightData>
       </b-col>
       <b-col xl="5" lg="5" >
@@ -48,6 +48,7 @@ interface ISelectOption { value: number; text: string; disabled?: boolean; }
 export default class Home extends Vue {
   public boluses = true;
   public infusions = true;
+  public infusionsAvailable = false;
   private ward: IEntityWard | null = null;
   private defaultWardAbbrev = '';
   @Inject('db')

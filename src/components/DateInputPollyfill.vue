@@ -1,13 +1,14 @@
 <template>
     <div>
         <div
-            class="FormDate"
+            :class="['FormDate',isValid===true?'valid':'',isValid===false?'invalid':'']"
             @keydown.capture.passive="keydown"
             @blur.capture.passive="emitBlur" >
             <input :required="required"
                 ref="first"
                 class="FormDate__input FormDate__input--day"
                 type="number"
+                autocomplete="off"
                 min="1"
                 :max="firstMax"
                 :placeholder="pIsMonthFirst?'mm':'dd'"
@@ -17,6 +18,7 @@
                 ref="second"
                 class="FormDate__input FormDate__input--month"
                 type="number"
+                autocomplete="off"
                 min="1"
                 :max="secondMax"
                 :placeholder="pIsMonthFirst?'dd':'mm'"
@@ -29,6 +31,7 @@
                 v-model="year"
                 class="FormDate__input FormDate__input--year"
                 type="number"
+                autocomplete="off"
                 placeholder="yyyy">
         </div>
     </div>
@@ -41,6 +44,7 @@ import { parseDate, dateInRange } from '@/services/utilities/dateHelpers';
 
 @Component
 export default class DateInputPollyfill extends Vue {
+    public isValid: null | boolean = null;
     private readonly pIsMonthFirst: boolean;
     private readonly firstMax: number;
     private readonly secondMax: number;
@@ -206,9 +210,25 @@ export default class DateInputPollyfill extends Vue {
         if (!timestamp) {
             if (this.pDate) {
                 this.$emit('input', this.pDate = null);
+                this.isValid = null;
             }
         } else if (!this.pDate || this.pDate.getTime() !== timestamp.getTime()) {
             this.$emit('input', this.pDate = timestamp);
+            const yearEl = this.$refs.year as HTMLInputElement;
+            if (this.min && timestamp < this.min) {
+                if (this.max && timestamp > this.max) {
+                    yearEl.setCustomValidity(`date must be between ${this.min.toLocaleDateString()} and ${this.max.toLocaleDateString()}`);
+                } else {
+                     yearEl.setCustomValidity(`date must be >= ${this.min.toLocaleDateString()}`);
+                }
+                this.isValid = false;
+            } else if (this.max && timestamp > this.max) {
+                yearEl.setCustomValidity(`date must be <= ${this.max.toLocaleDateString()}`);
+                this.isValid = false;
+            } else {
+                yearEl.setCustomValidity('');
+                this.isValid = true;
+            }
         }
     }
 }
@@ -231,19 +251,33 @@ function formatNo(no: string, len: number = 2) {
 
 <style lang="scss">
 // formatting https://github.com/maoberlehner/building-a-date-input-component-with-vue
+.FormDate.invalid {
+    border-color: #dc3545;
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    box-shadow: 0px 0px 0px 0.2rem rgba(220,53,69,0.25);
+}
+.FormDate.valid {
+    border-color: #28a745;
+}
+
 .FormDate {
   $spacing: 0.75em;
+  $vert-pad:0.375rem;
   display: inline-flex;
   position: relative;
   overflow: hidden;
-  border: 1px solid #888;
-  border-radius: 0.25em;
+  border: 1px solid #ced4da;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  height: calc(1.5em + 0.75rem + 2px);
+  font-size: 1rem;
   // 1. Hide the spinner button in Chrome, Safari and Firefox.
   &__input {
-    padding: $spacing;
+    padding: $vert-pad;
     padding-right: $spacing / 2;
     padding-left: $spacing / 2;
     border: none;
+    color: #495057;
     text-align: center;
     /* stylelint-disable-next-line property-no-vendor-prefix */
     -moz-appearance: textfield; // 1
@@ -268,9 +302,10 @@ function formatNo(no: string, len: number = 2) {
     }
   }
   &__divider {
-    padding-top: $spacing;
-    padding-bottom: $spacing;
+    padding-top: $vert-pad * 0.67;
     pointer-events: none;
+    font-size:1.2rem;
+    color: #6c757d;
   }
 }
 </style>

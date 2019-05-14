@@ -37,21 +37,23 @@
           </output>
           <div>
             <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn" :value="true" required
-                 v-if="alertLevel==='warning'||alertLevel==='danger'">
+                v-if="alertLevel==='warning'||alertLevel==='danger'">
               I confirm this is the correct weight
             </b-form-checkbox>
           </div>
         </template>
-      <b-input-group append="kg">
-        <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" 
-            type="number" required ref="weight"
-            :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
-      </b-input-group>
-      <b-button variant="outline-primary" :disabled="!!weightKg||!age" @click="wt4age" >
-          Median Weight For Age
-      </b-button>
-    </b-form-group>
-    <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
+        <div class="form-inline" >
+          <b-input-group append="kg">
+            <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" 
+                type="number" required ref="weight"
+                :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
+          </b-input-group>
+          <b-button variant="outline-primary" :disabled="!!weightKg||!age" @click="wt4age" class="ml-3" >
+            Median Weight For Age
+          </b-button>
+        </div> <!-- end form-inline -->
+      </b-form-group>
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
         <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate" >
           <b-form-radio id="estimate" :value="true">
             estimated weight
@@ -61,7 +63,6 @@
           </b-form-radio>
         </b-form-radio-group>
     </b-form-group>
-    <hr />
     <b-button type="submit" :variant="alertLevel" >Create Chart</b-button>
   </form>
 </template>
@@ -256,6 +257,6 @@ input.form-control.warning:valid {
   border-color: #fd7e14;
 }
 input[type='number'] {
-  max-width: 7.3em;
+  max-width: 7.5em;
 }
 </style>

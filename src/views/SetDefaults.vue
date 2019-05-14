@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <b-jumbotron header="Drug Calculator" 
-            lead="Defaults for this browser" />
+    <h2>Drug Calculator - Defaults for this browser </h2>
     <form @submit.prevent="submit" ref="form" class="card p-2">
         <ward-select @ward="wardAbbrev=$event.abbrev" :ward-abbrev="wardAbbrev"
                 @boluses="boluses=$event" :boluses="boluses"

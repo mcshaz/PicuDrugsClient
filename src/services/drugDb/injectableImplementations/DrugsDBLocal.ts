@@ -39,10 +39,10 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
 
     constructor(@inject(TYPES.IFetch) updateProvider: IFetch,
                 @inject(TYPES.ILogger) logger: ILogger,
-                indexedDb: IDBFactory | undefined = void 0,
+                indexedDB: IDBFactory | undefined = void 0,
                 dbKeyRange: typeof IDBKeyRange | undefined = void 0) {
-        if (indexedDb !== void 0) {
-            Dexie.dependencies.indexedDB = indexedDb as IDBFactory;
+        if (indexedDB !== void 0) {
+            Dexie.dependencies.indexedDB = indexedDB as IDBFactory;
         }
         if (dbKeyRange !== void 0) {
             Dexie.dependencies.IDBKeyRange = dbKeyRange;
@@ -85,9 +85,10 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
     private async alignDB() {
         const updateData = await this.appData.get(appDataType.lastFetchServer);
         if (updateData === void 0) {
-            this.logger.info('db being populated from 0 records');
+            this.logger.info('db being seeded from 0 records');
             // block requests & use VIP to place data;
             await this.getPutAndDeleteData(null, true);
+            this.logger.debug('database should now be unlocked');
         } else {
             this.logger.info('db being updated from ' + updateData.data);
             const updateChecked = new Date(Date.parse(updateData.data));
@@ -125,11 +126,18 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
         this.logger.info(Object.keys(serverData.data).filter((d) => d !== 'deletions')
             .reduce<number>((p, k) => p + (serverData.data as any)[k].length, 0)
             + ' records updated or inserted');
-        // running delete after in case records were deleted after the table data was populated
+        // running delete after in case records were deleted on the server after the table JSON data was written to stream
         await this.deleteLocalData(serverData.data.deletions);
-        await this.appData.put({
-            dataType: appDataType.lastFetchServer,
-            data: serverData.updateCheckStart.toString()});
+        this.logger.debug('setting dbUpdatedTime');
+        // for native promise/await implementations seems to work, but falls over in IE with promise polyfill unless
+        // rewrapped in Dexie.vip
+        await Dexie.vip(async () => {
+            await this.appData.put({
+                dataType: appDataType.lastFetchServer,
+                data: serverData.updateCheckStart.toString(),
+            });
+        });
+        this.logger.debug('dbUpdated time set at: ' + serverData.updateCheckStart.toString());
     }
 
     private async deleteLocalData(deletions: INewServerDeletions[]) {

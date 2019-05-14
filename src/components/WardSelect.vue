@@ -14,7 +14,7 @@
             :checked="boluses" name="boluses" :required="!infusions" :state="boluses||infusions" >
           Bolus Drugs
         </b-form-checkbox>
-        <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event && infusionsAvailable)" 
+        <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event&&infusionsAvailable)" 
             :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions" 
             :required="!boluses" :state="boluses||infusions">
           Infusions
@@ -94,6 +94,10 @@ export default class WardSelect extends Vue {
         });
       }
     }
+  }
+  @Watch('infusionsAvailable')
+  private availableChange(newVal: boolean) {
+    this.$emit('infusions-available', newVal);
   }
 }
 </script>

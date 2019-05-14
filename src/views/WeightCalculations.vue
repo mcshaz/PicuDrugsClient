@@ -1,7 +1,7 @@
 <template>
     <div class="weight-calculations">
         <section>
-            <h1>Obesity and eating disorder calculations</h1>
+            <h2>Obesity and eating disorder calculations</h2>
             <p>
                 Drug dosing in obesity is a complex and controversial topic. There is <em>clearly</em> no one size fits all model<sup>1,2</sup>.
             </p>
