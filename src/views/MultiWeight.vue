@@ -74,7 +74,7 @@ export default class MultiWeight extends Vue {
   public boluses = true;
   public infusions = true;
   public infusionsAvailable = false;
-  public weights: number[] = [2, 4, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60 , 70, 80];
+  public weights: number[] = [2.5, 3, 3.5, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80];
   public weightInEditor: vueNumber = '';
   public min = 0.1;
   public max = 100;
@@ -118,11 +118,6 @@ export default class MultiWeight extends Vue {
       this.weights.push(this.weightInEditor);
       this.weights.sort();
     }
-  }
-
-  public edit(indx: number) {
-    this.weightInEditor = this.weights[indx];
-    this.del(indx);
   }
 
   public del(indx: number) {

@@ -1,12 +1,23 @@
 <template>
   <tr>
       <td v-html="wtKg"></td>
-      <td><span v-html="maleMedianAgeForWeight"></span> &nbsp;(<small v-html="maleIQRAgeForWeight"></small>)</td>
-      <td><span v-html="femaleMedianAgeForWeight"></span> &nbsp;(<small v-html="femaleIQRAgeForWeight"></small>)</td>
       <td>
-         <b-button @click="$emit('edit-row')" variant="primary">
-              <font-awesome-icon icon="edit" />
-          </b-button>
+        <output>
+            <span v-html="maleMedianAgeForWeight"></span>
+            <span v-if="maleMedianAgeForWeight!==maleIQRAgeForWeight">
+                &nbsp;(<small v-html="maleIQRAgeForWeight"></small>)
+            </span>
+        </output>
+      </td>
+      <td>
+        <output>
+          <span v-html="femaleMedianAgeForWeight"></span>
+          <span v-if="femaleMedianAgeForWeight!==femaleIQRAgeForWeight"> 
+              &nbsp;(<small v-html="femaleIQRAgeForWeight"></small>)
+          </span>
+        </output>
+      </td>
+      <td>
           <b-button @click="$emit('delete-row')" variant="danger">
               <font-awesome-icon icon="trash-alt" />
           </b-button>
@@ -82,12 +93,12 @@ export default class MultiWeightRow extends Vue {
                     return`${match.gestation}<sup>+${roundDays}</sup>/40`;
                 }
                 if (roundDays <= 30) {
-                    return roundDays + ' days';
+                    return `${roundDays} day${roundDays === 1 ? '' : 's'}`;
                 }
                 if (roundDays < monthCut) {
                     const mth = Math.round(roundDays * 2 / daysPerMonth) / 2;
                     return mth % 1 === 0
-                        ? mth + ' months'
+                        ? `${mth} month${mth === 1 ? '' : 's'}`
                         : (mth - 0.5) + '½ months';
                 }
                 if (roundDays < halfCut) {
@@ -96,7 +107,7 @@ export default class MultiWeightRow extends Vue {
                         ? yrs + ' years'
                         : (yrs - 0.5) + '½ years';
                 }
-                return (roundDays / daysPerYear).toFixed() + 'years';
+                return (roundDays / daysPerYear).toFixed() + ' years';
             default:
                 throw new Error('unrecognised result');
         }

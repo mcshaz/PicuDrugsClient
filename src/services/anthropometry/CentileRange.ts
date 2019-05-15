@@ -78,13 +78,11 @@ export class CentileRange {
     }
 
     private ageDaysFor(target: number, getTarget: (ages: AgeRange, indx: number) => number) {
-        let currentRange!: AgeRange;
         let currentDelegate!: (indx: number) => number;
         const setAndSearchRange = (ages: AgeRange) => {
-            currentRange = ages;
-            currentDelegate = getTarget.bind(this, currentRange);
+            currentDelegate = getTarget.bind(this, ages);
             return binarySearch(currentDelegate,
-                target, 0, currentRange.lookup.length - 1);
+                target, 0, ages.lookup.length - 1);
         };
         let hit = setAndSearchRange(this.gestAgeData);
         switch (hit.comparison) {
@@ -92,10 +90,10 @@ export class CentileRange {
                 return {
                     matchType: searchComparison.lessThanMin,
                     ageDays: 0,
-                    gestation: currentRange.minAge,
+                    gestation: this.gestAgeData.minAge,
                 };
             case searchComparison.inRange:
-                const interpol = currentRange.minAge + CentileRange.linearInterpolateOnDelegate(currentDelegate, hit, target);
+                const interpol = this.gestAgeData.minAge + CentileRange.linearInterpolateOnDelegate(currentDelegate, hit, target);
                 if (interpol <= termGestationWeeks) {
                     const exactWeeks = Math.floor(interpol);
                     return {
@@ -115,13 +113,13 @@ export class CentileRange {
             case searchComparison.lessThanMin:
                 return {
                     matchType: searchComparison.inRange,
-                    ageDays: 7 * linearInterpolate([this.gestAgeData.maxLms().m, this.gestAgeData.maxAge - termGestationWeeks],
-                                                   [this.ageWeeksData.minLms().m, this.ageWeeksData.minAge],
+                    ageDays: 7 * linearInterpolate([getTarget(this.gestAgeData, this.gestAgeData.lookup.length - 1), this.gestAgeData.maxAge - termGestationWeeks],
+                                                   [currentDelegate(this.ageWeeksData.minAge), this.ageWeeksData.minAge],
                                                    target),
                     gestation: termGestationWeeks,
                 };
             case searchComparison.inRange:
-                const interpol = currentRange.minAge + CentileRange.linearInterpolateOnDelegate(currentDelegate, hit, target);
+                const interpol = this.ageWeeksData.minAge + CentileRange.linearInterpolateOnDelegate(currentDelegate, hit, target);
                 return {
                     matchType: searchComparison.inRange,
                     ageDays: interpol * 7,
@@ -133,13 +131,13 @@ export class CentileRange {
             case searchComparison.lessThanMin:
                 return {
                     matchType: searchComparison.inRange,
-                    ageDays: 7 * linearInterpolate([this.ageWeeksData.maxLms().m, this.ageWeeksData.maxAge],
-                                                   [this.ageMonthsData.minLms().m, this.ageMonthsData.minAge * weeksPerMonth],
+                    ageDays: 7 * linearInterpolate([getTarget(this.ageWeeksData, this.ageWeeksData.lookup.length - 1), this.ageWeeksData.maxAge],
+                                                   [currentDelegate(this.ageMonthsData.minAge), this.ageMonthsData.minAge * weeksPerMonth],
                                                    target),
                     gestation: termGestationWeeks,
                 };
             case searchComparison.inRange:
-                const interpol = currentRange.minAge + CentileRange.linearInterpolateOnDelegate(currentDelegate, hit, target);
+                const interpol = this.ageMonthsData.minAge + CentileRange.linearInterpolateOnDelegate(currentDelegate, hit, target);
                 return {
                     matchType: searchComparison.inRange,
                     ageDays: interpol * daysPerMonth,
@@ -148,7 +146,7 @@ export class CentileRange {
         }
         return {
             matchType: searchComparison.greaterThanMax,
-            ageDays: currentRange.maxAge * daysPerMonth,
+            ageDays: this.ageMonthsData.maxAge * daysPerMonth,
             gestation: termGestationWeeks,
         };
     }
