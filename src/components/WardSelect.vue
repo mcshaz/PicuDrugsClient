@@ -44,7 +44,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-import { IEntityWard, IDrugDB } from '@/services/drugDb';
+import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: string; text: string; disabled?: boolean; }
@@ -62,15 +62,27 @@ export default class WardSelect extends Vue {
   private boluses!: boolean;
   @Prop({default: true})
   private infusions!: boolean;
+  @Inject('appData')
+  private appData!: IAppData;
 
   public created() {
     this.wards = this.db.wards.toArray().then((wards) => {
       wards = wards.filter((w) => w.isLive);
       sortByStringProp(wards, 'fullname');
       this.wardOptions = wards.map((w) => ({ value: w.abbrev, text: w.fullname } as ISelectOption));
-      this.abbrev = this.wardAbbrev;
       return wards;
     });
+    if (this.wardAbbrev) {
+      this.abbrev = this.wardAbbrev;
+    } else {
+      this.appData.getWardDefaults().then((wd) => {
+        if (wd) {
+          this.boluses = wd.boluses;
+          this.infusions = wd.infusions;
+          this.abbrev = wd.wardAbbrev;
+        }
+      });
+    }
   }
 
   public get infusionsAvailable() {

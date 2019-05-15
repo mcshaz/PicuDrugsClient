@@ -13,14 +13,10 @@ export class ChildAge implements IChildAge {
     if (dobOrAge instanceof Date) {
       return new NumericRange(ChildAge.getMinAgeInDays(dobOrAge, now));
     }
-    if (typeof dobOrAge.months === 'number') {
-      if (typeof dobOrAge.days === 'number') {
-        return new NumericRange(ChildAge.getMinTotalDays(dobOrAge));
-      } else {
-        return new NumericRange(ChildAge.getMinTotalDays(dobOrAge), ChildAge.getMaxTotalDays(dobOrAge));
-      }
+    if (typeof dobOrAge.months === 'number' && typeof dobOrAge.days === 'number') {
+      return new NumericRange(ChildAge.getMinTotalDays(dobOrAge));
     }
-    return new NumericRange();
+    return new NumericRange(ChildAge.getMinTotalDays(dobOrAge), ChildAge.getMaxTotalDays(dobOrAge));
   }
 
   public static getMinAgeInDays(dob: Date, now?: Date): number {

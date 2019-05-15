@@ -3,8 +3,8 @@
     <h2>Drug Calculator - Rescitation ± ICU infusion charts </h2>
     <b-row align-h="end">
       <b-col lg="7" >
-        <PatientAgeWeightData @valid-submit="submit" :requireAnyAge="infusions&&infusionsAvailable">
-          <ward-select @ward="ward=$event" :ward-abbrev="wardName||defaultWardAbbrev"
+        <PatientAgeWeightData @valid-submit="submit" :requireAge="infusions&&infusionsAvailable">
+          <ward-select @ward="ward=$event" :ward-abbrev="wardName"
               @boluses="boluses=$event" :boluses="boluses"
               @infusions="infusions=$event" :infusions="infusions" 
               @infusions-available="infusionsAvailable=$event" />
@@ -30,12 +30,11 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 import WardSelect from '@/components/WardSelect.vue';
 import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
-import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
-import { sortByStringProp } from '@/services/utilities/sortByProp';
+import { IEntityWard, IAppData } from '@/services/drugDb';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
@@ -50,15 +49,11 @@ export default class Home extends Vue {
   public infusions = true;
   public infusionsAvailable = false;
   private ward: IEntityWard | null = null;
-  private defaultWardAbbrev = '';
-  @Inject('db')
-  private db!: IDrugDB;
   @Inject('appData')
   private appData!: IAppData;
   @Prop({default: ''})
   private wardName!: string;
   private baseRef!: string;
-  private setOnWardReady!: boolean;
 
   public created() {
     // route might be user typed & is valid with or without trailing '/'
@@ -68,16 +63,6 @@ export default class Home extends Vue {
     // nb 2 promises - do not set up race condition - should be ok as in created hook
     if (this.wardName) {
       this.baseRef = this.baseRef.slice(0, -1 - this.wardName.length);
-      this.setOnWardReady = true;
-    } else {
-      this.appData.getWardDefaults().then((wd) => {
-        this.setOnWardReady = !wd;
-        if (wd) {
-          this.boluses = wd.boluses;
-          this.infusions = wd.infusions;
-          this.defaultWardAbbrev = wd.wardAbbrev;
-        }
-      });
     }
   }
 
@@ -92,15 +77,6 @@ export default class Home extends Vue {
     this.appData.setWardDefaults(
         { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false});
     this.$router.push({ name: 'ward-chart', params: { chartData }} as any);
-  }
-
-  @Watch('ward')
-  public watchWard(newVal: IEntityWard, oldVal: IEntityWard) {
-    if (this.setOnWardReady && newVal && !oldVal) {
-      this.infusions = !newVal.defaultBolusOnly;
-      this.boluses = true;
-      this.setOnWardReady = false;
-    }
   }
 
   public get link() {

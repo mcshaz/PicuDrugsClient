@@ -114,6 +114,6 @@ function isDateSupported() {
 
 <style>
 .date-input {
-    max-width: 14.2em;
+    max-width: 14.4em;
 }
 </style>

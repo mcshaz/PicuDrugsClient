@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <dob-input v-model="dob" @min-change="minDate=$event" :required="(exact||required)&&errMsg!==''" />
+  <div class="was-validated">
+    <dob-input v-model="dob" @min-change="minDate=$event" :required="!!errMsg&&errMsg.endsWith('required')" />
     <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2" 
       :state="errMsg===null?null:(errMsg==='')"
       :invalid-feedback="errMsg" >
-      <div class="form-inline" :class="errMsg===null?'':'was-validated'">
+      <div class="form-inline">
         <b-input-group append="years" class="mr-1">
           <input class="form-control" name="years" id="years" v-model.number="years" placeholder="years" type="number"
             min="0" :max="maxYears" ref="years" :required="exact||required||months!==''" step="1" />
@@ -144,7 +144,7 @@ export default class PatientAgeData extends Vue {
 
   public get errMsg() {
     if (this.pYears === '' && this.pMonths === '' && this.pDays === '') {
-      return this.required || this.exact
+      return this.required
         ? 'age or DOB is required'
         : null;
     } else if (this.exact && (this.pMonths === '' || this.pDays === '')) {

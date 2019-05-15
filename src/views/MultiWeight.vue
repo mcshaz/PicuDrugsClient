@@ -3,58 +3,52 @@
     <h2>Drug Calculator - Create printable charts
     </h2>
     <form class="was-validated" @submit.prevent>
-      <ward-select @ward="ward=$event" :ward-abbrev="wardName||defaultWardAbbrev"
+      <ward-select @ward="ward=$event" :ward-abbrev="wardName"
           @boluses="boluses=$event" :boluses="boluses"
           @infusions="infusions=$event" :infusions="infusions" 
           @infusions-available="infusionsAvailable=$event" />
-
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col" rowspan="2">Weight(kg)</th>
-            <th scope="col">Male</th>
-            <th scope="col">Female</th>
-            <th></th>
-          </tr>
-          <tr>
-            <th scope="col" >Median<small>(IQR)</small></th>
-            <th scope="col" >Median<small>(IQR)</small></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <multi-weight-row v-for="(w, indx) in weights" 
-              :key="w"
-              :wtKg="w"
-              @edit-row="edit(indx)"
-              @delete-row="del(indx)"
-          />
-        </tbody>
-        <tfoot>
-          <tr>
-            <td>
-              <input type="number" class="form-control" v-model.number="weightInEditor" :min="min" :max="max">
-            </td>
-            <td colspan="3">
-              <b-button :disabled="weightInEditor===''||weightInEditor<min||weightInEditor>max">
-                Add
-              </b-button>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
     </form>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Weight(kg)</th>
+          <th scope="col">Male Median <small>(IQR)</small></th>
+          <th scope="col">Female Median <small>(IQR)</small></th>
+          <th scope="col" class="small">remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        <multi-weight-row v-for="(w, indx) in weights" 
+            :key="w"
+            :wtKg="w"
+            @edit-row="edit(indx)"
+            @delete-row="del(indx)"
+        />
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>
+            <form class="form-inline" @submit.prevent="addRow">
+              <input type="number" class="form-control" v-model.number="weightInEditor" :min="min" :max="max" step="0.1">
+              <b-button type="submit" :disabled="weightInEditor===''||weightInEditor<min||weightInEditor>max">
+                <font-awesome-icon icon="plus" />
+              </b-button>
+            </form>
+          </td>
+          <td colspan="3">
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import WardSelect from '@/components/WardSelect.vue';
 import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
-import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
-import { sortByStringProp } from '@/services/utilities/sortByProp';
+import { IEntityWard } from '@/services/drugDb';
 import MultiWeightRow from '@/components/MultiWeightRow.vue';
 import { UKWeightData } from '@/services/anthropometry';
 
@@ -80,44 +74,22 @@ export default class MultiWeight extends Vue {
   public max = 100;
   private ward: IEntityWard | null = null;
   private defaultWardAbbrev = '';
-  @Inject('db')
-  private db!: IDrugDB;
-  @Inject('appData')
-  private appData!: IAppData;
+
   @Prop({default: ''})
   private wardName!: string;
-  private baseRef!: string;
-  private setOnWardReady!: boolean;
-
-  public created() {
-    // route might be user typed & is valid with or without trailing '/'
-    this.baseRef = process.env.VUE_APP_BASE_URL! + setSlash(this.$route.path);
-    // logic should be - if wardName prop defined or if no appData use ward.isBolusOnly
-    // else use appData
-    // nb 2 promises - do not set up race condition - should be ok as in created hook
-    if (this.wardName) {
-      this.baseRef = this.baseRef.slice(0, -1 - this.wardName.length);
-      this.setOnWardReady = true;
-    } else {
-      this.appData.getWardDefaults().then((wd) => {
-        this.setOnWardReady = !wd;
-        if (wd) {
-          this.boluses = wd.boluses;
-          this.infusions = wd.infusions;
-          this.defaultWardAbbrev = wd.wardAbbrev;
-        }
-      });
-    }
-  }
 
   public addRow() {
     if (this.weightInEditor === '' || this.weightInEditor <= 0) {
-      throw new Error('cannot add empty or <= 0 weight');
+      return;
     }
     if (!this.weights.includes(this.weightInEditor)) {
       this.weights.push(this.weightInEditor);
-      this.weights.sort();
+      this.weights.sort((a, b) => {
+        if (a === b) { return 0; }
+        return a > b ? 1 : -1;
+      });
     }
+    this.weightInEditor = '';
   }
 
   public del(indx: number) {
@@ -132,24 +104,7 @@ export default class MultiWeight extends Vue {
     chartData.boluses = this.boluses;
     chartData.infusions = this.infusions;
     chartData.ward = this.ward;
-    this.appData.setWardDefaults(
-        { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false});
     this.$router.push({ name: 'ward-chart', params: { chartData }} as any);
-  }
-
-  @Watch('ward')
-  public watchWard(newVal: IEntityWard, oldVal: IEntityWard) {
-    if (this.setOnWardReady && newVal && !oldVal) {
-      this.infusions = !newVal.defaultBolusOnly;
-      this.boluses = true;
-      this.setOnWardReady = false;
-    }
-  }
-
-  public get link() {
-    return this.ward
-      ? this.baseRef + encodeURIComponent(this.ward.abbrev)
-      : '';
   }
 }
 

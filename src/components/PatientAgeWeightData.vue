@@ -8,18 +8,16 @@
           placeholder="Patient Name" autocomplete="off" />
     </b-form-group>
     <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
-    <patient-age-data v-model="age" :exact="exactAge" :required="requireAnyAge" />
+    <patient-age-data v-model="age" :exact="exactAge" :required="requireAge" />
     <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
     <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
-    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" :state="wtState()"
-          :class="alertLevel===''?'':'was-validated'" @blur="debounceCentiles.flush()" >
-        <template slot="invalid-feedback" v-if="pWeightKg===''&&wtTouched">
-          Weight is required
+    <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
+          :state="errMsg===null?null:(errMsg==='')" 
+          class="was-validated" @blur="debounceCentiles.flush()" >
+        <template slot="invalid-feedback" v-if="!acceptWtWarn&&errMsg.startsWith('Weight')">
+          {{errMsg}}
         </template>
-        <template slot="invalid-feedback" v-else-if="pWeightKg<minWeight||pWeightKg>maxWeight">
-          Weight must be {{minWeight}} – {{maxWeight}} kg
-        </template>
-        <template :slot="alertLevel==='success'?'valid-feedback':'invalid-feedback'" v-else>
+        <template :slot="acceptWtWarn?'valid-feedback':'invalid-feedback'" v-else >
           <output v-if="lbWtCentile!==null" name="centile" id="centile" ref="centile">
             <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span>
             <span class="val">{{lbWtCentile.val}}</span>
@@ -40,6 +38,7 @@
                 v-if="alertLevel==='warning'||alertLevel==='danger'">
               I confirm this is the correct weight
             </b-form-checkbox>
+            {{errMsg}}
           </div>
         </template>
         <div class="form-inline" >
@@ -48,7 +47,7 @@
                 type="number" required ref="weight"
                 :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
           </b-input-group>
-          <b-button variant="outline-primary" :disabled="!!weightKg||!age" @click="wt4age" class="ml-3" >
+          <b-button variant="outline-primary" :disabled="(!isWeightEstimate&&!!weightKg)||!age" @click="wt4age" class="ml-3" >
             Median Weight For Age
           </b-button>
         </div> <!-- end form-inline -->
@@ -93,16 +92,17 @@ export default class PatientAgeWeightData extends Vue {
   public alertLevel = '';
   public lbWtCentile: ICentileVal | null = null;
   public ubWtCentile: ICentileVal | null = null;
-  public wtTouched = false;
   public isFormSubmitted = false;
   public minWeight = minWeightRecord();
   public maxWeight = maxWeightRecord();
   public isWeightEstimate = false;
 
+  @Prop({default: true})
+  private requireWeight!: boolean;
   @Prop({default: false})
   private exactAge!: boolean;
   @Prop({default: false})
-  private requireAnyAge!: boolean;
+  private requireAge!: boolean;
   private pAcceptWtWarn = false;
   private pAge: ChildAge | null = null;
   private pIsMale: nullBool = null;
@@ -120,7 +120,6 @@ export default class PatientAgeWeightData extends Vue {
   public get weightKg() { return this.pWeightKg; }
   public set weightKg(value: vueNumber) {
     this.pWeightKg = value;
-    this.wtTouched = true;
     if (value === '') {
       this.debounceCentiles.cancel();
       this.updateCentiles();
@@ -152,11 +151,21 @@ export default class PatientAgeWeightData extends Vue {
     }
   }
 
-  public wtState() {
-    if (!this.wtTouched) {
-      return null;
+  public get errMsg() {
+    if (this.weightKg === '') {
+      return this.requireWeight
+        ? 'Weight is required'
+        : null;
     }
-    return (this.$refs.weight as HTMLInputElement).checkValidity();
+    if (this.weightKg < this.minWeight || this.weightKg > this.maxWeight) {
+      return `Weight must be ${this.minWeight} – ${this.maxWeight} kg`;
+    }
+    if (this.alertLevel === 'success') {
+      return '';
+    }
+    return this.acceptWtWarn
+      ? ''
+      : 'Please confirm the weight has been double checked';
   }
 
   public wt4age() {
@@ -173,7 +182,7 @@ export default class PatientAgeWeightData extends Vue {
   }
 
   public submit(evt: Event) {
-    this.isFormSubmitted = this.wtTouched = true;
+    this.isFormSubmitted = true;
     if ((this.$refs.form as HTMLFormElement).checkValidity()) {
       this.$emit('valid-submit', {
         name: this.name,
