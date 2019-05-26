@@ -31,6 +31,7 @@
             <b-dropdown-item to="/booklet">
               <font-awesome-icon icon="book-medical" />
               create booklet
+              <font-awesome-icon icon="print" />
             </b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item to="/about"><font-awesome-icon icon="info-circle" /> About</b-nav-item>
@@ -59,7 +60,7 @@
 import 'reflect-metadata';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { drugDbContainer, IDrugDB, TYPES, IAppData } from '@/services/drugDb';
+import { drugDbContainer, IDrugDB, TYPES, IAppData, IRegisterEmail } from '@/services/drugDb';
 
 @Component({
   name: 'App',
@@ -67,6 +68,7 @@ import { drugDbContainer, IDrugDB, TYPES, IAppData } from '@/services/drugDb';
   provide: {
     db: drugDbContainer.get<IDrugDB>(TYPES.IDrugDB),
     appData: drugDbContainer.get<IAppData>(TYPES.IAppData),
+    serverCom: drugDbContainer.get<IRegisterEmail>(TYPES.IRegisterEmail),
   },
 })
 export default class App extends Vue {

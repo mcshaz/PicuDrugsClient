@@ -13,7 +13,7 @@ describe('variableVMConversion', () => {
     const testDatum = getVariableInfusionVMTestData();
     before('get data', async () => {
         const am = new ToArrayMap<IVariableVMTestData, IEntityVariableInfusionDrug>(testDatum, (d) => d.infusionDrugIds);
-        const dbInit = await fileFetch.getUpdates(null);
+        const dbInit = await fileFetch.getDbUpdates(null);
         dbDatum = am.match(dbInit.data.infusionDrugs as IEntityVariableInfusionDrug[], (d) => d.infusionDrugId)
             .map((m) => m[1] as IEntityVariableInfusionDrug[]);
     });

@@ -7,6 +7,7 @@ import SetDefaults from './views/SetDefaults.vue';
 import Centiles from './views/Centiles.vue';
 import WeightCalculations from './views/WeightCalculations.vue';
 import MultiWeight from './views/MultiWeight.vue';
+import WardMultiChart from './views/WardMultiChart.vue';
 
 Vue.use(Router);
 
@@ -57,6 +58,11 @@ export default new Router({
       component: MultiWeight,
       props: true,
     }, {
+      path: '/multi-chart',
+      name: 'multi-chart',
+      component: WardMultiChart,
+      props: true,
+    }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',
       component: Home,

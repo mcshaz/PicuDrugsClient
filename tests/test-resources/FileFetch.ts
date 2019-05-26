@@ -1,7 +1,7 @@
-import { IServerChanges, IFetch  } from '@/services/drugDb';
+import { IServerChanges, IFetchUpdates  } from '@/services/drugDb';
 
-const fileFetch: IFetch = {
-    async getUpdates(lastServerCheckUtc: Date | null) {
+const fileFetch: IFetchUpdates = {
+    async getDbUpdates(lastServerCheckUtc: Date | null) {
         let fileName = process.env.VUE_APP_BASE_URL! + process.env.VUE_APP_DBJSON!;
         if (new Function('try {return this===global;}catch(e){return false;}')()) {
             const fs = await import('fs');

@@ -7,7 +7,7 @@ import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
 import { dbTableName } from '../entities/enums/dbTableName';
 import { ILogger } from '../Injectables/ILogger';
-import { IFetch } from '../Injectables/IFetch';
+import { IFetchUpdates } from '../Injectables/IFetch';
 import { inject, injectable, decorate } from 'inversify';
 import { TYPES } from '../types';
 import { IServerChanges } from '../ServerCommunication/IServerChanges';
@@ -33,11 +33,11 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
     public defibModels!: Dexie.Table<IEntityDefibModel, number>;
     public fixedDrugs!: Dexie.Table<IEntityFixedDrug, number>;
     public appData!: Dexie.Table<IDbAppData, number>;
-    private readonly updateProvider: IFetch;
+    private readonly updateProvider: IFetchUpdates;
     private readonly logger: ILogger;
     // ...other tables goes here...
 
-    constructor(@inject(TYPES.IFetch) updateProvider: IFetch,
+    constructor(@inject(TYPES.IFetchUpdates) updateProvider: IFetchUpdates,
                 @inject(TYPES.ILogger) logger: ILogger,
                 indexedDB: IDBFactory | undefined = void 0,
                 dbKeyRange: typeof IDBKeyRange | undefined = void 0) {
@@ -98,7 +98,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
     }
 
     private async getPutAndDeleteData(updateChecked: Date | null, vip: boolean = false) {
-        const serverData = await this.updateProvider.getUpdates(updateChecked);
+        const serverData = await this.updateProvider.getDbUpdates(updateChecked);
         this.logger.log(`dbdata returned from server @ ${ serverData.updateCheckStart } consisting of `
             + Object.keys(serverData.data).map((k) => `{${k}:length[${(serverData.data as any)[k].length}]}`)
             .join(','));

@@ -68,7 +68,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import NhiInput from '@/components/NhiInput.vue';
 import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
@@ -96,6 +96,7 @@ export default class PatientAgeWeightData extends Vue {
   public minWeight = minWeightRecord();
   public maxWeight = maxWeightRecord();
   public isWeightEstimate = false;
+  public errMsg = '';
 
   @Prop({default: true})
   private requireWeight!: boolean;
@@ -113,8 +114,9 @@ export default class PatientAgeWeightData extends Vue {
 // not to be watched
   private wtData!: UKWeightData;
 
-  public created() {
+  public mounted() {
     this.wtData = new UKWeightData();
+    this.weightChange();
   }
 
   public get weightKg() { return this.pWeightKg; }
@@ -150,22 +152,22 @@ export default class PatientAgeWeightData extends Vue {
       this.alertLevel = 'warning';
     }
   }
-
-  public get errMsg() {
-    if (this.weightKg === '') {
-      return this.requireWeight
-        ? 'Weight is required'
-        : null;
+  @Watch('weightKg')
+  @Watch('pAcceptWtWarn')
+  @Watch('alertLevel')
+  public weightChange() {
+    const validity = (this.$refs.weight as HTMLInputElement).validity;
+    if (validity.valueMissing) {
+      this.errMsg = 'Weight is required';
+    } else if (validity.rangeUnderflow || validity.rangeOverflow) {
+      this.errMsg = `Weight must be ${this.minWeight} – ${this.maxWeight} kg`;
+    } else if (this.alertLevel === 'success') {
+      this.errMsg = '';
+    } else {
+      this.errMsg = this.acceptWtWarn
+        ? ''
+        : 'Please confirm the weight has been double checked';
     }
-    if (this.weightKg < this.minWeight || this.weightKg > this.maxWeight) {
-      return `Weight must be ${this.minWeight} – ${this.maxWeight} kg`;
-    }
-    if (this.alertLevel === 'success') {
-      return '';
-    }
-    return this.acceptWtWarn
-      ? ''
-      : 'Please confirm the weight has been double checked';
   }
 
   public wt4age() {

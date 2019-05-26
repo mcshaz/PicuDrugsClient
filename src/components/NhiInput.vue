@@ -43,54 +43,63 @@ enum nhiValidationResult { na, pass, simPass, length, regExp, checkSum }
 
 @Component
 export default class NhiInput extends Vue {
-    public nhiState: null | boolean = null;
-    public nhiPattern!: string;
-    public readonly simNHI = simNHI;
-    public readonly nhiLength = nhiLength;
-    public validationResult = nhiValidationResult.na;
-    public validationResults = nhiValidationResult;
+  public nhiState: null | boolean = null;
+  public nhiPattern!: string;
+  public readonly simNHI = simNHI;
+  public readonly nhiLength = nhiLength;
+  public validationResult = nhiValidationResult.na;
+  public validationResults = nhiValidationResult;
 
-    @Prop() private readonly value!: string;
-    private pNhi: string = '';
+  @Prop() private readonly value!: string;
+  private pNhi: string = '';
 
-    public created() {
-        this.nhiPattern = createNHIRx();
-        this.pNhi = this.value;
+  public created() {
+      this.nhiPattern = createNHIRx();
+      this.pNhi = this.value;
+  }
+
+  public get nhi() { return this.pNhi; }
+  public set nhi(value: string) {
+      this.pNhi = value.toUpperCase();
+      this.$emit('input', value);
+      this.validate(value.length < nhiLength);
+  }
+
+  public validate(isBeingEntered = false) {
+    const validity = (this.$refs.nhi as HTMLInputElement).validity;
+    if (this.nhi.length === 0) {
+      this.validationResult = nhiValidationResult.na;
+    } else if (validity.tooShort || validity.tooLong) {
+      this.validationResult = nhiValidationResult.length;
+    } else if (validity.patternMismatch) {
+      this.validationResult = nhiValidationResult.regExp;
+    } else if (this.nhi !== simNHI && !mod11check(this.nhi)) {
+      this.validationResult = nhiValidationResult.checkSum;
+      (this.$refs.nhi as HTMLInputElement).setCustomValidity('checksum fails');
+    } else {
+      this.validationResult = nhiValidationResult.pass;
+      (this.$refs.nhi as HTMLInputElement).setCustomValidity('');
     }
-
-    public get nhi() { return this.pNhi; }
-    public set nhi(value: string) {
-        this.pNhi = value.toUpperCase();
-        this.$emit('input', value);
-        this.validate(value.length < nhiLength);
+    let newState: boolean | null;
+    switch (this.validationResult) {
+      case nhiValidationResult.pass:
+        newState = true;
+        break;
+      case nhiValidationResult.na:
+        newState = null;
+        break;
+      case nhiValidationResult.length:
+        newState = isBeingEntered ? null : false;
+        break;
+      default:
+        newState = false;
+        break;
     }
-
-    public validate(isBeingEntered = false) {
-        this.validationResult = validateNhi(this.nhi, this.nhiPattern);
-        let newState: boolean | null;
-        switch (this.validationResult) {
-          case nhiValidationResult.pass:
-          case nhiValidationResult.simPass:
-            newState = true;
-            break;
-          case nhiValidationResult.na:
-            newState = null;
-            break;
-          case nhiValidationResult.length:
-            newState = isBeingEntered ? null : false;
-            break;
-          default:
-            newState = false;
-            break;
-        }
-        (this.$refs.nhi as HTMLInputElement).setCustomValidity(this.validationResult === nhiValidationResult.checkSum
-              ? 'Checksum Error'
-              : '');
-        if (this.nhiState !== newState) {
-            this.nhiState = newState;
-            this.$emit('valid-state-change', newState);
-        }
+    if (this.nhiState !== newState) {
+        this.nhiState = newState;
+        this.$emit('valid-state-change', newState);
     }
+  }
 }
 
 function validateNhi(nhi: string, pattern: string = createNHIRx()) {

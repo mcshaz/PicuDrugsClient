@@ -2,11 +2,22 @@
   <div class="prinatableCharts">
     <h2>Drug Calculator - Create printable charts
     </h2>
-    <form class="was-validated" @submit.prevent>
+    <form class="was-validated" @submit.prevent="submit" >
       <ward-select @ward="ward=$event" :ward-abbrev="wardName"
           @boluses="boluses=$event" :boluses="boluses"
           @infusions="infusions=$event" :infusions="infusions" 
           @infusions-available="infusionsAvailable=$event" />
+      <b-form-group label="Email:" label-cols-lg="2" label-cols-xl="2" :state="emailValidity"
+          invalid-feedback="Please enter a valid email address" label-for="email" v-model="email"
+          description="To be notified if the charts for this department are altered/updated">
+        <b-input-group >
+          <b-input type="email" name="email" ref="email" id="email" v-model="email"/>
+          <b-input-group-text slot="append">
+            <font-awesome-icon icon="envelope" />
+          </b-input-group-text>
+        </b-input-group>
+      </b-form-group>
+      <b-button type="submit" :disabled="!ward" >submit</b-button>
     </form>
     <table class="table table-striped">
       <thead>
@@ -19,8 +30,10 @@
       </thead>
       <tbody>
         <multi-weight-row v-for="(w, indx) in weights" 
-            :key="w"
-            :wtKg="w"
+            :key="w.wtKg"
+            :wtKg="w.wtKg"
+            @female-median-age="w.femaleM=$event"
+            @male-median-age="w.maleM=$event"
             @edit-row="edit(indx)"
             @delete-row="del(indx)"
         />
@@ -47,14 +60,15 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import WardSelect from '@/components/WardSelect.vue';
-import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
-import { IEntityWard } from '@/services/drugDb';
+import { IMultiWardChartData } from '@/components/ComponentCommunication';
+import { IEntityWard, IAppData } from '@/services/drugDb';
 import MultiWeightRow from '@/components/MultiWeightRow.vue';
-import { UKWeightData } from '@/services/anthropometry';
+import { UKWeightData, searchComparison } from '@/services/anthropometry';
+import { IMedianMatchResult } from '../services/anthropometry/CentileRange';
 
 type vueNumber = number | '';
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
-
+interface IWtAge { wtKg: number; maleM: IMedianMatchResult; femaleM: IMedianMatchResult; }
 @Component({
   components: {
     WardSelect,
@@ -68,7 +82,9 @@ export default class MultiWeight extends Vue {
   public boluses = true;
   public infusions = true;
   public infusionsAvailable = false;
-  public weights: number[] = [2.5, 3, 3.5, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80];
+  public email = '';
+  public weights: IWtAge[] = [2.5, 3, 3.5, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80]
+      .map((wtKg) => ({ wtKg } as IWtAge));
   public weightInEditor: vueNumber = '';
   public min = 0.1;
   public max = 100;
@@ -78,15 +94,22 @@ export default class MultiWeight extends Vue {
   @Prop({default: ''})
   private wardName!: string;
 
+  public get emailValidity() {
+    if (this.email.length) {
+      return (this.$refs.email as HTMLInputElement).validity.valid;
+    }
+    return null;
+  }
+
   public addRow() {
     if (this.weightInEditor === '' || this.weightInEditor <= 0) {
       return;
     }
-    if (!this.weights.includes(this.weightInEditor)) {
-      this.weights.push(this.weightInEditor);
+    if (!this.weights.some((w) => w.wtKg === this.weightInEditor)) {
+      this.weights.push({ wtKg: this.weightInEditor } as IWtAge);
       this.weights.sort((a, b) => {
-        if (a === b) { return 0; }
-        return a > b ? 1 : -1;
+        if (a.wtKg === b.wtKg) { return 0; }
+        return a.wtKg > b.wtKg ? 1 : -1;
       });
     }
     this.weightInEditor = '';
@@ -96,28 +119,34 @@ export default class MultiWeight extends Vue {
     this.weights.splice(indx, 1);
   }
 
-  public submit(data: IPatientData) {
+  public submit() {
     if (!this.ward) {
       throw new Error('validation failing - selectedWard was null but valid submit reached');
     }
-    const chartData = data as IWardChartData;
-    chartData.boluses = this.boluses;
-    chartData.infusions = this.infusions;
-    chartData.ward = this.ward;
-    this.$router.push({ name: 'ward-chart', params: { chartData }} as any);
+    const chartData: IMultiWardChartData = {
+      boluses: this.boluses,
+      infusions: this.infusions,
+      ward: this.ward,
+      weights: this.weights.map((w) => ({ wtKg: w.wtKg, estAge: average(w.femaleM, w.maleM)})),
+      updateEmail: this.email,
+    };
+    this.$router.push({ name: 'multi-chart', params: { chartData }} as any);
   }
 }
 
-function setSlash(path: string) {
-  if (/^\/*$/.test(path)) {
-    return '';
+function average(a: IMedianMatchResult, b: IMedianMatchResult): IMedianMatchResult {
+  let matchType = searchComparison.inRange;
+  if (a.matchType === searchComparison.lessThanMin || b.matchType === searchComparison.lessThanMin) {
+    matchType = searchComparison.lessThanMin;
+  } else if (a.matchType === searchComparison.greaterThanMax || b.matchType === searchComparison.greaterThanMax) {
+    matchType = searchComparison.greaterThanMax;
   }
-  if (!path.endsWith('/')) { // route might be user typed & is valid with or without trailing '/'
-    path += '/';
-  }
-  if (path[0] === '/') {
-    path = path.substr(1);
-  }
-  return path;
+  return {
+    ageDays: (a.ageDays + b.ageDays) / 2,
+    gestation: (a.gestation + b.gestation) / 2,
+    matchType,
+  };
 }
+
+
 </script>

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
 import { Substitute, Arg } from '@fluffy-spoon/substitute';
-import { IFetch } from '@/services/drugDb/Injectables/IFetch';
+import { IFetchUpdates } from '@/services/drugDb/Injectables/IFetch';
 import { fileFetch } from '../../test-resources/FileFetch';
 import { IServerChanges } from '@/services/drugDb/ServerCommunication/IServerChanges';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
@@ -11,8 +11,8 @@ import { dbTableName } from '@/services/drugDb/entities/enums/dbTableName';
 import { EmptyLogger } from '@/services/drugDb/injectableImplementations/EmptyLogger';
 
 describe('simple DB tests', () => {
-    const emptyFetch = Substitute.for<IFetch>();
-    emptyFetch.getUpdates(null).returns(Promise.resolve<IServerChanges>({
+    const emptyFetch = Substitute.for<IFetchUpdates>();
+    emptyFetch.getDbUpdates(null).returns(Promise.resolve<IServerChanges>({
         updateCheckStart: new Date(),
         data: {
             deletions: [],
@@ -32,12 +32,12 @@ describe('simple DB tests', () => {
         });
         return promise;
     });
-    it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getUpdates(Arg.any()));
-    it('called IFetch only with null', () => emptyFetch.received(1).getUpdates(null));
+    it('empty DB called IFetch exactly once', () => emptyFetch.received(1).getDbUpdates(Arg.any()));
+    it('called IFetch only with null', () => emptyFetch.received(1).getDbUpdates(null));
     describe('single DB table items can be added', () => {
         const allTables = new DbTestTableHelpers();
         before('adding single db items', async () => {
-            const allData = await fileFetch.getUpdates(null);
+            const allData = await fileFetch.getDbUpdates(null);
             allTables.setDb(db, (e) => {
                 switch (e.tableCode) {
                     case dbTableName.wards:

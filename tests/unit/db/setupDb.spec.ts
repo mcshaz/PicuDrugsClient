@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { DrugsDBLocal } from '@/services/drugDb/injectableImplementations/DrugsDBLocal';
 import fakedb from 'fake-indexeddb';
 import dbKeyRange from 'fake-indexeddb/lib/FDBKeyRange';
-import { IFetch } from '@/services/drugDb';
+import { IFetchUpdates } from '@/services/drugDb';
 import { appDataType } from '@/services/drugDb/entities/enums/appDataType';
 import { IDbAppData } from '@/services/drugDb/entities/IAppData';
 import { DbTestTableHelpers } from './DbTestTableHelpers';
@@ -15,9 +15,9 @@ describe('setup full local db from JSON', () => {
     const allTables = new DbTestTableHelpers();
     let updated: Date;
     before('initialize db', () => {
-        const fetch: IFetch = {
-            getUpdates: async () => {
-                const dbInit = await fileFetch.getUpdates(null);
+        const fetch: IFetchUpdates = {
+            getDbUpdates: async () => {
+                const dbInit = await fileFetch.getDbUpdates(null);
                 dbInit.updateCheckStart = updated = new Date();
                 allTables.forEach((t) => {
                     t.entities = dbInit.data[t.name] = dbInit.data[t.name].slice(0, takeUpTo + 1);

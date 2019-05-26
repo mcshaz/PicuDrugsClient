@@ -50,6 +50,7 @@ export default class MultiWeightRow extends Vue {
     public get maleMedianAgeForWeight() {
         if (this.wtKg === '') { return ''; }
         const ageDays = this.wtCentiles.maleRange.ageDaysForMedian(this.wtKg);
+        this.$emit('male-median-age', ageDays);
         return this.ageString(ageDays);
     }
 
@@ -60,6 +61,7 @@ export default class MultiWeightRow extends Vue {
     public get femaleMedianAgeForWeight() {
         if (this.wtKg === '') { return ''; }
         const ageDays = this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg);
+        this.$emit('female-median-age', ageDays);
         return this.ageString(ageDays);
     }
 

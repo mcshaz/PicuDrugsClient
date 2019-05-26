@@ -12,7 +12,7 @@ describe('fixedVMConversion', () => {
     before('get data', async () => {
         const m = new ToArrayMap<IFixedVMTestData, IEntityFixedInfusionDrug>(expectedDatum,
             (d) => [d.infusionDrugId]);
-        const dbInit = await fileFetch.getUpdates(null);
+        const dbInit = await fileFetch.getDbUpdates(null);
         dbDatum = m.match(dbInit.data.infusionDrugs as IEntityFixedInfusionDrug[], (d) => d.infusionDrugId)
             .map((d) => d[1][0]);
     });
