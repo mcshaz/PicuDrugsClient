@@ -21,8 +21,7 @@ import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 import DateInputPollyfill from '@/components/DateInputPollyfill.vue';
 import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
-
-enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
+import { dateElSupportValues, dateElSupport} from '@/services/utilities/html5ElementSupport';
 
 @Component({
     components: {
@@ -30,8 +29,8 @@ enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
     },
 })
 export default class DateInput extends Vue {
-    public readonly isDateSupported: dateElSupport;
-    public readonly dateElSupport: typeof dateElSupport;
+    public readonly isDateSupported: dateElSupportValues;
+    public readonly dateElSupportValues: typeof dateElSupportValues;
     public offset = 0;
     private pDateStr!: string;
     private wasDate?: boolean;
@@ -51,17 +50,17 @@ export default class DateInput extends Vue {
 
     constructor() {
         super();
-        this.isDateSupported = isDateSupported();
-        this.dateElSupport = dateElSupport;
-        if (this.isDateSupported === dateElSupport.elSupport) {
+        this.isDateSupported = dateElSupport;
+        this.dateElSupportValues = dateElSupportValues;
+        if (this.isDateSupported === dateElSupportValues.elSupport) {
             this.pDateStr = '';
         }
     }
 
     public created() {
-        if (this.isDateSupported === dateElSupport.elSupport && this.value) {
+        if (this.isDateSupported === dateElSupportValues.elSupport && this.value) {
             this.pDateStr = ymdFormat(this.value);
-        } else if (this.isDateSupported === dateElSupport.valueAsDateSupport) {
+        } else if (this.isDateSupported === dateElSupportValues.valueAsDateSupport) {
             this.offset = (this.value || new Date()).getTimezoneOffset() * 60000;
         }
     }
@@ -98,18 +97,6 @@ export default class DateInput extends Vue {
     }
 }
 
-function isDateSupported() {
-    const input = document.createElement('input');
-    const v = 'a';
-    input.setAttribute('type', 'date');
-    input.setAttribute('value', v);
-    if (input.value === v) {
-        return dateElSupport.noSupport;
-    }
-    return input.valueAsDate === null
-        ? dateElSupport.valueAsDateSupport
-        : dateElSupport.elSupport;
-}
 </script>
 
 <style>

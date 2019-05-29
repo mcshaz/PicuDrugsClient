@@ -22,3 +22,13 @@ export function dmyFormat(dt: Date) {
 export function dateInRange(dt: Date | null, min: Date | null, max: Date | null) {
     return dt && (!min || dt >= min) && (!max || dt <= max);
 }
+
+export const isMonthFirst = (() => {
+    const indexOf = (search: string, searchFor: number) =>
+                        search.search(new RegExp('\\b' + searchFor.toString().padStart(2, '0') + '\\b'));
+    const mm = 3;
+    const dd = 28;
+    const testDate = new Date(1974, mm - 1, dd);
+    const dateStr = testDate.toLocaleDateString(void 0, { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return indexOf(dateStr, mm) < indexOf(dateStr, dd);
+})();

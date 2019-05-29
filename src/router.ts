@@ -8,6 +8,7 @@ import Centiles from './views/Centiles.vue';
 import WeightCalculations from './views/WeightCalculations.vue';
 import MultiWeight from './views/MultiWeight.vue';
 import WardMultiChart from './views/WardMultiChart.vue';
+import TransportTimes from './views/TransportTimes.vue';
 
 Vue.use(Router);
 
@@ -62,6 +63,10 @@ export default new Router({
       name: 'multi-chart',
       component: WardMultiChart,
       props: true,
+    }, {
+      path: '/retrievals',
+      name: 'retrievals',
+      component: TransportTimes,
     }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',

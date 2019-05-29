@@ -2,7 +2,7 @@
   <div>
     <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:" 
         invalid-feedback="Please select a ward" :state="!!abbrev">
-      <b-form-select v-model="abbrev" :options="wardOptions" :required="true" name="ward" id="ward" >
+      <b-form-select v-model="abbrev" :options="wardOptions" :required="true" name="ward" id="ward" :state="!!abbrev">
         <template slot="first">
           <option :value="''" disabled>Please select a ward</option>
         </template>

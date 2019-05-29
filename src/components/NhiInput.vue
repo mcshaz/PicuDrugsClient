@@ -101,7 +101,7 @@ export default class NhiInput extends Vue {
     }
   }
 }
-
+/*
 function validateNhi(nhi: string, pattern: string = createNHIRx()) {
     if (!nhi || nhi.length === 0) { return nhiValidationResult.na; }
     if (nhi.length !== nhiLength) { return nhiValidationResult.length; }
@@ -114,7 +114,7 @@ function validateNhi(nhi: string, pattern: string = createNHIRx()) {
     }
     return nhiValidationResult.pass;
 }
-
+*/
 function createNHIRx(ignoreCase: boolean = false) {
   let allowedChars = 'A-HJ-NP-Z';
   let sim = simNHI;

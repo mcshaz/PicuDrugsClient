@@ -12,7 +12,7 @@
                 min="1"
                 step="1"
                 :max="firstMax"
-                :placeholder="pIsMonthFirst?'mm':'dd'"
+                :placeholder="isMonthFirst?'mm':'dd'"
                 v-model="first">
             <span class="FormDate__divider">/</span>
             <input :required="required"
@@ -23,7 +23,7 @@
                 min="1"
                 step="1"
                 :max="secondMax"
-                :placeholder="pIsMonthFirst?'dd':'mm'"
+                :placeholder="isMonthFirst?'dd':'mm'"
                 v-model="second">
             <span
                 class="FormDate__divider"
@@ -43,12 +43,12 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import { parseDate, dateInRange } from '@/services/utilities/dateHelpers';
+import { parseDate, dateInRange, isMonthFirst } from '@/services/utilities/dateHelpers';
 
 @Component
 export default class DateInputPollyfill extends Vue {
     public isValid: null | boolean = null;
-    private readonly pIsMonthFirst: boolean;
+    private readonly isMonthFirst: boolean;
     private readonly firstMax: number;
     private readonly secondMax: number;
 
@@ -68,8 +68,8 @@ export default class DateInputPollyfill extends Vue {
 
     constructor() {
         super();
-        this.pIsMonthFirst = isMonthFirst();
-        if (this.pIsMonthFirst) {
+        this.isMonthFirst = isMonthFirst;
+        if (this.isMonthFirst) {
             this.firstMax = 12;
             this.secondMax = 31;
         } else {
@@ -85,7 +85,7 @@ export default class DateInputPollyfill extends Vue {
         if (this.value) {
             const mm = this.value.getMonth().toString().padStart(2, '0');
             const dd = this.value.getDay().toString().padStart(2, '0');
-            if (this.pIsMonthFirst) {
+            if (this.isMonthFirst) {
                 this.pFirst = mm;
                 this.pSecond = dd;
             } else {
@@ -99,7 +99,7 @@ export default class DateInputPollyfill extends Vue {
 
     public get first() { return this.pFirst; }
     public set first(value: string) {
-        const move = this.pIsMonthFirst
+        const move = this.isMonthFirst
             ? this.moveMonth(value)
             : this.moveDay(value);
         if (typeof move === 'boolean') {
@@ -121,7 +121,7 @@ export default class DateInputPollyfill extends Vue {
 
     public get second() { return this.pSecond; }
     public set second(value: string) {
-        const move = this.pIsMonthFirst
+        const move = this.isMonthFirst
             ? this.moveDay(value)
             : this.moveMonth(value);
         if (typeof move === 'boolean') {
@@ -207,7 +207,7 @@ export default class DateInputPollyfill extends Vue {
     }
 
     private setValue() {
-        const timestamp = this.pIsMonthFirst
+        const timestamp = this.isMonthFirst
             ? parseDate(this.pYear, this.pFirst, this.pSecond)
             : parseDate(this.pYear, this.pSecond, this.pFirst);
         if (!timestamp) {
@@ -234,16 +234,6 @@ export default class DateInputPollyfill extends Vue {
             }
         }
     }
-}
-
-function isMonthFirst() {
-    const indexOf = (search: string, searchFor: number) =>
-                        search.search(new RegExp('\\b' + searchFor.toString().padStart(2, '0') + '\\b'));
-    const mm = 3;
-    const dd = 28;
-    const testDate = new Date(1974, mm - 1, dd);
-    const dateStr = testDate.toLocaleDateString(void 0, { year: 'numeric', month: '2-digit', day: '2-digit' });
-    return indexOf(dateStr, mm) < indexOf(dateStr, dd);
 }
 
 function formatNo(no: string, len: number = 2) {

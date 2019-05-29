@@ -73,7 +73,7 @@ export default class CentileCell extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
     input {
         width: 3em;
     }

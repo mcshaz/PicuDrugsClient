@@ -33,6 +33,11 @@
               create booklet
               <font-awesome-icon icon="print" />
             </b-dropdown-item>
+            <b-dropdown-item to="/retrievals">
+              <font-awesome-icon icon="plane-departure" />
+              retrieval times
+              <font-awesome-icon icon="plane-arrival" />
+            </b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item to="/about"><font-awesome-icon icon="info-circle" /> About</b-nav-item>
         </b-navbar-nav>
