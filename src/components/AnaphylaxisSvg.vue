@@ -6,13 +6,13 @@
             </marker>
         </defs>
         
-        <rect x="0" y="0" width="800" class="title" height="70"/>
+        <rect x="0" y="0" width="800" class="title" height="60"/>
         <text class="title-text" x="400" y="42">
             Anaphylaxis
         </text>
-        
-        <rect x="220" y="106" height="206" width="360" class="blue" rx="10" ry="10"/>
-        <text x="400" y="130">
+      
+        <rect x="220" y="70" height="206" width="360" class="blue" rx="10" ry="10"/>
+        <text x="400" y="94">
             <tspan class="heading">
                 Assess for:
             </tspan>
@@ -41,9 +41,9 @@
                 (dizziness, pale, clammy)
             </tspan>
         </text>
-        <line x1="400" y1="312" x2="400" y2="332" marker-end="url(#arrow)"/>
-        <rect x="220" height="74" width="360" class="blue" rx="10" ry="10" y="336"/>
-        <text x="400" y="356">
+        <line x1="400" y1="276" x2="400" y2="296" marker-end="url(#arrow)"/>
+        <rect x="220" height="74" width="360" class="blue" rx="10" ry="10" y="300"/>
+        <text x="400" y="320">
             <tspan class="strong">
                 Call for help
             </tspan>
@@ -54,22 +54,22 @@
                 Position flat or sitting, not walking or standing
             </tspan>
         </text>
-        <line x1="400" x2="400" marker-end="url(#arrow)" y1="410" y2="430"/>
+        <line x1="400" x2="400" marker-end="url(#arrow)" y1="374" y2="394"/>
 
-        <rect x="294" height="66" width="212" class="pink" rx="10" ry="10" y="434"/>
-        <text class="decision" x="400" y="475">
+        <rect x="294" height="66" width="212" class="pink" rx="10" ry="10" y="398"/>
+        <text class="decision" x="400" y="439">
             Cardiac arrest?
         </text>
         
-        <line y1="467" x1="507" y2="467" x2="605"/>
-        <text class="decision" y="475" x="634">
+        <line y1="431" x1="507" y2="431" x2="605"/>
+        <text class="decision" y="439" x="634">
             YES
         </text>
-        <line marker-end="url(#arrow)" x1="634" x2="634" y1="480" y2="502"/>
+        <line marker-end="url(#arrow)" x1="634" x2="634" y1="444" y2="466"/>
         
-        <rect height="84" class="pink" rx="10" ry="10" width="264" x="500" y="506"/>
+        <rect height="84" class="pink" rx="10" ry="10" width="264" x="500" y="470"/>
             <a href="https://www.nzrc.org.nz/assets/Guidelines/Algorithms/Advanced-Life-Support-for-Infants-and-Children-Jan-2016.pdf">
-                <text class="strong" x="634" y="540">
+                <text class="strong" x="634" y="504">
                     <tspan>
                         Refer Advanced Life
                     </tspan>
@@ -79,14 +79,14 @@
                 </text>
             </a>
 
-        <line y1="467" x1="294" y2="467" x2="218"/>
-        <text class="decision" y="475" x="195">
+        <line y1="431" x1="294" y2="431" x2="218"/>
+        <text class="decision" y="439" x="195">
             NO
         </text>
-        <line marker-end="url(#arrow)" y1="480" y2="502" x1="195" x2="195"/>
+        <line marker-end="url(#arrow)" y1="444" y2="466" x1="195" x2="195"/>
         
-        <rect class="pink" rx="10" ry="10" width="346" x="20" y="506" height="148"/>
-        <text y="535" x="195">
+        <rect class="pink" rx="10" ry="10" width="346" x="20" y="470" height="148"/>
+        <text y="499" x="195">
             <tspan class="strong">
                 Adrenaline IM:
             </tspan>
@@ -107,9 +107,9 @@
             </tspan>
         </text>
         
-        <line marker-end="url(#arrow)" x1="195" x2="195" y1="654" y2="674"/>
-        <rect class="pink" rx="10" ry="10" x="40" y="678" width="310" height="120"/>
-        <text x="195" y="700">
+        <line marker-end="url(#arrow)" x1="195" x2="195" y1="618" y2="638"/>
+        <rect class="pink" rx="10" ry="10" x="40" y="642" width="310" height="120"/>
+        <text x="195" y="664">
             <tspan>
                 Attach cardiac monitoring:
             </tspan>
@@ -127,14 +127,14 @@
             </tspan>
         </text>
         
-        <line marker-end="url(#arrow)" y1="740" y2="740" x1="350" x2="370"/>
-        <rect class="green" x="374" width="106" height="30" rx="10" ry="10" y="725"/>
-        <text class="resolve" y="745" x="426">
+        <line marker-end="url(#arrow)" y1="704" y2="704" x1="350" x2="370"/>
+        <rect class="green" x="374" width="106" height="30" rx="10" ry="10" y="689"/>
+        <text class="resolve" y="709" x="426">
             RESOLUTION
         </text>
-        <line y1="740" y2="740" marker-end="url(#arrow)" x1="480" x2="496"/>
-        <rect class="green" x="500" height="143" width="264" rx="10" ry="10" y="664"/> 
-        <text x="634" y="690">
+        <line y1="704" y2="704" marker-end="url(#arrow)" x1="480" x2="496"/>
+        <rect class="green" x="500" height="143" width="264" rx="10" ry="10" y="628"/> 
+        <text x="634" y="654">
             <tspan class="strong">
                 Observe (4 hours min)
             </tspan>
@@ -142,9 +142,9 @@
                 Monitor vital signs, reassess ABC
             </tspan>
         </text>
-        <circle r="2px" cx="520" cy="759"/>
-        <circle r="2px" cx="520" cy="779"/>
-        <text class="list" x="516" y="744">
+        <circle r="2px" cx="520" cy="723"/>
+        <circle r="2px" cx="520" cy="741"/>
+        <text class="list" x="516" y="708">
             <tspan>
                 Consider:
             </tspan>
@@ -159,10 +159,10 @@
             </tspan>
         </text>
         
-        <line marker-end="url(#arrow)" x1="195" y1="798" x2="195" y2="820"/>
-        <rect class="pink" rx="10" ry="10" x="40" width="700" y="824" height="142"/>
+        <line marker-end="url(#arrow)" x1="195" y1="762" x2="195" y2="784"/>
+        <rect class="pink" rx="10" ry="10" x="40" width="700" y="788" height="142"/>
         <g>
-            <text class="strong" x="400" y="850">
+            <text class="strong" x="400" y="814">
                 <tspan>
                     Call for specialist advice
                 </tspan>
@@ -171,10 +171,10 @@
                 </tspan>
             </text>
             <g>
-                <circle r="2px" cy="884" cx="60"/>
-                <circle r="2px" cy="906" cx="60"/>
-                <circle r="2px" cx="60" cy="929"/>
-                <text class="list" y="890" x="68">
+                <circle r="2px" cy="848" cx="60"/>
+                <circle r="2px" cy="870" cx="60"/>
+                <circle r="2px" cx="60" cy="893"/>
+                <text class="list" y="854" x="68">
                     <tspan>
                         Transfer to advanced care setting
                     </tspan>
@@ -197,9 +197,9 @@
                         + {{adrenalineNebSaline}}mL 0.9% saline
                     </tspan>
                 </text>
-                <circle r="2px" cy="884" cx="348"/>
-                <circle r="2px" cy="929" cx="348"/>
-                <text class="list" y="890" x="355">
+                <circle r="2px" cy="848" cx="348"/>
+                <circle r="2px" cy="893" cx="348"/>
+                <text class="list" y="854" x="355">
                     <tspan class="strong">
                         Adrenaline
                     </tspan>
@@ -257,7 +257,7 @@ export default class AnaphylaxisSvg extends Vue {
         if (this.wtKg >= 50) {
             return { dose: 0.5, units: 'mg', ml: 0.5 };
         }
-        if (this.wtKg < 7.5){
+        if (this.wtKg < 7.5) {
             return { dose: '5–10', units: 'microg', ml: '0.05–0.1' };
         }
         let dose;
@@ -366,10 +366,11 @@ export default class AnaphylaxisSvg extends Vue {
 		stroke: #45b348;
 	}
 	.title {
-		fill: #0e2c53;
+        fill:#FFF;
+		stroke: #0e2c53;
 	}
 	.title-text {
-		fill: #fff;
+		fill: #0e2c53;
 		font-size: 32pt;
 		font-weight: bold;
 	}
