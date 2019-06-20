@@ -9,6 +9,7 @@ import WeightCalculations from './views/WeightCalculations.vue';
 import MultiWeight from './views/MultiWeight.vue';
 import WardMultiChart from './views/WardMultiChart.vue';
 import TransportTimes from './views/TransportTimes.vue';
+import Anaphylaxis from './views/Anaphylaxis.vue';
 
 Vue.use(Router);
 
@@ -67,6 +68,10 @@ export default new Router({
       path: '/retrievals',
       name: 'retrievals',
       component: TransportTimes,
+    }, {
+      path: '/anaphylaxis',
+      name: 'anaphylaxis',
+      component: Anaphylaxis,
     }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',

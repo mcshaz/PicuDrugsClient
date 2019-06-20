@@ -38,6 +38,9 @@
               retrieval times
               <font-awesome-icon icon="plane-arrival" />
             </b-dropdown-item>
+            <b-dropdown-item to="/anaphylaxis">
+              anaphylaxis flowchart
+            </b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item to="/about"><font-awesome-icon icon="info-circle" /> About</b-nav-item>
         </b-navbar-nav>

@@ -20,7 +20,8 @@ describe('setup full local db from JSON', () => {
                 const dbInit = await fileFetch.getDbUpdates(null);
                 dbInit.updateCheckStart = updated = new Date();
                 allTables.forEach((t) => {
-                    t.entities = dbInit.data[t.name] = dbInit.data[t.name].slice(0, takeUpTo + 1);
+                    t.entities = dbInit.data[t.name].slice(0, takeUpTo + 1);
+                    dbInit.data[t.name] = t.entities;
                     dbInit.data.deletions.push({
                         table: t.tableCode,
                         deletionIds: t.entities.slice(-1)

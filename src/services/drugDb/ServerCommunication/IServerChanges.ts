@@ -14,6 +14,5 @@ export interface IServerChanges {
         bolusDrugs: IEntityBolusDrug[];
         defibModels: IEntityDefibModel[];
         fixedDrugs: IEntityFixedDrug[];
-        [index: string]: any[];
     };
 }

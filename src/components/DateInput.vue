@@ -1,12 +1,12 @@
 <template>
     <div class="date-input">
         <date-input-pollyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" 
-                v-if="isDateSupported===dateElSupport.noSupport" @blur="$emit('blur', $event)" :id="id" :required="required"/>
+                v-if="isDateSupported===dateElSupportValues.noSupport" @blur="$emit('blur', $event)" :id="id" :required="required"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr" 
                 :value-as-date.prop="value?new Date(value.getTime()-offset):null" :required="required"
                 @blur="$emit('blur', $event)" @input.passive="$emit('input', $event.target.valueAsDate?new Date($event.target.valueAsDate.getTime()+offset):null)"
-                v-if="isDateSupported===dateElSupport.valueAsDateSupport" :name="name" :id="id" />
+                v-if="isDateSupported===dateElSupportValues.valueAsDateSupport" :name="name" :id="id" />
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr" 
                 @blur="$emit('blur', $event)" v-else :name="name" :id="id" :required="required" />
             <b-input-group-append :is-text="true">

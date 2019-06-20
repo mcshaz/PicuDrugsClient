@@ -31,28 +31,28 @@
         </b-form-select>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Depart Starship:" >
-        <date-time-input v-model="departSS"/>
+        <date-time-input v-model="departSS" id="depart" name="depart"/>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Takeoff:" v-if="mode==='prop'||mode==='jet'" >
         <template slot="description">
           <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"></span>
         </template>
-        <date-time-input v-model="takeOff"/>
+        <date-time-input v-model="takeOff" id="takeoff" name="takeoff"/>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Arrive ${hospital?hospital.label:''}:`" >
         <template slot="description">
           <span v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"></span>
         </template>
-        <date-time-input v-model="arriveDest"/>
+        <date-time-input v-model="arriveDest" id="arriveDest" name="arriveDest"/>
       </b-form-group>   
       <b-form-group label-for="timeAtCentre" label-cols-lg="2" label-cols-xl="2" label="Time @ centre:" 
             invalid-feedback="Please select a duration">
         <template slot="description">
-          <span>estimate {{ timeAtCentre }} mins </span>
+          <span class="time-estimate">estimate {{ timeAtCentre | timeFilter }}</span> &nbsp;
           <span v-html="timeStatsFilter(timeAtCentreStats)"></span>
         </template>
         <b-input-group prepend="15" append="240" >
-          <input class="form-control" type="range" min="15" max="240" 
+          <input class="custom-range" type="range" min="15" max="240"
               v-model.number="timeAtCentre" id="timeAtCentre" name="timeAtCentre" />
         </b-input-group>
       </b-form-group>
@@ -63,7 +63,7 @@
         <template slot="description">
           <span v-html="timeStatsFilter(minsToReturn,'departing '+(hospital?hospital.label:'referring centre'))"></span>
         </template>
-        <date-time-input v-model="arriveSS"/>
+        <date-time-input v-model="arriveSS" id="arriveSS" name="arriveSS"/>
       </b-form-group> 
   </div>
 </template>
@@ -84,6 +84,9 @@ type modes = 'prop' | 'jet' | 'road' | 'rotary' | '';
   components: {
     VueSingleSelect,
     DateTimeInput,
+  },
+  filters: {
+    timeFilter,
   },
 })
 export default class TransportTimes extends Vue {
@@ -178,8 +181,6 @@ export default class TransportTimes extends Vue {
       const nextTime = new Date(this.takeOff);
       nextTime.setMinutes(nextTime.getMinutes() + this.minsToArriveDest.p50);
       this.arriveDest = nextTime;
-    } else {
-      this.arriveDest = null;
     }
   }
 
@@ -224,3 +225,10 @@ function timeFilter(minutes: number) {
 }
 
 </script>
+<style scoped>
+  .time-estimate {
+    color: indigo;
+  }
+</style>
+
+

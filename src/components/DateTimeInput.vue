@@ -11,6 +11,7 @@
                 <font-awesome-icon icon="clock" />
             </b-input-group-append>
         </b-input-group>
+        <input class="form-control ml-2" type="button" value="Now" @click="setNow">
     </div>
 </template>
 
@@ -20,9 +21,7 @@ import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 import DateInput from '@/components/DateInput.vue';
 import { ymdFormat, dateInRange, isMonthFirst } from '@/services/utilities/dateHelpers';
 
-interface IDates { value: number; text: string; disabled: boolean; }
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+interface IDates { value: number; text: string; /* disabled: boolean; */ }
 
 @Component({
     components: {
@@ -32,33 +31,18 @@ today.setHours(0, 0, 0, 0);
 export default class DateTimeInput extends Vue {
     @Prop({default: null})
     public value!: Date | null;
-    @Prop({default: () => today})
-    public min!: Date;
+    // @Prop({default: () => today})
+    // public min!: Date;
     public date: number | null = null;
     public time = '';
     private wasEmpty = true;
-    private dates: IDates[] = new Array(7).fill(today).map((t, indx) => {
-        const dt = new Date(t);
-        dt.setDate(dt.getDate() + indx);
-        let rel: string;
-        switch (indx) {
-            case 0:
-                rel = ' (today)';
-                break;
-            case 1:
-                rel = ' (tomorrow)';
-                break;
-            default:
-                rel = '';
-        }
-        return {
-            value: dt.getTime(),
-            text: dateStr(dt) + rel,
-            disabled: dt.getTime() < this.min.getTime(),
-        };
-    });
+    private dates: IDates[] = getDateOptions();
     public created() {
         this.valueChange();
+    }
+    public setNow() {
+        const d = new Date();
+        this.$emit('input', d);
     }
     @Watch('value')
     public valueChange() {
@@ -89,6 +73,34 @@ export default class DateTimeInput extends Vue {
             this.$emit('input', returnVar);
         }
     }
+}
+
+let pDtOptions: IDates[];
+function getDateOptions() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (!pDtOptions || pDtOptions[0].value !== today.getTime()) {
+        pDtOptions = new Array(7).fill(today).map((t, indx) => {
+            const dt = new Date(t);
+            dt.setDate(dt.getDate() + indx);
+            let rel: string;
+            switch (indx) {
+                case 0:
+                    rel = ' (today)';
+                    break;
+                case 1:
+                    rel = ' (tomorrow)';
+                    break;
+                default:
+                    rel = '';
+            }
+            return {
+                value: dt.getTime(),
+                text: dateStr(dt) + rel,
+            };
+        });
+    }
+    return pDtOptions;
 }
 
 function dateStr(date: Date) {

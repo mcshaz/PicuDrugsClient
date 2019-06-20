@@ -1,7 +1,7 @@
 import { linearInterpolate } from '@/services/anthropometry';
 
 const maxRecords: Array<[number, number]> = [[0, 10.8], [13, 55], [24, 94], [36, 101], [84, 222], [156, 250], [216, 314], [480, 635]];
-const minRecords: Array<[number, number]> = [[0, 0.24], [216, 2.1], [240, 5.9], [864, 14.5]];
+const minRecords: Array<[number, number]> = [[0, 0.25], [216, 2.1], [240, 5.9], [864, 14.5]];
 const maxAge = 122 * 12;
 
 export function minWeightRecord(ageMonths?: number) {
