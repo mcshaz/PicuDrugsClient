@@ -91,6 +91,14 @@ export class NumericRange {
       ? Math.round(returnVar)
       : returnVar;
   }
+  public apply(transform: (n: number) => number) {
+    if (this.lowerBound !== void 0) {
+      this.lowerBound = transform(this.lowerBound);
+    }
+    if (this.upperBound !== void 0) {
+      this.upperBound = transform(this.upperBound);
+    }
+  }
   private makeString(val: number): string {
     switch (this.rounding) {
       case roundingMethod.noRounding:

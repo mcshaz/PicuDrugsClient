@@ -1,5 +1,16 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 968" version="1.1">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 932" version="1.1">
+          <metadata>
+            <rdf:RDF>
+                <cc:Work
+                    rdf:about="">
+                    <dc:format>image/svg+xml</dc:format>
+                    <dc:type
+                    rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+                    <dc:title>Anaphylaxis</dc:title>
+                </cc:Work>
+            </rdf:RDF>
+        </metadata>
         <defs>
             <marker xmlns="http://www.w3.org/2000/svg" id="arrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="20" refY="10" refX="7">
             <path fill="#fb3199" d="M0,0 L0,20 L10,10 z"/>
@@ -85,13 +96,10 @@
         </text>
         <line marker-end="url(#arrow)" y1="444" y2="466" x1="195" x2="195"/>
         
-        <rect class="pink" rx="10" ry="10" width="346" x="20" y="470" height="148"/>
+        <rect class="pink" rx="10" ry="10" width="346" x="20" y="470" height="120"/>
         <text y="499" x="195">
             <tspan class="strong">
                 Adrenaline IM:
-            </tspan>
-            <tspan class="em" dy="1.2em" x="195">
-                Use auto injector if available
             </tspan>
             <tspan class="em" dy="1.2em" x="195">
                 (preferred injection site upper outer thigh)
@@ -107,14 +115,14 @@
             </tspan>
         </text>
         
-        <line marker-end="url(#arrow)" x1="195" x2="195" y1="618" y2="638"/>
-        <rect class="pink" rx="10" ry="10" x="40" y="642" width="310" height="120"/>
-        <text x="195" y="664">
+        <line marker-end="url(#arrow)" x1="195" x2="195" y1="590" y2="610"/>
+        <rect class="pink" rx="10" ry="10" x="40" y="614" width="310" height="120"/>
+        <text x="195" y="636">
             <tspan>
                 Attach cardiac monitoring:
             </tspan>
             <tspan dy="1.2em" x="195">
-                High flow oxygen (6-10 L/min)
+                High flow oxygen (8-12 L/min)
             </tspan>
             <tspan dy="1.2em" x="195">
                 IV access
@@ -127,14 +135,14 @@
             </tspan>
         </text>
         
-        <line marker-end="url(#arrow)" y1="704" y2="704" x1="350" x2="370"/>
-        <rect class="green" x="374" width="106" height="30" rx="10" ry="10" y="689"/>
-        <text class="resolve" y="709" x="426">
+        <line marker-end="url(#arrow)" y1="676" y2="676" x1="350" x2="370"/>
+        <rect class="green" x="374" width="106" height="30" rx="10" ry="10" y="661"/>
+        <text class="resolve" y="681" x="426">
             RESOLUTION
         </text>
-        <line y1="704" y2="704" marker-end="url(#arrow)" x1="480" x2="496"/>
-        <rect class="green" x="500" height="143" width="264" rx="10" ry="10" y="628"/> 
-        <text x="634" y="654">
+        <line y1="676" y2="676" marker-end="url(#arrow)" x1="480" x2="496"/>
+        <rect class="green" x="500" height="143" width="264" rx="10" ry="10" y="600"/> 
+        <text x="634" y="626">
             <tspan class="strong">
                 Observe (4 hours min)
             </tspan>
@@ -142,9 +150,9 @@
                 Monitor vital signs, reassess ABC
             </tspan>
         </text>
-        <circle r="2px" cx="520" cy="723"/>
-        <circle r="2px" cx="520" cy="741"/>
-        <text class="list" x="516" y="708">
+        <circle r="2px" cx="520" cy="695"/>
+        <circle r="2px" cx="520" cy="713"/>
+        <text class="list" x="516" y="680">
             <tspan>
                 Consider:
             </tspan>
@@ -159,10 +167,10 @@
             </tspan>
         </text>
         
-        <line marker-end="url(#arrow)" x1="195" y1="762" x2="195" y2="784"/>
-        <rect class="pink" rx="10" ry="10" x="40" width="700" y="788" height="142"/>
+        <line marker-end="url(#arrow)" x1="195" y1="734" x2="195" y2="756"/>
+        <rect class="pink" rx="10" ry="10" x="40" width="700" y="760" height="142"/>
         <g>
-            <text class="strong" x="400" y="814">
+            <text class="strong" x="400" y="786">
                 <tspan>
                     Call for specialist advice
                 </tspan>
@@ -171,10 +179,10 @@
                 </tspan>
             </text>
             <g>
-                <circle r="2px" cy="848" cx="60"/>
-                <circle r="2px" cy="870" cx="60"/>
-                <circle r="2px" cx="60" cy="893"/>
-                <text class="list" y="854" x="68">
+                <circle r="2px" cy="820" cx="60"/>
+                <circle r="2px" cy="842" cx="60"/>
+                <circle r="2px" cx="60" cy="865"/>
+                <text class="list" y="826" x="68">
                     <tspan>
                         Transfer to advanced care setting
                     </tspan>
@@ -197,9 +205,9 @@
                         + {{adrenalineNebSaline}}mL 0.9% saline
                     </tspan>
                 </text>
-                <circle r="2px" cy="848" cx="348"/>
-                <circle r="2px" cy="893" cx="348"/>
-                <text class="list" y="854" x="355">
+                <circle r="2px" cy="820" cx="348"/>
+                <circle r="2px" cy="865" cx="348"/>
+                <text class="list" y="826" x="355">
                     <tspan class="strong">
                         Adrenaline
                     </tspan>
@@ -213,7 +221,7 @@
                         If no infusion pump avalable, ≈{{dirtyAdrenalineDrops}}drops/min
                     </tspan>
                     <tspan dy="1.2em" x="355">
-                        Metaraminol or vasopressin infusion
+                        Metaraminol infusion
                     </tspan>
                 </text>
             </g> 
@@ -223,7 +231,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { roundToFixed, roundToNearest } from '@/services/utilities/rounding';
+import { roundToFixed, roundToNearest } from '@/services/infusion-calculations/Utilities/rounding';
 
 type vueNumber = number | '';
 
@@ -311,9 +319,9 @@ export default class AnaphylaxisSvg extends Vue {
         if (this.wtKg === '') {
             return '';
         }
-        return this.wtKg >= 25
-            ? 100
-            : Math.round(this.wtKg * 4);
+        return this.wtKg >= 40
+            ? 200
+            : Math.round(this.wtKg * 5);
     }
 
     public get hydrocortVol() {

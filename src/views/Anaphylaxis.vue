@@ -1,31 +1,36 @@
 <template>
   <div class="anaphylaxis">
-    <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
-        :state="!errMsg" 
-        class="was-validated" >
-      <template slot="invalid-feedback" >
-        {{errMsg}}
-      </template>
+    <form>
+      <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
+          :state="!errMsg" 
+          class="was-validated" >
+        <template slot="invalid-feedback" >
+          {{errMsg}}
+        </template>
 
-      <b-input-group append="kg">
-        <input class="form-control" name="weight" v-model.number="wtKg" placeholder="Weight" 
-            type="number" required
-            :min="minWt" :max="maxWt" autocomplete="off" step="0.1" />
-      </b-input-group>
-    </b-form-group>
-    <anaphylaxis-svg :wtKg="wtKg"/>
+        <b-input-group append="kg">
+          <input class="form-control" name="weight" v-model.number="wtKg" placeholder="Weight" 
+              type="number" required
+              :min="minWt" :max="maxWt" autocomplete="off" step="0.1" />
+        </b-input-group>
+      </b-form-group>
+    </form>
+    <!--<anaphylaxis-svg :wtKg="wtKg"/>-->
+    <svt-svg  :wtKg="wtKg"/>
   </div>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue } from 'vue-property-decorator';
-import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue';
+// import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue';
+import SvtSvg from '@/components/SvtSvg.vue';
 
 type vueNumber = number | '';
 @Component({
   components: {
-    AnaphylaxisSvg,
+//    AnaphylaxisSvg,
+    SvtSvg,
   },
 })
 export default class Anaphylaxis extends Vue {
@@ -45,3 +50,14 @@ export default class Anaphylaxis extends Vue {
 }
 
 </script>
+
+<style scoped>
+@media print {
+  form {
+    display: none;
+  }
+  .nav {
+    display: none;
+  }
+}
+</style>
