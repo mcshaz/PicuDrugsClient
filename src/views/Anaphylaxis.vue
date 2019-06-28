@@ -15,21 +15,21 @@
         </b-input-group>
       </b-form-group>
     </form>
-    <!--<anaphylaxis-svg :wtKg="wtKg"/>-->
-    <svt-svg  :wtKg="wtKg"/>
+    <anaphylaxis-svg :wtKg="wtKg"/>
+    <!--<svt-svg  :wtKg="wtKg"/>-->
   </div>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue } from 'vue-property-decorator';
-// import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue';
+import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue';
 import SvtSvg from '@/components/SvtSvg.vue';
 
 type vueNumber = number | '';
 @Component({
   components: {
-//    AnaphylaxisSvg,
+    AnaphylaxisSvg,
     SvtSvg,
   },
 })
