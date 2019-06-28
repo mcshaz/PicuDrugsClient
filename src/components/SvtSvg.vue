@@ -1,6 +1,6 @@
 <template>
     <svg xmlns:osb="http://www.openswatchbook.org/uri/2009/osb" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" 
-            viewBox="0 0 210 255">
+            viewBox="0 0 197 251">
   <defs>
     <marker style="overflow:visible;" id="arrow" refX="0.0" refY="0.0" orient="auto">
       <path transform="rotate(180)" d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z " style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1" id="path881"></path>
@@ -15,25 +15,25 @@
       </cc:work>
     </rdf:rdf>
   </metadata>
-  <g>
-    <path id="shock-choice" d="M 74,25 96,46 119,25 96,4 Z"></path>
-    <text height="22" width="40" x="96" y="23">
+<g>
+    <path id="shock-choice" d="M 68,22 90,43 113,22 90,1 Z"></path>
+    <text height="22" width="40" x="90" y="20">
         <tspan>Shock</tspan>
-        <tspan dy="1.2em" x="96">present?</tspan>
+        <tspan dy="1.2em" x="90">present?</tspan>
     </text>
 
-    <path marker-end="url(#arrow)" d="M 119,25 h 31 v 6"></path>
-    <rect y="32" x="133" height="22" width="34"></rect>
-    <text height="22" width="40" x="150" y="41">
+    <path marker-end="url(#arrow)" d="M 113,22 h 31 v 6"></path>
+    <rect y="29" x="127" height="22" width="34"></rect>
+    <text height="22" width="40" x="144" y="38">
         <tspan>Vagal</tspan>
-        <tspan dy="1.2em" x="150">manoeuvre</tspan>
+        <tspan dy="1.2em" x="144">manoeuvre</tspan>
     </text>
     
     <g v-for="(d, indx) in initialAdenosines" :key="d.dosePerKg">
-        <rect :y="indx*28+75" x="131" height="13" width="38"></rect>
-        <text height="13" width="38" x="150" :y="indx*28+81">
+        <rect :y="indx*28+71" x="125" height="13" width="38"></rect>
+        <text height="13" width="38" x="144" :y="indx*28+77">
             <tspan class="drug">Adenosine</tspan><tspan class="ref" dy="-1em">†</tspan>
-            <tspan class="ampule" x="150" dy="1.5em">
+            <tspan class="ampule" x="144" dy="1.5em">
                 {{d.ampuleMl}}
             </tspan>
             <tspan class="ml">
@@ -45,16 +45,16 @@
         </text>
     </g>
     
-    <rect y="157" x="96" height="27" width="106"></rect>
-    <text height="22" width="40" x="150" y="162">
+    <rect y="154" x="90" height="27" width="106"></rect>
+    <text height="22" width="40" x="144" y="159">
         Consider:
     </text>
 
-    <circle r="1px" cx="102" cy="168"></circle>
-    <circle r="1px" cx="102" cy="174"></circle>
-    <circle r="1px" cx="102" cy="180"></circle>
+    <circle r="1px" cx="96" cy="165"></circle>
+    <circle r="1px" cx="96" cy="171"></circle>
+    <circle r="1px" cx="96" cy="177"></circle>
     
-    <text class="list" height="22" width="40" y="169" x="105">
+    <text class="list" height="22" width="40" y="166" x="99">
         <tspan class="drug">
             Adenosine</tspan><tspan class="ref" dy="-1em">†</tspan>
         <tspan class="dose" dy="0.4em">
@@ -64,11 +64,11 @@
             mL
         </tspan>
         <tspan class="small">({{finalAdenosine.dose}} mg)</tspan>
-        <tspan dy="1.2em" x="105">Synchronous DC shock</tspan>
+        <tspan dy="1.2em" x="99">Synchronous DC shock</tspan>
         <tspan class="small">
             + hypnosedative
         </tspan>
-        <tspan dy="1.2em" x="105">
+        <tspan dy="1.2em" x="99">
             Amiodarone</tspan><tspan>*</tspan>
         <tspan>
             or Procainamide
@@ -78,112 +78,112 @@
         </tspan>
     </text>    
         
-    <path marker-end="url(#arrow)" d="m 74,25 -34,0 v 6"></path>
-    <rect y="32" x="19" height="22" width="40"></rect>
-    <text height="22" width="40" x="39" y="39">
+    <path marker-end="url(#arrow)" d="m 68,22 -34,0 v 6"></path>
+    <rect y="29" x="13" height="22" width="40"></rect>
+    <text height="22" width="40" x="33" y="36">
         <tspan>Vagal</tspan>
-        <tspan dy="1em" x="39">manoeuvre</tspan>
-        <tspan dy="1em" x="39">(if no delays)</tspan>
+        <tspan dy="1em" x="33">manoeuvre</tspan>
+        <tspan dy="1em" x="33">(if no delays)</tspan>
     </text>
 
-    <path id="iv-choice" d="M 7,85 39,61 71,85 39,109 Z"></path>
-    <text height="22" width="40" x="39" y="81">
+    <path id="iv-choice" d="M 1,82 33,58 65,82 33,106 Z"></path>
+    <text height="22" width="40" x="33" y="78">
         <tspan>IV access + draw</tspan>
-        <tspan dy="1em" x="39">up adenosine quicker than</tspan>
-        <tspan dy="1em" x="39">obtaining defibrillator?</tspan>
+        <tspan dy="1em" x="33">up adenosine quicker than</tspan>
+        <tspan dy="1em" x="33">obtaining defibrillator?</tspan>
     </text>    
     
-    <rect y="126" x="19" height="20" width="40"></rect>
-    <text height="22" width="40" x="39" y="135">
+    <rect y="123" x="13" height="20" width="40"></rect>
+    <text height="22" width="40" x="33" y="132">
         <tspan>Synchronous</tspan>
-        <tspan dy="1em" x="39">DC shock {{shock1}}J</tspan>
+        <tspan dy="1em" x="33">DC shock {{shock1}}J</tspan>
     </text>    
     
-    <rect y="157" x="19" height="20" width="40"></rect>
-    <text height="22" width="40" x="39" y="166">
+    <rect y="154" x="13" height="20" width="40"></rect>
+    <text height="22" width="40" x="33" y="163">
         <tspan>Synchronous</tspan>
-        <tspan dy="1em" x="39">DC shock {{shock2}}J</tspan>
+        <tspan dy="1em" x="33">DC shock {{shock2}}J</tspan>
     </text>    
 
-    <path marker-end="url(#arrow)" d="M 39,54 v 7"></path>
-    <path marker-end="url(#arrow)" d="m 71,85 h 59.5"></path>
-    <path marker-end="url(#arrow)" d="M 39,109 39,126"></path>
-    <path marker-end="url(#arrow)" d="m 39,146 v 10.5"></path>
-    <path marker-end="url(#arrow)" d="m 150,54 v 20.5"></path>
-    <path marker-end="url(#arrow)" d="M 150,88 v 14.5"></path>
-    <path marker-end="url(#arrow)" d="m 150,116 v 14.5"></path>
-    <path marker-end="url(#arrow)" d="m 150,144 v 12.5"></path>
-    <path id="shock-revert" marker-end="url(#arrow)" d="M 39,177 v 6 h -26 v -31 h 22"></path>
+    <path marker-end="url(#arrow)" d="M 33,51 v 7"></path>
+    <path marker-end="url(#arrow)" d="m 65,82 h 59.5"></path>
+    <path marker-end="url(#arrow)" d="M 33,106 33,123"></path>
+    <path marker-end="url(#arrow)" d="m 33,143 v 10.5"></path>
+    <path marker-end="url(#arrow)" d="m 144,51 v 19.5"></path>
+    <path marker-end="url(#arrow)" d="M 144,84 v 14.5"></path>
+    <path marker-end="url(#arrow)" d="m 144,112 v 14.5"></path>
+    <path marker-end="url(#arrow)" d="m 144,140 v 13.5"></path>
+    <path id="shock-revert" marker-end="url(#arrow)" d="M 33,174 v 6 h -26 v -31 h 22"></path>
     
-    <rect class="flow-text" y="22" x="51" width="10" height="6"></rect>
-    <text class="flow-text" width="20" height="12" x="56" y="26.5">
+    <rect class="flow-text" y="19" x="45" width="10" height="6"></rect>
+    <text class="flow-text" width="20" height="12" x="50" y="23.5">
         Yes
     </text>
-    <rect class="flow-text" y="22" x="131" width="10" height="6"></rect>
-    <text class="flow-text" height="12" width="20" y="26.5" x="136">
+    <rect class="flow-text" y="19" x="125" width="10" height="6"></rect>
+    <text class="flow-text" height="12" width="20" y="23.5" x="130">
         No
     </text>
-    <rect class="flow-text" y="82" x="95" width="10" height="6"></rect>
-    <text class="flow-text" height="12" width="20" x="100" y="86.5">
+    <rect class="flow-text" y="79" x="89" width="10" height="6"></rect>
+    <text class="flow-text" height="12" width="20" x="94" y="83.5">
         Yes
     </text>
-    <rect class="flow-text" width="10" height="6" x="34" y="114.5"></rect>
-    <text class="flow-text" height="12" width="20" y="119" x="39">
+    <rect class="flow-text" width="10" height="6" x="28" y="111.5"></rect>
+    <text class="flow-text" height="12" width="20" y="116" x="33">
         No
     </text>
     
-    <rect class="flow-text" x="140" y="93" height="5.5" width="20"></rect>
-    <text class="wait" height="12" width="20" y="97" x="150">
+    <rect class="flow-text" x="134" y="89" height="5.5" width="20"></rect>
+    <text class="wait" height="12" width="20" y="93" x="144">
         2 minutes
     </text>
-    <rect class="flow-text" x="140" width="20" height="5.5" y="121"></rect>
-    <text class="wait" height="12" width="20" y="125" x="150">
+    <rect class="flow-text" x="134" width="20" height="5.5" y="117"></rect>
+    <text class="wait" height="12" width="20" y="121" x="144">
         2 minutes
     </text>
     
-    <rect height="4.5" width="40.5" class="flow-text" y="180.5" x="18.5"></rect>
-    <text class="wait" x="38.5" y="184.4">
+    <rect height="4.5" width="40.5" class="flow-text" y="177.5" x="12.5"></rect>
+    <text class="wait" x="32.5" y="181.4">
         <tspan>Consider amiodarone</tspan><tspan>*</tspan>
     </text>
 </g>
 <g id="legend">
-    <rect  x="19" height="63" y="190" width="183"></rect>
-    <circle cx="27" cy="200" r="1px"></circle>
-    <circle cx="27" cy="205.5" r="1px"></circle>
-    <text  x="22" class="list" y="196"><tspan >†</tspan>
+    <rect  x="13" height="63" y="187" width="183"></rect>
+    <circle cx="21" cy="197" r="1px"></circle>
+    <circle cx="21" cy="202.5" r="1px"></circle>
+    <text  x="16" class="list" y="193"><tspan >†</tspan>
         <tspan  class="drug" >Adenosine</tspan>
-        <tspan  class="push" x="30" dy="1.1em">rapid flush with {{flushVol}} ml 0.9% saline</tspan>
-        <tspan class="amp-describe"  x="30" dy="1.1em">Ampule is {{ampDescription}}</tspan>
+        <tspan  class="push" x="24" dy="1.1em">rapid flush with {{flushVol}} ml 0.9% saline</tspan>
+        <tspan class="amp-describe"  x="24" dy="1.1em">Ampule is {{ampDescription}}</tspan>
     </text>
-    <text class="list small" x="130" y="195">Dose is calculated as:</text>
-    <text class="list small" v-for="(d, indx) in initialAdenosines" :key="d.dosePerKg" x="130" :y="200+indx*5" >
+    <text class="list small" x="124" y="192">Dose is calculated as:</text>
+    <text class="list small" v-for="(d, indx) in initialAdenosines" :key="d.dosePerKg" x="124" :y="196+indx*5" >
         <tspan>{{indx + 1}})</tspan>
         <tspan dx="0.4em" class="dosing-calc" >{{d.dosePerKg}} mg/kg (max {{d.doseMax}} mg)</tspan>
     </text>
-    <line x1="19" x2="202" y1="211.5" y2="211.5" class="legend-divide"></line>
-    <text x="22" y="217" class="list">
+    <line x1="13" x2="196" y1="208.5" y2="208.5" class="legend-divide"></line>
+    <text x="16" y="214" class="list">
         <tspan >*</tspan><tspan class="drug">Amiodarone</tspan>
     </text>
-    <circle cx="27" cy="221" r="0.75px"></circle>
-    <circle cx="27" cy="225.7" r="0.75px"></circle>
-    <text x="29" y="222" class="list amio">
+    <circle cx="21" cy="218" r="0.75px"></circle>
+    <circle cx="21" cy="222.7" r="0.75px"></circle>
+    <text x="23" y="219" class="list amio">
         For central line dosing (preferable if available) please see:
     </text>
     <a href="/Cardiology">
-        <text x="133" y="222" class="list amio">
+        <text x="127" y="219" class="list amio">
             https://paediatricdrugs.net/Cardiology
         </text>
     </a>
-	<circle class="make" cx="30" cy="230.5" r="0.5px"></circle>
-    <circle class="make" cx="30" cy="235.2" r="0.5px"></circle>
-	<circle class="make" cx="30" cy="240" r="0.5px"></circle>
-    <circle class="make" cx="30" cy="245" r="0.5px"></circle>
-    <text x="29" y="227" class="list amio" v-if="pivAmio">
+	<circle class="make" cx="24" cy="227.5" r="0.5px"></circle>
+    <circle class="make" cx="24" cy="232.2" r="0.5px"></circle>
+	<circle class="make" cx="24" cy="237" r="0.5px"></circle>
+    <circle class="make" cx="24" cy="242" r="0.5px"></circle>
+    <text x="23" y="224" class="list amio" v-if="pivAmio">
         <tspan>Peripheral IV line concentration </tspan>
         <tspan class="em">(caution to avoid extravasation/tissuing)</tspan>
         <tspan>:</tspan>
-        <tspan x="33" dy="1.2em">Ampule is {{amioConc.concentration * amioConc.volume}} mg/{{amioConc.volume}} mL</tspan>
-        <tspan x="33" dy="1.2em">dilute </tspan>
+        <tspan x="27" dy="1.2em">Ampule is {{amioConc.concentration * amioConc.volume}} mg/{{amioConc.volume}} mL</tspan>
+        <tspan x="27" dy="1.2em">dilute </tspan>
         <tspan>
             {{pivAmio.concentrations[0].drawingUpDose / amioConc.concentration}} mL
         </tspan>
@@ -196,12 +196,12 @@
         <tspan>
             with {{ pivAmio.diluent }}
         </tspan>
-        <tspan x="33" dy="1.2em">1 mL/hour = </tspan>
+        <tspan x="27" dy="1.2em">1 mL/hour = </tspan>
         <tspan>
             {{pivAmio.concentrations[0].oneMlHrDose | roundToFixed}} {{pivAmio.rateUnit.toShortUserSafeString()}}
         </tspan>
-        <tspan x="33" dy="1.2em">infuse at {{ (25 / pivAmio.concentrations[0].oneMlHrDose) | roundToFixed }} mL/hour for 4 hours (25 {{ pivAmio.rateUnit.toShortUserSafeString() }})</tspan>
-        <tspan x="33" dy="1.2em">- then decrease rate to {{pivAmio.concentrations[0].flowRange.toString()}} mL/hour ({{ pivAmio.doseRange.toString() }} {{ pivAmio.rateUnit.toShortUserSafeString() }})</tspan>
+        <tspan x="27" dy="1.2em">infuse at {{ (25 / pivAmio.concentrations[0].oneMlHrDose) | roundToFixed }} mL/hour for 4 hours (25 {{ pivAmio.rateUnit.toShortUserSafeString() }})</tspan>
+        <tspan x="27" dy="1.2em">- then decrease rate to {{pivAmio.concentrations[0].flowRange.toString()}} mL/hour ({{ pivAmio.doseRange.toString() }} {{ pivAmio.rateUnit.toShortUserSafeString() }})</tspan>
     </text>
 </g>
 </svg>
