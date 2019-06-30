@@ -11,7 +11,6 @@ export class FixedInfusionDrugVM implements IInfusionDrugVM {
   public sourceHref: string = '';
   public route: string = '';
   public note: string = '';
-  public ampuleConcentration!: number;
   public ampuleUnits!: SiConcentration;
   public diluentFluid: string = '';
   public concentrations: IFixedInfusionPeriodVM[] = [];

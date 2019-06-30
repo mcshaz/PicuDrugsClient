@@ -7,5 +7,4 @@ export interface IFixedInfusionPeriodVM extends IConcentrationDetailVM {
   duration: MinutesDuration;
   cumulativeStartTime: MinutesDuration;
   ampuleMl: number;
-  diluentVolume: number;
 }

@@ -11,11 +11,11 @@ export interface IInfusionInfo {
     drugReferenceSource: IDrugReference;
     drugRoute: IDrugRoute;
     infusionDiluent: IDiluent;
+    drugAmpuleConcentrations: IEntityDrugAmpuleConcentration[];
 }
 
 export interface IEntityInfusion extends IInfusionInfo {
     infusionDrugId: number;
-    drugAmpuleConcentrations: IEntityDrugAmpuleConcentration[];
 }
 
 

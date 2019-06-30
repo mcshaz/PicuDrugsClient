@@ -1,11 +1,7 @@
-import {NumericRange} from '../Utilities/NumericRange';
+import { NumericRange } from '../Utilities/NumericRange';
+import { IConcentrationDetailVM } from '..';
 
-export interface IVariableConcentrationDetailVM {
+export interface IVariableConcentrationDetailVM extends IConcentrationDetailVM {
   detailName: string;
-  drawingUpDose: number;
-  isNeat: boolean;
-  finalVolume: number;
-  oneMlHrDose: number;
   flowRange: NumericRange;
 }
-

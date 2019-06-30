@@ -10,7 +10,6 @@ export function transformFixedInfusions(weight: number, ptDrug: IPatientFixedInf
   d.sourceDescription = ptDrug.drugReferenceSource.referenceDescription;
   d.route = ptDrug.drugRoute.description;
   d.diluentFluid = ptDrug.infusionDiluent.diluentType;
-  d.ampuleConcentration = ptDrug.selectedAmpule.concentration;
   // let cumulativeDuration = new MinutesDuration();
   tranformIInfusion(weight, ptDrug, d);
   const ampConversion = Math.pow(10, ptDrug.dilution.siPrefix - ptDrug.siPrefix);
@@ -20,8 +19,7 @@ export function transformFixedInfusions(weight: number, ptDrug: IPatientFixedInf
     p.infusionRate = v.rate / p.oneMlHrDose;
     const unitsPerMin = v.rate / (d.rateUnit!.isPerMin ? 1 : 60);
     p.calculatedDose = unitsPerMin * v.durationMinutes * ampConversion;
-    p.ampuleMl = p.drawingUpDose / ptDrug.selectedAmpule.concentration;
-    p.diluentVolume = p.finalVolume - p.ampuleMl;
+    // p.diluentVolume = p.finalVolume - p.ampuleMl;
     p.cumulativeStartTime = new MinutesDuration(v.stopMinutes - v.durationMinutes),
     p.duration = new MinutesDuration(v.durationMinutes);
   }

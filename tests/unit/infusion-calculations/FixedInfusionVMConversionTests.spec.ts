@@ -53,9 +53,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             const f = new FixedInfusionDrugVM();
             f.drugName = 'Acetylcysteine';
             f.sourceDescription = 'Notes on Injectable Drugs 6th Ed';
-            f.sourceHref = 'file://ahsl6/main/Groups/INTRANET/Pharmacy/eNoids6/eNOIDs6Mongraphs/ACETYLCYSTEINE.pdf';
-            f.ampuleConcentration = 200;
-            f.diluentFluid = '5% Dextrose';
+            f.sourceHref = 'file://ahsl6/main/Groups/INTRANET/Pharmacy/eNoids6/eNOIDs6Mongraphs/ACETYLCYSTEINE.pdf';            f.diluentFluid = '5% Dextrose';
             f.note = 'watch for hypotension.';
             f.route = 'Peripheral or Central Line';
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
@@ -65,7 +63,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 150,
                 cumulativeStartTime: new MinutesDuration(0),
                 duration: new MinutesDuration(15),
-                diluentVolume: 22.5,
+                ampuleDetails: [],
                 drawingUpDose: 1500,
                 finalVolume: 30,
                 infusionRate: 120,
@@ -76,7 +74,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 50,
                 cumulativeStartTime: new MinutesDuration(15),
                 duration: new MinutesDuration(240),
-                diluentVolume: 67.5,
+                ampuleDetails: [],
                 drawingUpDose: 500,
                 finalVolume: 70,
                 infusionRate: 17.5,
@@ -87,7 +85,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 100,
                 cumulativeStartTime: new MinutesDuration(255),
                 duration: new MinutesDuration(960),
-                diluentVolume: 135,
+                ampuleDetails: [],
                 drawingUpDose: 1000,
                 finalVolume: 140,
                 infusionRate: 8.75,
@@ -106,9 +104,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             const f = new FixedInfusionDrugVM();
             f.drugName = 'Levosimendan';
             f.sourceDescription = 'Starship Pharmacy Guidelines (paediatric)';
-            f.sourceHref = 'file://ahsl6/main/Groups/Everyone/POLICY/Master%20file%20of%20Intranet/Medication%20Admin/Paed/IV/Levosimendan_Paed.pdf';
-            f.ampuleConcentration = 2.5;
-            f.diluentFluid = '5% Dextrose';
+            f.sourceHref = 'file://ahsl6/main/Groups/Everyone/POLICY/Master%20file%20of%20Intranet/Medication%20Admin/Paed/IV/Levosimendan_Paed.pdf';            f.diluentFluid = '5% Dextrose';
             f.route = 'Peripheral or Central Line';
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-6, siUnit.gram, false, true);
@@ -117,7 +113,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 12.5,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(1440),
-                diluentVolume: 245,
+                ampuleDetails: [],
                 drawingUpDose: 12.5,
                 finalVolume: 250,
                 infusionRate: 10.416666666666677,
@@ -136,9 +132,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             const f = new FixedInfusionDrugVM();
             f.drugName = 'Magnesium Sulphate (asthma)';
             f.sourceDescription = 'Starship PICU Protocols';
-            f.sourceHref = 'http://www.adhb.govt.nz/picu/Protocols/Asthma.pdf';
-            f.ampuleConcentration = 493;
-            f.diluentFluid = '5% Dextrose';
+            f.sourceHref = 'http://www.adhb.govt.nz/picu/Protocols/Asthma.pdf';            f.diluentFluid = '5% Dextrose';
             f.note = 'Watch for hypotension. Keep serum Mg 1.5-2.5 mmol/L. May be repeated.';
             f.route = 'Peripheral or Central Line';
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
@@ -148,7 +142,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 50,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(20),
-                diluentVolume: 17.1602434077079,
+                ampuleDetails: [],
                 drawingUpDose: 1400,
                 finalVolume: 20,
                 infusionRate: 60,
@@ -167,9 +161,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             const f = new FixedInfusionDrugVM();
             f.drugName = 'Phenytoin - Peripheral IV';
             f.sourceDescription = 'Starship Clinical Guidelines';
-            f.sourceHref = 'http://www.adhb.govt.nz/StarShipClinicalGuidelines/Convulsions%20Status%20Epilepticus.htm#Manage_in_Resuscitation_Area';
-            f.ampuleConcentration = 50;
-            f.diluentFluid = '0.9% Saline';
+            f.sourceHref = 'http://www.adhb.govt.nz/StarShipClinicalGuidelines/Convulsions%20Status%20Epilepticus.htm#Manage_in_Resuscitation_Area';            f.diluentFluid = '0.9% Saline';
             f.route = 'Large Peripheral Line';
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-3, siUnit.gram, true, false);
@@ -178,7 +170,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 20,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(20),
-                diluentVolume: 180,
+                ampuleDetails: [],
                 drawingUpDose: 1000,
                 finalVolume: 200,
                 infusionRate: 600,
@@ -197,9 +189,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             const f = new FixedInfusionDrugVM();
             f.drugName = 'Phenytoin - Central Access';
             f.sourceDescription = 'Starship Clinical Guidelines';
-            f.sourceHref = 'http://www.adhb.govt.nz/StarShipClinicalGuidelines/Convulsions%20Status%20Epilepticus.htm#Manage_in_Resuscitation_Area';
-            f.ampuleConcentration = 50;
-            f.diluentFluid = 'Undiluted';
+            f.sourceHref = 'http://www.adhb.govt.nz/StarShipClinicalGuidelines/Convulsions%20Status%20Epilepticus.htm#Manage_in_Resuscitation_Area';            f.diluentFluid = 'Undiluted';
             f.route = 'Central Line Only';
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-3, siUnit.gram, true, false);
@@ -208,7 +198,7 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
                 calculatedDose: 20,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(20),
-                diluentVolume: 0,
+                ampuleDetails: [],
                 drawingUpDose: 1000,
                 finalVolume: 20,
                 infusionRate: 60,

@@ -65,6 +65,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 5,
                     flowRange: new NumericRange(0.5, 2),
                     isNeat: false,
+                    ampuleDetails: [],
                 }],
             }, {
                 drugName: 'Propofol',
@@ -80,6 +81,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 10.0 / 2.8,
                     flowRange: new NumericRange(0, 0.84),
                     isNeat: true,
+                    ampuleDetails: [],
                 }],
             }],
         }, {
@@ -98,6 +100,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 0.05,
                     flowRange: new NumericRange(0.2, 20),
                     isNeat: false,
+                    ampuleDetails: [],
                 }, {
                     detailName: 'High',
                     finalVolume: 50,
@@ -105,6 +108,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 0.1,
                     flowRange: new NumericRange(0.1, 10),
                     isNeat: false,
+                    ampuleDetails: [],
                 }],
             }],
         }, {
@@ -122,6 +126,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 0.01,
                     flowRange: new NumericRange(1, 100),
                     isNeat: false,
+                    ampuleDetails: [],
                 }, {
                     detailName: 'Medium',
                     finalVolume: 46,
@@ -129,6 +134,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 0.02,
                     flowRange: new NumericRange(0.5, 50),
                     isNeat: false,
+                    ampuleDetails: [],
                 }, {
                     detailName: 'High',
                     finalVolume: 46,
@@ -136,6 +142,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 0.05,
                     flowRange: new NumericRange(0.2, 20),
                     isNeat: false,
+                    ampuleDetails: [],
                 }],
             }],
         }, {
@@ -153,6 +160,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 1.0 / 3.6,
                     flowRange: new NumericRange(0.18, 0.36),
                     isNeat: false,
+                    ampuleDetails: [],
                 }],
             }],
         }, {
@@ -171,6 +179,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 1,
                     flowRange: new NumericRange(1, 4),
                     isNeat: false,
+                    ampuleDetails: [],
                 }],
             }],
         }, {
@@ -188,6 +197,7 @@ function getVariableInfusionVMTestData(): IVariableVMTestData[] {
                     oneMlHrDose: 10,
                     flowRange: new NumericRange(0.2, 2),
                     isNeat: true,
+                    ampuleDetails: [],
                 }],
             }],
     }];
