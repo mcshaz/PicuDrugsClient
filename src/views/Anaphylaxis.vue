@@ -15,8 +15,9 @@
         </b-input-group>
       </b-form-group>
     </form>
-    <anaphylaxis-svg :wtKg="wtKg"/>
-    <!--<svt-svg  :wtKg="wtKg"/>-->
+    <status-epilepsy-svg :wtKg="wtKg" />
+    <!--<anaphylaxis-svg :wtKg="wtKg"/>-->
+    <!--<svt-svg :wtKg="wtKg"/>-->
   </div>
 </template>
 
@@ -25,12 +26,14 @@ import 'reflect-metadata';
 import { Component, Vue } from 'vue-property-decorator';
 import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue';
 import SvtSvg from '@/components/SvtSvg.vue';
+import StatusEpilepsySvg from '@/components/StatusEpilepsySvg.vue';
 
 type vueNumber = number | '';
 @Component({
   components: {
     AnaphylaxisSvg,
     SvtSvg,
+    StatusEpilepsySvg,
   },
 })
 export default class Anaphylaxis extends Vue {

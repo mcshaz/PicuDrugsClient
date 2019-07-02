@@ -1,4 +1,4 @@
-# drugs_webapp
+# paediatric_drugs
 
 ## Project setup
 ```

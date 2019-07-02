@@ -1,6 +1,6 @@
 {
-  "name": "emergency/ICU drugs webapp",
-  "short_name": "drugs app",
+  "name": "emergency/ICU paediatric drug calculator",
+  "short_name": "paed drugs",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",

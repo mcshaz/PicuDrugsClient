@@ -12,7 +12,7 @@
     	viewBox="0 0 197 251">
 	<defs>
 		<marker style="overflow:visible;" id="arrow" refX="0.0" refY="0.0" orient="auto">
-		<path transform="rotate(180)" d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z " style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1" id="path881"></path>
+			<path transform="rotate(180)" d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z " style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1" id="path881"></path>
 		</marker>
 	</defs>
 	<metadata id="metadata5">
@@ -191,10 +191,14 @@
 				<tspan>Peripheral IV line concentration </tspan>
 				<tspan class="em">(caution to avoid extravasation/tissuing)</tspan>
 				<tspan>:</tspan>
-				<tspan x="27" dy="1.2em">Ampule is {{amioConc.concentration * amioConc.volume}} mg/{{amioConc.volume}} mL</tspan>
+				<tspan x="27" dy="1.2em">
+					Ampule is 
+					{{ pivAmio.concentrations[0].ampuleDetails.concentration * pivAmio.concentrations[0].ampuleDetails.volume }}
+					mg/
+					{{ pivAmio.concentrations[0].ampuleDetails.volume }} mL</tspan>
 				<tspan x="27" dy="1.2em">dilute </tspan>
 				<tspan>
-					{{pivAmio.concentrations[0].drawingUpDose / amioConc.concentration}} mL
+					{{ pivAmio.concentrations[0].ampuleDetails.drawingUpVolume }} mL
 				</tspan>
 				<tspan class="small">
 					({{ pivAmio.concentrations[0].drawingUpDose }} mg)
@@ -228,14 +232,13 @@ type vueNumber = number | '';
 
 @Component({ filters: { roundToFixed } })
 export default class SvtSvg extends Vue {
-    @Prop({default: ''})
+    @Prop({required: true})
     public wtKg!: vueNumber;
 
     public adenosineDoses: IDoseInfo[] = [];
     public ampDescription = ampuleDescription;
     // public cvlAmio: IVariableInfusionDrugVM | null = null;
     public pivAmio: IVariableInfusionDrugVM | null = null;
-    public amioConc: IEntityDrugAmpuleConcentration | null = null;
 
     @Inject('db')
     private db!: IDrugDB;
@@ -303,9 +306,6 @@ export default class SvtSvg extends Vue {
             const transformed = transformVariableInfusions(this.wtKg, wtSelectedInfusions, false);
             // this.cvlAmio = transformed[0];
             this.pivAmio = transformed[0];
-            if (!this.amioConc) {
-                this.amioConc = infusions[0].drugAmpuleConcentrations[0];
-            }
         }
     }
 }

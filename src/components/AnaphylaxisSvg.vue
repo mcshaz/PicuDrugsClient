@@ -18,7 +18,7 @@
         </metadata>
         <defs>
             <marker id="arrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="20" refY="10" refX="7">
-            <path fill="#fb3199" d="M0,0 L0,20 L10,10 z"/>
+                <path fill="#fb3199" d="M0,0 L0,20 L10,10 z"/>
             </marker>
         </defs>
         
@@ -242,7 +242,7 @@ type vueNumber = number | '';
 
 @Component({})
 export default class AnaphylaxisSvg extends Vue {
-    @Prop({default: ''})
+    @Prop({required: true})
     public wtKg!: vueNumber;
 
     public get adrenalineNebDose(): vueNumber {

@@ -12,7 +12,7 @@ export function getFixedDilutionsForPt(drug: IEntityFixedInfusionDrug, ageMonths
     const d = filterByAgeWeight(ageWt, drug.fixedTimeDilutions);
     if (d.length === 1) {
         newVar = mapProperties({} as IPatientFixedInfusionDrug, drug, ['abbrev', 'drugReferenceSource', 'drugRoute', 'fullname',
-                                                                      'infusionDiluent', 'note', 'siPrefix', 'siUnitId']);
+                                                                      'infusionDiluent', 'note', 'siPrefix', 'siUnitId', 'drugAmpuleConcentrations']);
         newVar.dilution = mapProperties({} as IPatientFixedDilution, d[0], ['dilutionMethodId', 'isPerMin', 'referencePage', 'siPrefix']);
         let lastStopMins = 0;
         newVar.dilution.concentrations = d[0].fixedTimeConcentrations.map((c) => {
