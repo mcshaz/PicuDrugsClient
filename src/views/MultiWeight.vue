@@ -63,8 +63,9 @@ import WardSelect from '@/components/WardSelect.vue';
 import { IMultiWardChartData } from '@/components/ComponentCommunication';
 import { IEntityWard, IAppData } from '@/services/drugDb';
 import MultiWeightRow from '@/components/MultiWeightRow.vue';
-import { UKWeightData, searchComparison } from '@/services/anthropometry';
-import { IMedianMatchResult } from '../services/anthropometry/CentileRange';
+import { UKWeightData, medianMatchAvg } from '@/services/anthropometry';
+import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
+import { exampleWeights } from '@/services/utilities/weightHelpers';
 
 type vueNumber = number | '';
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
@@ -83,7 +84,7 @@ export default class MultiWeight extends Vue {
   public infusions = true;
   public infusionsAvailable = false;
   public email = '';
-  public weights: IWtAge[] = [2.5, 3, 3.5, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80]
+  public weights: IWtAge[] = exampleWeights
       .map((wtKg) => ({ wtKg } as IWtAge));
   public weightInEditor: vueNumber = '';
   public min = 0.1;
@@ -127,26 +128,10 @@ export default class MultiWeight extends Vue {
       boluses: this.boluses,
       infusions: this.infusions,
       ward: this.ward,
-      weights: this.weights.map((w) => ({ wtKg: w.wtKg, estAge: average(w.femaleM, w.maleM)})),
+      weights: this.weights.map((w) => ({ wtKg: w.wtKg, estAge: medianMatchAvg(w.femaleM, w.maleM)})),
       updateEmail: this.email,
     };
     this.$router.push({ name: 'multi-chart', params: { chartData }} as any);
   }
 }
-
-function average(a: IMedianMatchResult, b: IMedianMatchResult): IMedianMatchResult {
-  let matchType = searchComparison.inRange;
-  if (a.matchType === searchComparison.lessThanMin || b.matchType === searchComparison.lessThanMin) {
-    matchType = searchComparison.lessThanMin;
-  } else if (a.matchType === searchComparison.greaterThanMax || b.matchType === searchComparison.greaterThanMax) {
-    matchType = searchComparison.greaterThanMax;
-  }
-  return {
-    ageDays: (a.ageDays + b.ageDays) / 2,
-    gestation: (a.gestation + b.gestation) / 2,
-    matchType,
-  };
-}
-
-
 </script>

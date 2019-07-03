@@ -6,7 +6,7 @@
             </template>
         </b-form-select>
         <b-input-group>
-            <input type="time" v-model="time">
+            <input type="time" v-model="time" class="form-control">
             <b-input-group-append :is-text="true">
                 <font-awesome-icon icon="clock" />
             </b-input-group-append>

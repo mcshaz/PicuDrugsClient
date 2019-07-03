@@ -4,6 +4,8 @@ const maxRecords: Array<[number, number]> = [[0, 10.8], [13, 55], [24, 94], [36,
 const minRecords: Array<[number, number]> = [[0, 0.25], [216, 2.1], [240, 5.9], [864, 14.5]];
 const maxAge = 122 * 12;
 
+export const exampleWeights: ReadonlyArray<number> = [2.5, 3, 3.5, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80];
+
 export function minWeightRecord(ageMonths?: number) {
     if (!ageMonths) {
         return minRecords[0][1];

@@ -20,3 +20,5 @@ export { GenericRange } from './Utilities/GenericRange';
 export { roundingMethod } from './Utilities/roundingMethod';
 export { getFixedDilutionsForPt } from './Transformations/Calculations/getFixedDilutionsForPt';
 export { getVariableInfusionsForPt } from './Transformations/Calculations/getVariableInfusionsForPt';
+export { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution } from './PatientSpecificViews/IPatientFixedInfusionDrug';
+export { prefixes } from './PresentationClasses/Dosing/getPrefix';

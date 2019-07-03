@@ -304,8 +304,8 @@
 		<tspan class="em">(max 10mg)</tspan>
 		<tspan class="or"
 				x="156"
-				dy="1.2em">OR</tspan>
-		<tspan>Buccal or Intranasal Midazolam</tspan>
+				dy="1.2em">OR </tspan>
+		<tspan>   or Intranasal Midazolam</tspan>
 		<tspan
 				x="156"
 				dy="1.2em">0.5mg/kg</tspan>
@@ -487,8 +487,8 @@
 				class="em">(max 10mg)</tspan>
 		<tspan class="or drug"
 				x="159"
-				dy="1em">OR</tspan>
-		<tspan>Buccal or Intranasal Midazolam</tspan>
+				dy="1em">OR </tspan>
+		<tspan>   or Intranasal Midazolam</tspan>
 		<tspan
 				x="159"
 				dy="1em">0.5mg/kg</tspan>

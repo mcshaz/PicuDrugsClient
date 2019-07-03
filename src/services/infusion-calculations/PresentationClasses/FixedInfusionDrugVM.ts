@@ -14,7 +14,7 @@ export class FixedInfusionDrugVM implements IInfusionDrugVM {
   public ampuleUnits!: SiConcentration;
   public diluentFluid: string = '';
   public concentrations: IFixedInfusionPeriodVM[] = [];
-  get CalculatedDoseUnit(): DrugDoseUnit {
+  get calculatedDoseUnit(): DrugDoseUnit {
     return this.rateUnit.toDrugDoseUnit();
   }
   public rateUnit!: InfusionRateUnit;

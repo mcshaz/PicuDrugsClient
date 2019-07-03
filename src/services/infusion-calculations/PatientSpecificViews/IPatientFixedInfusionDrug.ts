@@ -11,5 +11,4 @@ export interface IPatientFixedDilution extends IDilutionInfo {
 
 export interface IPatientFixedInfusionDrug extends IInfusionInfo {
     dilution: IPatientFixedDilution;
-    selectedAmpule: IEntityDrugAmpuleConcentration;
 }
