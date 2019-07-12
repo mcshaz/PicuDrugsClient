@@ -22,3 +22,4 @@ export { getFixedDilutionsForPt } from './Transformations/Calculations/getFixedD
 export { getVariableInfusionsForPt } from './Transformations/Calculations/getVariableInfusionsForPt';
 export { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution } from './PatientSpecificViews/IPatientFixedInfusionDrug';
 export { prefixes } from './PresentationClasses/Dosing/getPrefix';
+export { syringeRounding, roundToFixed, roundToNearest } from './Utilities/rounding';

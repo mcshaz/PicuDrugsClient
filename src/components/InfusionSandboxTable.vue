@@ -1,21 +1,17 @@
 <template>
 <tr>
-            drug.ampuleUnits
-            drug.calculatedDoseUnit
-            drug.rateUnit
+    drug.calculatedDoseUnit
+    drug.rateUnit
 
-            in concentrations
-            conc.calculatedDose
-            conc.infusionRate
+    in concentrations
+    conc.calculatedDose
+    conc.infusionRate
 
-            conc.isNeat;
-
-            conc.drawingUpDose
-            conc.oneMlHrDose
-            conc.finalVolume
-            in ampuleDetails
-
-            amp.drawingUpVolume
+    conc.drawingUpDose
+    amp.drawingUpVolume
+    conc.oneMlHrDose
+    conc.finalVolume
+    in ampuleDetails
   </tr>
 </template>
 <script lang="ts">
@@ -26,16 +22,16 @@ import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
 import { medianMatchAvg } from '@/services/anthropometry';
 import { ageString } from '@/services/utilities/ageString';
 import { IEntityFixedInfusionDrug } from '@/services/drugDb';
-import { getFixedDilutionsForPt, transformFixedInfusions, FixedInfusionDrugVM } from '@/services/infusion-calculations';
+import { transformFixedInfusions, IPatientFixedInfusionDrug, FixedInfusionDrugVM } from '@/services/infusion-calculations';
 
 type vueNumber = number | '';
 
 @Component
-export default class MultiWeightRow extends Vue {
+export default class InfusionSandboxTable extends Vue {
     @Prop({required: true})
     public wtKg!: number;
     @Prop({required: true})
-    public drugData!: IEntityFixedInfusionDrug;
+    public drugData!: IPatientFixedInfusionDrug;
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
 
@@ -53,13 +49,10 @@ export default class MultiWeightRow extends Vue {
 
     @Watch('drugData', {deep: true})
     private drugDataChange() {
-        const wtSelectedInfusion = getFixedDilutionsForPt(this.drugData, 600, this.wtKg)!;
-        if (!wtSelectedInfusion) {
-            this.$emit('has-data', false);
-        }
-        else {
-            this.patientInfusion = transformFixedInfusions(this.wtKg, wtSelectedInfusion);
-            this.$emit('has-data', true);
+        if (this.drugData) {
+            this.patientInfusion = transformFixedInfusions(this.wtKg, this.drugData);
+        } else {
+            this.patientInfusion = null;
         }
     }
 }

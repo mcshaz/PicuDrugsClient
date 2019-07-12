@@ -4,81 +4,84 @@
     </h2>
     <form class="was-validated" @submit.prevent="submit" >
         <b-form-group label="drug name:" label-for="name" label-cols-lg="2" label-cols-xl="2" >
-                <input name="name" type="text" v-model="name" class="form-control">
+                <input id="name" type="text" v-model="name" class="form-control">
         </b-form-group>
         <b-form-group label="ampule:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
-            <b-form-group label="ampConc:" label-for="ampConc" label-cols-lg="2" label-cols-xl="2" >
-                <div class="input-group">
-                    <input name="ampConc" type="number" v-model="ampConc" class="form-control">
-                    <select class="form-control" v-model="ampPrefix">
-                        <option v-for="" >
-                        </option>>
+            <div class="input-group">
+                <input id="ampAmount" type="number" v-model="ampAmount" class="form-control">
+                <div class="input-group-append select-input">
+                    <select class="custom-select" v-model="ampPrefix" id="ampPrefix">
+                        <option v-for="p in siPrefixes" :key="p.logValue" :value="p.logValue">
+                            {{p.fullName}}
+                        </option>
                     </select>
-                </div>
-            </b-form-group>
-            in
-            <b-form-group label="ampPrefix:" label-for="ampPrefix" label-cols-lg="2" label-cols-xl="2" >
-                <b-input-group append="ml">
-                    <input name="ampPrefix" type="number" v-model="ampPrefix" class="form-control">
-                </b-input-group>
-            </b-form-group>
+                    <select class="custom-select" v-model="siUnitId" id="siUnitId">
+                        <option v-for="u in siUnits" :key="u.value" :value="u.value">
+                            {{u.text}}
+                        </option>
+                    </select>
+                </div> <!--input-group-append-->
+            </div> <!--input-group-->
+            <label for="ampVol">in</label>
+            <b-input-group append="ml">
+                <input id="ampVol" type="number" v-model="ampVol" class="form-control">
+            </b-input-group>
 
-            <b-form-group label="siUnitId:" label-for="siUnitId" label-cols-lg="2" label-cols-xl="2" >
-                <b-input-group append="ml">
-                    <input name="siUnitId" type="number" v-model="siUnitId" class="form-control">
-                </b-input-group>
-            </b-form-group>
-
-            <b-form-group label="ampVol:" label-for="ampVol" label-cols-lg="2" label-cols-xl="2" >
-                <b-input-group append="ml">
-                    <input name="ampVol" type="number" v-model="ampVol" class="form-control">
-                </b-input-group>
-            </b-form-group>
         </b-form-group>
 
-        <b-form-group label="Dilution Method:" label-for="dilutionMethodId" label-cols-lg="2" label-cols-xl="2" >
+        <b-form-group label="Dilution Method:" label-for="dilutionMethod" label-cols-lg="2" label-cols-xl="2" >
+            <select class="custom-select" v-model="dilutionMethodId" id="dilutionMethod">
+                <option v-for="m in dilutionMethods" :key="m.value" :value="m.value">
+                    {{m.text}}
+                </option>
+            </select>
+        </b-form-group>
+
+        <b-form-group label="run infusion @:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
+            <div class="input-group-addon">
+                <select class="custom-select" v-model="infusionPrefix" id="infusionPrefix">
+                    <option v-for="p in siPrefixes" :key="p.logValue" :value="p.logValue">
+                        {{p.fullName}}
+                    </option>
+                </select>
+                <div class="input-group-append">
+                    {{siUnits.find(siUnitId).fullName}}
+                </div> <!--input-group-append-->
+            </div> <!--input-group-addon-->
+            <label for="isPerMinute">per</label>
+            <select class="custom-select" v-model="isPerMinute" id="isPerMinute">
+                <option :value="true">
+                    minute
+                </option>
+                <option :value="false">
+                    hour
+                </option>
+            </select>
+        </b-form-group>
+
+        <b-form-group label="Dilution Volume:" label-for="dilutionVol" label-cols-lg="2" label-cols-xl="2" >
             <b-input-group append="ml">
-                <input name="dilutionMethodId" type="number" v-model="dilutionMethodId" class="form-control">
+                <input id="dilutionVol" type="number" v-model="dilutionVol" class="form-control">
             </b-input-group>
         </b-form-group>
 
-        <b-form-group label="infusionPrefix:" label-for="infusionPrefix" label-cols-lg="2" label-cols-xl="2" >
-            <b-input-group append="ml">
-                <input name="infusionPrefix" type="number" v-model="infusionPrefix" class="form-control">
-            </b-input-group>
-        </b-form-group>
-
-        <b-form-group label="isPerMinute:" label-for="isPerMinute" label-cols-lg="2" label-cols-xl="2" >
-            <b-input-group append="ml">
-                <input name="isPerMinute" type="number" v-model="isPerMinute" class="form-control">
-            </b-input-group>
-        </b-form-group>
-
-
-        <b-form-group label="dilutionVol:" label-for="dilutionVol" label-cols-lg="2" label-cols-xl="2" >
-            <b-input-group append="ml">
-                <input name="dilutionVol" type="number" v-model="dilutionVol" class="form-control">
-            </b-input-group>
-        </b-form-group>
-
-        <b-form-group label="duration:" label-for="duration" label-cols-lg="2" label-cols-xl="2" >
-            <b-input-group append="ml">
-                <input name="duration" type="number" v-model="duration" class="form-control">
+        <b-form-group label="Duration:" label-for="duration" label-cols-lg="2" label-cols-xl="2" >
+            <b-input-group append="mins">
+                <input id="duration" type="number" v-model="duration" class="form-control">
             </b-input-group>
         </b-form-group>
 
         <b-form-group label="rate:" label-for="rate" label-cols-lg="2" label-cols-xl="2" >
             <b-input-group append="ml">
-                <input name="rate" type="number" v-model="rate" class="form-control">
+                <input id="rate" type="number" v-model="rate" class="form-control">
             </b-input-group>
         </b-form-group>
 
         <b-form-group label="concentration:" label-for="concentration" label-cols-lg="2" label-cols-xl="2" >
             <b-input-group append="ml">
-                <input name="concentration" type="number" v-model="concentration" class="form-control">
+                <input id="concentration" type="number" v-model="concentration" class="form-control">
             </b-input-group>
         </b-form-group>
-      <b-button type="submit" :disabled="!ward" >submit</b-button>
     </form>
     <table class="table table-striped">
       <thead>
@@ -90,13 +93,9 @@
         </tr>
       </thead>
       <tbody>
-        <infusion-sandbox-row v-for="(w, indx) in weights" 
-            :key="w.wtKg"
-            :wtKg="w.wtKg"
-            @female-median-age="w.femaleM=$event"
-            @male-median-age="w.maleM=$event"
-            @edit-row="edit(indx)"
-            @delete-row="del(indx)"
+        <infusion-sandbox-row v-for="w in weights" 
+            :key="w"
+            :wtKg="w"
         />
       </tbody>
       <tfoot>
@@ -118,7 +117,7 @@ import { exampleWeights } from '@/services/utilities/weightHelpers';
 import { siUnit, IEntityFixedDilution, IEntityFixedConcentration, dilutionMethod } from '@/services/drugDb';
 import { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution, prefixes } from '@/services/infusion-calculations';
 import { UKWeightData } from '@/services/anthropometry/';
-import { enumToValues } from '@/services/utilities/enumToValues';
+import { enumToValues, enumValueOptions } from '@/services/utilities/enumToValues';
 
 type vueNumber = number | '';
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
@@ -130,14 +129,14 @@ interface ISelectOption { value: number; text: string; disabled?: boolean; }
 })
 export default class InfusionSandbox extends Vue {
   public dilutionMethods = enumToValues(dilutionMethod);
-  public siUnits = enumToValues(siUnit, );
-  public infusionPrefixes = prefixes;
+  public siUnits = enumToValues(siUnit, enumValueOptions.sortOnText);
+  public siPrefixes = prefixes;
 
   public weights = exampleWeights;
   public name = '';
   public ampPrefix = -3;
-  public ampConc: vueNumber = '';
-  public ampVol: vueNumber = '';
+  public ampAmount: vueNumber = '';
+  public ampVol: vueNumber = 1;
   public siUnitId = siUnit.gram;
   public dilutionMethodId = dilutionMethod.NeatFixedFlow;
   public infusionPrefix = -3;
@@ -154,7 +153,7 @@ export default class InfusionSandbox extends Vue {
           siPrefix: this.ampPrefix,
           siUnitId: this.siUnitId,
           drugAmpuleConcentrations: [{
-              concentration: this.ampConc,
+              concentration: (this.ampAmount || 0) / (this.ampVol || 1),
               volume: this.ampVol,
           }],
           dilution: {
@@ -175,12 +174,12 @@ export default class InfusionSandbox extends Vue {
 
 </script>
 <style scoped>
-.input-group-addon.select-input {
+.input-group-append.select-input {
   width: 20%;
   padding: 0;
 }
 
-.input-group-addon.select-input select {
+.input-group-append.select-input select {
   border: none;
   height: 32px;
 }

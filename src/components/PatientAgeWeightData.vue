@@ -62,6 +62,7 @@
           </b-form-radio>
         </b-form-radio-group>
     </b-form-group>
+    <slot name="after"></slot>
     <b-button type="submit" :variant="alertLevel" >Create Chart</b-button>
   </form>
 </template>
