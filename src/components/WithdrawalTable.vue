@@ -1,64 +1,94 @@
 <template>
-    <table>
-        <tbody>
-            <tr>
-                <th scope="row">
-                    day #
-                </th>
-                <td v-for="d in weanRegime.length" :key="d">
-                    {{ d }}
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    Date
-                </th>
-                <td v-for="d in weanRegime" :key="d.id">
-                    {{ d.date.toLocaleDateString() }}
-                </td>
-            </tr>
-            <tr class="dose regular">
-                <th scope="row">
-                    Regular Dose
-                </th>
-                <td v-for="d in weanRegime" :key="d.id">
-                    {{ d.regularDose }} {{ doseUnit }}
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    Frequency
-                </th>
-                <td v-for="d in weanRegime.length" :key="d">
-                    {{ qHourly }}
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    Route
-                </th>
-                <td v-for="d in weanRegime.length" :key="d">
-                    {{ routeRegular }}
-                </td>
-            </tr>
-            <tr class="dose rescue divide">
-                <th scope="row">
-                    Rescue Dose - PRN
-                </th>
-                <td v-for="d in weanRegime" :key="d.id">
-                    {{ d.rescueDose }}
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    Route
-                </th>
-                <td v-for="d in weanRegime.length" :key="d">
-                    {{ routeRescue }} {{ doseUnit }}
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div id="withdrawal-table">
+        <div>
+            <h5>ORIGINAL MEDICINE</h5>
+            <dl>
+                <dt>Medicine</dt>
+                <dd></dd>
+                <dt>Route</dt>
+                <dd></dd>
+                <dt>24hr dose</dt>
+                <dd></dd>
+                <dt>Original duration</dt>
+                <dd></dd>
+            </dl>
+            <h4>WEANING MEDICINE</h4>
+            <dl>
+                <dt>Medicine</dt>
+                <dd></dd>
+                <dt>Route</dt>
+                <dd></dd>
+                <dt>24hr dose</dt>
+                <dd></dd>
+                <dt>Frequency</dt>
+                <dd>Q {{}} H</dd>
+                <dt>Start dose</dt>
+                <dd></dd>
+                <dt>Rescue Dose</dt>
+                <dd></dd>
+            </dl>
+        </div>
+        <table>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        day #
+                    </th>
+                    <td v-for="d in weanRegime.length" :key="d">
+                        {{ d }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Date
+                    </th>
+                    <td v-for="d in weanRegime" :key="d.id">
+                        {{ d.date.toLocaleDateString() }}
+                    </td>
+                </tr>
+                <tr class="dose regular">
+                    <th scope="row">
+                        Regular Dose
+                    </th>
+                    <td v-for="d in weanRegime" :key="d.id">
+                        {{ d.regularDose }} {{ doseUnit }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Frequency
+                    </th>
+                    <td v-for="d in weanRegime.length" :key="d">
+                        Q {{ qHourly }} H
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Route
+                    </th>
+                    <td v-for="d in weanRegime.length" :key="d">
+                        {{ routeRegular }}
+                    </td>
+                </tr>
+                <tr class="dose rescue divide">
+                    <th scope="row">
+                        Rescue Dose - PRN
+                    </th>
+                    <td v-for="d in weanRegime" :key="d.id">
+                        {{ d.rescueDose }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Route
+                    </th>
+                    <td v-for="d in weanRegime.length" :key="d">
+                        {{ routeRescue }} {{ doseUnit }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 <script lang="ts">
 import 'reflect-metadata';
