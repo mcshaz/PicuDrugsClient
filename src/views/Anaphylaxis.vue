@@ -2,11 +2,8 @@
   <div class="anaphylaxis">
     <form>
       <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
-          :state="!errMsg" 
+          :state="!errMsg" :invalid-feedback="errMsg"
           class="was-validated" >
-        <template slot="invalid-feedback" >
-          {{errMsg}}
-        </template>
 
         <b-input-group append="kg">
           <input class="form-control" name="weight" v-model.number="wtKg" placeholder="Weight" 

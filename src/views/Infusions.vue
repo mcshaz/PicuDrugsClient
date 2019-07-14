@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h2>Drug Calculator - Individual drug infusions </h2>
-    <PatientAgeWeightData :exactAge="selectedDrug&&!selectedDrug.isTitratable">
+    <patient-age-weight-data :exactAge="selectedDrug&&!selectedDrug.isTitratable">
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Drug:" 
           invalid-feedback="Please select a drug" :state="!!selectedDrugVM">
         <vue-single-select placeholder="please select a drug" 
@@ -17,7 +17,7 @@
           </template>
         </b-form-select>
       </b-form-group>
-    </PatientAgeWeightData>
+    </patient-age-weight-data>
     <p v-if="link">
       to link to this drug in documentation etc., use the link <a href="#">{{link}}</a>
     </p>

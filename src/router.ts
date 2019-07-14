@@ -10,6 +10,7 @@ import MultiWeight from './views/MultiWeight.vue';
 import WardMultiChart from './views/WardMultiChart.vue';
 import TransportTimes from './views/TransportTimes.vue';
 import Anaphylaxis from './views/Anaphylaxis.vue';
+import Withdrawal from './views/Withdrawal.vue';
 
 Vue.use(Router);
 
@@ -68,6 +69,10 @@ export default new Router({
       path: '/retrievals',
       name: 'retrievals',
       component: TransportTimes,
+    }, {
+      path: '/withdrawal',
+      name: 'withdrawal',
+      component: Withdrawal,
     }, {
       path: '/anaphylaxis',
       name: 'anaphylaxis',

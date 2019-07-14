@@ -8,7 +8,7 @@
                 <dt>Route</dt>
                 <dd>{{ originalRoute }}</dd>
                 <dt>24hr dose</dt>
-                <dd>{{ original24HDose }} {{ doseUnit }}</dd>
+                <dd>{{ original24HrDose }} {{ doseUnit }}</dd>
                 <dt>Original duration</dt>
                 <dd></dd>
             </dl>
@@ -108,7 +108,7 @@ export default class WithdrawalTable extends Vue {
     @Prop({ default: 'iv' })
     public originalRoute!: route;
     @Prop({required: true})
-    public original24HDose!: number;
+    public original24HrDose!: number;
     @Prop({default: 1})
     public bioavailability!: number;
     @Prop({required: true})
@@ -129,7 +129,7 @@ export default class WithdrawalTable extends Vue {
     }
 
     public get startWean24Hr() {
-        return roundToFixed(this.original24HDose * this.bioavailability);
+        return roundToFixed(this.original24HrDose * this.bioavailability);
     }
 
     public get startWeanDose() {
@@ -174,9 +174,9 @@ export default class WithdrawalTable extends Vue {
 }
 
 class WeanDay {
-    constructor (public readonly weanDate: Date,
-                 public regularDose: number,
-                 public rescueDose: number) {
+    constructor(public readonly weanDate: Date,
+                public regularDose: number,
+                public rescueDose: number) {
         this.regularDose = roundToFixed(this.regularDose);
     }
     public get id() {
