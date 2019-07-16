@@ -2,7 +2,7 @@
     <div :class="pState===null?'':'was-validated'" >
         <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState" >
             <template slot="invalid-feedback">
-                must be between {{min.toLocaleDateString()}} and {{max.toLocaleDateString()}}
+                must be between {{minString}} and {{maxString}}
             </template>
             <date-input :min="min" :max="max" v-model="dob"
                     @blur="onBlur($event)" :id="dob" :required="required" />
@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 import DateInput from '@/components/DateInput.vue';
-import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
+import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
 
 enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 
@@ -69,6 +69,14 @@ export default class DobInput extends Vue {
     private set min(value: Date) {
         this.pMin = value;
         this.$emit('min-change', value);
+    }
+
+    public get minString() {
+        return shortFormatter.format(this.min);
+    }
+
+    public get maxString() {
+        return shortFormatter.format(this.max);
     }
 
     @Watch('value')

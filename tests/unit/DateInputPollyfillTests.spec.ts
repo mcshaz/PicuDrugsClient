@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import DateInputPollyfill from '@/components/DateInputPollyfill.vue';
+import DateInputPolyfill from '@/components/DateInputPolyfill.vue';
 import { shallowMount, Wrapper } from '@vue/test-utils';
 import { dmyFormat } from '@/services/utilities/dateHelpers';
 import { CombinedVueInstance } from 'vue/types/vue';
@@ -11,13 +11,13 @@ const dData: IDData[] = [ { dmyDate: '9/9/1999', keystrokes: ['991999', '0909199
                           { dmyDate: '1/4/2003', keystrokes: ['0142003'] },
                           { dmyDate: '4/1/2003', keystrokes: ['4012003'] },
                           { dmyDate: '3/2/2003', keystrokes: ['322003'] }];
-describe('DateInputPollyfill', () => {
+describe('DateInputPolyfill', () => {
     const dtStr = (dob: Date, now: Date) => `born:${dmyFormat(dob)} now:${dmyFormat(now)}`;
-    let wrapper: Wrapper<CombinedVueInstance<DateInputPollyfill, object, object, object, Record<never, any>>>;
+    let wrapper: Wrapper<CombinedVueInstance<DateInputPolyfill, object, object, object, Record<never, any>>>;
     const createExpect = (el: string) => expect((wrapper.find('#' + el).element as HTMLInputElement).value, el);
 
     beforeEach('mounting wrapper', () => {
-        wrapper = shallowMount(DateInputPollyfill);
+        wrapper = shallowMount(DateInputPolyfill);
     });
     it('has set up defaults', () => {
         expect(wrapper.vm.$data.pIsDateSupported, 'isDateFirst').to.equal(true);

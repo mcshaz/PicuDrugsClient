@@ -148,7 +148,7 @@ export default class InfusionSandbox extends Vue {
   public concentration = 0.2;
 
   public get infusionEntity(): IPatientFixedInfusionDrug {
-    var returnVar = {
+    const returnVar = {
           fullname: this.name,
           siPrefix: this.ampPrefix,
           siUnitId: this.siUnitId,
@@ -165,9 +165,9 @@ export default class InfusionSandbox extends Vue {
                     stopMinutes: this.duration,
                     rate: this.rate,
                     concentration: this.concentration,
-              } as IPatientFixedConcentration]
+              } as IPatientFixedConcentration],
           } as IPatientFixedDilution,
-    } as IPatientFixedInfusionDrug
+    } as IPatientFixedInfusionDrug;
     return returnVar;
   }
 }

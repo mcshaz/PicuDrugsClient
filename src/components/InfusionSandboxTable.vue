@@ -35,7 +35,7 @@ export default class InfusionSandboxTable extends Vue {
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
 
-    public ageForWeight = '';
+    private ageForWeight = '';
     private patientInfusion: FixedInfusionDrugVM | null = null;
     private noData = true;
     private ageDays!: IMedianMatchResult;

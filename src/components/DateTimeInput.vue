@@ -19,7 +19,7 @@
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 import DateInput from '@/components/DateInput.vue';
-import { ymdFormat, dateInRange, isMonthFirst } from '@/services/utilities/dateHelpers';
+import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 
 interface IDates { value: number; text: string; /* disabled: boolean; */ }
 
@@ -74,7 +74,10 @@ export default class DateTimeInput extends Vue {
         }
     }
 }
-
+const formatter = new Intl.DateTimeFormat(navigator.languages as string[],
+        { weekday: 'short',
+          month: 'numeric',
+          day: 'numeric' });
 let pDtOptions: IDates[];
 function getDateOptions() {
     const today = new Date();
@@ -96,44 +99,10 @@ function getDateOptions() {
             }
             return {
                 value: dt.getTime(),
-                text: dateStr(dt) + rel,
+                text: formatter.format(dt) + rel,
             };
         });
     }
     return pDtOptions;
-}
-
-function dateStr(date: Date) {
-    let day: string;
-    switch (date.getDay()) {
-        case 0:
-            day = 'Sun';
-            break;
-        case 1:
-            day = 'Mon';
-            break;
-        case 2:
-            day = 'Tue';
-            break;
-        case 3:
-            day = 'Wed';
-            break;
-        case 4:
-            day = 'Thu';
-            break;
-        case 5:
-            day = 'Fri';
-            break;
-        case 6:
-            day = 'Sat';
-            break;
-        default:
-            throw new Error();
-    }
-    const d = date.getDate(); // could padLeft
-    const m = date.getMonth();
-    return isMonthFirst
-        ? `${day} ${m}/${d}`
-        : `${day} ${d}/${m}`;
 }
 </script>

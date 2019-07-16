@@ -32,7 +32,7 @@ describe('fixedVMConversion', () => {
             it(`${expected.vm.drugName} (${expected.wt}kg)`, () => {
                 const dbData = dbDatum[i];
                 const selectedDil = getFixedDilutionsForPt(dbData, expected.ageMth, expected.wt)!;
-                selectedDil.selectedAmpule = dbData.drugAmpuleConcentrations[0];
+                // selectedDil.selectedAmpule = dbData.drugAmpuleConcentrations[0];
                 methodsTested.add(selectedDil.dilution.dilutionMethodId);
                 const testOut = transformFixedInfusions(expected.wt, selectedDil);
                 chai.expect(testOut, `dilMethod ${selectedDil.dilution.dilutionMethodId}`).to.be.deep.almost.equal(expected.vm);
@@ -59,34 +59,31 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-3, siUnit.gram, true, false);
             f.concentrations = [{
-                ampuleMl: 7.5,
                 calculatedDose: 150,
                 cumulativeStartTime: new MinutesDuration(0),
                 duration: new MinutesDuration(15),
-                ampuleDetails: [],
+                ampuleDetails: [{drawingUpVolume: 7.5, concentration: 0, volume: 10}],
                 drawingUpDose: 1500,
                 finalVolume: 30,
                 infusionRate: 120,
                 oneMlHrDose: 5,
                 isNeat: false,
             }, {
-                ampuleMl: 2.5,
+                ampuleDetails: [{drawingUpVolume: 2.5, concentration: 0, volume: 10}],
                 calculatedDose: 50,
                 cumulativeStartTime: new MinutesDuration(15),
                 duration: new MinutesDuration(240),
-                ampuleDetails: [],
-                drawingUpDose: 500,
+                                drawingUpDose: 500,
                 finalVolume: 70,
                 infusionRate: 17.5,
                 oneMlHrDose: 0.714285714285714,
                 isNeat: false,
             }, {
-                ampuleMl: 5,
+                ampuleDetails: [{drawingUpVolume: 5, concentration: 0, volume: 10}],
                 calculatedDose: 100,
                 cumulativeStartTime: new MinutesDuration(255),
                 duration: new MinutesDuration(960),
-                ampuleDetails: [],
-                drawingUpDose: 1000,
+                                drawingUpDose: 1000,
                 finalVolume: 140,
                 infusionRate: 8.75,
                 oneMlHrDose: 0.714285714285714,
@@ -109,12 +106,11 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-6, siUnit.gram, false, true);
             f.concentrations = [{
-                ampuleMl: 5,
+                ampuleDetails: [{drawingUpVolume: 5, concentration: 0, volume: 10}],
                 calculatedDose: 12.5,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(1440),
-                ampuleDetails: [],
-                drawingUpDose: 12.5,
+                                drawingUpDose: 12.5,
                 finalVolume: 250,
                 infusionRate: 10.416666666666677,
                 oneMlHrDose: 0.833333333333333,
@@ -138,12 +134,11 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-3, siUnit.gram, true, false);
             f.concentrations = [{
-                ampuleMl: 2.83975659229209,
+                ampuleDetails: [{drawingUpVolume: 2.83975659229209, concentration: 0, volume: 10}],
                 calculatedDose: 50,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(20),
-                ampuleDetails: [],
-                drawingUpDose: 1400,
+                                drawingUpDose: 1400,
                 finalVolume: 20,
                 infusionRate: 60,
                 oneMlHrDose: 2.5,
@@ -166,12 +161,11 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-3, siUnit.gram, true, false);
             f.concentrations = [{
-                ampuleMl: 20,
+                ampuleDetails: [{drawingUpVolume: 20, concentration: 0, volume: 10}],
                 calculatedDose: 20,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(20),
-                ampuleDetails: [],
-                drawingUpDose: 1000,
+                                drawingUpDose: 1000,
                 finalVolume: 200,
                 infusionRate: 600,
                 oneMlHrDose: 0.1,
@@ -194,12 +188,11 @@ function getFixedInfusionVMTestData(): IFixedVMTestData[] {
             f.drawingUpUnits = new SiUnitMeasure(-3, siUnit.gram);
             f.rateUnit = new InfusionRateUnit(-3, siUnit.gram, true, false);
             f.concentrations = [{
-                ampuleMl: 20,
+                ampuleDetails: [{drawingUpVolume: 20, concentration: 0, volume: 10}],
                 calculatedDose: 20,
                 cumulativeStartTime: new MinutesDuration(),
                 duration: new MinutesDuration(20),
-                ampuleDetails: [],
-                drawingUpDose: 1000,
+                                drawingUpDose: 1000,
                 finalVolume: 20,
                 infusionRate: 60,
                 isNeat: true,

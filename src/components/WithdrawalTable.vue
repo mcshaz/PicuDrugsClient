@@ -9,8 +9,6 @@
                 <dd>{{ originalRoute }}</dd>
                 <dt>24hr dose</dt>
                 <dd>{{ original24HrDose }} {{ doseUnit }}</dd>
-                <dt>Original duration</dt>
-                <dd></dd>
             </dl>
             <h4>WEANING MEDICINE</h4>
             <dl>
@@ -28,22 +26,24 @@
                 <dd>{{ startWeanDose }} {{ doseUnit }}</dd>
             </dl>
         </div>
-        <table>
-            <tbody>
+        <table class="table table-bordered table-striped">
+            <thead>
                 <tr>
                     <th scope="row">
                         day #
                     </th>
-                    <td v-for="d in weanRegime.length" :key="d">
+                    <th scope="col" v-for="d in weanRegime.length" :key="d">
                         {{ d }}
-                    </td>
+                    </th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr>
                     <th scope="row">
                         Date
                     </th>
                     <td v-for="d in weanRegime" :key="d.id">
-                        {{ d.date.toLocaleDateString() }}
+                        {{ d.weanDateString }}
                     </td>
                 </tr>
                 <tr class="dose regular">
@@ -75,7 +75,7 @@
                         Rescue Dose - PRN
                     </th>
                     <td v-for="d in weanRegime" :key="d.id">
-                        {{ d.rescueDose }}
+                        {{ d.rescueDose }} {{ doseUnit }}
                     </td>
                 </tr>
                 <tr>
@@ -83,7 +83,7 @@
                         Route
                     </th>
                     <td v-for="d in weanRegime.length" :key="d">
-                        {{ routeRescue }} {{ doseUnit }}
+                        {{ routeRescue }}
                     </td>
                 </tr>
             </tbody>
@@ -95,6 +95,7 @@ import 'reflect-metadata';
 import { Component, Prop, Vue, Inject, Watch } from 'vue-property-decorator';
 import { roundToFixed } from '@/services/infusion-calculations/';
 
+
 type vueNumber = number | '';
 type route = 'po/ng' | 'iv' | 'patch' | 'subcut';
 type doseUnits = 'mg' | 'microg';
@@ -103,8 +104,6 @@ type doseUnits = 'mg' | 'microg';
 export default class WithdrawalTable extends Vue {
     @Prop({required: true})
     public drug!: string;
-    @Prop({default: ''})
-    private originalDrug!: string;
     @Prop({ default: 'iv' })
     public originalRoute!: route;
     @Prop({required: true})
@@ -123,13 +122,15 @@ export default class WithdrawalTable extends Vue {
     public doseUnit!: doseUnits;
     @Prop({default: false})
     public weanAlternateDays!: boolean;
+    @Prop({default: ''})
+    private originalDrug!: string;
 
     public get originalDrugName() {
         return this.originalDrug || this.drug;
     }
 
     public get startWean24Hr() {
-        return roundToFixed(this.original24HrDose * this.bioavailability);
+        return roundToFixed(this.original24HrDose / this.bioavailability);
     }
 
     public get startWeanDose() {
@@ -145,14 +146,14 @@ export default class WithdrawalTable extends Vue {
             : this.weanOverDays;
         const weanIncrement = this.startWeanDose / dayDivisor;
         for (let i = 0; i < dayDivisor; i++) {
-            const wean = new WeanDay(new Date(dt), 
-                                     this.startWeanDose - i * weanIncrement, 
+            const wean = new WeanDay(new Date(dt),
+                                     this.startWeanDose - i * weanIncrement,
                                      this.startWeanDose);
             wean.addDays(i);
             returnVar.push(wean);
         }
-        if (this.weanAlternateDays){
-            const isEven = this.weanOverDays % 2 === 0
+        if (this.weanAlternateDays) {
+            const isEven = this.weanOverDays % 2 === 0;
             // 6 over 6 days
             // odd 6 4 4 2 2
             // even 6 6 4 4 2 2
@@ -172,7 +173,12 @@ export default class WithdrawalTable extends Vue {
         return returnVar;
     }
 }
+const formatter = new Intl.DateTimeFormat(navigator.languages as string[],
+    { year: '2-digit',
+      month: 'numeric',
+      day: 'numeric' });
 
+// tslint:disable-next-line: max-classes-per-file
 class WeanDay {
     constructor(public readonly weanDate: Date,
                 public regularDose: number,
@@ -182,12 +188,16 @@ class WeanDay {
     public get id() {
         return this.weanDate.getTime();
     }
+    public get weanDateString() {
+        return formatter.format(this.weanDate);
+    }
     public addDays(days: number) {
         this.weanDate.setDate(this.weanDate.getDate() + days);
     }
     public cloneForTomorrow(): WeanDay {
-        return new WeanDay(new Date(this.weanDate), this.regularDose, this.rescueDose);
-        this.addDays(1);
+        const returnVar = new WeanDay(new Date(this.weanDate), this.regularDose, this.rescueDose);
+        returnVar.addDays(1);
+        return returnVar;
     }
 }
 </script>

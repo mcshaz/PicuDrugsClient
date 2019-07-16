@@ -20,6 +20,10 @@
               <li v-if="link">
                 to provide a hyperlink to this ward in protocols etc., copy the link <a href="#" target="_self" >{{link}}</a>
               </li>
+              <li>
+                do you write the date as {{dateEg}}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>
+                <a href="https://www.w3.org/International/questions/qa-lang-priorities#changing"> see these directions to set your browser language/culture</a>
+              </li>
             </ul>
           </b-card-body>
         </b-card>
@@ -35,6 +39,7 @@ import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 import WardSelect from '@/components/WardSelect.vue';
 import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
 import { IEntityWard, IAppData } from '@/services/drugDb';
+import { dateOrder } from '@/services/utilities/dateHelpers';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
@@ -48,6 +53,7 @@ export default class Home extends Vue {
   public boluses = true;
   public infusions = true;
   public infusionsAvailable = false;
+  public dateEg = dateOrder.join('');
   private ward: IEntityWard | null = null;
   @Inject('appData')
   private appData!: IAppData;

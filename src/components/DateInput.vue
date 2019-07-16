@@ -1,6 +1,6 @@
 <template>
     <div class="date-input">
-        <date-input-pollyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" 
+        <date-input-polyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" 
                 v-if="isDateSupported===dateElSupportValues.noSupport" @blur="$emit('blur', $event)" :id="id" :required="required"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr" 
@@ -19,13 +19,13 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import DateInputPollyfill from '@/components/DateInputPollyfill.vue';
+import DateInputPolyfill from '@/components/DateInputPolyfill.vue';
 import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 import { dateElSupportValues, dateElSupport} from '@/services/utilities/html5ElementSupport';
 
 @Component({
     components: {
-        DateInputPollyfill,
+        DateInputPolyfill,
     },
 })
 export default class DateInput extends Vue {

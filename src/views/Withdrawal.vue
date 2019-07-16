@@ -12,44 +12,44 @@
         </b-input-group>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Morphine">
-        <b-form-group label-cols-lg="5" label="1ml = " label-for="mophine-conc">
+        <b-form-group label-cols-lg="4" label="1ml = " label-for="mophine-conc">
           <b-input-group append="microg/kg/hr">
             <input type="number" v-model.number="morphineConc" id="morphine-conc" :min="10"
                 :max="80" step="10">
           </b-input-group>
         </b-form-group>
-        <b-form-group label-cols-lg="5" label="last 24hrs:" label-for="morphine-ml">
+        <b-form-group label-cols-lg="4" label="last 24hrs:" label-for="morphine-ml">
           <b-input-group append="ml">
             <input type="number" v-model.number="morphineMl" id="morphine-ml">
           </b-input-group>
         </b-form-group>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Midazolam">
-        <b-form-group label-cols-lg="5" label="1ml = " label-for="midazolam-conc">
+        <b-form-group label-cols-lg="4" label="1ml = " label-for="midazolam-conc">
           <b-input-group append="microg/kg/min">
             <input type="number" v-model.number="midazConc" id="midazolam-conc">
           </b-input-group>
         </b-form-group>
-        <b-form-group label-cols-lg="5" label="last 24hrs:" label-for="midazolam-ml">
+        <b-form-group label-cols-lg="4" label="last 24hrs:" label-for="midazolam-ml">
           <b-input-group append="ml">
             <input type="number" v-model.number="midazMl" id="midazolam-ml">
           </b-input-group>
         </b-form-group>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Clonidine">
-        <b-form-group label-cols-lg="5" label="1ml = " label-for="clonidine-conc">
+        <b-form-group label-cols-lg="4" label="1ml = " label-for="clonidine-conc">
           <b-input-group append="microg/kg/hr">
             <input type="number" v-model.number="clonidineConc" id="clonidine-conc" readonly>
           </b-input-group>
         </b-form-group>
-        <b-form-group label-cols-lg="5" label="last 24hrs:" label-for="clonidine-ml">
+        <b-form-group label-cols-lg="4" label="last 24hrs:" label-for="clonidine-ml">
           <b-input-group append="ml">
             <input type="number" v-model.number="clonidineMl" id="clonidine-ml">
           </b-input-group>
         </b-form-group>
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Wean Over:" label-for="wean-duration">
-        <b-select required id="wean-duration" v-model="selectDuration" >
+        <b-select required id="wean-duration" v-model="weanDuration" >
           <option :value="null" disabled>Please select a duration</option>
           <option :value="5">5 days <small class="text-muted">on infusions 5-10 days</small></option>
           <option :value="10">10 days <small class="text-muted">on infusions >10 days</small></option>
@@ -57,8 +57,8 @@
         </b-select>
       </b-form-group>
     </form>
-    <withdrawal-table drug="morphine" original24-hr-dose="morphine24Hr" bioavailability="0.3333333333333333"
-      :weanOverDays="selectDuration" />
+    <withdrawal-table drug="morphine" :original24-hr-dose="morhine24Hr" :bioavailability="0.3333333333333333"
+      :weanOverDays="weanDuration" />
   </div>
 </template>
 
@@ -77,19 +77,21 @@ type vueNumber = number | '';
   },
 })
 export default class Withdrawal extends Vue {
-  public morphinMl: vueNumber = '';
+  public morphineMl: vueNumber = '';
   public morphineConc: vueNumber = 20;
   public midazMl: vueNumber = '';
   public midazConc: vueNumber = 1;
   public clonidineMl: vueNumber = '';
   public clonidineConc: vueNumber = 1;
 
+  public weanDuration: number | null = null;
+
   public wtKg: vueNumber = '';
   public minWt = 1;
   public maxWt = 600;
 
   public get morhine24Hr() {
-    return (this.wtKg || 0) * (this.morphineConc || 0) * (this.morphinMl || 0) / 1000;
+    return (this.wtKg || 0) * (this.morphineConc || 0) * (this.morphineMl || 0) / 1000;
   }
 
   public get errMsg() {
