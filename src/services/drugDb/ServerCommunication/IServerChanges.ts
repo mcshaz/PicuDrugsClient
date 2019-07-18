@@ -1,4 +1,3 @@
-import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 import { IEntityDefibModel } from '../entities/IEntityDefibModel';
 import { INewServerDeletions } from './IEntityDeletion';
 import { IEntityWard } from '../entities/IEntityWard';
@@ -13,6 +12,5 @@ export interface IServerChanges {
         infusionDrugs: IEntityInfusion[];
         bolusDrugs: IEntityBolusDrug[];
         defibModels: IEntityDefibModel[];
-        fixedDrugs: IEntityFixedDrug[];
     };
 }

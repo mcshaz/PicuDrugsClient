@@ -16,8 +16,8 @@ import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
 import VariableInfusions from '@/components/VariableInfusions.vue';
 import { IMultiWardChartData } from '@/components/ComponentCommunication';
-import { WardLists, IDrugDB, IEntityBolusDrug, IEntityFixedDrug } from '@/services/drugDb';
-import { getVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM, daysPerMonth } from '@/services/infusion-calculations';
+import { WardLists, IDrugDB, IEntityBolusDrug, IEntityFixedInfusionDrug } from '@/services/drugDb';
+import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM, daysPerMonth } from '@/services/infusion-calculations';
 import { IRegisterEmail } from '@/services/drugDb';
 import { weeksPerMonth } from '../services/anthropometry';
 
@@ -28,7 +28,7 @@ import { weeksPerMonth } from '../services/anthropometry';
 })
 export default class WardMultiChart extends Vue {
   public infusions: Array<Promise<IVariableInfusionDrugVM[]>> = [];
-  public boluses: Array<IEntityBolusDrug | IEntityFixedDrug | string> = [];
+  public boluses: Array<IEntityBolusDrug | IEntityFixedInfusionDrug | string> = [];
   @Prop({required: true})
   private chartData!: IMultiWardChartData;
   @Inject('db')
@@ -53,7 +53,7 @@ export default class WardMultiChart extends Vue {
             ? 0
             : w.estAge.ageDays / daysPerMonth;
           this.infusions.push(allInfusions.then((data) => {
-            const selected = getVariableInfusionsForPt(data, ageMonths, w.wtKg);
+            const selected = filterVariableInfusionsForPt(data, w.wtKg, ageMonths);
             return transformVariableInfusions(w.wtKg, selected);
           }));
       }

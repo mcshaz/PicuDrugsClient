@@ -20,7 +20,6 @@ describe('simple DB tests', () => {
             infusionDrugs: [],
             bolusDrugs: [],
             defibModels: [],
-            fixedDrugs: [],
         },
     }));
     let db: DrugsDBLocal;
@@ -48,9 +47,6 @@ describe('simple DB tests', () => {
                         break;
                     case dbTableName.defibModels:
                         e.entities = allData.data.defibModels.slice(0, 1);
-                        break;
-                    case dbTableName.fixedDrugs:
-                        e.entities = allData.data.fixedDrugs.slice(0, 1);
                         break;
                     case dbTableName.infusionDrugs:
                         e.entities = allData.data.infusionDrugs.slice(0, 1);

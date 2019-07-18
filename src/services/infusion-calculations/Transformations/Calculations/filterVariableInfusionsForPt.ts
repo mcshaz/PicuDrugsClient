@@ -4,7 +4,8 @@ import { IPatientVariableInfuionDrug } from '../../PatientSpecificViews/IPatient
 import { IEntityVariableInfusionDrug } from '@/services/drugDb';
 import { mapProperties } from '../../helpers/mapProperties';
 
-export function getVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug[], ageMonths: number, weightKg: number): IPatientVariableInfuionDrug[] {
+// 600 chosen as default ageMonths as 1/2 way between min and max
+export function filterVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug[], weightKg: number, ageMonths: number = 600): IPatientVariableInfuionDrug[] {
     if (weightKg > maxWeight) { weightKg = maxWeight; }
     if (weightKg < minWeight) { throw new Error(`weight of ${weightKg * 1000}g below lower limit of ${minWeight * 1000}g`); }
     const ageWt: IAgeWeightDetails = { ageMonths, weightKg };
@@ -13,7 +14,7 @@ export function getVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug
     for (const i of infusions) {
         const d = filterByAgeWeight(ageWt, i.variableTimeDilutions);
         if (d.length === 1) {
-            const newVar = mapProperties({} as IPatientVariableInfuionDrug, i, ['abbrev', 'drugReferenceSource', 'drugRoute', 'fullname', 'infusionDiluent', 'note', 'siPrefix', 'siUnitId']);
+            const newVar = mapProperties({} as IPatientVariableInfuionDrug, i, ['abbrev', 'drugReferenceSource', 'drugRoute', 'fullname', 'infusionDiluentId', 'note', 'siPrefix', 'siUnitId']);
             newVar.dilution = d[0];
             newVar.dilution.concentrations = d[0].variableTimeConcentrations;
             returnVar[insert++] = newVar;

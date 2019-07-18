@@ -7,7 +7,7 @@ import { inject } from 'inversify';
 import { IEntityBolusDrug } from './entities/BolusDrugs/IEntityBolusDrug';
 import { IEntityVariableInfusionDrug } from './entities/InfusionDrugs/IEntityVariableInfusionDrug';
 import { toGrouping } from './helpers/toGrouping';
-import { IEntityFixedDrug } from './entities/BolusDrugs/IFixedDrug';
+import { IEntityFixedInfusionDrug } from './entities/InfusionDrugs/IEntityFixedInfusionDrug';
 
 export class WardLists {
     public constructor(@inject(TYPES.IDrugDB)private readonly db: IDrugDB) {
@@ -24,7 +24,7 @@ export class WardLists {
         return ward.infusionSortOrderings.map((id) => returnVar.get(id) as any as IEntityVariableInfusionDrug);
     }
 
-    public async getBolusDrugs(ward: IEntityWard): Promise<Array<IEntityBolusDrug | IEntityFixedDrug | string>> {
+    public async getBolusDrugs(ward: IEntityWard): Promise<Array<IEntityBolusDrug | IEntityFixedInfusionDrug | string>> {
         if (ward.bolusSortOrderings.length === 0) {
             return [];
         }
@@ -32,12 +32,12 @@ export class WardLists {
         const boluses = await this.db.bolusDrugs.where('bolusDrugId')
             .anyOf(bolusIdsGt0.get(true)!)
             .toArray();
-        const returnVar = new Map<number, IEntityBolusDrug | IEntityFixedDrug>();
+        const returnVar = new Map<number, IEntityBolusDrug | IEntityFixedInfusionDrug>();
         if (bolusIdsGt0.get(false)) {
-            const fixed = await this.db.fixedDrugs.where('fixedDrugId')
+            const fixed = await this.db.infusionDrugs.where('infusionDrugId')
                     .anyOf(bolusIdsGt0.get(false)!.map((id) => -id))
-                    .toArray();
-            fixed.forEach((f) => returnVar.set(-f.fixedDrugId, f));
+                    .toArray() as IEntityFixedInfusionDrug[];
+            fixed.forEach((f) => returnVar.set(-f.infusionDrugId, f));
         }
         boluses.forEach((b) => returnVar.set(b.bolusDrugId, b));
 

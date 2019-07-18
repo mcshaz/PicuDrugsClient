@@ -1,5 +1,4 @@
 import { DrugsDBLocal  } from '@/services/drugDb';
-import { IEntityFixedDrug } from '@/services/drugDb/entities/BolusDrugs/IFixedDrug';
 import { IEntityBolusDrug } from '@/services/drugDb/entities/BolusDrugs/IEntityBolusDrug';
 import { IEntityDefibModel } from '@/services/drugDb/entities/IEntityDefibModel';
 import { IEntityInfusion } from '@/services/drugDb/entities/InfusionDrugs/IEntityInfusionDrug';
@@ -21,7 +20,6 @@ export class DbTestTableHelpers {
     constructor() {
         this.pAllTables = new Map();
         [new DrugDBTable<IEntityWard>('wards', 'wardId'),
-         new DrugDBTable<IEntityFixedDrug>('fixedDrugs', 'fixedDrugId'),
          new DrugDBTable<IEntityBolusDrug>('bolusDrugs', 'bolusDrugId'),
          new DrugDBTable<IEntityDefibModel>('defibModels', 'id'),
          new DrugDBTable<IEntityInfusion>('infusionDrugs', 'infusionDrugId')]

@@ -10,5 +10,6 @@ export interface IPatientFixedDilution extends IDilutionInfo {
 }
 
 export interface IPatientFixedInfusionDrug extends IInfusionInfo {
+    infusionDrugId: number;
     dilution: IPatientFixedDilution;
 }

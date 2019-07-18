@@ -1,5 +1,6 @@
 import { siUnit } from '../enums/siUnit';
 import { dilutionMethod } from '../enums/dilutionMethod';
+import { diluentFluid } from '../enums/diluentFluid';
 
 export interface IInfusionInfo {
     fullname: string;
@@ -10,7 +11,7 @@ export interface IInfusionInfo {
 
     drugReferenceSource: IDrugReference;
     drugRoute: IDrugRoute;
-    infusionDiluent: IDiluent;
+    infusionDiluentId: diluentFluid;
     drugAmpuleConcentrations: IEntityDrugAmpuleConcentration[];
 }
 
@@ -53,10 +54,5 @@ export interface IDrugReference {
 
 export interface IDrugRoute {
     description: string;
-    abbrev: string;
-}
-
-export interface IDiluent {
-    diluentType: string;
     abbrev: string;
 }

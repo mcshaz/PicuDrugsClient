@@ -2,14 +2,17 @@ import { FixedInfusionDrugVM } from '../PresentationClasses/FixedInfusionDrugVM'
 import { MinutesDuration } from '../PresentationClasses/Duration/MinutesDuration';
 import { tranformIInfusion } from './TranformIInfusion';
 import { IPatientFixedInfusionDrug } from '../PatientSpecificViews/IPatientFixedInfusionDrug';
+import { diluentFluidName } from '@/services/drugDb';
+
 export function transformFixedInfusions(weight: number, ptDrug: IPatientFixedInfusionDrug): FixedInfusionDrugVM {
   const d = new FixedInfusionDrugVM();
   d.drugName = ptDrug.fullname;
+  d.infusionDrugId = ptDrug.infusionDrugId;
   d.note = ptDrug.note || '';
   d.sourceHref = ptDrug.drugReferenceSource.hyperlink + ptDrug.dilution.referencePage;
   d.sourceDescription = ptDrug.drugReferenceSource.referenceDescription;
   d.route = ptDrug.drugRoute.description;
-  d.diluentFluid = ptDrug.infusionDiluent.diluentType;
+  d.diluentFluid = diluentFluidName(ptDrug.infusionDiluentId);
   // let cumulativeDuration = new MinutesDuration();
   tranformIInfusion(weight, ptDrug, d);
   const ampConversion = Math.pow(10, ptDrug.dilution.siPrefix - ptDrug.siPrefix);

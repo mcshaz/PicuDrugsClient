@@ -91,6 +91,14 @@ export class NumericRange {
       ? Math.round(returnVar)
       : returnVar;
   }
+  public floor(floor: number) {
+    if (this.lowerBound < floor) { this.lowerBound = floor; }
+    if (this.upperBound < floor) { this.upperBound = floor; }
+  }
+  public cap(cap: number) {
+    if (this.lowerBound > cap) { this.lowerBound = cap; }
+    if (this.upperBound > cap) { this.upperBound = cap; }
+  }
   public apply(transform: (n: number) => number) {
     if (this.lowerBound !== void 0) {
       this.lowerBound = transform(this.lowerBound);

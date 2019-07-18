@@ -3,7 +3,7 @@ import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolera
 import { dilutionMethod, IEntityVariableInfusionDrug, siUnit } from '@/services/drugDb';
 import { ToArrayMap, concatSets, toMap } from './utilities/toMap';
 import { fileFetch } from '../../test-resources/FileFetch';
-import { getVariableInfusionsForPt } from '@/services/infusion-calculations/Transformations/Calculations/getVariableInfusionsForPt';
+import { filterVariableInfusionsForPt } from '@/services/infusion-calculations/Transformations/Calculations/filterVariableInfusionsForPt';
 import { IVariableInfusionDrugVM, NumericRange, InfusionRateUnit, SiUnitMeasure } from '@/services/infusion-calculations';
 import { transformVariableInfusions } from '@/services/infusion-calculations/Transformations/transformVariableInfusions';
 
@@ -31,7 +31,7 @@ describe('variableVMConversion', () => {
         for (let i = 0; i < testDatum.length; i++) {
             const expected = testDatum[i];
             it(`${expected.vm.map((d) => d.drugName).join(',')} (${expected.wt}kg)`, () => {
-                const selected = getVariableInfusionsForPt(dbDatum[i], expected.ageMth, expected.wt);
+                const selected = filterVariableInfusionsForPt(dbDatum[i], expected.wt, expected.ageMth);
                 const dilMethods = [...new Set(selected.map((s) => s.dilution.dilutionMethodId))];
                 concatSets(methodsTested, dilMethods);
                 const testOut = transformVariableInfusions(expected.wt, selected);

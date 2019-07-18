@@ -7,6 +7,7 @@ import { IFixedInfusionPeriodVM } from './IFixedInfusionPeriodVM';
 
 export class FixedInfusionDrugVM implements IInfusionDrugVM {
   public drugName!: string;
+  public infusionDrugId!: number;
   public sourceDescription: string = '';
   public sourceHref: string = '';
   public route: string = '';

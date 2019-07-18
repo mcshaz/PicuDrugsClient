@@ -1,6 +1,6 @@
 import { dilutionMethod, siUnit, IEntityFixedInfusionDrug} from '@/services/drugDb';
 import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolerance of 1 x 10-6
-import { FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit,  MinutesDuration, getFixedDilutionsForPt } from '@/services/infusion-calculations';
+import { FixedInfusionDrugVM, transformFixedInfusions, SiUnitMeasure, InfusionRateUnit,  MinutesDuration, filterFixedDilutionsForPt } from '@/services/infusion-calculations';
 import chai from 'chai';
 import { fileFetch } from '../../test-resources/FileFetch';
 import { ToArrayMap } from './utilities/toMap';
@@ -31,7 +31,7 @@ describe('fixedVMConversion', () => {
             const expected = expectedDatum[i];
             it(`${expected.vm.drugName} (${expected.wt}kg)`, () => {
                 const dbData = dbDatum[i];
-                const selectedDil = getFixedDilutionsForPt(dbData, expected.ageMth, expected.wt)!;
+                const selectedDil = filterFixedDilutionsForPt(dbData, expected.wt, expected.ageMth)!;
                 // selectedDil.selectedAmpule = dbData.drugAmpuleConcentrations[0];
                 methodsTested.add(selectedDil.dilution.dilutionMethodId);
                 const testOut = transformFixedInfusions(expected.wt, selectedDil);

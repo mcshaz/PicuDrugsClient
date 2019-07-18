@@ -11,7 +11,6 @@ import { IFetchUpdates } from '../Injectables/IFetch';
 import { inject, injectable, decorate } from 'inversify';
 import { TYPES } from '../types';
 import { IServerChanges } from '../ServerCommunication/IServerChanges';
-import { IEntityFixedDrug } from '../entities/BolusDrugs/IFixedDrug';
 import { INewServerDeletions } from '../ServerCommunication/IEntityDeletion';
 import { appDataType } from '../entities/enums/appDataType';
 import { IDrugDB } from '../Injectables/IDrugDB';
@@ -31,7 +30,6 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
     public infusionDrugs!: Dexie.Table<IEntityInfusion, number>;
     public bolusDrugs!: Dexie.Table<IEntityBolusDrug, number>;
     public defibModels!: Dexie.Table<IEntityDefibModel, number>;
-    public fixedDrugs!: Dexie.Table<IEntityFixedDrug, number>;
     public appData!: Dexie.Table<IDbAppData, number>;
     private readonly updateProvider: IFetchUpdates;
     private readonly logger: ILogger;
@@ -120,9 +118,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
             this.transaction('rw', this.bolusDrugs,
                 () => this.bolusDrugs.bulkPut(serverData.data.bolusDrugs)),
             this.transaction('rw', this.defibModels,
-                () => this.defibModels.bulkPut(serverData.data.defibModels)),
-            this.transaction('rw', this.fixedDrugs,
-                () => this.fixedDrugs.bulkPut(serverData.data.fixedDrugs))]);
+                () => this.defibModels.bulkPut(serverData.data.defibModels))]);
         this.logger.info(Object.keys(serverData.data).filter((d) => d !== 'deletions')
             .reduce<number>((p, k) => p + (serverData.data as any)[k].length, 0)
             + ' records updated or inserted');
@@ -151,8 +147,6 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
                     return this.transaction('rw', this.bolusDrugs, () => this.bolusDrugs.bulkDelete(d.deletionIds));
                 case dbTableName.defibModels:
                     return this.transaction('rw', this.defibModels, () => this.defibModels.bulkDelete(d.deletionIds));
-                case dbTableName.fixedDrugs:
-                    return this.transaction('rw', this.fixedDrugs, () => this.fixedDrugs.bulkDelete(d.deletionIds));
                 case dbTableName.infusionDrugs:
                     return this.transaction('rw', this.infusionDrugs, () => this.infusionDrugs.bulkDelete(d.deletionIds));
                 default:

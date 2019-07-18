@@ -225,7 +225,7 @@ import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
 import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine';
 // import { NumericRange } from '@/services/infusion-calculations/Utilities/NumericRange';
 import { IDrugDB, IEntityInfusion, IEntityVariableInfusionDrug, IEntityDrugAmpuleConcentration } from '@/services/drugDb';
-import { getVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM } from '@/services/infusion-calculations';
+import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM } from '@/services/infusion-calculations';
 import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
 
 type vueNumber = number | '';
@@ -301,9 +301,8 @@ export default class SvtSvg extends Vue {
     private async getAmio() {
         if (this.wtKg) {
             const infusions = await Promise.all([/* this.cvlAmioDbData,*/ this.pivAmioDbData ]) as any as IEntityVariableInfusionDrug[];
-            // note 600 = age months - this is not actually relevant for our current amiodarone protocols
-            const wtSelectedInfusions = getVariableInfusionsForPt(infusions, 600, this.wtKg);
-            const transformed = transformVariableInfusions(this.wtKg, wtSelectedInfusions, false);
+            const wtSelectedInfusions = filterVariableInfusionsForPt(infusions, this.wtKg);
+            const transformed = transformVariableInfusions(this.wtKg, wtSelectedInfusions);
             // this.cvlAmio = transformed[0];
             this.pivAmio = transformed[0];
         }
