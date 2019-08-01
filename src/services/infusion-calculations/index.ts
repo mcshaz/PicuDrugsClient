@@ -24,4 +24,4 @@ export { filterVariableInfusionsForPt } from './Transformations/Calculations/fil
 export { filterTransformBolusesForPt } from './Transformations/filterTransformBolusesForPt';
 export { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution } from './PatientSpecificViews/IPatientFixedInfusionDrug';
 export { prefixes } from './PresentationClasses/Dosing/getPrefix';
-export { syringeRounding, roundToFixed, roundToNearest } from './Utilities/rounding';
+export { syringeRounding, roundToFixed, roundToNearest, roundToPrecision } from './Utilities/rounding';

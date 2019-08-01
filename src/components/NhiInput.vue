@@ -165,7 +165,7 @@ function mod11check(str: string) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 #nhi {
   text-transform: uppercase;
   max-width: 12em;

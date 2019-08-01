@@ -270,5 +270,6 @@ input.form-control.warning:valid {
 }
 input[type='number'] {
   max-width: 7.5em;
+  min-width: 5em;
 }
 </style>

@@ -8,6 +8,11 @@ export function roundToNearest(value: number, nearest: number): number {
     return Math.round(value * inverse + Number.EPSILON) / inverse;
 }
 
+export function roundToPrecision(value: number, precision: number) {
+    const figures = Math.floor(Math.log10(value)) - precision + 1;
+    return roundToFixed(value, -figures);
+}
+
 export function syringeRounding(ml: number) {
     if (ml <= 1) {
         return roundToFixed(ml, 2);

@@ -19,3 +19,4 @@ export { drugDbContainer } from './inversify.config';
 export { appDataType } from './entities/enums/appDataType';
 export { WardLists } from './WardLists';
 export { IAppData } from './Injectables/IAppData';
+export { toGrouping } from './helpers/toGrouping';
