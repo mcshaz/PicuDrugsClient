@@ -31,7 +31,9 @@
 
         <b-card no-body class="mb-1">
           <b-card-header header-tag="header" class="p-1" role="tab" id="clonidine-wean-header">
-            <b-button block href="#" v-b-toggle.clonidine-wean variant="info">Clonidine weaning protocol</b-button>
+            <b-button block href="#" v-b-toggle.clonidine-wean variant="info">Clonidine weaning protocol
+              <small class="when-closed">(click to open)</small>
+            </b-button>
           </b-card-header>
           <b-collapse id="clonidine-wean" v-model="clonidineVis" accordion="weaning-info" role="tabpanel">
             <b-card-body>
@@ -131,7 +133,7 @@
           </b-form-group>
         </b-form-group><!--/original prescription-->
         <div class="alert alert-primary" role="alert" v-if="totalOriginal24Hr.dose && !this.isChloral">
-          This equates to a total {{originalDrug.name}} dose of <output>{{totalOriginal24Hr.displayDose}} {{totalOriginal24Hr.units}}</output>/<strong>day</strong>
+          This equates to a total {{originalDrug.name}} dose of <output>{{totalOriginal24Hr.dose}} {{totalOriginal24Hr.units}}</output>/<strong>day</strong>
         </div>
         <hr>
         <b-form-group label="Weaning medication" label-cols-xl="3" id="weaning-med" label-size="lg">
@@ -146,7 +148,7 @@
               <input type="number" required step="1" min="2" max="41" v-model.number="weanDuration" id="weanDuration" class="form-control">
             </b-input-group>
             <template slot="description">
-              <a href="#opiod-benzo-wean-header" @click="protocolVis=true">How many days?</a>
+              <a href="#opiod-benzo-wean-header" @click="opiodBenzoVis=true">How many days?</a>
             </template>
           </b-form-group>
           <true-false-radio label="Wean:" true-label="daily" false-label="alternate days" v-model="weanDaily" label-align-sm="right" label-cols-sm="4" label-cols-md="3"
@@ -191,7 +193,7 @@ type vueNumber = number | '';
 const emptyObj = Object.freeze({});
 const defaultOriginalDrug = { concentrations: Object.freeze([]), conversion: emptyObj } as IDrug;
 const ddOpts = Object.freeze(Array.from(toGrouping(withdrawalDrugs, (d) => d.drugClass)));
-interface IDoseUnits { dose?: number; units?: string; displayDose?: number; }
+interface IDoseUnits { dose?: number; units?: string; }
 
 @Component({
   components: {
@@ -267,7 +269,6 @@ export default class Withdrawal extends Vue {
         const dose = this.originalConc * 100;
         return {
           dose,
-          displayDose: dose,
           units: extractUnits(this.selectedConcUnits.units),
         };
       } else if (this.original24Hr) {
@@ -283,12 +284,10 @@ export default class Withdrawal extends Vue {
           units: extractUnits(this.selectedConcUnits.units),
         } as IDoseUnits;
         if (returnVar.dose! > 3000 && returnVar.units === 'microg') {
-          returnVar.displayDose = returnVar.dose! /= 1000;
+          returnVar.dose = returnVar.dose! / 1000;
           returnVar.units = 'mg';
-        } else {
-          returnVar.displayDose = returnVar.dose;
         }
-        returnVar.displayDose = roundToPrecision(returnVar.displayDose!, 3);
+        returnVar.dose = roundToPrecision(returnVar.dose!, 3);
 
         return returnVar;
       }
@@ -299,7 +298,15 @@ export default class Withdrawal extends Vue {
   public get totalWeaning24Hrs() {
     if (this.originalDrug && this.weaningDrug && this.lt1Year !== null) {
       if (this.totalOriginal24Hr.dose) {
-        return this.originalDrug.conversion[this.weaningDrug]!(this.totalOriginal24Hr.dose, this.lt1Year);
+        let dose = this.totalOriginal24Hr.dose;
+        if (this.weaningDrug === 'clonidine') {
+          if (this.totalOriginal24Hr.units === 'mg') {
+            dose *= 1000;
+          }
+        } else if (this.totalOriginal24Hr.units === 'microg') {
+          dose /= 1000;
+        }
+        return this.originalDrug.conversion[this.weaningDrug]!(dose, this.lt1Year);
       } else if (this.wtKg && this.wtKg > 0 && !this.isDailyDrugRequired) {
         return this.originalDrug.conversion[this.weaningDrug]!(this.wtKg, this.lt1Year);
       }
@@ -410,7 +417,7 @@ export default class Withdrawal extends Vue {
 	align-items: center;
 	margin-bottom: 0;
 	color: #495057;
-	text-align: center;
+	text-align: left;
 	white-space: nowrap;
 	background-color: #e9ecef!important;
 	border-top-left-radius: 0;

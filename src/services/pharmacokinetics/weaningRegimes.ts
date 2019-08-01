@@ -6,7 +6,7 @@ export function linearWean(startingDose: number, fractionReduction: number, fini
     const returnVar = [] as WeanDay[];
     const reduction = fractionReduction * startingDose;
     let i = 0;
-    while (startingDose - finishingDose > 0.1) {
+    while (startingDose - finishingDose >= 0.05) {
         const wean = new WeanDay(new Date(dt),
                                     startingDose);
         wean.addDays(i);
