@@ -15,6 +15,8 @@
           <slot name="description">
           </slot>
         </template>
+        <slot name="feedback">
+        </slot>
     </b-form-group>
 </template>
 <script lang="ts">

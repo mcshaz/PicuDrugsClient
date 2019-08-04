@@ -12,6 +12,7 @@ import { faCalendarAlt, faSyringe, faCalculator, faFilePrescription, faFileMedic
          faPlane, faHelicopter, faClock, faPlaneDeparture, faPlaneArrival, faFighterJet,
          faPrescriptionBottle, faPrescription } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import Vuelidate from 'vuelidate';
 
 library.add(...[faCalendarAlt, faSyringe, faCalculator, faFilePrescription, faFileMedicalAlt,
                 faRuler, faInfoCircle, faQuestion, faChartLine, faSave, faTrashAlt, faSortAmountDown, faAmbulance,
@@ -21,6 +22,7 @@ library.add(...[faCalendarAlt, faSyringe, faCalculator, faFilePrescription, faFi
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 // to import individual components https://bootstrap-vue.js.org/docs/#vue-cli-3
 Vue.use(BootstrapVue);
+Vue.use(Vuelidate);
 
 Vue.config.productionTip = false;
 
