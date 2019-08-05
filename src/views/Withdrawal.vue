@@ -139,10 +139,10 @@
               <input type="number" v-model.number="$v.original24HrVol.$model" id="vol" 
                   class="form-control" :class="getValidationClass($v.original24HrVol)">
             </b-input-group>
-            <vuelidate-message :validator="$v.original24HrVol" 
+            <vuelidate-message :validator="$v.original24HrVol"
                 :label="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"/>
             <template slot="description" v-if="original24HrUnits==='ml'">
-              <a href="#PICU-total-vol" @click.prevent="openThenNav($event, picuVolVis=true)">Finding the volume given…</a>
+              <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">Finding the volume given…</a>
             </template>
           </b-form-group>
         </b-form-group><!--/original prescription-->
@@ -166,7 +166,7 @@
             </b-input-group>
             <vuelidate-message :validator="$v.weanDuration" label="weaning duration" units="days"/>
             <template #description>
-              <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event, opiodBenzoVis=true)">Determining the wean duration…</a>
+              <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">Determining the wean duration…</a>
             </template>
           </b-form-group>
           <b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right" >
@@ -176,7 +176,7 @@
             <true-false-radio label="Wean:" true-label="daily" false-label="alternate days" v-model="weanDaily"
                 v-else />
             <template #description v-if="isClonidine">
-              <a href="#clonidine-wean" @click.prevent="openThenNav($event, clonidineVis=true)">Determining the clonidine wean duration…</a>
+              <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">Determining the clonidine wean duration…</a>
             </template>
           </b-form-group>
         </b-form-group><!--/weaning medication-->
@@ -250,17 +250,18 @@ export default class Withdrawal extends Vue {
   public clonidineVis = false;
   public picuVolVis = false;
   public rapidClonidineWean = false;
+  private navTarget!: HTMLElement | null;
 
   private validations!: any;
   public created() {
     const requiredIfDaily = { required: requiredIf('isDailyDrugRequired') };
     const simpleRequired = { required };
     this.validations = {
-      wtKg: simpleRequired, // between
+      wtKg: Object.assign({ between: between(1, 200) }, simpleRequired as any), // between
       lt1Year: simpleRequired,
       originalDrugName: simpleRequired,
       // originalConc between
-      originalConc: Object.apply({}, requiredIfDaily as any),
+      originalConc: Object.assign({}, requiredIfDaily as any),
       originalConcUnits: requiredIfDaily,
       original24HrVol: { required: requiredIf((vm: Withdrawal) => vm.isDailyDrugRequired && !vm.isPatch) },
       weaningDrug: simpleRequired,
@@ -387,12 +388,6 @@ export default class Withdrawal extends Vue {
           weanAlternateDays: !this.weanDaily }
       : null;
   }
-  public get minWt() {
-    return roundToFixed(minWeightRecord(this.lt1Year === false ? 12 : 4), 1);
-  }
-  public get maxWt() {
-    return Math.round(maxWeightRecord(this.lt1Year === true ? 12 : 216));
-  }
   @Watch('originalDrug')
   @Watch('wtKg')
   public setDefaultUnits() {
@@ -440,11 +435,11 @@ export default class Withdrawal extends Vue {
     this.clonidineVis = false;
     this.picuVolVis = false;
   }
-  private navTarget!: HTMLElement | null;
-  public openThenNav(evt: Event) {
-    let target = (evt.target as HTMLAnchorElement).href;
-    target = target.substring(target.indexOf('#') + 1);
-    this.navTarget = document.getElementById(target);
+
+  public openThenNav(target: HTMLAnchorElement) {
+    let href = target.href;
+    href = href.substring(href.indexOf('#') + 1);
+    this.navTarget = document.getElementById(href);
     if (this.navTarget!.classList.contains('show')) {
       this.notifyShown();
     }
