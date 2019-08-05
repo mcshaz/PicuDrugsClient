@@ -83,7 +83,7 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
         name: 'IV fentanyl',
         drugClass: drugClass.opiate,
         adminRoute: adminRoute.infusion,
-        conversion: { morphine: morphineMultiplyBy(0.2), oxycodone: oxycodoneMultiplyBy(0.1) },
+        conversion: { morphine: morphineMultiplyBy(200), oxycodone: oxycodoneMultiplyBy(100) },
         concentrations: [
             { units: 'microg/kg/hr', min: 0.5, max: 2, default: 1 },
             { units: 'microg/hr', min: 10, max: 50 }],

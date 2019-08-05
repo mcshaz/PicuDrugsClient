@@ -1,5 +1,5 @@
 <template>
-  <div class="withdrawal">
+  <div id="withdrawal">
     <h2>Withdrawal Charting</h2>
     <b-row align-h="end" >
       <b-col lg="7" order-lg="12" role="tablist" class="d-print-none">
@@ -396,20 +396,18 @@ export default class Withdrawal extends Vue {
       switch (this.originalDrug.concentrations.length) {
         case 1:
           this.originalConcUnits = this.originalDrug.concentrations[0];
-          if (!this.$v.originalConc!.$dirty) {
-              this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || '';
-          }
           break;
         case 2:
+          // change conc units to default if - a)have an invalid value b) are not dirty 
           if (this.originalConcUnits && !this.originalDrug.concentrations.some((c) => c.units === this.originalConcUnits!.units)) {
             this.originalConcUnits = null;
           }
-          if (!this.$v.originalConcUnits!.$dirty && this.wtKg) {
+          if ((!this.originalConcUnits || !this.$v.originalConcUnits!.$dirty) && this.wtKg) {
             this.originalConcUnits = this.originalDrug.concentrations[this.wtKg < 30 ? 0 : 1]!;
           }
-          if (!this.$v.originalConc!.$dirty && this.originalConcUnits) {
-            this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || '';
-          }
+      }
+      if (this.originalConcUnits && (this.originalConcUnits.min === this.originalConcUnits.max || !this.$v.originalConc!.$dirty)) {
+          this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || '';
       }
       const convKeys = Object.keys(this.originalDrug.conversion);
       if (convKeys.length === 1) {
@@ -494,12 +492,34 @@ export default class Withdrawal extends Vue {
 }
 .nobr { white-space: nowrap; }
 
+/*
 @media print {
     @page {
-      size: A4 landscape;
-      margin: 1cm;
+      size: A4 portrait;
     }
-    body.bg-light {background-color: white !important}
+    body.bg-light {
+      background-color: white !important
+    }
+    #withdrawal {
+        transform: translate(0mm, -100%) rotate(90deg);
+        padding: 0;
+        transform-origin: bottom left;
+        overflow: visible;
+    }
+    table, tr, td, th {
+      page-break-inside: avoid;
+    }
+    tr {
+      display: block;
+      page-break-before: auto;
+    }
+    th, td {
+      display:inline-block;
+      min-width: 2.25cm;
+    }
+    th:first-child {
+      min-width: 2.8cm;
+    }
     form {
       max-width: 100%!important;
       flex: none!important;
@@ -515,7 +535,7 @@ export default class Withdrawal extends Vue {
     }
     hr {display: none;}
     .form-group .text-muted { display: none;}
-    /* Hide HTML5 Up and Down arrows. */
+    /* Hide HTML5 Up and Down arrows. 
     input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
@@ -536,4 +556,5 @@ export default class Withdrawal extends Vue {
       min-width: unset !important;
     }
 }
+/*
 </style>

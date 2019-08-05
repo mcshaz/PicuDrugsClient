@@ -46,7 +46,7 @@
                 </tr>
                 <tr class="dose rescue divide">
                     <th scope="row">
-                        Rescue Dose - PRN
+                        Rescue Dose-PRN
                     </th>
                     <td v-for="d in weanRegime" :key="d.id">
                         {{ d.rescueDose }}{{ doseUnit }}
