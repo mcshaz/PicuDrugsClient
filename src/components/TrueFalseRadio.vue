@@ -1,23 +1,13 @@
 <template>
-    <b-form-group :label="label" :label-cols-lg="labelColsLg" :label-align-lg="labelAlignLg" :label-cols-md="labelColsMd" :label-align-md="labelAlignMd"
-          :label-cols-sm="labelColsSm" :label-align-sm="labelAlignSm"
-          :invalid-feedback="`Either ${trueLabel} or ${falseLabel} must be selected`" :state="state">
-        <b-form-radio-group :checked="value" @change="$emit('change', $event)"
-             :required="required" :stacked="stacked" :name="labelName" >
-          <b-form-radio :value="true">
-            {{trueLabel}}
-          </b-form-radio>
-          <b-form-radio :value="false">
-            {{falseLabel}}
-          </b-form-radio>
-        </b-form-radio-group>
-        <template #description>
-          <slot name="description">
-          </slot>
-        </template>
-        <slot name="feedback">
-        </slot>
-    </b-form-group>
+  <b-form-radio-group :checked="value" @change="$emit('change', $event)"
+        :stacked="stacked" :name="radioGrpName" :state="state">
+    <b-form-radio :value="true">
+      {{trueLabel}}
+    </b-form-radio>
+    <b-form-radio :value="false">
+      {{falseLabel}}
+    </b-form-radio>
+  </b-form-radio-group>
 </template>
 <script lang="ts">
 import 'reflect-metadata';
@@ -29,47 +19,20 @@ type nullBool = null | boolean;
 @Component({})
 export default class TrueFalseRadio extends Vue {
   @Model('change')
-  private value!: boolean | null;
+  public value!: boolean | null;
   @Prop({required: true})
-  private label!: string;
+  public trueLabel!: string;
   @Prop({required: true})
-  private trueLabel!: string;
-  @Prop({required: true})
-  private falseLabel!: string;
-  @Prop({default: false})
-  private required!: boolean;
+  public falseLabel!: string;
   @Prop({default: true})
-  private stacked!: boolean;
+  public stacked!: boolean;
+  @Prop({default: null})
+  public state!: boolean | null;
+  @Prop({default: ''})
+  public name!: string;
 
-  @Prop({default: null})
-  private labelColsLg!: number | null;
-  @Prop({default: null})
-  private labelAlignLg!: string | null;
-  @Prop({default: null})
-  private labelColsMd!: number | null;
-  @Prop({default: null})
-  private labelAlignMd!: string | null;
- @Prop({default: null})
-  private labelColsSm!: number | null;
-  @Prop({default: null})
-  private labelAlignSm!: string | null;
-
-  private trueName!: string;
-  private falseName!: string;
-  private labelName!: string;
-
-  public created() {
-    this.labelName = html5IdSafe(this.label);
-    if (!this.labelColsLg && !this.labelColsMd && !this.labelColsSm) {
-      this.labelColsLg = 2;
-    }
-  }
-
-  public get state() {
-    if (this.required === false) {
-      return null;
-    }
-    return this.value !== null;
+  public get radioGrpName() {
+    return this.name || ('radioGrp_' + (this as any)._uid);
   }
 }
 function html5IdSafe(id: string) {
