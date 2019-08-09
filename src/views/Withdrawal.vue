@@ -1,8 +1,8 @@
 <template>
   <div id="withdrawal">
     <h2>Withdrawal Charting</h2>
-    <b-row align-h="end" >
-      <b-col lg="7" order-lg="12" role="tablist" class="d-print-none">
+    <b-row align-h="end" class="d-print-none">
+      <b-col lg="7" order-lg="12" role="tablist">
         <b-card no-body class="mb-1">
           <b-card-header header-tag="header" class="p-1" role="tab">
             <b-button block href="#" v-b-toggle.opiod-benzo-wean variant="info">Opiods &amp; benzodiazepine weaning protocol
@@ -84,9 +84,9 @@
       </b-col>
       <form class="col-lg-5 order-lg-1" novalidate autocomplete="off">
         <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
-          <b-form-group label-for="weight" label-cols-sm="4" label-cols-md="3" label="Weight:" label-align-sm="right" >
+          <b-form-group label-for="weight" label-cols-sm="4" label-cols-md="3" label-align-sm="right" >
             <b-input-group append="kg">
-              <input class="form-control" name="weight:" v-model.number="$v.wtKg.$model" placeholder="Weight"
+              <input class="form-control" id="weight" v-model.number="$v.wtKg.$model" placeholder="Weight"
                   type="number" step="0.1" :class="getValidationClass($v.wtKg)"/>
             </b-input-group>
             <vuelidate-message :validator="$v.wtKg" label="weight" units="kg" />
@@ -115,14 +115,14 @@
           </b-form-group>
           <b-form-group label-for="conc" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired">
             <template slot="label">
-              {{concLabel.label}} <strong class="text-warning d-print-none" v-if="hasDifferentDefaults">*</strong>
+              {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
             </template>
             <b-input-group :prepend="isPatch?originalConcUnits.units:void 0">
               <input type="number" v-model.number="$v.originalConc.$model" id="conc" :step="originalConcUnits?originalConcUnits.min:1"
-                  class="form-control" :class="getValidationClass($v.originalConc)">
+                  class="form-control" :class="getValidationClass($v.originalConc)" :disabled="originalConcUnits&&originalConcUnits.min===originalConcUnits.max">
               <div class="input-group-append">
                 <select v-model="$v.originalConcUnits.$model" id="unit-select" :class="getValidationClass($v.originalConcUnits)"
-                    class="custom-select input-group-addon" v-if="!isPatch">
+                    class="custom-select input-group-addon" v-if="!isPatch" :disabled="concentrations.length===1">
                   <option value="" disabled>…</option>
                   <option v-for="conc in concentrations" :key="conc.units" :value="conc" >{{conc.units}}</option>
                 </select>
@@ -142,12 +142,12 @@
             <vuelidate-message :validator="$v.original24HrVol"
                 :label="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"/>
             <template slot="description" v-if="original24HrUnits==='ml'">
-              <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">Finding the volume given…</a>
+              where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
             </template>
           </b-form-group>
         </b-form-group><!--/original prescription-->
         <hr>
-        <div class="alert alert-primary d-print-none" role="alert" v-if="original24HrCalc.dose && !this.isChloral">
+        <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !this.isChloral">
           This equates to a total {{originalDrug.name}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
         </div>
         <b-form-group label="Weaning medication" label-cols-xl="3" id="weaning-med" label-size="lg">
@@ -166,7 +166,7 @@
             </b-input-group>
             <vuelidate-message :validator="$v.weanDuration" label="weaning duration" units="days"/>
             <template #description>
-              <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">Determining the wean duration…</a>
+              how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
             </template>
           </b-form-group>
           <b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right" >
@@ -176,28 +176,82 @@
             <true-false-radio label="Wean:" true-label="daily" false-label="alternate days" v-model="weanDaily"
                 v-else />
             <template #description v-if="isClonidine">
-              <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">Determining the clonidine wean duration…</a>
+              how do I <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">determine the clonidine wean duration…</a>?
             </template>
           </b-form-group>
         </b-form-group><!--/weaning medication-->
-        <div class="alert alert-success d-print-none" role="alert" v-if="totalWeaning24Hrs">
+        <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
           This equates to a total <strong>daily</strong> <em> starting</em> enteral {{weaningDrug}} dose of
           <span class="nobr"><output>{{totalWeaning24Hrs.dailyCommence}} {{weaningDoseUnits}}</output>/<strong>day</strong></span>
           <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
         </div>
         <hr>
-        <button type="reset" class="btn btn-warning" @click.prevent="clearAll()">Clear All <font-awesome-icon icon="eraser"/></button>
+        <b-form-group label="Prescriber name" label-cols-xl="3" label-for="prescriber-name">
+          <input class="form-control" id="prescriber-name" v-model="$v.prescriber.$model" placeholder="your name"
+                  type="text" :class="getValidationClass($v.prescriber)" autocomplete="name"/>
+          <vuelidate-message :validator="$v.prescriber" label="your name" />
+        </b-form-group>
+        <hr>
+        <button type="reset" class="btn btn-warning mb-4" @click.prevent="clearAll()">Clear All <font-awesome-icon icon="eraser"/></button>
       </form>
     </b-row>
-    <hr>
     <b-row>
       <b-col>
         <b-alert v-model="$v.$invalid" variant="dark">
           The withdrawal plan will appear here after all the information in the form above is filled in and valid.
         </b-alert>
         <withdrawal-table v-if="!$v.$invalid"
-          :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
-          :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits" />
+            :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
+            :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits" >
+          <ul class="row" id="entered-details">
+            <li class="col-md-4">
+              <h5>Details:</h5>
+              <dl>
+                <dt>weight</dt>
+                  <dd>{{wtKg}} kg</dd>
+                <dt>age group</dt>
+                  <dd v-if='lt1Year'>
+                    &lt; 12 months
+                  <dd v-else>
+                    ≥ 1 year old
+                  </dd>
+                  <dt>data entered by</dt>
+                    <dd>{{prescriber}}</dd>
+              </dl>
+            </li>
+            <li class="col-md-4"><h5>Original medication:</h5>
+              <dl>
+                <dt>drug</dt>
+                  <dd>{{originalDrugName}}</dd>
+                <dt>{{concLabel.label}}</dt>
+                  <dd class="units" v-if="isPatch">
+                    {{originalConcUnits.units}} {{originalConc}}
+                  </dd>
+                  <dd class="units" v-else>
+                    {{originalConc}} {{originalConcUnits.units}}
+                  </dd>
+                  <template v-if="isDailyDrugRequired">
+                    <dt>per 24 hours</dt>
+                    <dd>{{original24HrVol}} {{original24HrUnits}}</dd>
+                  </template>
+              </dl>
+            </li>
+            <li class="col-md-4"><h5>Weaning medication:</h5>
+              <dl>
+                <dt>drug</dt>
+                  <dd>{{weaningDrug}}</dd>
+                <dt>weaning duration</dt>
+                  <dd v-if="isClonidine">
+                    <span v-if="rapidClonidineWean">rapid</span>
+                    <span v-else>slow</span>
+                  </dd>
+                  <dd v-else>{{weanDuration}} days
+                    <span class="text-muted" v-if="!weanDaily">(alternate day)</span>
+                  </dd>
+              </dl>
+            </li>
+          </ul>
+        </withdrawal-table>
       </b-col>
     </b-row>
   </div>
@@ -215,9 +269,14 @@ import { roundToFixed, roundToPrecision } from '@/services/infusion-calculations
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize';
 import { Validations } from 'vuelidate-property-decorators';
-import { required, between, requiredIf, integer, ValidationRule } from 'vuelidate/lib/validators';
+import { required, between, requiredIf, integer, minLength, ValidationRule } from 'vuelidate/lib/validators';
 import { Validation, validationMixin } from 'vuelidate';
 import { LeaveDirtyState } from '@/services/validation/LeaveDirtyState';
+// import { regexDescribe } from '@/services/validation/regexDescribe';
+import jsPDF from 'jspdf';
+import { pdfTemplate } from '@/services/utilities/pdfTemplate';
+// import 'jspdf-autotable';
+// import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
 
 type vueNumber = number | '';
 const emptyObj = Object.freeze({});
@@ -236,6 +295,7 @@ const defaultConcLimits = [1, 1000];
   mixins: [ validationMixin ],
 })
 export default class Withdrawal extends Vue {
+  public prescriber = '';
   public wtKg: vueNumber = '';
   public ddOpts = ddOpts;
   public originalDrugName = '';
@@ -257,6 +317,7 @@ export default class Withdrawal extends Vue {
     const requiredIfDaily = { required: requiredIf('isDailyDrugRequired') };
     const simpleRequired = { required };
     this.validations = {
+      prescriber: Object.assign({ minLength: minLength(2) }, simpleRequired as any),
       wtKg: Object.assign({ between: between(1, 200) }, simpleRequired as any), // between
       lt1Year: simpleRequired,
       originalDrugName: simpleRequired,
@@ -398,7 +459,7 @@ export default class Withdrawal extends Vue {
           this.originalConcUnits = this.originalDrug.concentrations[0];
           break;
         case 2:
-          // change conc units to default if - a)have an invalid value b) are not dirty 
+          // change conc units to default if - a)have an invalid value b) are not dirty
           if (this.originalConcUnits && !this.originalDrug.concentrations.some((c) => c.units === this.originalConcUnits!.units)) {
             this.originalConcUnits = null;
           }
@@ -468,6 +529,16 @@ export default class Withdrawal extends Vue {
 
 </script>
 <style>
+#entered-details {
+  list-style: none;
+  margin-bottom: 0;
+}
+#entered-details dl {
+  padding-left: 1em;
+}
+#entered-details dd {
+  padding-left: 1em;
+}
 .custom-select.input-group-addon {
 	display: -ms-flexbox;
 	display: -webkit-box;
@@ -491,70 +562,4 @@ export default class Withdrawal extends Vue {
   display: none;
 }
 .nobr { white-space: nowrap; }
-
-/*
-@media print {
-    @page {
-      size: A4 portrait;
-    }
-    body.bg-light {
-      background-color: white !important
-    }
-    #withdrawal {
-        transform: translate(0mm, -100%) rotate(90deg);
-        padding: 0;
-        transform-origin: bottom left;
-        overflow: visible;
-    }
-    table, tr, td, th {
-      page-break-inside: avoid;
-    }
-    tr {
-      display: block;
-      page-break-before: auto;
-    }
-    th, td {
-      display:inline-block;
-      min-width: 2.25cm;
-    }
-    th:first-child {
-      min-width: 2.8cm;
-    }
-    form {
-      max-width: 100%!important;
-      flex: none!important;
-    }
-    button {display: none!important;}
-    #patient-details, #original-Rx, #weaning-med {
-      width: 33.33333%;
-      display: inline-block;
-      padding: 5mm;
-    }
-    #original-Rx, #weaning-med {
-      border-left: 1px solid blue;
-    }
-    hr {display: none;}
-    .form-group .text-muted { display: none;}
-    /* Hide HTML5 Up and Down arrows. 
-    input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    
-    input[type="number"] {
-        -moz-appearance: textfield;
-    }
-    .custom-select:valid{
-      background: none !important;
-      padding-right: 0.75rem !important;
-    }
-    input.form-control:valid {
-      background-image: none !important;
-      padding-right: 0.75rem !important;
-    }
-    input[type='number'] {
-      min-width: unset !important;
-    }
-}
-/*
 </style>

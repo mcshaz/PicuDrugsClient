@@ -7,6 +7,9 @@
         <span v-else-if="validator.between===false">
             {{label}} must be {{minStr}}–{{maxStr}} {{units}}
         </span>
+        <span v-else-if="validator.minLength===false">
+            {{label}} must be at least {{ validator.$params.minLength.min }} characters
+        </span>
     </div>
 </template>
 <script lang="ts">
@@ -29,7 +32,7 @@ export default class VuelidateMessage extends Vue {
     public isSelect!: boolean;
 
     public get indefinateArticle() {
-        if (this.label.startsWith('the ')) { return ''; }
+        if (this.label.startsWith('the ') || this.label.startsWith('your ')) { return ''; }
         if (this.label.length >= 2) {
             const begin = this.label.substring(0, 2);
             if (begin === 'eu' || begin === 'ur') { return 'a'; }

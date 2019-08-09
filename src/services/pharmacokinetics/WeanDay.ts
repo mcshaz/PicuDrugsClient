@@ -17,7 +17,7 @@ export class WeanDay {
         return this.weanDate.getTime();
     }
     public get weanDateString() {
-        return formatter.format(this.weanDate).replace('/0', '/'); // hack because all browsers currently seems to give 2 digit month
+        return formatter.format(this.weanDate); // .replace('/0', '/'); // hack because all browsers currently seems to give 2 digit month
     }
     public addDays(days: number) {
         this.weanDate.setDate(this.weanDate.getDate() + days);
