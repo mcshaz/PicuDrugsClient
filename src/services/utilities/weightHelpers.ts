@@ -1,8 +1,9 @@
 import { linearInterpolate } from '@/services/anthropometry';
+import { maxYears } from '@/services/validation/getAgeOrDOBVals';
 
 const maxRecords: Array<[number, number]> = [[0, 10.8], [13, 55], [24, 94], [36, 101], [84, 222], [156, 250], [216, 314], [480, 635]];
 const minRecords: Array<[number, number]> = [[0, 0.25], [216, 2.1], [240, 5.9], [864, 14.5]];
-const maxAge = 122 * 12;
+const maxAge = maxYears * 12;
 
 export const exampleWeights: ReadonlyArray<number> = [2.5, 3, 3.5, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80];
 

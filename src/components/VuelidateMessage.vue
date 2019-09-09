@@ -48,13 +48,13 @@ export default class VuelidateMessage extends Vue {
             : 'a';
     }
     public get minStr() {
-        const min: Date | number = this.validator.$params.between.min;
+        const min: Date | number = this.validator.$params.between!.min;
         return (typeof min === 'number')
             ? min.toString()
             : shortFormatter.format(min);
     }
     public get maxStr() {
-        const max: Date | number = this.validator.$params.between.max;
+        const max: Date | number = this.validator.$params.between!.max;
         return (typeof max === 'number')
             ? max.toString()
             : shortFormatter.format(max);

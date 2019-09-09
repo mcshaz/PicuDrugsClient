@@ -6,15 +6,15 @@
       :invalid-feedback="errMsg" >
       <div class="form-inline">
         <b-input-group append="years" class="mr-1">
-          <input class="form-control" name="years" id="years" v-model.number="years" placeholder="years" type="number"
+          <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
             min="0" :max="maxYears" ref="years" :required="exact||required||months!==''" step="1" />
         </b-input-group>
         <b-input-group append="months" class="mr-1">
-          <input class="form-control" name="months" id="months" v-model.number="months" placeholder="months" type="number" 
+          <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number" 
             min="0" max="160" ref="months" :required="exact||years===0" step="1" />
         </b-input-group>
         <b-input-group append="days">
-          <input class="form-control" name="days" id="days" v-model.number="days" placeholder="days" type="number" 
+          <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number" 
             min="0" max="1200" ref="days" :required="exact" step="1" />
         </b-input-group>
       </div>
@@ -27,6 +27,7 @@ import 'reflect-metadata';
 import { ChildAge } from '@/services/infusion-calculations/';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import DobInput from '@/components/DobInput.vue';
+import { maxYears } from '@/services/validation/getAgeOrDOBVals';
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
 @Component({
@@ -35,8 +36,6 @@ export type vueNumber = number | ''; // todo https://stackoverflow.com/questions
     },
 })
 export default class PatientAgeData extends Vue {
-  public readonly maxYears = 122;
-
   @Prop({default: false})
   private exact!: boolean;
   @Prop({default: false})
@@ -155,8 +154,8 @@ export default class PatientAgeData extends Vue {
       return 'months are required if 0 years';
     } else if (this.pYears < 0 || this.pMonths! < 0 || this.pDays! < 0) {
       return 'negative values are not allowed';
-    } else if (this.pYears > this.maxYears) {
-      return `age must be <= ${this.maxYears} years old (oldest person to have lived)`;
+    } else if (this.pYears > maxYears) {
+      return `age must be <= ${maxYears} years old (oldest person to have lived)`;
     }
     return '';
   }

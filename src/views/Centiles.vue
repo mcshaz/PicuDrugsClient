@@ -2,7 +2,7 @@
   <div class="centiles">
     <h2>Drug Calculator - Centile Data</h2>
     <form @submit.prevent ref="base-data" class="card p-2" id="patientData-data">
-        <nhi-input v-model="nhi" @valid-state-change="lookupNhi($event)" />
+        <nhi-input v-model="nhi" @invalid-state-change="lookupNhi(!$event.$invalid)" />
         <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
         <weeks-gestation v-model="weeksGestation" />
         <dob-input v-model="dob" />

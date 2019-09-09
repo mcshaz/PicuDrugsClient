@@ -1,17 +1,18 @@
 <template>
-  <form :class="isFormSubmitted?'was-validated':''" novalidate 
-      @submit.prevent="submit" ref="form" class="card p-2">
+  <form novalidate @submit.prevent="submit" class="card p-2" autocomplete="off">
     <slot>
     </slot>
     <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:">
       <input class="form-control" type="text" name="name" id="name" v-model.trim="name" 
-          placeholder="Patient Name" autocomplete="off" />
+          placeholder="Patient Name" />
     </b-form-group>
-    <nhi-input v-model="nhi" @valid-state-change="nhiValidState=$event" />
+    <nhi-input v-model="nhi" @invalid-state-change="nhiValidState=!$event.$invalid" />
     <patient-age-data v-model="age" :exact="exactAge" :required="requireAge" />
-    <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
+    <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2" >
+      <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
+    </b-form-group>
     <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
-    <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
+    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
           :state="errMsg===null?null:(errMsg==='')" 
           class="was-validated" @blur="debounceCentiles.flush()" >
         <template slot="invalid-feedback" v-if="!acceptWtWarn&&errMsg.startsWith('Weight')">
@@ -271,5 +272,8 @@ input.form-control.warning:valid {
 input[type='number'] {
   max-width: 7.5em;
   min-width: 5em;
+}
+input.small-int {
+  max-width: 6.3em;
 }
 </style>

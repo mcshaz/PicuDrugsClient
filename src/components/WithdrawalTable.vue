@@ -156,6 +156,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { roundToFixed } from '@/services/infusion-calculations/';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
+import { pdfTemplate } from '@/services/utilities/pdfTemplate';
 
 type vueNumber = number | '';
 type route = 'po/ng' | 'iv' | 'patch' | 'subcut';
@@ -179,7 +183,7 @@ export default class WithdrawalTable extends Vue {
     public linearWean!: ({ weanOverDays: number, weanAlternateDays: boolean } | null);
     @Prop({default: null})
     public clonidineWean!: ({ weightKg: number, rapidWean: boolean } | null);
-    @Prop({default: false})
+    @Prop({default: true})
     public wideFormat!: boolean;
 
     public get weanRegime(): WeanDay[] {
@@ -207,11 +211,6 @@ export default class WithdrawalTable extends Vue {
         return [];
     }
 
-    /*
-    @Watch('weanRegime')
-    private emitRegimeChange(newRegime: WeanDay[]) {
-    }
-
     public createPDF() {
         const doc = new jsPDF('l', 'mm', 'a4');
         // start dom manip
@@ -220,65 +219,60 @@ export default class WithdrawalTable extends Vue {
         const htmlTables: HTMLTableElement[] = [];
         const cols = htmlTable.querySelector('tr')!.childElementCount - 1;
         if (cols > maxCols) {
-        const its = Math.ceil(cols / maxCols);
-        for (let i = 0; i < its; ++i) {
-            htmlTables.push(htmlTable.cloneNode(true) as HTMLTableElement);
-            for (const tr of htmlTables[htmlTables.length - 1].querySelectorAll('tr')) {
-            const els = Array.from(tr.children);
-            els.splice(0, 1); // the row headers
-            els.splice(i * maxCols, maxCols);
-            els.forEach((e, indx) => e.remove());
+            const its = Math.ceil(cols / maxCols);
+            for (let i = 0; i < its; ++i) {
+                htmlTables.push(htmlTable.cloneNode(true) as HTMLTableElement);
+                for (const tr of htmlTables[htmlTables.length - 1].querySelectorAll('tr')) {
+                    const els = Array.from(tr.children);
+                    els.splice(0, 1); // the row headers
+                    els.splice(i * maxCols, maxCols);
+                    els.forEach((e, indx) => e.remove());
+                }
             }
-        }
         } else {
-        htmlTables.push(htmlTable);
+            htmlTables.push(htmlTable);
         }
         const headColWidth = 34;
         const cellWidth = 21;
         const lineWidth = 0.1;
         const widths = new Set<number>();
         const template: BaseConfig = Object.assign(pdfTemplate(doc), {
-        theme: 'grid',
-        pageBreak: 'avoid',
-        headStyles: {
-            fillColor: [255, 255, 255],
-            textColor: 0,
-            fontStyle: 'bold',
-        },
-        styles: { halign: 'center'},
-        columnStyles: { 0: { halign: 'left', fontStyle: 'bold', cellWidth: headColWidth }},
-        didDrawCell: (data) => { widths.add(data.cell.width) },
-        didParseCell: (data) => {
-            if (data.row.section === 'head' && data.column.dataKey === '0') {
-            data.cell.styles.halign = 'left';
-            }
-        },
+            theme: 'grid',
+            pageBreak: 'avoid',
+            tableWidth: 'wrap',
+            headStyles: {
+                fillColor: [255, 255, 255],
+                textColor: 0,
+                fontStyle: 'bold',
+            },
+            styles: { halign: 'center', cellWidth },
+            columnStyles: { 0: { halign: 'left', fontStyle: 'bold', cellWidth: headColWidth }},
+            didParseCell: (data) => {
+                if (data.row.section === 'head' && data.column.dataKey === '0') {
+                    data.cell.styles.halign = 'left';
+                }
+            },
         } as BaseConfig);
-        console.log(widths);
         // const colStyle = { cellWidth };
         // for (let i = 1; i <= maxCols; ++i) {
         //   (template.columnStyles![i.toString()] as any) = colStyle;
         // }
         htmlTables.forEach((t, indx) => {
-        (template as HTMLConfig).html = t;
-        if (indx === htmlTables.length - 1) {
-            template.tableWidth = (cols % maxCols) * cellWidth + headColWidth - lineWidth * (cols + 2);
-        }
-        // @ts-ignore
-        doc.autoTable(template);
+            (template as HTMLConfig).html = t;
+            if (indx === htmlTables.length - 1) {
+                template.tableWidth = (cols % maxCols) * cellWidth + headColWidth - lineWidth * (cols + 2);
+            }
+            // @ts-ignore
+            doc.autoTable(template);
         });
         // doc.autoPrint();
         doc.save('withdrawal-plan.pdf');
     }
-    */
 }
 
 </script>
 
 <style>
-    .regular {
-        page-break-inside: avoid;
-    }
     .table-quad-striped tbody tr:nth-child(4n+1) > [rowspan="2"] {
         background-color: #f5ffff;
     }
@@ -300,8 +294,6 @@ export default class WithdrawalTable extends Vue {
 
     .rescue {
         color: darkred;
-        page-break-before: avoid;
-
     }
     .table-quad-striped.table td, .table-quad-striped.table th {
         vertical-align: middle;
@@ -316,6 +308,12 @@ export default class WithdrawalTable extends Vue {
             height: 297mm;
             margin: 0;
             min-width: 210mm !important;
+        }
+        .regular {
+            page-break-inside: avoid;
+        }
+        .rescue {
+            page-break-before: avoid;
         }
     }
 </style>

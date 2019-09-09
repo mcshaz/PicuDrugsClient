@@ -193,6 +193,7 @@
         </b-form-group>
         <hr>
         <button type="reset" class="btn btn-warning mb-4" @click.prevent="clearAll()">Clear All <font-awesome-icon icon="eraser"/></button>
+        <button type="button" class="btn btn-success mb-4 ml-2" :disabled="$v.invalid" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
       </form>
     </b-row>
     <b-row>
@@ -200,7 +201,7 @@
         <b-alert v-model="$v.$invalid" variant="dark">
           The withdrawal plan will appear here after all the information in the form above is filled in and valid.
         </b-alert>
-        <withdrawal-table v-if="!$v.$invalid"
+        <withdrawal-table v-if="!$v.$invalid" ref="plan"
             :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
             :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits" >
           <ul class="row" id="entered-details">
@@ -251,7 +252,7 @@
               </dl>
             </li>
           </ul>
-        </withdrawal-table>
+        </withdrawal-table >
       </b-col>
     </b-row>
   </div>
@@ -273,8 +274,8 @@ import { required, between, requiredIf, integer, minLength, ValidationRule } fro
 import { Validation, validationMixin } from 'vuelidate';
 import { LeaveDirtyState } from '@/services/validation/LeaveDirtyState';
 // import { regexDescribe } from '@/services/validation/regexDescribe';
-import jsPDF from 'jspdf';
-import { pdfTemplate } from '@/services/utilities/pdfTemplate';
+// import jsPDF from 'jspdf';
+// import { pdfTemplate } from '@/services/utilities/pdfTemplate';
 // import 'jspdf-autotable';
 // import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
 
