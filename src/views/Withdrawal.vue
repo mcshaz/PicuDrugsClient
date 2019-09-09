@@ -84,14 +84,14 @@
       </b-col>
       <form class="col-lg-5 order-lg-1" novalidate autocomplete="off">
         <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
-          <b-form-group label-for="weight" label-cols-sm="4" label-cols-md="3" label-align-sm="right" >
+          <b-form-group label-for="weight" label="Weight:" label-cols-sm="4" label-cols-md="3" label-align-sm="right" >
             <b-input-group append="kg">
               <input class="form-control" id="weight" v-model.number="$v.wtKg.$model" placeholder="Weight"
                   type="number" step="0.1" :class="getValidationClass($v.wtKg)"/>
             </b-input-group>
             <vuelidate-message :validator="$v.wtKg" label="weight" units="kg" />
           </b-form-group>
-          <b-form-group label-for="age" label-cols-sm="4" label-cols-md="3" label="age:" label-align-sm="right" >
+          <b-form-group label-for="age" label-cols-sm="4" label-cols-md="3" label="Age:" label-align-sm="right" >
             <true-false-radio label="Age:" true-label="< 12 months old" false-label="≥ 1 year old" :state="!$v.lt1Year.$invalid"
                 v-model="$v.lt1Year.$model" name="age" >
             </true-false-radio>
