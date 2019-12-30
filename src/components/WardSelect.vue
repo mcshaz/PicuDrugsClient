@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:" 
+    <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:"
         invalid-feedback="Please select a ward" :state="!!abbrev">
       <b-form-select v-model="abbrev" :options="wardOptions" :required="true" name="ward" id="ward" :state="!!abbrev">
         <template slot="first">
@@ -11,12 +11,12 @@
     <b-form-group label-cols-lg="2" label-cols-xl="2" label="Chart type:" invalid-feedback="Please select at least 1 chart"
         :state="boluses||infusions">
       <div role="group" tabindex="-1">
-        <b-form-checkbox class="custom-control-inline" @change="$emit('boluses', $event)" 
+        <b-form-checkbox class="custom-control-inline" @change="$emit('boluses', $event)"
             :checked="boluses" name="boluses" :required="!infusions" :state="boluses||infusions" >
           Bolus Drugs
         </b-form-checkbox>
-        <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event&&infusionsAvailable)" 
-            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions" 
+        <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event&&infusionsAvailable)"
+            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions"
             :required="!boluses" :state="boluses||infusions">
           Infusions
         </b-form-checkbox>
@@ -25,15 +25,15 @@
   </div>
       <!--
       <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input" @change="$emit('boluses', $event.target.checked)" 
+          <input type="checkbox" class="form-check-input" @change="$emit('boluses', $event.target.checked)"
               :checked="boluses" name="boluses" :required="!infusions"  />
           <label class="form-check-label" for="boluses">
             Bolus Drugs
           </label>
       </div>
       <div class="form-check form-check-inline">
-        <input type="checkbox" class="form-check-input" @change="$emit('infusions', $event.target.checked)" 
-            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions" 
+        <input type="checkbox" class="form-check-input" @change="$emit('infusions', $event.target.checked)"
+            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions"
             :required="!boluses" :state="boluses||infusions" />
         <label class="form-check-label" for="infusions">
           Infusions
@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
-import { sortByStringProp } from '@/services/utilities/sortByProp';
+import 'reflect-metadata'
+import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator'
+import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb'
+import { sortByStringProp } from '@/services/utilities/sortByProp'
 
 interface ISelectOption { value: string; text: string; disabled?: boolean; }
 
@@ -57,60 +57,60 @@ export default class WardSelect extends Vue {
   private wards!: PromiseLike<IEntityWard[]>;
   @Inject('db')
   private db!: IDrugDB;
-  @Prop({default: ''})
+  @Prop({ default: '' })
   private wardAbbrev!: string;
-  @Prop({default: true})
+  @Prop({ default: true })
   private boluses!: boolean;
-  @Prop({default: true})
+  @Prop({ default: true })
   private infusions!: boolean;
   @Inject('appData')
   private appData!: IAppData;
 
-  public created() {
+  public created () {
     this.wards = this.db.wards.toArray().then((wards) => {
-      wards = wards.filter((w) => w.isLive);
-      sortByStringProp(wards, 'fullname');
-      this.wardOptions = wards.map((w) => ({ value: w.abbrev, text: w.fullname } as ISelectOption));
-      return wards;
-    });
+      wards = wards.filter((w) => w.isLive)
+      sortByStringProp(wards, 'fullname')
+      this.wardOptions = wards.map((w) => ({ value: w.abbrev, text: w.fullname } as ISelectOption))
+      return wards
+    })
     if (this.wardAbbrev) {
-      this.abbrev = this.wardAbbrev;
+      this.abbrev = this.wardAbbrev
     } else {
       this.appData.getWardDefaults().then((wd) => {
         if (wd) {
-          this.boluses = wd.boluses;
-          this.infusions = wd.infusions;
-          this.abbrev = wd.wardAbbrev;
+          this.boluses = wd.boluses
+          this.infusions = wd.infusions
+          this.abbrev = wd.wardAbbrev
         }
-      });
+      })
     }
   }
 
-  public get infusionsAvailable() {
-    return this.selectedWard && this.selectedWard.infusionSortOrderings.length > 0;
+  public get infusionsAvailable () {
+    return this.selectedWard && this.selectedWard.infusionSortOrderings.length > 0
   }
 
-  public get abbrev() {
+  public get abbrev () {
     return this.selectedWard
       ? this.selectedWard.abbrev
-      : '';
+      : ''
   }
-  public set abbrev(value: string) {
+  public set abbrev (value: string) {
     if (value !== this.abbrev) {
       if (value === '') {
-        this.selectedWard = null;
+        this.selectedWard = null
       } else {
         this.wards.then((wards) => {
-          const searchFor = value.toLowerCase();
-          this.selectedWard = wards.find((w) => w.abbrev.toLowerCase() === searchFor) || null;
-          this.$emit('ward', this.selectedWard);
-        });
+          const searchFor = value.toLowerCase()
+          this.selectedWard = wards.find((w) => w.abbrev.toLowerCase() === searchFor) || null
+          this.$emit('ward', this.selectedWard)
+        })
       }
     }
   }
   @Watch('infusionsAvailable')
-  private availableChange(newVal: boolean) {
-    this.$emit('infusions-available', newVal);
+  private availableChange (newVal: boolean) {
+    this.$emit('infusions-available', newVal)
   }
 }
 </script>

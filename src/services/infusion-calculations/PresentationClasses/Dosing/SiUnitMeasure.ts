@@ -1,36 +1,36 @@
 
-import { getPrefix } from './getPrefix';
-import { getSiUnitAbbrev} from './getSiUnitAbbrev';
-import { siUnit } from '@/services/drugDb';
+import { getPrefix } from './getPrefix'
+import { getSiUnitAbbrev } from './getSiUnitAbbrev'
+import { siUnit } from '@/services/drugDb'
 export class SiUnitMeasure {
-  get isUserSafePrefix(): boolean {
-    return this.logSi === -3;
+  get isUserSafePrefix (): boolean {
+    return this.logSi === -3
   }
-  public static logSiToString(logVal: number): string {
-    return getPrefix(logVal).fullName;
+  public static logSiToString (logVal: number): string {
+    return getPrefix(logVal).fullName
   }
-  public static logSiToChar(logVal: number): string {
-    return getPrefix(logVal).siSymbol;
+  public static logSiToChar (logVal: number): string {
+    return getPrefix(logVal).siSymbol
   }
   public pleuralise: boolean = true;
-  constructor(readonly logSi: number, readonly unit: siUnit) {
+  constructor (readonly logSi: number, readonly unit: siUnit) {
     if (logSi > 0 || logSi % 3 !== 0) {
-      throw new RangeError('logSi must be between -12 and 0, in intervals of 3');
+      throw new RangeError('logSi must be between -12 and 0, in intervals of 3')
     }
   }
-  public unitString(abbreviate: boolean = false): string {
+  public unitString (abbreviate: boolean = false): string {
     if (abbreviate) {
-      return getSiUnitAbbrev(this.unit);
+      return getSiUnitAbbrev(this.unit)
     }
-    return siUnit[this.unit] + (this.pleuralise ? 's' : '');
+    return siUnit[this.unit] + (this.pleuralise ? 's' : '')
   }
-  public toString(): string {
-    return SiUnitMeasure.logSiToString(this.logSi) + this.unitString(false);
+  public toString (): string {
+    return SiUnitMeasure.logSiToString(this.logSi) + this.unitString(false)
   }
-  public toShortString(): string {
-    return SiUnitMeasure.logSiToChar(this.logSi) + this.unitString(true);
+  public toShortString (): string {
+    return SiUnitMeasure.logSiToChar(this.logSi) + this.unitString(true)
   }
-  public toShortUserSafeString(): string {
-    return this.isUserSafePrefix ? this.toShortString() : this.toString();
+  public toShortUserSafeString (): string {
+    return this.isUserSafePrefix ? this.toShortString() : this.toString()
   }
 }

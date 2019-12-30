@@ -3,8 +3,8 @@ module.exports = {
     name: 'Children\'s Drug Calculator'
   },
   configureWebpack: {
-    devtool: 'source-map',
-  },
+    devtool: 'source-map'
+  }
 }
 // https://cli.vuejs.org/config/#publicpath
 /*

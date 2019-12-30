@@ -1,4 +1,4 @@
-import { IDilutionInfo, IInfusionInfo, IEntityConcentration } from '@/services/drugDb';
+import { IDilutionInfo, IInfusionInfo, IEntityConcentration } from '@/services/drugDb'
 
 export interface IPatientDilution extends IDilutionInfo {
     concentrations: IEntityConcentration[];

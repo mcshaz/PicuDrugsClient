@@ -1,6 +1,5 @@
 
-import { IEntityInfusion } from './IEntityInfusionDrug';
-import { IEntityDilutionBase, IEntityConcentration } from './IEntityInfusionDrug';
+import { IEntityInfusion, IEntityDilutionBase, IEntityConcentration } from './IEntityInfusionDrug'
 
 export interface IEntityFixedInfusionDrug extends IEntityInfusion {
     fixedTimeDilutions: IEntityFixedDilution[];
@@ -15,4 +14,3 @@ export interface IEntityFixedConcentration extends IEntityConcentration {
     stopMinutes: number;
     rate: number;
 }
-

@@ -71,10 +71,10 @@
   </div>
 </template>
 <script lang="ts">
-import 'reflect-metadata';
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import { drugDbContainer, IDrugDB, TYPES, IAppData, IRegisterEmail } from '@/services/drugDb';
+import 'reflect-metadata'
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { drugDbContainer, IDrugDB, TYPES, IAppData, IRegisterEmail } from '@/services/drugDb'
 
 @Component({
   name: 'App',
@@ -82,8 +82,8 @@ import { drugDbContainer, IDrugDB, TYPES, IAppData, IRegisterEmail } from '@/ser
   provide: {
     db: drugDbContainer.get<IDrugDB>(TYPES.IDrugDB),
     appData: drugDbContainer.get<IAppData>(TYPES.IAppData),
-    serverCom: drugDbContainer.get<IRegisterEmail>(TYPES.IRegisterEmail),
-  },
+    serverCom: drugDbContainer.get<IRegisterEmail>(TYPES.IRegisterEmail)
+  }
 })
 export default class App extends Vue {
 }

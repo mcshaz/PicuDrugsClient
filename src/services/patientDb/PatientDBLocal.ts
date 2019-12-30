@@ -1,5 +1,5 @@
-import Dexie from '../../../../Dexie.js/dist/dexie'; // todo - return to node import once fixes released released
-import { IPatient } from './IPatient';
+import Dexie from '../../../../Dexie.js/dist/dexie' // todo - return to node import once fixes released released
+import { IPatient } from './IPatient'
 
 export class PatientDBLocal extends Dexie {
     // Declare implicit table properties.
@@ -9,10 +9,10 @@ export class PatientDBLocal extends Dexie {
     public patients!: Dexie.Table<IPatient, string>; // number = type of the primkey
     // ...other tables goes here...
 
-    constructor() {
-        super('PatientDBLocal' + process.env.NODE_ENV);
-        this.version(1).stores({
-            patients: 'nhi',
-        });
+    constructor () {
+      super('PatientDBLocal' + process.env.NODE_ENV)
+      this.version(1).stores({
+        patients: 'nhi'
+      })
     }
 }

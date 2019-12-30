@@ -82,41 +82,41 @@
   </div>
 </template>
 <script>
-import pointerScroll from './pointerScroll';
+import pointerScroll from './pointerScroll'
 export default {
   props: {
     value: {
-      required: true,
+      required: true
     },
     options: {
       type: Array,
       required: false,
-      default: () => [],
+      default: () => []
     },
     textField: {
       type: String,
       required: false,
-      default: () => null,
+      default: () => null
     },
     keyField: {
       type: String,
       required: false,
-      default: () => null,
+      default: () => null
     },
     placeholder: {
       type: String,
       required: false,
-      default: () => 'Search Here',
+      default: () => 'Search Here'
     },
     maxHeight: {
       type: String,
       default: () => '220px',
-      required: false,
+      required: false
     },
     inputId: {
       type: String,
       default: () => 'single-select',
-      required: false,
+      required: false
     },
     classes: {
       type: Object,
@@ -129,213 +129,213 @@ export default {
           icons: 'icons',
           required: 'required',
           activeClass: 'active',
-          dropdown: 'dropdown',
-        };
-      },
+          dropdown: 'dropdown'
+        }
+      }
     },
     required: {
       type: Boolean,
       required: false,
-      default: () => false,
+      default: () => false
     },
     maxResults: {
       type: Number,
       required: false,
-      default: () => 30,
+      default: () => 30
     },
     getOptionText: {
       type: Function,
-      default(option) {
+      default (option) {
         if (this.textField) {
-          return option[this.textField];
+          return option[this.textField]
         }
-        return option;
-      },
+        return option
+      }
     },
     getOptionKey: {
       type: Function,
-      default(option) {
+      default (option) {
         if (this.keyField) {
-          return option[this.keyField];
+          return option[this.keyField]
         }
-        return option;
-      },
+        return option
+      }
     },
     filterBy: {
       type: Function,
-      default(option, searchText) {
+      default (option, searchText) {
         if (this.textField) {
           return option[this.textField]
             .toString()
             .toLowerCase()
-            .includes(searchText.toString().toLowerCase());
+            .includes(searchText.toString().toLowerCase())
         }
         return option
           .toString()
           .toLowerCase()
-          .includes(searchText.toString().toLowerCase());
-      },
-    },
+          .includes(searchText.toString().toLowerCase())
+      }
+    }
   },
   mixins: [pointerScroll],
-  mounted() {
+  mounted () {
     if (!this.keyField && (!this.options.every((o) => typeof o !== 'object') || this.options.length !== (new Set(...options).size))) {
-      throw new Error('keyField option must be used if the options are not all distinct strings or numbers');
+      throw new Error('keyField option must be used if the options are not all distinct strings or numbers')
     }
-    document.addEventListener('click', this.handleClickOutside);
-    document.addEventListener('keyup', this.handleClickOutside);
+    document.addEventListener('click', this.handleClickOutside)
+    document.addEventListener('keyup', this.handleClickOutside)
   },
-  destroyed() {
-    document.removeEventListener('keyup', this.handleClickOutside);
-    document.removeEventListener('click', this.handleClickOutside);
+  destroyed () {
+    document.removeEventListener('keyup', this.handleClickOutside)
+    document.removeEventListener('click', this.handleClickOutside)
   },
-  data() {
+  data () {
     return {
       searchText: null,
       selectedOption: null,
       matchingOptions: null,
-      dropdownOpen: false,
-    };
+      dropdownOpen: false
+    }
   },
   watch: {
-    value(curr) {
-      this.selectedOption = curr;
-    },
+    value (curr) {
+      this.selectedOption = curr
+    }
   },
   computed: {
-    isRequired() {
+    isRequired () {
       if (!this.required) {
-        return '';
+        return ''
       }
       if (this.selectedOption) {
-        return '';
+        return ''
       }
-      return 'required';
-    },
+      return 'required'
+    }
   },
   watch: {
-    searchText(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            this.pointer = -1;
-            if (this.searchText === null) {
-                this.matchingOptions = null;
-                return;
-            }
-            if (!this.searchText.length) {
-                this.matchingOptions = [...this.options].slice(0, this.maxResults);
-                return;
-            }
-            // minor performance enhancement
-            if (newVal.includes(oldVal) &&
+    searchText (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.pointer = -1
+        if (this.searchText === null) {
+          this.matchingOptions = null
+          return
+        }
+        if (!this.searchText.length) {
+          this.matchingOptions = [...this.options].slice(0, this.maxResults)
+          return
+        }
+        // minor performance enhancement
+        if (newVal.includes(oldVal) &&
                         this.matchingOptions &&
                         this.matchingOptions.length < this.maxResults) {
-                this.matchingOptions = this.matchingOptions.filter((option) =>
-                        this.filterBy(option, this.searchText));
-                return;
-            }
-            this.matchingOptions = this.options
-                    .filter((option) => this.filterBy(option, this.searchText))
-                    .slice(0, this.maxResults);
+          this.matchingOptions = this.matchingOptions.filter((option) =>
+            this.filterBy(option, this.searchText))
+          return
         }
+        this.matchingOptions = this.options
+          .filter((option) => this.filterBy(option, this.searchText))
+          .slice(0, this.maxResults)
+      }
     },
-    selectedOption(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            this.$emit('input', newVal);
+    selectedOption (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.$emit('input', newVal)
+      }
+    },
+    dropdownOpen (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (!newVal) {
+          this.searchText = null
+          return
         }
-    },
-    dropdownOpen(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            if (!newVal) {
-                this.searchText = null;
-                return;
-            }
 
-            if (!this.searchText) {
-                this.searchText = '';
-            }
-            const self = this;
-            this.$nextTick().then(() => {
-                self.$refs.search.select();
-            });
+        if (!this.searchText) {
+          this.searchText = ''
         }
+        const self = this
+        this.$nextTick().then(() => {
+          self.$refs.search.select()
+        })
+      }
     },
-    value(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            if (newVal && this.options.includes(newVal)) {
-                this.selectedOption = newVal;
-            } else {
-                this.selectedOption = null;
-            }
+    value (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (newVal && this.options.includes(newVal)) {
+          this.selectedOption = newVal
+        } else {
+          this.selectedOption = null
         }
-    },
+      }
+    }
   },
   methods: {
-    setPointerIdx(idx) {
-      this.pointer = idx;
+    setPointerIdx (idx) {
+      this.pointer = idx
     },
-    seedSearchText() {
+    seedSearchText () {
       if (this.searchText !== null) {
-        return;
+        return
       }
-      this.searchText = '';
+      this.searchText = ''
     },
-    switchToSearch(event) {
+    switchToSearch (event) {
       // this.$refs.selectedValue.value = null; had been a hidden with prop 'name' & value getOptionText -
       // useful if submitting form data as is (although should be key if that is the case)
-      this.searchText = event.target.value;
-      this.selectedOption = null;
-      this.dropdownOpen = true;
+      this.searchText = event.target.value
+      this.selectedOption = null
+      this.dropdownOpen = true
     },
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
+    toggleDropdown () {
+      this.dropdownOpen = !this.dropdownOpen
     },
-    closeOut() {
-      this.selectedOption = null;
-      this.dropdownOpen = false;
-      this.searchText = null;
+    closeOut () {
+      this.selectedOption = null
+      this.dropdownOpen = false
+      this.searchText = null
     },
-    movePointerDown() {
+    movePointerDown () {
       if (!this.matchingOptions) {
-        return;
+        return
       }
       if (this.pointer >= this.matchingOptions.length - 1) {
-        return;
+        return
       }
-      this.pointer++;
+      this.pointer++
     },
-    movePointerUp() {
+    movePointerUp () {
       if (this.pointer > 0) {
-        this.pointer--;
+        this.pointer--
       }
     },
-    setOption(e) {
+    setOption (e) {
       if (!this.matchingOptions || !this.matchingOptions.length) {
-        return;
+        return
       }
       if (this.pointer === -1) {
-        this.pointer++;
+        this.pointer++
       }
 
-      this.selectedOption = this.matchingOptions[this.pointer];
-      this.searchText = null;
-      this.dropdownOpen = false;
-      this.pointer = -1;
+      this.selectedOption = this.matchingOptions[this.pointer]
+      this.searchText = null
+      this.dropdownOpen = false
+      this.pointer = -1
       if (!(e && e.code && e.code === 'Tab')) {
-        const self = this;
+        const self = this
         this.$nextTick().then(() => {
-          self.$refs.match.focus();
-        });
+          self.$refs.match.focus()
+        })
       }
     },
-    handleClickOutside(e) {
+    handleClickOutside (e) {
       if (this.$el.contains(e.target) || e.target.id === this.inputId) {
-        return;
+        return
       }
-      this.dropdownOpen = false;
-      this.searchText = null;
-    },
-  },
-};
+      this.dropdownOpen = false
+      this.searchText = null
+    }
+  }
+}
 </script>
 <style scoped>
 .w-full {

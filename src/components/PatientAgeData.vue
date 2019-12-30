@@ -1,21 +1,21 @@
 <template>
   <div class="was-validated">
-    <dob-input v-model="dob" @min-change="minDate=$event" :required="!!errMsg&&errMsg.endsWith('required')" />
-    <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2" 
-      :state="errMsg===null?null:(errMsg==='')"
+    <dob-input v-model="dob" @min-change="minDate=$event" />
+    <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
+      :state="$v.$invalid"
       :invalid-feedback="errMsg" >
       <div class="form-inline">
         <b-input-group append="years" class="mr-1">
           <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
-            min="0" :max="maxYears" ref="years" :required="exact||required||months!==''" step="1" />
+            :min="$v.years.$params.min" :max="$v.years.$params.max" ref="years" step="1" />
         </b-input-group>
         <b-input-group append="months" class="mr-1">
-          <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number" 
-            min="0" max="160" ref="months" :required="exact||years===0" step="1" />
+          <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number"
+            :min="$v.months.$params.min" :max="$v.months.$params.max" ref="months" step="1" />
         </b-input-group>
         <b-input-group append="days">
-          <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number" 
-            min="0" max="1200" ref="days" :required="exact" step="1" />
+          <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number"
+            :min="$v.days.$params.min" :max="$v.days.$params.max" ref="days" step="1" />
         </b-input-group>
       </div>
     </b-form-group>
@@ -23,124 +23,134 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata';
-import { ChildAge } from '@/services/infusion-calculations/';
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import DobInput from '@/components/DobInput.vue';
-import { maxYears } from '@/services/validation/getAgeOrDOBVals';
+import 'reflect-metadata'
+import { ChildAge } from '@/services/infusion-calculations/'
+import { Component, Prop, Vue, Emit } from 'vue-property-decorator'
+import DobInput from '@/components/DobInput.vue'
+import { maxYears, getAgeVals, getDOBVal } from '@/services/validation/getAgeOrDOBVals'
+import { validationMixin } from 'vuelidate'
+import { Validations } from 'vuelidate-property-decorators'
+import { between } from 'vuelidate/lib/validators'
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
 @Component({
-    components: {
-        DobInput,
-    },
+  components: {
+    DobInput
+  },
+  mixins: [ validationMixin ]
 })
 export default class PatientAgeData extends Vue {
-  @Prop({default: false})
-  private exact!: boolean;
-  @Prop({default: false})
-  private required!: boolean;
   private pYears: vueNumber = '';
   private pMonths: vueNumber = '';
   private pDays: vueNumber = '';
   private pDob: Date | null = null;
   private pMinDate: Date | null = null;
-
   private childAge?: ChildAge | null;
-  public get years() { return this.pYears; }
-  public set years(years: vueNumber) {
-    if (years === this.pYears) {
-      return;
+
+  @Validations()
+  public getValidations () {
+    const vals = getAgeVals() as any
+    if (this.minDate) {
+      vals.dob = between(this.minDate, new Date())
     }
-    if (typeof years === 'number') {
-      this.pYears = Math.floor(years);
-    } else {
-      this.pYears = '';
-    }
-    this.pDob = null;
-    this.ageDataChange();
+    return vals
   }
 
-  public get months() { return this.pMonths; }
-  public set months(months: vueNumber) {
+  public get years () { return this.pYears }
+  public set years (years: vueNumber) {
+    if (years === this.pYears) {
+      return
+    }
+    if (typeof years === 'number') {
+      this.pYears = Math.floor(years)
+    } else {
+      this.pYears = ''
+    }
+    this.pDob = null
+    this.ageDataChange()
+  }
+
+  public get months () { return this.pMonths }
+  public set months (months: vueNumber) {
     if (months === this.pMonths) {
-      return;
+      return
     }
     if (typeof months === 'number') {
       if (this.pYears === '') {
-        this.pYears = 0;
+        this.pYears = 0
       }
       if (months > 12) {
-        this.pYears = Math.floor(this.pYears + (months / 12));
-        months = months % 12;
+        this.pYears = Math.floor(this.pYears + (months / 12))
+        months = months % 12
       }
-      this.pMonths = Math.floor(months);
+      this.pMonths = Math.floor(months)
     } else {
-      this.pMonths = '';
+      this.pMonths = ''
     }
-    this.pDob = null;
-    this.ageDataChange();
+    this.pDob = null
+    this.ageDataChange()
   }
 
-  public get days() { return this.pDays; }
-  public set days(days: vueNumber) {
+  public get days () { return this.pDays }
+  public set days (days: vueNumber) {
     if (days === this.pDays) {
-      return;
+      return
     }
     if (typeof days === 'number') {
       if (this.pMonths === '') {
-        this.pMonths = 0;
+        this.pMonths = 0
       }
       if (this.pYears === '') {
-        this.pYears = 0;
+        this.pYears = 0
       }
       if (days > 28) {
-        const workingDate = new Date();
-        let dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
+        const workingDate = new Date()
+        let dInPriorMonth = ChildAge.daysInPriorMonth(workingDate)
         while (days >= dInPriorMonth) {
-          days = days - dInPriorMonth;
-          this.pMonths = (this.pMonths || 0) + 1;
-          workingDate.setMonth(workingDate.getMonth() - 1);
-          dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
+          days = days - dInPriorMonth
+          this.pMonths = (this.pMonths || 0) + 1
+          workingDate.setMonth(workingDate.getMonth() - 1)
+          dInPriorMonth = ChildAge.daysInPriorMonth(workingDate)
         }
       }
-      this.pDays = days;
+      this.pDays = days
     } else {
-        this.pDays = '';
+      this.pDays = ''
     }
-    this.pDob = null;
-    this.ageDataChange();
+    this.pDob = null
+    this.ageDataChange()
   }
 
-  public get dob() {
-    return this.pDob;
+  public get dob () {
+    return this.pDob
   }
 
-  public set dob(dob: Date | null) {
-    this.pDob = dob;
+  public set dob (dob: Date | null) {
+    this.pDob = dob
     if (dob === null) {
-      this.setAgeTabs(false);
-      return;
+      this.setAgeTabs(false)
+      return
     }
-    const now = new Date();
+    const now = new Date()
     if (dob < this.minDate || dob > now) { // not handling 122yr 11mo 30d on tickover of night as edge case & irrelevant
-      this.pDays = this.pMonths = this.pYears = '';
-      this.setAgeTabs(false);
-      return;
+      this.pDays = this.pMonths = this.pYears = ''
+      this.setAgeTabs(false)
+      return
     }
-    const age = ChildAge.ageOnDate(dob, now);
-    this.pYears = age.years;
-    this.pMonths = age.months;
-    this.pDays = age.days;
-    this.ageDataChange();
-    this.setAgeTabs(true);
+    const age = ChildAge.ageOnDate(dob, now)
+    this.pYears = age.years
+    this.pMonths = age.months
+    this.pDays = age.days
+    this.ageDataChange()
+    this.setAgeTabs(true)
   }
 
-  public setAgeTabs(isValidDOB: boolean) {
+  public setAgeTabs (isValidDOB: boolean) {
     (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
-      (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0;
+      (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0
   }
 
+  /*
   public get errMsg() {
     if (this.pYears === '' && this.pMonths === '' && this.pDays === '') {
       return this.required
@@ -159,46 +169,47 @@ export default class PatientAgeData extends Vue {
     }
     return '';
   }
+  */
 
-  private ageDataChange() {
-    if (this.errMsg === null || this.errMsg !== '' || this.pYears === '') {
+  private ageDataChange () {
+    this.$v.$touch()
+    if (this.$v.$invalid || this.pYears === '') {
       if (this.childAge) {
-        this.$emit('input', this.childAge = null);
+        this.$emit('input', this.childAge = null, this.$v)
       }
-      return;
+      return
     }
     const mo = typeof this.pMonths === 'number'
       ? this.pMonths
-      : null;
+      : null
     const dyo = typeof this.pDays === 'number'
       ? this.pDays
-      : null;
+      : null
     if (this.childAge) {
       if (this.childAge.years === this.pYears && this.childAge.months === mo && this.childAge.days === dyo) {
-        return;
+        return
       }
-      this.childAge.years = this.pYears;
-      this.childAge.months = mo;
-      this.childAge.days = dyo;
+      this.childAge.years = this.pYears
+      this.childAge.months = mo
+      this.childAge.days = dyo
     } else {
-      this.childAge = new ChildAge(this.pYears, mo, dyo);
+      this.childAge = new ChildAge(this.pYears, mo, dyo)
     }
-    this.$emit('input', this.childAge);
+    this.$emit('input', this.childAge, this.$v)
   }
 
-  private get minDate() { return this.pMinDate!; }
-  private set minDate(value: Date) {
+  private get minDate () { return this.pMinDate! }
+  private set minDate (value: Date) {
     if (this.pMinDate) { // must be a new day
       if (this.pDob !== null) {
-        this.dob = this.pDob;
+        this.dob = this.pDob
       } else if (this.days !== '') {
-        this.days++;
+        this.days++
       }
     }
-    this.pMinDate = value;
+    this.pMinDate = value
   }
 }
-
 
 </script>
 

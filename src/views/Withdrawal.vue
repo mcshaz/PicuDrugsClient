@@ -128,7 +128,7 @@
                 </select>
               </div><!--/input-group-append-->
             </b-input-group>
-            <vuelidate-message :isSelect="!$v.originalConc.$invalid" :validator="$v.originalConc.$invalid?$v.originalConc:$v.originalConcUnits" 
+            <vuelidate-message :isSelect="!$v.originalConc.$invalid" :validator="$v.originalConc.$invalid?$v.originalConc:$v.originalConcUnits"
                 :label="`the ${concLabel.description}${$v.originalConc.$invalid?'':' units'}`" :units="originalConcUnits?originalConcUnits.units:''"/>
             <template slot="description"  v-if="hasDifferentDefaults">
               <strong class="text-warning">*</strong> Please note different PICU vs. PCA/NCA concentrations.
@@ -136,7 +136,7 @@
           </b-form-group>
           <b-form-group label="last 24hrs:" label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch">
             <b-input-group :append="original24HrUnits">
-              <input type="number" v-model.number="$v.original24HrVol.$model" id="vol" 
+              <input type="number" v-model.number="$v.original24HrVol.$model" id="vol"
                   class="form-control" :class="getValidationClass($v.original24HrVol)">
             </b-input-group>
             <vuelidate-message :validator="$v.original24HrVol"
@@ -258,21 +258,22 @@
   </div>
 </template>
 <script lang="ts">
-import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import 'reflect-metadata'
+import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator'
 // import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
-import WithdrawalTable from '@/components/WithdrawalTable.vue';
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
-import VuelidateMessage from '@/components/VuelidateMessage.vue';
-import { toGrouping } from '@/services/drugDb';
-import { withdrawalDrugs, IDrug, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
-import { roundToFixed, roundToPrecision } from '@/services/infusion-calculations/';
-import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
-import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize';
-import { Validations } from 'vuelidate-property-decorators';
-import { required, between, requiredIf, integer, minLength, ValidationRule } from 'vuelidate/lib/validators';
-import { Validation, validationMixin } from 'vuelidate';
-import { LeaveDirtyState } from '@/services/validation/LeaveDirtyState';
+import WithdrawalTable from '@/components/WithdrawalTable.vue'
+import TrueFalseRadio from '@/components/TrueFalseRadio.vue'
+import VuelidateMessage from '@/components/VuelidateMessage.vue'
+import { toGrouping } from '@/services/drugDb'
+import { withdrawalDrugs, IDrug, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo'
+import { roundToFixed, roundToPrecision } from '@/services/infusion-calculations/'
+import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers'
+import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize'
+import { Validations } from 'vuelidate-property-decorators'
+import vue from 'vuelidate/vue'
+import { required, between, requiredIf, integer, minLength, ValidationRule } from 'vuelidate/lib/validators'
+import { Validation, validationMixin } from 'vuelidate'
+import { LeaveDirtyState } from '@/services/validation/LeaveDirtyState'
 // import { regexDescribe } from '@/services/validation/regexDescribe';
 // import jsPDF from 'jspdf';
 // import { pdfTemplate } from '@/services/utilities/pdfTemplate';
@@ -280,20 +281,20 @@ import { LeaveDirtyState } from '@/services/validation/LeaveDirtyState';
 // import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
 
 type vueNumber = number | '';
-const emptyObj = Object.freeze({});
-const emptyArray = Object.freeze([]) as [];
-const ddOpts = Object.freeze(Array.from(toGrouping(withdrawalDrugs, (d) => d.drugClass)));
+const emptyObj = Object.freeze({})
+const emptyArray = Object.freeze([]) as []
+const ddOpts = Object.freeze(Array.from(toGrouping(withdrawalDrugs, (d) => d.drugClass)))
 interface IDoseUnits { dose?: number; units?: string; }
-const defaultConcLimits = [1, 1000];
+const defaultConcLimits = [1, 1000]
 
 @Component({
   components: {
-//    PatientAgeWeightData,
-      WithdrawalTable,
-      TrueFalseRadio,
-      VuelidateMessage,
+    //    PatientAgeWeightData,
+    WithdrawalTable,
+    TrueFalseRadio,
+    VuelidateMessage
   },
-  mixins: [ validationMixin ],
+  mixins: [ validationMixin ]
 })
 export default class Withdrawal extends Vue {
   public prescriber = '';
@@ -314,9 +315,9 @@ export default class Withdrawal extends Vue {
   private navTarget!: HTMLElement | null;
 
   private validations!: any;
-  public created() {
-    const requiredIfDaily = { required: requiredIf('isDailyDrugRequired') };
-    const simpleRequired = { required };
+  public created () {
+    const requiredIfDaily = { required: requiredIf('isDailyDrugRequired') }
+    const simpleRequired = { required }
     this.validations = {
       prescriber: Object.assign({ minLength: minLength(2) }, simpleRequired as any),
       wtKg: Object.assign({ between: between(1, 200) }, simpleRequired as any), // between
@@ -327,202 +328,202 @@ export default class Withdrawal extends Vue {
       originalConcUnits: requiredIfDaily,
       original24HrVol: { required: requiredIf((vm: Withdrawal) => vm.isDailyDrugRequired && !vm.isPatch) },
       weaningDrug: simpleRequired,
-      weanDuration: { required, between: between(2, 41), integer },
-    };
+      weanDuration: { required, between: between(2, 41), integer }
+    }
   }
   @Validations()
-  public getValidations() {
-    let min: number | undefined;
-    let max: number | undefined;
+  public getValidations () {
+    let min: number | undefined
+    let max: number | undefined
     if (this.originalConcUnits) {
-      min = this.getVal(this.originalConcUnits.min);
-      max = this.getVal(this.originalConcUnits.max);
+      min = this.getVal(this.originalConcUnits.min)
+      max = this.getVal(this.originalConcUnits.max)
     }
-    this.validations.originalConc.between = between(min || defaultConcLimits[0], max || defaultConcLimits[1]);
-    return this.validations;
+    this.validations.originalConc.between = between(min || defaultConcLimits[0], max || defaultConcLimits[1])
+    return this.validations
   }
 
-  public get originalDrug() {
-    if (!this.originalDrugName) { return; }
-    return withdrawalDrugs.find((wd) => wd.name === this.originalDrugName);
+  public get originalDrug () {
+    if (!this.originalDrugName) { return }
+    return withdrawalDrugs.find((wd) => wd.name === this.originalDrugName)
   }
-  public get concentrations() {
-    return this.originalDrug ? this.originalDrug.concentrations : emptyArray;
+  public get concentrations () {
+    return this.originalDrug ? this.originalDrug.concentrations : emptyArray
   }
-  public get conversionDrugs() {
-    return this.originalDrug ? this.originalDrug.conversion : emptyObj;
+  public get conversionDrugs () {
+    return this.originalDrug ? this.originalDrug.conversion : emptyObj
   }
-  public get concLabel() {
+  public get concLabel () {
     if (this.isPatch) {
-      return { label: 'Patch strength:', description: 'strength' };
+      return { label: 'Patch strength:', description: 'strength' }
     }
     if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
-      return { label: 'Single dose:', description: 'dose' };
+      return { label: 'Single dose:', description: 'dose' }
     }
-    return { label: '1 ml/hr =', description: 'concentration' };
+    return { label: '1 ml/hr =', description: 'concentration' }
   }
-  public get hasDifferentDefaults() {
-    return !!(this.originalConcUnits && this.originalConcUnits.default);
+  public get hasDifferentDefaults () {
+    return !!(this.originalConcUnits && this.originalConcUnits.default)
   }
-  public get isPatch() {
-    return this.originalDrug && this.originalDrug.adminRoute === adminRoute.patch;
+  public get isPatch () {
+    return this.originalDrug && this.originalDrug.adminRoute === adminRoute.patch
   }
-  public get isDailyDrugRequired() {
-    return !!(this.originalDrug && this.originalDrug.concentrations.length);
+  public get isDailyDrugRequired () {
+    return !!(this.originalDrug && this.originalDrug.concentrations.length)
   }
-  public get isClonidine() {
-    return this.weaningDrug === 'clonidine';
+  public get isClonidine () {
+    return this.weaningDrug === 'clonidine'
   }
-  public get isChloral() {
-    return this.originalDrug && this.originalDrug.name === 'chloral hydrate';
+  public get isChloral () {
+    return this.originalDrug && this.originalDrug.name === 'chloral hydrate'
   }
 
-  public get original24HrUnits() {
+  public get original24HrUnits () {
     if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
-      return 'doses';
+      return 'doses'
     }
-    return 'ml';
+    return 'ml'
   }
-  public get original24HrCalc(): IDoseUnits {
+  public get original24HrCalc (): IDoseUnits {
     if (this.originalConcUnits && this.originalConc && this.originalConc > 0) {
       if (this.originalConcUnits.units === 'TTS') {
-        const dose = this.originalConc * 100;
+        const dose = this.originalConc * 100
         return {
           dose,
-          units: extractUnits(this.originalConcUnits.units),
-        };
+          units: extractUnits(this.originalConcUnits.units)
+        }
       } else if (this.original24HrVol) {
-        let multiplier = this.originalConcUnits.units.endsWith('/min') ? 60 : 1; // 1 assigned per hour & per dose
+        let multiplier = this.originalConcUnits.units.endsWith('/min') ? 60 : 1 // 1 assigned per hour & per dose
         if (this.originalConcUnits.units.includes('/kg')) {
           if (!this.wtKg || this.wtKg <= 0) {
-            return emptyObj;
+            return emptyObj
           }
-          multiplier *= this.wtKg;
+          multiplier *= this.wtKg
         }
         const returnVar = {
           dose: multiplier * this.originalConc * this.original24HrVol,
-          units: extractUnits(this.originalConcUnits.units),
-        } as IDoseUnits;
+          units: extractUnits(this.originalConcUnits.units)
+        } as IDoseUnits
         if (returnVar.dose! > 3000 && returnVar.units === 'microg') {
-          returnVar.dose = returnVar.dose! / 1000;
-          returnVar.units = 'mg';
+          returnVar.dose = returnVar.dose! / 1000
+          returnVar.units = 'mg'
         }
-        returnVar.dose = roundToPrecision(returnVar.dose!, 3);
+        returnVar.dose = roundToPrecision(returnVar.dose!, 3)
 
-        return returnVar;
+        return returnVar
       }
     }
-    return emptyObj;
+    return emptyObj
   }
 
-  public get totalWeaning24Hrs() {
+  public get totalWeaning24Hrs () {
     if (this.originalDrug && this.weaningDrug && this.lt1Year !== null) {
       if (this.original24HrCalc.dose) {
-        let dose = this.original24HrCalc.dose;
+        let dose = this.original24HrCalc.dose
         if (this.weaningDrug === 'clonidine') {
           if (this.original24HrCalc.units === 'mg') {
-            dose *= 1000;
+            dose *= 1000
           }
         } else if (this.original24HrCalc.units === 'microg') {
-          dose /= 1000;
+          dose /= 1000
         }
-        return this.originalDrug.conversion[this.weaningDrug]!(dose, this.lt1Year);
+        return this.originalDrug.conversion[this.weaningDrug]!(dose, this.lt1Year)
       } else if (this.wtKg && this.wtKg > 0 && !this.isDailyDrugRequired) {
-        return this.originalDrug.conversion[this.weaningDrug]!(this.wtKg, this.lt1Year);
+        return this.originalDrug.conversion[this.weaningDrug]!(this.wtKg, this.lt1Year)
       }
     }
   }
-  public get weaningDoseUnits() {
-    if (!this.weaningDrug) { return ''; }
-    return this.weaningDrug === 'clonidine' ? 'microg' : 'mg';
+  public get weaningDoseUnits () {
+    if (!this.weaningDrug) { return '' }
+    return this.weaningDrug === 'clonidine' ? 'microg' : 'mg'
   }
-  public get isWeaningDoseMax() {
-    return this.totalWeaning24Hrs && this.totalWeaning24Hrs.dailyCommence === this.totalWeaning24Hrs.maxPerDay;
+  public get isWeaningDoseMax () {
+    return this.totalWeaning24Hrs && this.totalWeaning24Hrs.dailyCommence === this.totalWeaning24Hrs.maxPerDay
   }
-  public get clonidineWeanInfo() {
+  public get clonidineWeanInfo () {
     return this.isClonidine && this.wtKg
       ? { weightKg: this.wtKg, rapidWean: this.rapidClonidineWean }
-      : null;
+      : null
   }
-  public get linearWeanInfo() {
+  public get linearWeanInfo () {
     return !this.isClonidine && this.weaningDrug && this.weanDuration
       ? { weanOverDays: this.weanDuration,
-          weanAlternateDays: !this.weanDaily }
-      : null;
+        weanAlternateDays: !this.weanDaily }
+      : null
   }
   @Watch('originalDrug')
   @Watch('wtKg')
-  public setDefaultUnits() {
+  public setDefaultUnits () {
     if (this.originalDrug) {
-      const leaveDirty = new LeaveDirtyState(this.$v.originalConc!, this.$v.originalConcUnits!, this.$v.weaningDrug!);
+      const leaveDirty = new LeaveDirtyState(this.$v.originalConc!, this.$v.originalConcUnits!, this.$v.weaningDrug!)
       switch (this.originalDrug.concentrations.length) {
         case 1:
-          this.originalConcUnits = this.originalDrug.concentrations[0];
-          break;
+          this.originalConcUnits = this.originalDrug.concentrations[0]
+          break
         case 2:
           // change conc units to default if - a)have an invalid value b) are not dirty
           if (this.originalConcUnits && !this.originalDrug.concentrations.some((c) => c.units === this.originalConcUnits!.units)) {
-            this.originalConcUnits = null;
+            this.originalConcUnits = null
           }
           if ((!this.originalConcUnits || !this.$v.originalConcUnits!.$dirty) && this.wtKg) {
-            this.originalConcUnits = this.originalDrug.concentrations[this.wtKg < 30 ? 0 : 1]!;
+            this.originalConcUnits = this.originalDrug.concentrations[this.wtKg < 30 ? 0 : 1]!
           }
       }
       if (this.originalConcUnits && (this.originalConcUnits.min === this.originalConcUnits.max || !this.$v.originalConc!.$dirty)) {
-          this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || '';
+        this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || ''
       }
-      const convKeys = Object.keys(this.originalDrug.conversion);
+      const convKeys = Object.keys(this.originalDrug.conversion)
       if (convKeys.length === 1) {
-        this.weaningDrug = (convKeys[0] as (keyof IWeaningMed & string));
+        this.weaningDrug = (convKeys[0] as (keyof IWeaningMed & string))
       } else if (this.weaningDrug && !this.originalDrug.conversion[this.weaningDrug]) {
-        this.weaningDrug = '';
+        this.weaningDrug = ''
       }
-      leaveDirty.setValues();
+      leaveDirty.setValues()
     }
   }
-  public clearAll() {
-    this.wtKg = '';
-    this.ddOpts = ddOpts;
-    this.originalDrugName = '';
-    this.weanDuration = '';
-    this.original24HrVol = '';
-    this.originalConc = '';
-    this.originalConcUnits = null;
-    this.weanDaily = true;
-    this.lt1Year = null;
-    this.weaningDrug = '';
-    this.opiodBenzoVis = false;
-    this.clonidineVis = false;
-    this.picuVolVis = false;
+  public clearAll () {
+    this.wtKg = ''
+    this.ddOpts = ddOpts
+    this.originalDrugName = ''
+    this.weanDuration = ''
+    this.original24HrVol = ''
+    this.originalConc = ''
+    this.originalConcUnits = null
+    this.weanDaily = true
+    this.lt1Year = null
+    this.weaningDrug = ''
+    this.opiodBenzoVis = false
+    this.clonidineVis = false
+    this.picuVolVis = false
   }
 
-  public openThenNav(target: HTMLAnchorElement) {
-    let href = target.href;
-    href = href.substring(href.indexOf('#') + 1);
-    this.navTarget = document.getElementById(href);
+  public openThenNav (target: HTMLAnchorElement) {
+    let href = target.href
+    href = href.substring(href.indexOf('#') + 1)
+    this.navTarget = document.getElementById(href)
     if (this.navTarget!.classList.contains('show')) {
-      this.notifyShown();
+      this.notifyShown()
     }
   }
-  public notifyShown() {
+  public notifyShown () {
     if (this.navTarget) {
-      this.navTarget.parentElement!.scrollIntoView({ behavior: 'smooth' });
-      this.navTarget = null;
+      this.navTarget.parentElement!.scrollIntoView({ behavior: 'smooth' })
+      this.navTarget = null
     }
   }
-  public getValidationClass(v: Validation) {
-    return v.$invalid ? 'is-invalid' : 'is-valid';
+  public getValidationClass (v: Validation) {
+    return v.$invalid ? 'is-invalid' : 'is-valid'
   }
-  private getVal(val?: numberOrFunc, val2?: numberOrFunc) {
+  private getVal (val?: numberOrFunc, val2?: numberOrFunc) {
     for (const v of arguments) {
       switch (typeof v) {
         case 'function':
           if (this.wtKg) {
-            return v(this.wtKg);
+            return v(this.wtKg)
           }
-          break;
+          break
         case 'number':
-          return v;
+          return v
       }
     }
   }

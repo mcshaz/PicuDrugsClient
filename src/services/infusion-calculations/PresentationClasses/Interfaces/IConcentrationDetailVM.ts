@@ -1,4 +1,4 @@
-import { IEntityDrugAmpuleConcentration } from '@/services/drugDb';
+import { IEntityDrugAmpuleConcentration } from '@/services/drugDb'
 
 export interface IConcentrationDetailVM {
   isNeat: boolean;

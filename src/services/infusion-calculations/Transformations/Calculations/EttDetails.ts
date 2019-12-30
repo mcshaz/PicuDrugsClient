@@ -1,4 +1,4 @@
-import { NumericRange } from '../../Utilities/NumericRange';
+import { NumericRange } from '../../Utilities/NumericRange'
 
 export class EttDetails {
   public InternalDiameter: number = 0;

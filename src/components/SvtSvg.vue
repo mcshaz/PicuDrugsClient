@@ -1,14 +1,14 @@
 <template>
 	<!--unused namespaces:
-		xmlns:osb="http://www.openswatchbook.org/uri/2009/osb" 
+		xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
 		xmlns:xlink="http://www.w3.org/1999/xlink"  -->
     <svg
 		xmlns="http://www.w3.org/2000/svg"
 		xmlns:svg="http://www.w3.org/2000/svg"
-		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-		xmlns:dc="http://purl.org/dc/elements/1.1/" 
-		xmlns:cc="http://creativecommons.org/ns#"  
-		version="1.1" 
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:dc="http://purl.org/dc/elements/1.1/"
+		xmlns:cc="http://creativecommons.org/ns#"
+		version="1.1"
     	viewBox="0 0 197 251">
 	<defs>
 		<marker style="overflow:visible;" id="arrow" refX="0.0" refY="0.0" orient="auto">
@@ -37,7 +37,7 @@
 				<tspan>Vagal</tspan>
 				<tspan dy="1.2em" x="144">manoeuvre</tspan>
 			</text>
-			
+
 			<g v-for="(d, indx) in initialAdenosines" :key="d.dosePerKg">
 				<rect :y="indx*28+71" x="125" height="13" width="38"></rect>
 				<text height="13" width="38" x="144" :y="indx*28+77">
@@ -53,7 +53,7 @@
 					</tspan>
 				</text>
 			</g>
-			
+
 			<rect y="154" x="90" height="27" width="106"></rect>
 			<text height="22" width="40" x="144" y="159">
 				Consider:
@@ -62,7 +62,7 @@
 			<circle r="1px" cx="96" cy="165"></circle>
 			<circle r="1px" cx="96" cy="171"></circle>
 			<circle r="1px" cx="96" cy="177"></circle>
-			
+
 			<text class="list" height="22" width="40" y="166" x="99">
 				<tspan class="drug">
 					Adenosine</tspan><tspan class="ref" dy="-1em">†</tspan>
@@ -85,8 +85,8 @@
 				<tspan class="small">
 					(seek advice)
 				</tspan>
-			</text>    
-				
+			</text>
+
 			<path marker-end="url(#arrow)" d="m 68,22 -34,0 v 6"></path>
 			<rect y="29" x="13" height="22" width="40"></rect>
 			<text height="22" width="40" x="33" y="36">
@@ -100,19 +100,19 @@
 				<tspan>IV access + draw</tspan>
 				<tspan dy="1em" x="33">up adenosine quicker than</tspan>
 				<tspan dy="1em" x="33">obtaining defibrillator?</tspan>
-			</text>    
-			
+			</text>
+
 			<rect y="123" x="13" height="20" width="40"></rect>
 			<text height="22" width="40" x="33" y="132">
 				<tspan>Synchronous</tspan>
 				<tspan dy="1em" x="33">DC shock {{shock1}}J</tspan>
-			</text>    
-			
+			</text>
+
 			<rect y="154" x="13" height="20" width="40"></rect>
 			<text height="22" width="40" x="33" y="163">
 				<tspan>Synchronous</tspan>
 				<tspan dy="1em" x="33">DC shock {{shock2}}J</tspan>
-			</text>    
+			</text>
 
 			<path marker-end="url(#arrow)" d="M 33,51 v 7"></path>
 			<path marker-end="url(#arrow)" d="m 65,82 h 59.5"></path>
@@ -123,7 +123,7 @@
 			<path marker-end="url(#arrow)" d="m 144,112 v 14.5"></path>
 			<path marker-end="url(#arrow)" d="m 144,140 v 13.5"></path>
 			<path id="shock-revert" marker-end="url(#arrow)" d="M 33,174 v 6 h -26 v -31 h 22"></path>
-			
+
 			<rect class="flow-text" y="19" x="45" width="10" height="6"></rect>
 			<text class="flow-text" width="20" height="12" x="50" y="23.5">
 				Yes
@@ -140,7 +140,7 @@
 			<text class="flow-text" height="12" width="20" y="116" x="33">
 				No
 			</text>
-			
+
 			<rect class="flow-text" x="134" y="89" height="5.5" width="20"></rect>
 			<text class="wait" height="12" width="20" y="93" x="144">
 				2 minutes
@@ -149,7 +149,7 @@
 			<text class="wait" height="12" width="20" y="121" x="144">
 				2 minutes
 			</text>
-			
+
 			<rect height="4.5" width="40.5" class="flow-text" y="177.5" x="12.5"></rect>
 			<text class="wait" x="32.5" y="181.4">
 				<tspan>Consider amiodarone</tspan><tspan>*</tspan>
@@ -192,7 +192,7 @@
 				<tspan class="em">(caution to avoid extravasation/tissuing)</tspan>
 				<tspan>:</tspan>
 				<tspan x="27" dy="1.2em">
-					Ampule is 
+					Ampule is
 					{{ pivAmio.concentrations[0].ampuleDetails.concentration * pivAmio.concentrations[0].ampuleDetails.volume }}
 					mg/
 					{{ pivAmio.concentrations[0].ampuleDetails.volume }} mL</tspan>
@@ -220,19 +220,19 @@
 	</svg>
 </template>
 <script lang="ts">
-import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
-import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine';
+import 'reflect-metadata'
+import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator'
+import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine'
 // import { NumericRange } from '@/services/infusion-calculations/Utilities/NumericRange';
-import { IDrugDB, IEntityInfusion, IEntityVariableInfusionDrug, IEntityDrugAmpuleConcentration } from '@/services/drugDb';
-import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM } from '@/services/infusion-calculations';
-import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
+import { IDrugDB, IEntityInfusion, IEntityVariableInfusionDrug, IEntityDrugAmpuleConcentration } from '@/services/drugDb'
+import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM } from '@/services/infusion-calculations'
+import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding'
 
 type vueNumber = number | '';
 
 @Component({ filters: { roundToFixed } })
 export default class SvtSvg extends Vue {
-    @Prop({required: true})
+    @Prop({ required: true })
     public wtKg!: vueNumber;
 
     public adenosineDoses: IDoseInfo[] = [];
@@ -245,67 +245,67 @@ export default class SvtSvg extends Vue {
     // private cvlAmioDbData!: PromiseLike<IEntityInfusion | undefined>;
     private pivAmioDbData!: PromiseLike<IEntityInfusion | undefined>;
 
-    public created() {
-        this.updateAdenosine();
-        // this.cvlAmioDbData = this.db.infusionDrugs.get(44);
-        this.pivAmioDbData = this.db.infusionDrugs.get(45);
+    public created () {
+      this.updateAdenosine()
+      // this.cvlAmioDbData = this.db.infusionDrugs.get(44);
+      this.pivAmioDbData = this.db.infusionDrugs.get(45)
     }
 
-    public get initialAdenosines() {
-        return this.adenosineDoses.slice(0, 3);
+    public get initialAdenosines () {
+      return this.adenosineDoses.slice(0, 3)
     }
-    public get finalAdenosine() {
-        return {
-            dose: this.adenosineDoses[3].dose + '–' + this.adenosineDoses[4].dose,
-            ampuleMl: this.adenosineDoses[3].ampuleMl + '–' + this.adenosineDoses[4].ampuleMl,
-        };
-    }
-
-    public get shock1() {
-        if (!this.wtKg) {
-            return 0;
-        }
-        return this.wtKg >= 50
-            ? 50
-            : Math.round(this.wtKg);
+    public get finalAdenosine () {
+      return {
+        dose: this.adenosineDoses[3].dose + '–' + this.adenosineDoses[4].dose,
+        ampuleMl: this.adenosineDoses[3].ampuleMl + '–' + this.adenosineDoses[4].ampuleMl
+      }
     }
 
-    public get shock2() {
-        if (!this.wtKg) {
-            return 0;
-        }
-        return this.wtKg >= 50
-            ? 100
-            : Math.round(this.wtKg * 2);
+    public get shock1 () {
+      if (!this.wtKg) {
+        return 0
+      }
+      return this.wtKg >= 50
+        ? 50
+        : Math.round(this.wtKg)
     }
 
-    public get flushVol() {
-        if (!this.wtKg) {
-            return '';
-        }
-        if (this.wtKg < 3) {
-            return 5;
-        }
-        if (this.wtKg < 20) {
-            return 10;
-        }
-        return 20;
+    public get shock2 () {
+      if (!this.wtKg) {
+        return 0
+      }
+      return this.wtKg >= 50
+        ? 100
+        : Math.round(this.wtKg * 2)
+    }
+
+    public get flushVol () {
+      if (!this.wtKg) {
+        return ''
+      }
+      if (this.wtKg < 3) {
+        return 5
+      }
+      if (this.wtKg < 20) {
+        return 10
+      }
+      return 20
     }
 
     @Watch('wtKg')
-    public updateAdenosine() {
-        this.adenosineDoses = getAdenosineDoses(this.wtKg || 0);
-        this.getAmio();
+    public updateAdenosine () {
+      this.adenosineDoses = getAdenosineDoses(this.wtKg || 0)
+      this.getAmio()
     }
 
-    private async getAmio() {
-        if (this.wtKg) {
-            const infusions = await Promise.all([/* this.cvlAmioDbData,*/ this.pivAmioDbData ]) as any as IEntityVariableInfusionDrug[];
-            const wtSelectedInfusions = filterVariableInfusionsForPt(infusions, this.wtKg);
-            const transformed = transformVariableInfusions(this.wtKg, wtSelectedInfusions);
-            // this.cvlAmio = transformed[0];
-            this.pivAmio = transformed[0];
-        }
+    private async getAmio () {
+      if (this.wtKg) {
+        const infusions = await Promise.all([/* this.cvlAmioDbData, */ this.pivAmioDbData ]) as any as IEntityVariableInfusionDrug[]
+        const wtSelectedInfusions = filterVariableInfusionsForPt(infusions, this.wtKg)
+        const transformed = transformVariableInfusions(this.wtKg, wtSelectedInfusions)
+        // this.cvlAmio = transformed[0];
+        this.pivAmio = transformed[0]
+      }
     }
 }
 </script>
@@ -388,4 +388,3 @@ export default class SvtSvg extends Vue {
     }
     /* ]]> */
 </style>
-

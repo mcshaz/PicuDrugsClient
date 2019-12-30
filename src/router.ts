@@ -1,19 +1,19 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import Home from './views/Home.vue';
-import Infusions from './views/Infusions.vue';
-import WardChart from './views/WardChart.vue';
-import SetDefaults from './views/SetDefaults.vue';
-import Centiles from './views/Centiles.vue';
-import WeightCalculations from './views/WeightCalculations.vue';
-import MultiWeight from './views/MultiWeight.vue';
-import WardMultiChart from './views/WardMultiChart.vue';
-import TransportTimes from './views/TransportTimes.vue';
-import Anaphylaxis from './views/Anaphylaxis.vue';
-import Withdrawal from './views/Withdrawal.vue';
-import About from './views/About.vue';
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from './views/Home.vue'
+import Infusions from './views/Infusions.vue'
+import WardChart from './views/WardChart.vue'
+import SetDefaults from './views/SetDefaults.vue'
+import Centiles from './views/Centiles.vue'
+import WeightCalculations from './views/WeightCalculations.vue'
+import MultiWeight from './views/MultiWeight.vue'
+import WardMultiChart from './views/WardMultiChart.vue'
+import TransportTimes from './views/TransportTimes.vue'
+import Anaphylaxis from './views/Anaphylaxis.vue'
+import Withdrawal from './views/Withdrawal.vue'
+import About from './views/About.vue'
 
-Vue.use(Router);
+Vue.use(Router)
 
 export default new Router({
   mode: 'history',
@@ -23,16 +23,16 @@ export default new Router({
       path: '/infusions/:abbrev?',
       name: 'infusions',
       component: Infusions,
-      props: true,
+      props: true
     }, {
       path: '/ward-chart',
       name: 'ward-chart',
       component: WardChart,
-      props: true,
+      props: true
     }, {
       path: '/about',
       name: 'about',
-      component: About,
+      component: About
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -40,7 +40,7 @@ export default new Router({
     }, {
       path: '/browser-defaults',
       name: 'browser-defaults',
-      component: SetDefaults,
+      component: SetDefaults
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -48,11 +48,11 @@ export default new Router({
     }, {
       path: '/centiles',
       name: 'centiles',
-      component: Centiles,
+      component: Centiles
     }, {
       path: '/weight-calculations',
       name: 'weight-calculations',
-      component: WeightCalculations,
+      component: WeightCalculations
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -61,29 +61,29 @@ export default new Router({
       path: '/booklet/:wardName?',
       name: 'booklet',
       component: MultiWeight,
-      props: true,
+      props: true
     }, {
       path: '/multi-chart',
       name: 'multi-chart',
       component: WardMultiChart,
-      props: true,
+      props: true
     }, {
       path: '/retrievals',
       name: 'retrievals',
-      component: TransportTimes,
+      component: TransportTimes
     }, {
       path: '/withdrawal',
       name: 'withdrawal',
-      component: Withdrawal,
+      component: Withdrawal
     }, {
       path: '/anaphylaxis',
       name: 'anaphylaxis',
-      component: Anaphylaxis,
+      component: Anaphylaxis
     }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',
       component: Home,
-      props: true,
-    }, // NB THIS MUST COME LAST
-  ],
-});
+      props: true
+    } // NB THIS MUST COME LAST
+  ]
+})

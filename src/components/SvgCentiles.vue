@@ -10,7 +10,7 @@
                 <pattern v-if="yAxis&&xAxes.length" id="grid" :width="xAxes[0].majorTick" :height="yAxis.majorTick" patternUnits="userSpaceOnUse"
                     :patternTransform="xAxes[0].majorTickOffset?`translate(-${xAxes[0].majorTickOffset},0)`:null" >
                     <rect v-if="minorTickParams" :width="xAxes[0].majorTick" :height="yAxis.majorTick" fill="url(#smallGrid)"/>
-                    <path :d="`M ${xAxes[0].majorTick} 0 L 0 0 0 ${yAxis.majorTick}`" 
+                    <path :d="`M ${xAxes[0].majorTick} 0 L 0 0 0 ${yAxis.majorTick}`"
                             fill="none" stroke="gray" stroke-width="1"/>
                 </pattern>
             </defs>
@@ -21,7 +21,7 @@
                         {{cl.centile}} centile
                     </title>
                 </path>
-                    <text class="y-label right" v-for="cl in centileLines.lines" :key="chartType+(cl.centile*113)" :x="RMargin+textClearance" 
+                    <text class="y-label right" v-for="cl in centileLines.lines" :key="chartType+(cl.centile*113)" :x="RMargin+textClearance"
                             :y="cl.centileLastY">
                     {{cl.centile}}
                 </text>
@@ -32,22 +32,22 @@
                 </text>
             </g>
             <g v-if="xAxes.length" >
-                <text class="x-label bottom" v-for="xl1 in xAxes[0].labels" :key="xl1.hash" :x="xl1.position" 
+                <text class="x-label bottom" v-for="xl1 in xAxes[0].labels" :key="xl1.hash" :x="xl1.position"
                         :y="lowerMargin+textClearance">
                     {{xl1.label}}
                 </text>
             </g>
             <g v-if="xAxes.length > 1" >
-                <text class="x-label top" v-for="xl2 in xAxes[1].labels" :key="xl2.hash" :x="xl2.position" 
+                <text class="x-label top" v-for="xl2 in xAxes[1].labels" :key="xl2.hash" :x="xl2.position"
                         :y="padTop-textClearance">
                     {{xl2.label}}
                 </text>
             </g>
-            <rect :width="RMargin-padL" :height="lowerMargin-padTop" fill="url(#grid)" 
+            <rect :width="RMargin-padL" :height="lowerMargin-padTop" fill="url(#grid)"
                 :transform="`scale(1,-1) translate(${padL},-${lowerMargin})`" />
             <circle v-for="m in dataPoints" :key="hash(m)" :cx="m[0]" :cy="m[1]" class="data-point" />
             <!--
-                 
+
             <text x="20" y="100%" class="x-label" >4</text>
             <text y="120" class="y-label" >2</text>
             <rect :width="width" :height="height" fill="url(#grid)" />
@@ -55,27 +55,27 @@
         </svg>
     </template>
 <script lang="ts">
-import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Inject, Mixins } from 'vue-property-decorator';
+import 'reflect-metadata'
+import { Component, Prop, Vue, Watch, Inject, Mixins } from 'vue-property-decorator'
 import { svgPaths, pathTypes, ICentileLine, ICentileLines, CentileCollection, labelAgeUnits,
-        UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, IAnthropometry } from '@/services/anthropometry';
-import Ready from '@/mixins/Ready';
-import { hash } from '@/services/utilities/hash';
+  UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, IAnthropometry } from '@/services/anthropometry'
+import Ready from '@/mixins/Ready'
+import { hash } from '@/services/utilities/hash'
 interface IAxisLabel { position: number; label: string; hash: number; lgOnly?: boolean; }
 interface IAxis { labels: IAxisLabel[]; majorTick: number; minorTick?: number; majorTickOffset: number; }
 
 export type chartType = 'weight' | 'length' | 'head-circumference' | 'BMI';
-const padR = 37;
+const padR = 37
 
 @Component
 export default class SvgCentiles extends Mixins(Ready) {
-    @Prop({required: true})
+    @Prop({ required: true })
     public measurements!: IAnthropometry[];
-    @Prop({required: true})
+    @Prop({ required: true })
     public isMale!: boolean;
-    @Prop({required: true})
+    @Prop({ required: true })
     public chartType!: chartType;
-    @Prop({required: true})
+    @Prop({ required: true })
     public gestAgeWeeks!: number;
 
     public pathType = pathTypes.polyline;
@@ -97,163 +97,163 @@ export default class SvgCentiles extends Mixins(Ready) {
     @Inject('hcCentiles')
     private hcCentiles!: UKHeadCircumferenceData;
 
-    public created() {
-        this.emptyArray = [];
+    public created () {
+      this.emptyArray = []
     }
-    public async mounted() {
-        await this.$ready();
-        this.setSize();
-    }
-
-    public get centileLines() {
-        let centiles: CentileCollection;
-        switch (this.chartType) {
-            case 'weight':
-                centiles = this.wtCentiles;
-                break;
-            case 'length':
-                centiles = this.lengthCentiles;
-                break;
-            case 'head-circumference':
-                centiles = this.hcCentiles;
-                break;
-            case 'BMI':
-                centiles = this.bmiCentiles;
-                break;
-            default:
-                throw new Error(`unrecognised chart type:'${this.chartType}'`);
-        }
-        const centileRange = this.isMale ? centiles.maleRange : centiles.femaleRange;
-        return svgPaths( this.measurements,
-                                this.gestAgeWeeks,
-                                centileRange,
-                                this.padL,
-                                this.padTop,
-                                this.RMargin,
-                                this.lowerMargin,
-                                this.pathType);
+    public async mounted () {
+      await this.$ready()
+      this.setSize()
     }
 
-    public get yAxisTitle() {
-        switch (this.chartType) {
-            case 'weight':
-                return 'kg';
-            case 'length':
-            case 'head-circumference':
-                return 'cm';
-            case 'BMI':
-                return 'kg/m<sup>2</sup>';
-            default:
-                throw new Error(`unrecognised chart type:'${this.chartType}'`);
-        }
+    public get centileLines () {
+      let centiles: CentileCollection
+      switch (this.chartType) {
+        case 'weight':
+          centiles = this.wtCentiles
+          break
+        case 'length':
+          centiles = this.lengthCentiles
+          break
+        case 'head-circumference':
+          centiles = this.hcCentiles
+          break
+        case 'BMI':
+          centiles = this.bmiCentiles
+          break
+        default:
+          throw new Error(`unrecognised chart type:'${this.chartType}'`)
+      }
+      const centileRange = this.isMale ? centiles.maleRange : centiles.femaleRange
+      return svgPaths(this.measurements,
+        this.gestAgeWeeks,
+        centileRange,
+        this.padL,
+        this.padTop,
+        this.RMargin,
+        this.lowerMargin,
+        this.pathType)
+    }
+
+    public get yAxisTitle () {
+      switch (this.chartType) {
+        case 'weight':
+          return 'kg'
+        case 'length':
+        case 'head-circumference':
+          return 'cm'
+        case 'BMI':
+          return 'kg/m<sup>2</sup>'
+        default:
+          throw new Error(`unrecognised chart type:'${this.chartType}'`)
+      }
     }
 
     // computed
-    public get dataPoints(): Array<[number, number]> {
-        if (this.centileLines === null) {
-            return this.emptyArray;
-        }
-        const premCorrect = this.gestAgeWeeks < 40 ? (40 - this.gestAgeWeeks) * 7 : 0;
-        return this.measurements.map((p) => [this.centileLines!.transformX!(p.ageDays - premCorrect), this.centileLines!.transformY!(p.measure)] as [number, number]);
+    public get dataPoints (): Array<[number, number]> {
+      if (this.centileLines === null) {
+        return this.emptyArray
+      }
+      const premCorrect = this.gestAgeWeeks < 40 ? (40 - this.gestAgeWeeks) * 7 : 0
+      return this.measurements.map((p) => [this.centileLines!.transformX!(p.ageDays - premCorrect), this.centileLines!.transformY!(p.measure)] as [number, number])
     }
-    public get minorTickParams() {
-        const yAxis = this.yAxis;
-        const xAxes = this.xAxes;
-        const noY = !yAxis || !yAxis.minorTick;
-        const noX = !xAxes.length || !xAxes[0].minorTick;
-        if (noX && noY) { return null; }
-        const returnVar = {
-            width: noX ? xAxes[0].majorTick : xAxes[0].minorTick!,
-            height: noY ? yAxis!.majorTick : yAxis!.minorTick!,
-            path: '',
-        };
-        if (noY) {
-            returnVar.path = `M ${returnVar.width} 0 V ${returnVar.height}`;
-        } else if (noX) {
-            returnVar.path = `M 0 ${returnVar.height} H ${returnVar.width}`;
-        } else {
-            returnVar.path = `M ${returnVar.width} 0 V ${returnVar.height} H 0 `;
-        }
-        return returnVar;
+    public get minorTickParams () {
+      const yAxis = this.yAxis
+      const xAxes = this.xAxes
+      const noY = !yAxis || !yAxis.minorTick
+      const noX = !xAxes.length || !xAxes[0].minorTick
+      if (noX && noY) { return null }
+      const returnVar = {
+        width: noX ? xAxes[0].majorTick : xAxes[0].minorTick!,
+        height: noY ? yAxis!.majorTick : yAxis!.minorTick!,
+        path: ''
+      }
+      if (noY) {
+        returnVar.path = `M ${returnVar.width} 0 V ${returnVar.height}`
+      } else if (noX) {
+        returnVar.path = `M 0 ${returnVar.height} H ${returnVar.width}`
+      } else {
+        returnVar.path = `M ${returnVar.width} 0 V ${returnVar.height} H 0 `
+      }
+      return returnVar
     }
-    public get yAxis(): IAxis | null {
-        if (!this.centileLines) { return null; }
-        const lab = this.centileLines.yLabels;
-        const transform = this.centileLines.transformY;
-        const y0 = transform(0);
-        let lgOnly = lab.start % (lab.increment * 2) === 0; // begin loop with not, so actually determining notLg
-        return {
-            labels: new Array(lab.count).fill(0).map((u, indx) => {
-                const val = lab.start + indx * lab.increment;
-                lgOnly = !lgOnly;
-                return {
-                    label: val.toString(),
-                    position: transform(val),
-                    hash: hash('y', val),
-                    lgOnly,
-                };
-            }),
-            majorTick: y0 - transform(lab.increment),
-            minorTick: lab.minorTickIncrement
-                ? (y0 - transform(lab.minorTickIncrement))
-                : void 0,
-            majorTickOffset: 0,
-        };
+    public get yAxis (): IAxis | null {
+      if (!this.centileLines) { return null }
+      const lab = this.centileLines.yLabels
+      const transform = this.centileLines.transformY
+      const y0 = transform(0)
+      let lgOnly = lab.start % (lab.increment * 2) === 0 // begin loop with not, so actually determining notLg
+      return {
+        labels: new Array(lab.count).fill(0).map((u, indx) => {
+          const val = lab.start + indx * lab.increment
+          lgOnly = !lgOnly
+          return {
+            label: val.toString(),
+            position: transform(val),
+            hash: hash('y', val),
+            lgOnly
+          }
+        }),
+        majorTick: y0 - transform(lab.increment),
+        minorTick: lab.minorTickIncrement
+          ? (y0 - transform(lab.minorTickIncrement))
+          : void 0,
+        majorTickOffset: 0
+      }
     }
-    public get xAxes(): IAxis[] {
-        if (!this.centileLines) { return this.emptyArray; }
-        const transform = this.centileLines.transformX;
-        const x0 = transform(0);
-        let majorTickOffset = 0;
-        return this.centileLines.xLabels.map((l, lIndx) => ({
-            title: labelAgeUnits[l.units],
-            labels: new Array(l.count).fill(0).map((u, uIndx) => {
-                        const labelVal = l.startLabelAt + uIndx * l.incrementLabelBy;
-                        let label: string;
-                        if (l.units === labelAgeUnits.weeks && labelVal <= 0) {
-                            label = labelVal === 0 ? 'term' : (40 + labelVal).toString();
-                        } else {
-                            label = Math.trunc(labelVal).toString();
-                            if (labelVal % 1 === 0.5) {
-                                label += '½';
-                            }
-                        }
-                        const position = transform(l.start + uIndx * l.increment);
-                        if (lIndx === 0 && uIndx === 0) {
-                            const remainder = this.centileLines!.minX % l.increment;
-                            if (remainder < 0) {
-                                majorTickOffset = transform(l.increment + remainder) - x0;
-                            } else if (remainder > 0) {
-                                majorTickOffset = transform(l.increment - remainder) - x0;
-                            }
-                        }
-                        return {
-                            label,
-                            position,
-                            hash: hash('x', labelVal),
-                        };
-                    }),
-            majorTick: transform(l.increment) - x0,
-            minorTick: l.minorTickIncrement
-                ? transform(l.minorTickIncrement) - x0
-                : void 0,
-            majorTickOffset,
-        }));
+    public get xAxes (): IAxis[] {
+      if (!this.centileLines) { return this.emptyArray }
+      const transform = this.centileLines.transformX
+      const x0 = transform(0)
+      let majorTickOffset = 0
+      return this.centileLines.xLabels.map((l, lIndx) => ({
+        title: labelAgeUnits[l.units],
+        labels: new Array(l.count).fill(0).map((u, uIndx) => {
+          const labelVal = l.startLabelAt + uIndx * l.incrementLabelBy
+          let label: string
+          if (l.units === labelAgeUnits.weeks && labelVal <= 0) {
+            label = labelVal === 0 ? 'term' : (40 + labelVal).toString()
+          } else {
+            label = Math.trunc(labelVal).toString()
+            if (labelVal % 1 === 0.5) {
+              label += '½'
+            }
+          }
+          const position = transform(l.start + uIndx * l.increment)
+          if (lIndx === 0 && uIndx === 0) {
+            const remainder = this.centileLines!.minX % l.increment
+            if (remainder < 0) {
+              majorTickOffset = transform(l.increment + remainder) - x0
+            } else if (remainder > 0) {
+              majorTickOffset = transform(l.increment - remainder) - x0
+            }
+          }
+          return {
+            label,
+            position,
+            hash: hash('x', labelVal)
+          }
+        }),
+        majorTick: transform(l.increment) - x0,
+        minorTick: l.minorTickIncrement
+          ? transform(l.minorTickIncrement) - x0
+          : void 0,
+        majorTickOffset
+      }))
     }
 
     // methods
-    public hash(...args: Array<string | number | Array<number | undefined | null> | null | undefined>) {
-        return hash(...args);
+    public hash (...args: Array<string | number | Array<number | undefined | null> | null | undefined>) {
+      return hash(...args)
     }
 
-    private setSize() {
-        const container = (this.$refs.svg as SVGImageElement).parentElement!;
-        this.RMargin = container.offsetWidth - padR;
-        this.lowerMargin = container.offsetHeight - this.padBottom;
+    private setSize () {
+      const container = (this.$refs.svg as SVGImageElement).parentElement!
+      this.RMargin = container.offsetWidth - padR
+      this.lowerMargin = container.offsetHeight - this.padBottom
     }
 }
-function hashAxis(...axes: IAxis[]) {
-    hash(axes.flatMap((a) => [a.minorTick, ...a.labels.map((l) => l.hash)]));
+function hashAxis (...axes: IAxis[]) {
+  hash(axes.flatMap((a) => [a.minorTick, ...a.labels.map((l) => l.hash)]))
 }
 </script>
 <style scoped>

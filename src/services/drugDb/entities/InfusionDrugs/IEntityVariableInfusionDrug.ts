@@ -1,4 +1,4 @@
-import { IEntityConcentration, IEntityInfusion, IDilutionInfo, IEntityDilutionBase } from './IEntityInfusionDrug';
+import { IEntityConcentration, IEntityInfusion, IDilutionInfo, IEntityDilutionBase } from './IEntityInfusionDrug'
 
 export interface IEntityVariableInfusionDrug extends IEntityInfusion {
     variableTimeDilutions: IEntityVariableDilution[];

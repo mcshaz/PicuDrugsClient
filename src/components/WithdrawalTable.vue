@@ -151,15 +151,15 @@
     </div>
 </template>
 <script lang="ts">
-import 'reflect-metadata';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { roundToFixed } from '@/services/infusion-calculations/';
-import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
-import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
-import { pdfTemplate } from '@/services/utilities/pdfTemplate';
+import 'reflect-metadata'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { roundToFixed } from '@/services/infusion-calculations/'
+import { WeanDay } from '@/services/pharmacokinetics/WeanDay'
+import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes'
+import jsPDF from 'jspdf'
+import { BaseConfig, HTMLConfig } from 'jspdf-autotable'
+
+import { pdfTemplate } from '@/services/utilities/pdfTemplate'
 
 type vueNumber = number | '';
 type route = 'po/ng' | 'iv' | 'patch' | 'subcut';
@@ -167,106 +167,106 @@ type doseUnits = 'mg' | 'microg';
 
 @Component
 export default class WithdrawalTable extends Vue {
-    @Prop({required: true})
+    @Prop({ required: true })
     public drug!: string;
-    @Prop({required: true})
+    @Prop({ required: true })
     public start24HrDose!: number;
-    @Prop({required: true})
+    @Prop({ required: true })
     public qHourly!: number;
-    @Prop({default: 'po/ng'})
+    @Prop({ default: 'po/ng' })
     public routeRegular!: route;
-    @Prop({default: 'po/ng'})
+    @Prop({ default: 'po/ng' })
     public routeRescue!: route;
-    @Prop({default: 'mg'})
+    @Prop({ default: 'mg' })
     public doseUnit!: doseUnits;
-    @Prop({default: null})
+    @Prop({ default: null })
     public linearWean!: ({ weanOverDays: number, weanAlternateDays: boolean } | null);
-    @Prop({default: null})
+    @Prop({ default: null })
     public clonidineWean!: ({ weightKg: number, rapidWean: boolean } | null);
-    @Prop({default: true})
+    @Prop({ default: true })
     public wideFormat!: boolean;
 
-    public get weanRegime(): WeanDay[] {
-        let individualDose = this.start24HrDose * this.qHourly / 24;
-        if (this.linearWean) {
-            if (this.linearWean.weanAlternateDays) {
-                return alternateWean(individualDose, this.linearWean.weanOverDays);
-            } else {
-                return linearWean(individualDose, 1 / this.linearWean.weanOverDays);
-            }
+    public get weanRegime (): WeanDay[] {
+      let individualDose = this.start24HrDose * this.qHourly / 24
+      if (this.linearWean) {
+        if (this.linearWean.weanAlternateDays) {
+          return alternateWean(individualDose, this.linearWean.weanOverDays)
+        } else {
+          return linearWean(individualDose, 1 / this.linearWean.weanOverDays)
         }
-        if (this.clonidineWean) {
-            let returnVar: WeanDay[] = [];
-            let startWeanDate: Date;
-            if (!this.clonidineWean.rapidWean && individualDose > this.clonidineWean.weightKg) {
-                returnVar = linearWean(individualDose, this.clonidineWean.weightKg / individualDose, this.clonidineWean.weightKg);
-                startWeanDate = new Date(returnVar[returnVar.length - 1].weanDate);
-                startWeanDate.setDate(startWeanDate.getDate() + 1);
-                individualDose = this.clonidineWean.weightKg;
-            } else {
-                startWeanDate = new Date();
-            }
-            return returnVar.concat(exponentialWean(individualDose, 0.5, 4, startWeanDate));
+      }
+      if (this.clonidineWean) {
+        let returnVar: WeanDay[] = []
+        let startWeanDate: Date
+        if (!this.clonidineWean.rapidWean && individualDose > this.clonidineWean.weightKg) {
+          returnVar = linearWean(individualDose, this.clonidineWean.weightKg / individualDose, this.clonidineWean.weightKg)
+          startWeanDate = new Date(returnVar[returnVar.length - 1].weanDate)
+          startWeanDate.setDate(startWeanDate.getDate() + 1)
+          individualDose = this.clonidineWean.weightKg
+        } else {
+          startWeanDate = new Date()
         }
-        return [];
+        return returnVar.concat(exponentialWean(individualDose, 0.5, 4, startWeanDate))
+      }
+      return []
     }
 
-    public createPDF() {
-        const doc = new jsPDF('l', 'mm', 'a4');
-        // start dom manip
-        const maxCols = 11;
-        const htmlTable = document.querySelector('#withdrawal-table table') as HTMLTableElement;
-        const htmlTables: HTMLTableElement[] = [];
-        const cols = htmlTable.querySelector('tr')!.childElementCount - 1;
-        if (cols > maxCols) {
-            const its = Math.ceil(cols / maxCols);
-            for (let i = 0; i < its; ++i) {
-                htmlTables.push(htmlTable.cloneNode(true) as HTMLTableElement);
-                for (const tr of htmlTables[htmlTables.length - 1].querySelectorAll('tr')) {
-                    const els = Array.from(tr.children);
-                    els.splice(0, 1); // the row headers
-                    els.splice(i * maxCols, maxCols);
-                    els.forEach((e, indx) => e.remove());
-                }
-            }
-        } else {
-            htmlTables.push(htmlTable);
+    public createPDF () {
+      const doc = new jsPDF('l', 'mm', 'a4')
+      // start dom manip
+      const maxCols = 11
+      const htmlTable = document.querySelector('#withdrawal-table table') as HTMLTableElement
+      const htmlTables: HTMLTableElement[] = []
+      const cols = htmlTable.querySelector('tr')!.childElementCount - 1
+      if (cols > maxCols) {
+        const its = Math.ceil(cols / maxCols)
+        for (let i = 0; i < its; ++i) {
+          htmlTables.push(htmlTable.cloneNode(true) as HTMLTableElement)
+          for (const tr of htmlTables[htmlTables.length - 1].querySelectorAll('tr')) {
+            const els = Array.from(tr.children)
+            els.splice(0, 1) // the row headers
+            els.splice(i * maxCols, maxCols)
+            els.forEach((e, indx) => e.remove())
+          }
         }
-        const headColWidth = 34;
-        const cellWidth = 21;
-        const lineWidth = 0.1;
-        const widths = new Set<number>();
-        const template: BaseConfig = Object.assign(pdfTemplate(doc), {
-            theme: 'grid',
-            pageBreak: 'avoid',
-            tableWidth: 'wrap',
-            headStyles: {
-                fillColor: [255, 255, 255],
-                textColor: 0,
-                fontStyle: 'bold',
-            },
-            styles: { halign: 'center', cellWidth },
-            columnStyles: { 0: { halign: 'left', fontStyle: 'bold', cellWidth: headColWidth }},
-            didParseCell: (data) => {
-                if (data.row.section === 'head' && data.column.dataKey === '0') {
-                    data.cell.styles.halign = 'left';
-                }
-            },
-        } as BaseConfig);
-        // const colStyle = { cellWidth };
-        // for (let i = 1; i <= maxCols; ++i) {
-        //   (template.columnStyles![i.toString()] as any) = colStyle;
-        // }
-        htmlTables.forEach((t, indx) => {
-            (template as HTMLConfig).html = t;
-            if (indx === htmlTables.length - 1) {
-                template.tableWidth = (cols % maxCols) * cellWidth + headColWidth - lineWidth * (cols + 2);
-            }
-            // @ts-ignore
-            doc.autoTable(template);
-        });
-        // doc.autoPrint();
-        doc.save('withdrawal-plan.pdf');
+      } else {
+        htmlTables.push(htmlTable)
+      }
+      const headColWidth = 34
+      const cellWidth = 21
+      const lineWidth = 0.1
+      const widths = new Set<number>()
+      const template: BaseConfig = Object.assign(pdfTemplate(doc), {
+        theme: 'grid',
+        pageBreak: 'avoid',
+        tableWidth: 'wrap',
+        headStyles: {
+          fillColor: [255, 255, 255],
+          textColor: 0,
+          fontStyle: 'bold'
+        },
+        styles: { halign: 'center', cellWidth },
+        columnStyles: { 0: { halign: 'left', fontStyle: 'bold', cellWidth: headColWidth } },
+        didParseCell: (data) => {
+          if (data.row.section === 'head' && data.column.dataKey === '0') {
+            data.cell.styles.halign = 'left'
+          }
+        }
+      } as BaseConfig)
+      // const colStyle = { cellWidth };
+      // for (let i = 1; i <= maxCols; ++i) {
+      //   (template.columnStyles![i.toString()] as any) = colStyle;
+      // }
+      htmlTables.forEach((t, indx) => {
+        (template as HTMLConfig).html = t
+        if (indx === htmlTables.length - 1) {
+          template.tableWidth = (cols % maxCols) * cellWidth + headColWidth - lineWidth * (cols + 2)
+        }
+        // @ts-ignore
+        doc.autoTable(template)
+      })
+      // doc.autoPrint();
+      doc.save('withdrawal-plan.pdf')
     }
 }
 
