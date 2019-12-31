@@ -26,16 +26,16 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Inject } from 'vue-property-decorator'
-import { UKWeightData } from '@/services/anthropometry/'
-import { CentileRange, IMedianMatchResult } from '@/services/anthropometry/CentileRange'
-import { vueNumber } from './PatientAgeData.vue'
-import { inverseCumSNorm } from '@/services/anthropometry/graphing/inverseCumSNorm'
-import { ageString } from '@/services/utilities/ageString'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Inject } from 'vue-property-decorator';
+import { UKWeightData } from '@/services/anthropometry/';
+import { CentileRange, IMedianMatchResult } from '@/services/anthropometry/CentileRange';
+import { vueNumber } from './PatientAgeData.vue';
+import { inverseCumSNorm } from '@/services/anthropometry/graphing/inverseCumSNorm';
+import { ageString } from '@/services/utilities/ageString';
 
-const lqZ = inverseCumSNorm(0.25)
-let ageForWeightStr!: (ageDays: IMedianMatchResult, abbrev?: boolean) => string
+const lqZ = inverseCumSNorm(0.25);
+let ageForWeightStr!: (ageDays: IMedianMatchResult, abbrev?: boolean) => string;
 
 @Component
 export default class MultiWeightRow extends Vue {
@@ -44,41 +44,41 @@ export default class MultiWeightRow extends Vue {
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
 
-    private created () {
+    private created() {
       if (!ageForWeightStr) {
         // using male range because for the data we have for the weight metric, these are both the same.
-        ageForWeightStr = ageString.bind(null, this.wtCentiles.maleRange.gestAgeData.minAge)
+        ageForWeightStr = ageString.bind(null, this.wtCentiles.maleRange.gestAgeData.minAge);
       }
     }
 
-    public get maleMedianAgeForWeight () {
-      if (this.wtKg === '') { return '' }
-      const ageDays = this.wtCentiles.maleRange.ageDaysForMedian(this.wtKg)
-      this.$emit('male-median-age', ageDays)
-      return ageForWeightStr(ageDays)
+    public get maleMedianAgeForWeight() {
+      if (this.wtKg === '') { return ''; }
+      const ageDays = this.wtCentiles.maleRange.ageDaysForMedian(this.wtKg);
+      this.$emit('male-median-age', ageDays);
+      return ageForWeightStr(ageDays);
     }
 
-    public get maleIQRAgeForWeight () {
-      return this.iqrString(this.wtCentiles.maleRange)
+    public get maleIQRAgeForWeight() {
+      return this.iqrString(this.wtCentiles.maleRange);
     }
 
-    public get femaleMedianAgeForWeight () {
-      if (this.wtKg === '') { return '' }
-      const ageDays = this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg)
-      this.$emit('female-median-age', ageDays)
-      return ageForWeightStr(ageDays)
+    public get femaleMedianAgeForWeight() {
+      if (this.wtKg === '') { return ''; }
+      const ageDays = this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg);
+      this.$emit('female-median-age', ageDays);
+      return ageForWeightStr(ageDays);
     }
 
-    public get femaleIQRAgeForWeight () {
-      return this.iqrString(this.wtCentiles.femaleRange)
+    public get femaleIQRAgeForWeight() {
+      return this.iqrString(this.wtCentiles.femaleRange);
     }
 
-    private iqrString (centiles: CentileRange) {
-      if (this.wtKg === '') { return '' }
-      const lb = ageForWeightStr(centiles.ageDaysForZ(-lqZ, this.wtKg))
-      const ub = ageForWeightStr(centiles.ageDaysForZ(lqZ, this.wtKg))
-      if (lb === ub) { return lb }
-      return `${lb} – ${ub}`
+    private iqrString(centiles: CentileRange) {
+      if (this.wtKg === '') { return ''; }
+      const lb = ageForWeightStr(centiles.ageDaysForZ(-lqZ, this.wtKg));
+      const ub = ageForWeightStr(centiles.ageDaysForZ(lqZ, this.wtKg));
+      if (lb === ub) { return lb; }
+      return `${lb} – ${ub}`;
     }
 }
 </script>

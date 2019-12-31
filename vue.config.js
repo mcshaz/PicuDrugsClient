@@ -1,11 +1,11 @@
 module.exports = {
   pwa: {
-    name: 'Children\'s Drug Calculator'
+    name: 'Children\'s Drug Calculator',
   },
   configureWebpack: {
-    devtool: 'source-map'
-  }
-}
+    devtool: 'source-map',
+  },
+};
 // https://cli.vuejs.org/config/#publicpath
 /*
 process.env.VUE_APP_VERSION = require('./package.json').version;

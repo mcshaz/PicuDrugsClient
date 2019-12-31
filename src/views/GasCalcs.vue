@@ -52,18 +52,18 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator'
-import { cylinderSizes, pressureToKpa, GasCylinder } from '@/services/transports/GasCylinder'
-import SvgGasGuage from '@/components/SvgGasGuage.vue'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { cylinderSizes, pressureToKpa, GasCylinder } from '@/services/transports/GasCylinder';
+import SvgGasGuage from '@/components/SvgGasGuage.vue';
 type vueNumber = number | '';
-const units = [ 'KPa', 'Bar', 'PSI', 'Proportion' ] as const
+const units = [ 'KPa', 'Bar', 'PSI', 'Proportion' ] as const;
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
 @Component({
   components: {
-  }
+  },
 })
 export default class GasCalcs extends Vue {
   public minVol: vueNumber = '';
@@ -76,29 +76,29 @@ export default class GasCalcs extends Vue {
   public units = units;
   public selectedUnit = 'KPa';
 
-  public get proportionUsed () {
-    return this.o2Consumption * this.durationMins / this.selectedCylinder.litres
+  public get proportionUsed() {
+    return this.o2Consumption * this.durationMins / this.selectedCylinder.litres;
   }
 
-  public get selectedCylinder () {
-    return cylinderSizes[this.selectedSize]
+  public get selectedCylinder() {
+    return cylinderSizes[this.selectedSize];
   }
 
   @Watch('minVol')
   @Watch('fio2')
-  public calco2 () {
+  public calco2() {
     this.o2Consumption = (this.fio2 !== '' && this.minVol !== '')
       ? theoreticalO2Flow(this.fio2, this.minVol)
-      : 0
+      : 0;
   }
 
   @Watch('o2consumption')
-  public o2Changed (newVal: vueNumber, oldVal: vueNumber) {
-    this.fio2 = ''
-    this.minVol = ''
+  public o2Changed(newVal: vueNumber, oldVal: vueNumber) {
+    this.fio2 = '';
+    this.minVol = '';
   }
 }
-function theoreticalO2Flow (fio2: number, mv: number) {
-  return mv * (fio2 - 0.21) / 0.79
+function theoreticalO2Flow(fio2: number, mv: number) {
+  return mv * (fio2 - 0.21) / 0.79;
 }
 </script>

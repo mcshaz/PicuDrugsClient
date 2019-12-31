@@ -1,56 +1,56 @@
-import { helpers } from 'vuelidate/lib/validators'
+import { helpers } from 'vuelidate/lib/validators';
 
-export const defaultSim = 'SIM0000'
-export function getNHIVals () {
+export const defaultSim = 'SIM0000';
+export function getNHIVals() {
   return {
     nhiChars: helpers.regex('nhiChars', createNHIRx()),
     // exactLength: exactLength(defaultSim.length),
-    nhiChecksum: helpers.withParams({ type: 'nhiChecksum' }, (val: string) => !helpers.req(val) || mod11check(val))
-  }
+    nhiChecksum: helpers.withParams({ type: 'nhiChecksum' }, (val: string) => !helpers.req(val) || mod11check(val)),
+  };
 }
-function createNHIRx (ignoreCase: boolean = false, simNHI = defaultSim) {
-  let allowedChars = 'A-HJ-NP-Z'
+function createNHIRx(ignoreCase: boolean = false, simNHI = defaultSim) {
+  let allowedChars = 'A-HJ-NP-Z';
   if (ignoreCase) {
-    allowedChars += allowedChars.toLowerCase()
+    allowedChars += allowedChars.toLowerCase();
     simNHI = simNHI.split('')
       .map((c) => isNaN(Number(c))
         ? `[${c}${c.toLowerCase()}]`
         : c)
-      .join('')
+      .join('');
   }
-  allowedChars = '[' + allowedChars + ']'
+  allowedChars = '[' + allowedChars + ']';
   const returnVar = 'AAANNNC'
     .split('')
     .map((c) => {
       switch (c) {
         case 'A':
-          return allowedChars
+          return allowedChars;
         case 'N':
         case 'C':
-          return '\\d'
+          return '\\d';
         default:
-          return c
+          return c;
       }
     })
-    .join('')
-  return new RegExp(`^(${returnVar}|${simNHI})$`)
+    .join('');
+  return new RegExp(`^(${returnVar}|${simNHI})$`);
 }
 
-function mod11check (str: string) {
-  const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
-  const checkSum = parseInt(str.slice(-1), 10)
-  str = str.slice(0, -1).toUpperCase()
-  let cum = 0
-  let multiplier = str.length + 1
+function mod11check(str: string) {
+  const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const checkSum = parseInt(str.slice(-1), 10);
+  str = str.slice(0, -1).toUpperCase();
+  let cum = 0;
+  let multiplier = str.length + 1;
   for (const c of str) {
-    let val = parseInt(c, 10)
+    let val = parseInt(c, 10);
     if (isNaN(val)) {
-      val = alphaLookup.indexOf(c) + 1
+      val = alphaLookup.indexOf(c) + 1;
     }
-    cum += val * multiplier--
+    cum += val * multiplier--;
   }
-  const modulus = cum % 11
+  const modulus = cum % 11;
   return modulus > 1
     ? (checkSum === 11 - modulus)
-    : (modulus + checkSum === 11)
+    : (modulus + checkSum === 11);
 }

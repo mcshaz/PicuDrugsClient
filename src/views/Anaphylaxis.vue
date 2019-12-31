@@ -19,33 +19,33 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue } from 'vue-property-decorator'
-import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue'
-import SvtSvg from '@/components/SvtSvg.vue'
-import StatusEpilepsySvg from '@/components/StatusEpilepsySvg.vue'
+import 'reflect-metadata';
+import { Component, Vue } from 'vue-property-decorator';
+import AnaphylaxisSvg from '@/components/AnaphylaxisSvg.vue';
+import SvtSvg from '@/components/SvtSvg.vue';
+import StatusEpilepsySvg from '@/components/StatusEpilepsySvg.vue';
 
 type vueNumber = number | '';
 @Component({
   components: {
     AnaphylaxisSvg,
     SvtSvg,
-    StatusEpilepsySvg
-  }
+    StatusEpilepsySvg,
+  },
 })
 export default class Anaphylaxis extends Vue {
   public wtKg: vueNumber = '';
   public minWt = 1;
   public maxWt = 600;
 
-  public get errMsg () {
+  public get errMsg() {
     if (this.wtKg === '') {
-      return 'Weight is required'
+      return 'Weight is required';
     }
     if (this.wtKg < this.minWt || this.wtKg > this.maxWt) {
-      return `weight must be between ${this.minWt} and ${this.maxWt} kg`
+      return `weight must be between ${this.minWt} and ${this.maxWt} kg`;
     }
-    return ''
+    return '';
   }
 }
 

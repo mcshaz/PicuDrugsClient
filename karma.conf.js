@@ -1,11 +1,11 @@
-module.exports = function (config) {
+module.exports = function(config) {
   config.set({
     frameworks: ['mocha', 'chai', 'karma-typescript'],
     files: [
-      '**/tests/**/*.spec.ts'
+      '**/tests/**/*.spec.ts',
     ],
     preprocessors: {
-      '**/*.ts': 'karma-typescript' // *.tsx for React Jsx
+      '**/*.ts': 'karma-typescript', // *.tsx for React Jsx
     },
     reporters: ['progress', 'karma-typescript'],
     port: 9876, // karma web server port
@@ -17,8 +17,8 @@ module.exports = function (config) {
     customLaunchers: {
       FirefoxHeadless: {
         base: 'FirefoxDeveloper',
-        flags: ['-headless']
-      }
-    }
-  })
-}
+        flags: ['-headless'],
+      },
+    },
+  });
+};

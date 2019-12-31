@@ -234,9 +234,9 @@
     </svg>
 </template>
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { roundToFixed, roundToNearest } from '@/services/infusion-calculations/Utilities/rounding'
+import 'reflect-metadata';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { roundToFixed, roundToNearest } from '@/services/infusion-calculations/Utilities/rounding';
 
 type vueNumber = number | '';
 
@@ -245,179 +245,179 @@ export default class AnaphylaxisSvg extends Vue {
     @Prop({ required: true })
     public wtKg!: vueNumber;
 
-    public get adrenalineNebDose (): vueNumber {
+    public get adrenalineNebDose(): vueNumber {
       if (this.wtKg === '') {
-        return ''
+        return '';
       }
       return this.wtKg >= 12
         ? 6
-        : roundToFixed(0.5 * this.wtKg)
+        : roundToFixed(0.5 * this.wtKg);
     }
 
-    public get adrenalineNebSaline (): vueNumber {
+    public get adrenalineNebSaline(): vueNumber {
       if (!this.adrenalineNebDose) {
-        return ''
+        return '';
       }
       return this.adrenalineNebDose >= 4
         ? 0
-        : roundToFixed(4 - this.adrenalineNebDose)
+        : roundToFixed(4 - this.adrenalineNebDose);
     }
 
-    public get adrenalineIM () {
+    public get adrenalineIM() {
       if (this.wtKg === '') {
-        return ''
+        return '';
       }
       if (this.wtKg >= 50) {
-        return { dose: 0.5, units: 'mg', ml: 0.5 }
+        return { dose: 0.5, units: 'mg', ml: 0.5 };
       }
       if (this.wtKg < 7.5) {
-        return { dose: '5–10', units: 'microg', ml: '0.05–0.1' }
+        return { dose: '5–10', units: 'microg', ml: '0.05–0.1' };
       }
-      let dose
+      let dose;
       if (this.wtKg <= 20) {
-        dose = roundToNearest(10 * this.wtKg, 50)
-        return { dose, units: 'microg', ml: dose / 1000 }
+        dose = roundToNearest(10 * this.wtKg, 50);
+        return { dose, units: 'microg', ml: dose / 1000 };
       }
-      dose = roundToNearest(10 * this.wtKg, 100)
-      return { dose, units: 'microg', ml: dose / 1000 }
+      dose = roundToNearest(10 * this.wtKg, 100);
+      return { dose, units: 'microg', ml: dose / 1000 };
     }
 
-    public get dirtyAdrenalineRate () {
+    public get dirtyAdrenalineRate() {
       if (this.wtKg === '') {
-        return ''
+        return '';
       }
       return this.wtKg >= 100
         ? 500
-        : Math.round(5 * this.wtKg)
+        : Math.round(5 * this.wtKg);
     }
 
-    public get dirtyAdrenalineDrops () {
+    public get dirtyAdrenalineDrops() {
       if (!this.dirtyAdrenalineRate) {
-        return ''
+        return '';
       }
-      return Math.round(this.dirtyAdrenalineRate / 3)
+      return Math.round(this.dirtyAdrenalineRate / 3);
     }
 
-    public get volume () {
+    public get volume() {
       if (this.wtKg === '') {
-        return ''
+        return '';
       }
       return this.wtKg >= 50
         ? 1000
-        : Math.round(20 * this.wtKg)
+        : Math.round(20 * this.wtKg);
     }
 
-    public get loratadineDose () {
+    public get loratadineDose() {
       if (this.wtKg === '') {
-        return ''
+        return '';
       }
       if (this.wtKg <= 12) {
-        return 2.5
+        return 2.5;
       }
       if (this.wtKg <= 30) {
-        return 5
+        return 5;
       }
-      return 10
+      return 10;
     }
 
-    public get hydrocortDose () {
+    public get hydrocortDose() {
       if (this.wtKg === '') {
-        return ''
+        return '';
       }
       return this.wtKg >= 40
         ? 200
-        : Math.round(this.wtKg * 5)
+        : Math.round(this.wtKg * 5);
     }
 
-    public get hydrocortVol () {
+    public get hydrocortVol() {
       if (!this.hydrocortDose) {
-        return ''
+        return '';
       }
-      return this.hydrocortDose / 50
+      return this.hydrocortDose / 50;
     }
 }
 
 </script>
 <style scoped>
     /* <![CDATA[ */
-	@namespace svg url(http://www.w3.org/2000/svg);
+    @namespace svg url(http://www.w3.org/2000/svg);
     rect {
-	  fill-opacity: 1;
-	  stroke-width: 2;
-	  stroke-linejoin:round;
-	  stroke-opacity: 1;
+      fill-opacity: 1;
+      stroke-width: 2;
+      stroke-linejoin:round;
+      stroke-opacity: 1;
     }
-	text {
-		font-size: 12pt;
-		font-style: normal;
-		font-weight: normal;
-		font-family: Arial, Helvetica, sans-serif;
-		text-align: center;
-		letter-spacing: 0;
-		word-spacing: 0;
-		writing-mode: lr-tb;
-		text-anchor: middle;
-	}
-	line {
-		stroke-width: 5;
-		stroke: #fb3199;
-	}
-	text.list {
-		text-anchor: start;
-		text-align: left;
-	}
-	.blue {
-		fill: #8ce1fd;
-		stroke: #00b9f2;
-	}
-	.pink {
-		fill: #ffd4c5;
-		stroke: #fb3199;
-	}
-	.green {
-		fill: #c5e4c2;
-		stroke: #45b348;
-	}
-	.title {
+    text {
+        font-size: 12pt;
+        font-style: normal;
+        font-weight: normal;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        letter-spacing: 0;
+        word-spacing: 0;
+        writing-mode: lr-tb;
+        text-anchor: middle;
+    }
+    line {
+        stroke-width: 5;
+        stroke: #fb3199;
+    }
+    text.list {
+        text-anchor: start;
+        text-align: left;
+    }
+    .blue {
+        fill: #8ce1fd;
+        stroke: #00b9f2;
+    }
+    .pink {
+        fill: #ffd4c5;
+        stroke: #fb3199;
+    }
+    .green {
+        fill: #c5e4c2;
+        stroke: #45b348;
+    }
+    .title {
         fill:#FFF;
-		stroke: #0e2c53;
-	}
-	.title-text {
-		fill: #0e2c53;
-		font-size: 32pt;
-		font-weight: bold;
-	}
-	.heading {
-		font-weight: bold;
-		font-size: 16pt;
-	}
-	.strong {
-		font-weight: bold;
-	}
-	.decision {
-		font-size: 20pt;
-		font-weight: bold;
-	}
-	.em {
-		font-style: italic;
-	}
-	.resolve {
-		font-size: 10pt;
-		font-weight: bold;
-	}
-	.small {
-		font-size: 9pt;
-		fill: #444;
-	}
+        stroke: #0e2c53;
+    }
+    .title-text {
+        fill: #0e2c53;
+        font-size: 32pt;
+        font-weight: bold;
+    }
+    .heading {
+        font-weight: bold;
+        font-size: 16pt;
+    }
+    .strong {
+        font-weight: bold;
+    }
+    .decision {
+        font-size: 20pt;
+        font-weight: bold;
+    }
+    .em {
+        font-style: italic;
+    }
+    .resolve {
+        font-size: 10pt;
+        font-weight: bold;
+    }
+    .small {
+        font-size: 9pt;
+        fill: #444;
+    }
 
-	svg|a:link, svg|a:visited {
-	  cursor: pointer;
-	}
+    svg|a:link, svg|a:visited {
+      cursor: pointer;
+    }
 
-	svg|a text,
-	text svg|a {
-	  fill: blue; /* Even for text, SVG uses fill over color */
-	  text-decoration: underline;
-	}
+    svg|a text,
+    text svg|a {
+      fill: blue; /* Even for text, SVG uses fill over color */
+      text-decoration: underline;
+    }
     /* ]]> */
   </style>

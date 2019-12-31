@@ -17,16 +17,16 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator'
-import DateInputPolyfill from '@/components/DateInputPolyfill.vue'
-import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers'
-import { dateElSupportValues, dateElSupport } from '@/services/utilities/html5ElementSupport'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
+import DateInputPolyfill from '@/components/DateInputPolyfill.vue';
+import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
+import { dateElSupportValues, dateElSupport } from '@/services/utilities/html5ElementSupport';
 
 @Component({
   components: {
-    DateInputPolyfill
-  }
+    DateInputPolyfill,
+  },
 })
 export default class DateInput extends Vue {
     public readonly isDateSupported: dateElSupportValues;
@@ -48,52 +48,52 @@ export default class DateInput extends Vue {
     @Prop({ default: false })
     private required!: boolean;
 
-    constructor () {
-      super()
-      this.isDateSupported = dateElSupport
-      this.dateElSupportValues = dateElSupportValues
+    constructor() {
+      super();
+      this.isDateSupported = dateElSupport;
+      this.dateElSupportValues = dateElSupportValues;
       if (this.isDateSupported === dateElSupportValues.elSupport) {
-        this.pDateStr = ''
+        this.pDateStr = '';
       }
     }
 
-    public created () {
+    public created() {
       if (this.isDateSupported === dateElSupportValues.elSupport && this.value) {
-        this.pDateStr = ymdFormat(this.value)
+        this.pDateStr = ymdFormat(this.value);
       } else if (this.isDateSupported === dateElSupportValues.valueAsDateSupport) {
-        this.offset = (this.value || new Date()).getTimezoneOffset() * 60000
+        this.offset = (this.value || new Date()).getTimezoneOffset() * 60000;
       }
     }
 
-    public get dateStr () {
-      return this.pDateStr
+    public get dateStr() {
+      return this.pDateStr;
     }
-    public set dateStr (value: string) {
-      this.pDateStr = value
-      let dt!: Date
+    public set dateStr(value: string) {
+      this.pDateStr = value;
+      let dt!: Date;
       if (value === '' || isNaN((dt = new Date(value)).valueOf())) {
         if (this.wasDate) {
-          this.$emit('value', null)
-          this.wasDate = false
+          this.$emit('value', null);
+          this.wasDate = false;
         }
-        return
+        return;
       }
       if (dt.getHours() !== 0 || dt.getMinutes() !== 0) { // because it is interpreted as utc midnight
-        dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset())
+        dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset());
       }
-      this.$emit('value', dt)
-      this.wasDate = true
+      this.$emit('value', dt);
+      this.wasDate = true;
     }
 
-    public get minStr () {
+    public get minStr() {
       return this.min
         ? ymdFormat(this.min)
-        : void 0
+        : void 0;
     }
-    public get maxStr () {
+    public get maxStr() {
       return this.max
         ? ymdFormat(this.max)
-        : void 0
+        : void 0;
     }
 }
 

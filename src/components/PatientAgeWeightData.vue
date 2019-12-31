@@ -68,23 +68,23 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import PatientAgeData from '@/components/PatientAgeData.vue'
-import NhiInput from '@/components/NhiInput.vue'
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue'
-import WeeksGestation from '@/components/WeeksGestation.vue'
-import { ChildAge, daysPerMonth, GenericRange } from '@/services/infusion-calculations'
-import { UKWeightData, Lms } from '@/services/anthropometry/'
-import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString'
-import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers'
-import _ from 'lodash'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import PatientAgeData from '@/components/PatientAgeData.vue';
+import NhiInput from '@/components/NhiInput.vue';
+import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
+import WeeksGestation from '@/components/WeeksGestation.vue';
+import { ChildAge, daysPerMonth, GenericRange } from '@/services/infusion-calculations';
+import { UKWeightData, Lms } from '@/services/anthropometry/';
+import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString';
+import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
+import _ from 'lodash';
 
 type vueNumber = number | '';
 type nullBool = null | boolean;
 
 @Component({
-  components: { PatientAgeData, NhiInput, TrueFalseRadio, WeeksGestation }
+  components: { PatientAgeData, NhiInput, TrueFalseRadio, WeeksGestation },
 })
 export default class PatientAgeWeightData extends Vue {
   public name = '';
@@ -115,59 +115,59 @@ export default class PatientAgeWeightData extends Vue {
   // not to be watched
   private wtData!: UKWeightData;
 
-  public mounted () {
-    this.wtData = new UKWeightData()
+  public mounted() {
+    this.wtData = new UKWeightData();
   }
 
-  public get weightKg () { return this.pWeightKg }
-  public set weightKg (value: vueNumber) {
-    this.pWeightKg = value
+  public get weightKg() { return this.pWeightKg; }
+  public set weightKg(value: vueNumber) {
+    this.pWeightKg = value;
     if (value === '') {
-      this.debounceCentiles.cancel()
-      this.updateCentiles()
+      this.debounceCentiles.cancel();
+      this.updateCentiles();
     } else {
-      this.debounceCentiles()
+      this.debounceCentiles();
     }
   }
 
-  public get isMale () { return this.pIsMale }
-  public set isMale (value: nullBool) {
+  public get isMale() { return this.pIsMale; }
+  public set isMale(value: nullBool) {
     if (value !== this.pIsMale) {
-      this.pIsMale = value
-      this.updateCentiles()
+      this.pIsMale = value;
+      this.updateCentiles();
     }
   }
 
-  public get age () { return this.pAge }
-  public set age (value: ChildAge | null) {
-    this.pAge = value
-    this.updateCentiles()
+  public get age() { return this.pAge; }
+  public set age(value: ChildAge | null) {
+    this.pAge = value;
+    this.updateCentiles();
   }
 
-  public get acceptWtWarn () { return this.pAcceptWtWarn }
-  public set acceptWtWarn (value: boolean) {
+  public get acceptWtWarn() { return this.pAcceptWtWarn; }
+  public set acceptWtWarn(value: boolean) {
     this.pAcceptWtWarn = value;
-    (this.$refs.weight as HTMLInputElement).setCustomValidity(value ? '' : 'centiles')
+    (this.$refs.weight as HTMLInputElement).setCustomValidity(value ? '' : 'centiles');
     if (value && this.alertLevel === 'danger') {
-      this.alertLevel = 'warning'
+      this.alertLevel = 'warning';
     }
   }
 
-  public wt4age () {
-    const rng = this.lmsRange()
+  public wt4age() {
+    const rng = this.lmsRange();
     if (!rng.lowerBound) {
-      throw new Error('cannot get lms for age - no data')
+      throw new Error('cannot get lms for age - no data');
     }
-    this.isWeightEstimate = true
+    this.isWeightEstimate = true;
     if (!rng.upperBound) {
-      this.weightKg = Math.round(rng.lowerBound.m)
+      this.weightKg = Math.round(rng.lowerBound.m);
     } else {
-      this.weightKg = Math.round((rng.lowerBound.m + rng.upperBound.m) / 2)
+      this.weightKg = Math.round((rng.lowerBound.m + rng.upperBound.m) / 2);
     }
   }
 
-  public submit (evt: Event) {
-    this.isFormSubmitted = true
+  public submit(evt: Event) {
+    this.isFormSubmitted = true;
     if ((this.$refs.form as HTMLFormElement).checkValidity()) {
       this.$emit('valid-submit', {
         name: this.name,
@@ -177,70 +177,70 @@ export default class PatientAgeWeightData extends Vue {
         isMale: this.pIsMale,
         weightKg: this.pWeightKg,
         centileHTML: this.$refs.centile ? (this.$refs.centile as HTMLOutputElement).innerHTML : '',
-        isWeightEstimate: this.isWeightEstimate
-      })
+        isWeightEstimate: this.isWeightEstimate,
+      });
     }
   }
 
-  private updateCentiles () {
-    const rng = this.lmsRange()
+  private updateCentiles() {
+    const rng = this.lmsRange();
     if (this.pWeightKg === '' || rng.lowerBound === void 0) {
-      this.ubWtCentile = this.lbWtCentile = null
-      this.minWeight = minWeightRecord()
-      this.maxWeight = maxWeightRecord()
-      return
+      this.ubWtCentile = this.lbWtCentile = null;
+      this.minWeight = minWeightRecord();
+      this.maxWeight = maxWeightRecord();
+      return;
     }
-    const lbWtCentile = rng.lowerBound.cumSnormfromParam(this.pWeightKg) * 100
-    this.lbWtCentile = centileString(lbWtCentile)
+    const lbWtCentile = rng.lowerBound.cumSnormfromParam(this.pWeightKg) * 100;
+    this.lbWtCentile = centileString(lbWtCentile);
     if (rng.upperBound === void 0) {
-      this.ubWtCentile = null
-      this.alertLevel = alertLevel(this.lbWtCentile.alarm)
+      this.ubWtCentile = null;
+      this.alertLevel = alertLevel(this.lbWtCentile.alarm);
     } else {
-      const ubWtCentile = rng.upperBound.cumSnormfromParam(this.pWeightKg) * 100
-      const ucs = centileString(ubWtCentile)
+      const ubWtCentile = rng.upperBound.cumSnormfromParam(this.pWeightKg) * 100;
+      const ucs = centileString(ubWtCentile);
       if (ucs.val === this.lbWtCentile.val) {
-        this.ubWtCentile = null
-        this.alertLevel = alertLevel(this.lbWtCentile.alarm)
+        this.ubWtCentile = null;
+        this.alertLevel = alertLevel(this.lbWtCentile.alarm);
       } else {
-        this.ubWtCentile = ucs
+        this.ubWtCentile = ucs;
         if (ucs.prefix === this.lbWtCentile.prefix) {
-          ucs.prefix = this.lbWtCentile.prefix = ''
+          ucs.prefix = this.lbWtCentile.prefix = '';
         }
         if (this.pIsMale === null) {
-          this.lbWtCentile.note = '♂'
-          ucs.note = '♀'
+          this.lbWtCentile.note = '♂';
+          ucs.note = '♀';
         }
-        this.alertLevel = alertLevel(Math.round((this.lbWtCentile.alarm + this.ubWtCentile.alarm) / 2))
+        this.alertLevel = alertLevel(Math.round((this.lbWtCentile.alarm + this.ubWtCentile.alarm) / 2));
       }
     }
-    this.acceptWtWarn = this.alertLevel === 'success'
-    this.minWeight = minWeightRecord(ChildAge.getMinTotalDays(this.pAge!) / daysPerMonth)
-    this.maxWeight = maxWeightRecord(ChildAge.getMaxTotalDays(this.pAge!) / daysPerMonth)
+    this.acceptWtWarn = this.alertLevel === 'success';
+    this.minWeight = minWeightRecord(ChildAge.getMinTotalDays(this.pAge!) / daysPerMonth);
+    this.maxWeight = maxWeightRecord(ChildAge.getMaxTotalDays(this.pAge!) / daysPerMonth);
   }
 
-  private lmsRange () {
-    const returnVar = new GenericRange<Lms>()
+  private lmsRange() {
+    const returnVar = new GenericRange<Lms>();
     if (!this.pAge) {
-      return returnVar
+      return returnVar;
     }
-    const ageDays = this.pAge.getAgeRangeInDays()
-    returnVar.lowerBound = this.wtData.lmsForAge(ageDays.upperBound, this.pIsMale === null ? true : this.pIsMale, this.weeksGestation || 40)
+    const ageDays = this.pAge.getAgeRangeInDays();
+    returnVar.lowerBound = this.wtData.lmsForAge(ageDays.upperBound, this.pIsMale === null ? true : this.pIsMale, this.weeksGestation || 40);
     if (this.isMale !== null && ageDays.lowerBound === ageDays.upperBound) {
-      return returnVar
+      return returnVar;
     }
-    returnVar.upperBound = this.wtData.lmsForAge(ageDays.lowerBound, this.pIsMale === null ? false : this.pIsMale, this.weeksGestation || 40)
-    return returnVar
+    returnVar.upperBound = this.wtData.lmsForAge(ageDays.lowerBound, this.pIsMale === null ? false : this.pIsMale, this.weeksGestation || 40);
+    return returnVar;
   }
 }
 
-function alertLevel (level: alarmLevel) {
+function alertLevel(level: alarmLevel) {
   switch (level) {
     case alarmLevel.none:
     case alarmLevel.minorWarning:
-      return 'success'
+      return 'success';
     case alarmLevel.warning:
     case alarmLevel.danger:
-      return 'danger'
+      return 'danger';
   }
 }
 </script>

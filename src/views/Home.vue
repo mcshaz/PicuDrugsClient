@@ -33,21 +33,21 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator'
-import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue'
-import WardSelect from '@/components/WardSelect.vue'
-import { IPatientData, IWardChartData } from '@/components/ComponentCommunication'
-import { IEntityWard, IAppData } from '@/services/drugDb'
-import { dateOrder } from '@/services/utilities/dateHelpers'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
+import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
+import WardSelect from '@/components/WardSelect.vue';
+import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
+import { IEntityWard, IAppData } from '@/services/drugDb';
+import { dateOrder } from '@/services/utilities/dateHelpers';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
 @Component({
   components: {
     PatientAgeWeightData,
-    WardSelect
-  }
+    WardSelect,
+  },
 })
 export default class Home extends Vue {
   public boluses = true;
@@ -61,47 +61,47 @@ export default class Home extends Vue {
   private wardName!: string;
   private baseRef!: string;
 
-  public created () {
+  public created() {
     // route might be user typed & is valid with or without trailing '/'
-    this.baseRef = process.env.VUE_APP_BASE_URL! + setSlash(this.$route.path)
+    this.baseRef = process.env.VUE_APP_BASE_URL! + setSlash(this.$route.path);
     // logic should be - if wardName prop defined or if no appData use ward.isBolusOnly
     // else use appData
     // nb 2 promises - do not set up race condition - should be ok as in created hook
     if (this.wardName) {
-      this.baseRef = this.baseRef.slice(0, -1 - this.wardName.length)
+      this.baseRef = this.baseRef.slice(0, -1 - this.wardName.length);
     }
   }
 
-  public submit (data: IPatientData) {
+  public submit(data: IPatientData) {
     if (!this.ward) {
-      throw new Error('validation failing - selectedWard was null but valid submit reached')
+      throw new Error('validation failing - selectedWard was null but valid submit reached');
     }
-    const chartData = data as IWardChartData
-    chartData.boluses = this.boluses
-    chartData.infusions = this.infusions
-    chartData.ward = this.ward
+    const chartData = data as IWardChartData;
+    chartData.boluses = this.boluses;
+    chartData.infusions = this.infusions;
+    chartData.ward = this.ward;
     this.appData.setWardDefaults(
-      { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false })
-    this.$router.push({ name: 'ward-chart', params: { chartData } } as any)
+      { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false });
+    this.$router.push({ name: 'ward-chart', params: { chartData } } as any);
   }
 
-  public get link () {
+  public get link() {
     return this.ward
       ? this.baseRef + encodeURIComponent(this.ward.abbrev)
-      : ''
+      : '';
   }
 }
 
-function setSlash (path: string) {
+function setSlash(path: string) {
   if (/^\/*$/.test(path)) {
-    return ''
+    return '';
   }
   if (!path.endsWith('/')) { // route might be user typed & is valid with or without trailing '/'
-    path += '/'
+    path += '/';
   }
   if (path[0] === '/') {
-    path = path.substr(1)
+    path = path.substr(1);
   }
-  return path
+  return path;
 }
 </script>

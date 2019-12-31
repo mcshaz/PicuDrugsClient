@@ -1,5 +1,5 @@
 export class GasCylinder {
-  constructor (readonly litres: number, readonly use = '', readonly kpaFull = 153) {
+  constructor(readonly litres: number, readonly use = '', readonly kpaFull = 153) {
   }
 }
 
@@ -10,10 +10,10 @@ export const cylinderSizes = Object.freeze({
   BP: new GasCylinder(110, 'small nitric oxide'),
   D: new GasCylinder(1490, 'ambulance'),
   G: new GasCylinder(7290),
-  M122: new GasCylinder(3455, 'aviation')
-})
+  M122: new GasCylinder(3455, 'aviation'),
+});
 
 export const pressureToKpa = {
   psi: 6.89476,
-  bar: 100
-}
+  bar: 100,
+};

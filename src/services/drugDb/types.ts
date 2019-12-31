@@ -3,7 +3,7 @@ const TYPES = {
   ILogger: Symbol.for('ILogger'),
   IDrugDB: Symbol.for('IDrugDB'),
   IAppData: Symbol.for('IAppData'),
-  IRegisterEmail: Symbol.for('IRegisterEmail')
-}
+  IRegisterEmail: Symbol.for('IRegisterEmail'),
+};
 
-export { TYPES }
+export { TYPES };

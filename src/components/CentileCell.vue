@@ -30,13 +30,13 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Model } from 'vue-property-decorator'
-import { ICentileVal } from '@/services/utilities/centileString'
-import _ from 'lodash'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Model } from 'vue-property-decorator';
+import { ICentileVal } from '@/services/utilities/centileString';
+import _ from 'lodash';
 
 type vueNumber = number | '';
-export const emitKey = 'debounced-input'
+export const emitKey = 'debounced-input';
 
 @Component({})
 export default class CentileCell extends Vue {
@@ -56,18 +56,18 @@ export default class CentileCell extends Vue {
     public max!: number;
 
     private debounceEmit = _.debounce(this.emitValue.bind(this), 450);
-    private emitValue ($event: Event) {
-      const valStr = ($event.target as HTMLInputElement).value
-      let returnVar: vueNumber
+    private emitValue($event: Event) {
+      const valStr = ($event.target as HTMLInputElement).value;
+      let returnVar: vueNumber;
       if (valStr === '') {
-        returnVar = ''
+        returnVar = '';
       } else {
-        returnVar = parseFloat(valStr)
+        returnVar = parseFloat(valStr);
         if (isNaN(returnVar) || returnVar < this.min || returnVar > this.max) {
-          returnVar = ''
+          returnVar = '';
         }
       }
-      this.$emit(emitKey, returnVar)
+      this.$emit(emitKey, returnVar);
     }
 }
 </script>

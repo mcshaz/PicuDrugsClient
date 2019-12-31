@@ -1,8 +1,8 @@
-import { CentileCollection } from './CentileCollection'
-import { Lms } from './Lms'
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
 
 export class UKWeightData extends CentileCollection {
-  constructor () {
+  constructor() {
     super({
       lmsForGestAgeMale: [
         new Lms(1.147, 0.6145, 0.15875),
@@ -547,8 +547,8 @@ export class UKWeightData extends CentileCollection {
         new Lms(-0.599, 58.072, 0.1412),
         new Lms(-0.6, 58.0833, 0.14119),
         new Lms(-0.6, 58.0936, 0.14118),
-        new Lms(-0.601, 58.104, 0.14117)
-      ]
-    })
+        new Lms(-0.601, 58.104, 0.14117),
+      ],
+    });
   }
 }

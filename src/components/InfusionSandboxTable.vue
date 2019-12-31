@@ -15,14 +15,14 @@
   </tr>
 </template>
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Inject, Watch } from 'vue-property-decorator'
-import { UKWeightData } from '@/services/anthropometry/'
-import { IMedianMatchResult } from '@/services/anthropometry/CentileRange'
-import { medianMatchAvg } from '@/services/anthropometry'
-import { ageString } from '@/services/utilities/ageString'
-import { IEntityFixedInfusionDrug } from '@/services/drugDb'
-import { transformFixedInfusions, IPatientFixedInfusionDrug, FixedInfusionDrugVM } from '@/services/infusion-calculations'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Inject, Watch } from 'vue-property-decorator';
+import { UKWeightData } from '@/services/anthropometry/';
+import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
+import { medianMatchAvg } from '@/services/anthropometry';
+import { ageString } from '@/services/utilities/ageString';
+import { IEntityFixedInfusionDrug } from '@/services/drugDb';
+import { transformFixedInfusions, IPatientFixedInfusionDrug, FixedInfusionDrugVM } from '@/services/infusion-calculations';
 
 type vueNumber = number | '';
 
@@ -40,19 +40,19 @@ export default class InfusionSandboxTable extends Vue {
     private noData = true;
     private ageDays!: IMedianMatchResult;
 
-    private created () {
+    private created() {
       this.ageDays = medianMatchAvg(this.wtCentiles.maleRange.ageDaysForMedian(this.wtKg),
-        this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg))
+        this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg));
       // using male range because for the data we have for the weight metric, these are both the same.
-      this.ageForWeight = ageString(this.wtCentiles.maleRange.gestAgeData.minAge, this.ageDays)
+      this.ageForWeight = ageString(this.wtCentiles.maleRange.gestAgeData.minAge, this.ageDays);
     }
 
     @Watch('drugData', { deep: true })
-    private drugDataChange () {
+    private drugDataChange() {
       if (this.drugData) {
-        this.patientInfusion = transformFixedInfusions(this.wtKg, this.drugData)
+        this.patientInfusion = transformFixedInfusions(this.wtKg, this.drugData);
       } else {
-        this.patientInfusion = null
+        this.patientInfusion = null;
       }
     }
 }

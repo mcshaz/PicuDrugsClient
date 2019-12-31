@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator'
-import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb'
-import { sortByStringProp } from '@/services/utilities/sortByProp'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
+import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: string; text: string; disabled?: boolean; }
 
@@ -66,51 +66,51 @@ export default class WardSelect extends Vue {
   @Inject('appData')
   private appData!: IAppData;
 
-  public created () {
+  public created() {
     this.wards = this.db.wards.toArray().then((wards) => {
-      wards = wards.filter((w) => w.isLive)
-      sortByStringProp(wards, 'fullname')
-      this.wardOptions = wards.map((w) => ({ value: w.abbrev, text: w.fullname } as ISelectOption))
-      return wards
-    })
+      wards = wards.filter((w) => w.isLive);
+      sortByStringProp(wards, 'fullname');
+      this.wardOptions = wards.map((w) => ({ value: w.abbrev, text: w.fullname } as ISelectOption));
+      return wards;
+    });
     if (this.wardAbbrev) {
-      this.abbrev = this.wardAbbrev
+      this.abbrev = this.wardAbbrev;
     } else {
       this.appData.getWardDefaults().then((wd) => {
         if (wd) {
-          this.boluses = wd.boluses
-          this.infusions = wd.infusions
-          this.abbrev = wd.wardAbbrev
+          this.boluses = wd.boluses;
+          this.infusions = wd.infusions;
+          this.abbrev = wd.wardAbbrev;
         }
-      })
+      });
     }
   }
 
-  public get infusionsAvailable () {
-    return this.selectedWard && this.selectedWard.infusionSortOrderings.length > 0
+  public get infusionsAvailable() {
+    return this.selectedWard && this.selectedWard.infusionSortOrderings.length > 0;
   }
 
-  public get abbrev () {
+  public get abbrev() {
     return this.selectedWard
       ? this.selectedWard.abbrev
-      : ''
+      : '';
   }
-  public set abbrev (value: string) {
+  public set abbrev(value: string) {
     if (value !== this.abbrev) {
       if (value === '') {
-        this.selectedWard = null
+        this.selectedWard = null;
       } else {
         this.wards.then((wards) => {
-          const searchFor = value.toLowerCase()
-          this.selectedWard = wards.find((w) => w.abbrev.toLowerCase() === searchFor) || null
-          this.$emit('ward', this.selectedWard)
-        })
+          const searchFor = value.toLowerCase();
+          this.selectedWard = wards.find((w) => w.abbrev.toLowerCase() === searchFor) || null;
+          this.$emit('ward', this.selectedWard);
+        });
       }
     }
   }
   @Watch('infusionsAvailable')
-  private availableChange (newVal: boolean) {
-    this.$emit('infusions-available', newVal)
+  private availableChange(newVal: boolean) {
+    this.$emit('infusions-available', newVal);
   }
 }
 </script>

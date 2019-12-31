@@ -13,13 +13,13 @@
     </div>
 </template>
 <script lang="ts">
-import 'reflect-metadata'
-import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
-import { Validation } from 'vuelidate'
-import { shortFormatter } from '@/services/utilities/dateHelpers'
+import 'reflect-metadata';
+import Vue from 'vue';
+import { Component, Prop } from 'vue-property-decorator';
+import { Validation } from 'vuelidate';
+import { shortFormatter } from '@/services/utilities/dateHelpers';
 
-const vowels = 'aeiouAEIOU'
+const vowels = 'aeiouAEIOU';
 @Component({})
 export default class VuelidateMessage extends Vue {
     @Prop({ required: true })
@@ -31,33 +31,33 @@ export default class VuelidateMessage extends Vue {
     @Prop({ default: false })
     public isSelect!: boolean;
 
-    public get indefinateArticle () {
-      if (this.label.startsWith('the ') || this.label.startsWith('your ')) { return '' }
+    public get indefinateArticle() {
+      if (this.label.startsWith('the ') || this.label.startsWith('your ')) { return ''; }
       if (this.label.length >= 2) {
-        const begin = this.label.substring(0, 2)
-        if (begin === 'eu' || begin === 'ur') { return 'a' }
+        const begin = this.label.substring(0, 2);
+        if (begin === 'eu' || begin === 'ur') { return 'a'; }
         if (begin === 'ho') {
           return ['hour', 'honest', 'honor'].some((h) => this.label.startsWith(h))
             ? 'an'
-            : 'a'
+            : 'a';
         }
-        if (begin === 'un' && this.label[2] === 'i') { return 'a' } // note un prefix, unidentified, unimportant actually 'an'
+        if (begin === 'un' && this.label[2] === 'i') { return 'a'; } // note un prefix, unidentified, unimportant actually 'an'
       }
       return vowels.includes(this.label[0])
         ? 'an'
-        : 'a'
+        : 'a';
     }
-    public get minStr () {
-      const min: Date | number = this.validator.$params.between!.min
+    public get minStr() {
+      const min: Date | number = this.validator.$params.between!.min;
       return (typeof min === 'number')
         ? min.toString()
-        : shortFormatter.format(min)
+        : shortFormatter.format(min);
     }
-    public get maxStr () {
-      const max: Date | number = this.validator.$params.between!.max
+    public get maxStr() {
+      const max: Date | number = this.validator.$params.between!.max;
       return (typeof max === 'number')
         ? max.toString()
-        : shortFormatter.format(max)
+        : shortFormatter.format(max);
     }
 }
 </script>

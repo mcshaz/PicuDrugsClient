@@ -1,9 +1,9 @@
-import { CentileCollection } from './CentileCollection'
-import { Lms } from './Lms'
-import { GenderRange } from './GenderRange'
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
+import { GenderRange } from './GenderRange';
 
 export class UKLengthData extends CentileCollection {
-  constructor () {
+  constructor() {
     super({ gestAgeWeeksRange: new GenderRange(25),
       lmsForGestAgeMale: [
         new Lms(1, 35.42414, 0.08132453),
@@ -544,8 +544,8 @@ export class UKLengthData extends CentileCollection {
         new Lms(1, 163.63, 0.0369),
         new Lms(1, 163.64, 0.0369),
         new Lms(1, 163.64, 0.0369),
-        new Lms(1, 163.64, 0.0369)
-      ]
-    })
+        new Lms(1, 163.64, 0.0369),
+      ],
+    });
   }
 }

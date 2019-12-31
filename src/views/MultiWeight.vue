@@ -57,15 +57,15 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator'
-import WardSelect from '@/components/WardSelect.vue'
-import { IMultiWardChartData } from '@/components/ComponentCommunication'
-import { IEntityWard, IAppData } from '@/services/drugDb'
-import MultiWeightRow from '@/components/MultiWeightRow.vue'
-import { UKWeightData, medianMatchAvg } from '@/services/anthropometry'
-import { IMedianMatchResult } from '@/services/anthropometry/CentileRange'
-import { exampleWeights } from '@/services/utilities/weightHelpers'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
+import WardSelect from '@/components/WardSelect.vue';
+import { IMultiWardChartData } from '@/components/ComponentCommunication';
+import { IEntityWard, IAppData } from '@/services/drugDb';
+import MultiWeightRow from '@/components/MultiWeightRow.vue';
+import { UKWeightData, medianMatchAvg } from '@/services/anthropometry';
+import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
+import { exampleWeights } from '@/services/utilities/weightHelpers';
 
 type vueNumber = number | '';
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
@@ -73,11 +73,11 @@ interface IWtAge { wtKg: number; maleM: IMedianMatchResult; femaleM: IMedianMatc
 @Component({
   components: {
     WardSelect,
-    MultiWeightRow
+    MultiWeightRow,
   },
   provide: {
-    wtCentiles: new UKWeightData()
-  }
+    wtCentiles: new UKWeightData(),
+  },
 })
 export default class MultiWeight extends Vue {
   public boluses = true;
@@ -95,43 +95,43 @@ export default class MultiWeight extends Vue {
   @Prop({ default: '' })
   private wardName!: string;
 
-  public get emailValidity () {
+  public get emailValidity() {
     if (this.email.length) {
-      return (this.$refs.email as HTMLInputElement).validity.valid
+      return (this.$refs.email as HTMLInputElement).validity.valid;
     }
-    return null
+    return null;
   }
 
-  public addRow () {
+  public addRow() {
     if (this.weightInEditor === '' || this.weightInEditor <= 0) {
-      return
+      return;
     }
     if (!this.weights.some((w) => w.wtKg === this.weightInEditor)) {
-      this.weights.push({ wtKg: this.weightInEditor } as IWtAge)
+      this.weights.push({ wtKg: this.weightInEditor } as IWtAge);
       this.weights.sort((a, b) => {
-        if (a.wtKg === b.wtKg) { return 0 }
-        return a.wtKg > b.wtKg ? 1 : -1
-      })
+        if (a.wtKg === b.wtKg) { return 0; }
+        return a.wtKg > b.wtKg ? 1 : -1;
+      });
     }
-    this.weightInEditor = ''
+    this.weightInEditor = '';
   }
 
-  public del (indx: number) {
-    this.weights.splice(indx, 1)
+  public del(indx: number) {
+    this.weights.splice(indx, 1);
   }
 
-  public submit () {
+  public submit() {
     if (!this.ward) {
-      throw new Error('validation failing - selectedWard was null but valid submit reached')
+      throw new Error('validation failing - selectedWard was null but valid submit reached');
     }
     const chartData: IMultiWardChartData = {
       boluses: this.boluses,
       infusions: this.infusions,
       ward: this.ward,
       weights: this.weights.map((w) => ({ wtKg: w.wtKg, estAge: medianMatchAvg(w.femaleM, w.maleM) })),
-      updateEmail: this.email
-    }
-    this.$router.push({ name: 'multi-chart', params: { chartData } } as any)
+      updateEmail: this.email,
+    };
+    this.$router.push({ name: 'multi-chart', params: { chartData } } as any);
   }
 }
 </script>

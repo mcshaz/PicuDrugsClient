@@ -48,7 +48,7 @@
             </form>
             <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
                 <output v-if="!!value">
-                    {{ value.toFixed(isBsa ? 2 : (value < 10 ? 1 : 0))}}
+                    {{ value.toFixed(isBsa ? 2 : (10 >= value ? 0 : 1))}}
                     <span v-if="isBsa">m<sup>2</sup></span><span v-else>kg</span>
                 </output>
                 <div class="formula" v-if="!!texFormulae.length>0">
@@ -77,25 +77,25 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue'
-import PatientAgeData from '@/components/PatientAgeData.vue'
-import { anthroCalculations, applyAnthropometry } from '@/services/pharmacokinetics/anthroCalculations'
-import { mcLarenObesityCorrection, mooreObesityCorrection, bmiObesityCorrection } from '@/services/anthropometry/helpers/obesityCorrections'
-import { UKWeightData, UKBMIData, UKLengthData } from '@/services/anthropometry/'
-import { ChildAge } from '@/services/infusion-calculations'
-import { toGrouping } from '@/services/drugDb/helpers/toGrouping'
-import KatexElement from 'vue-katex/src/components/KatexElement.vue'
+import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
+import PatientAgeData from '@/components/PatientAgeData.vue';
+import { anthroCalculations, applyAnthropometry } from '@/services/pharmacokinetics/anthroCalculations';
+import { mcLarenObesityCorrection, mooreObesityCorrection, bmiObesityCorrection } from '@/services/anthropometry/helpers/obesityCorrections';
+import { UKWeightData, UKBMIData, UKLengthData } from '@/services/anthropometry/';
+import { ChildAge } from '@/services/infusion-calculations';
+import { toGrouping } from '@/services/drugDb/helpers/toGrouping';
+import KatexElement from 'vue-katex/src/components/KatexElement.vue';
 
 type vueNumber = number | '';
 enum centileCorrections { BMI = 'Body Mass Index Method', Moore = 'Moore Method', McLaren = 'McLaren Method' }
-const emptyArray: string[] = []
+const emptyArray: string[] = [];
 
 @Component({
   components: {
-    TrueFalseRadio, PatientAgeData, KatexElement
-  }
+    TrueFalseRadio, PatientAgeData, KatexElement,
+  },
 })
 export default class WeightCalculations extends Vue {
     public isMale: boolean | null = null;
@@ -110,85 +110,85 @@ export default class WeightCalculations extends Vue {
     private pLengthCentiles?: UKLengthData;
     private pBmiCentiles?: UKBMIData;
 
-    public created () {
-      this.formulaGroups['Centile Chart Based'] = Object.values(centileCorrections)
-      const bsa = toGrouping(Array.from(anthroCalculations.keys()), isBsa)
-      this.formulaGroups['Body Surface Area'] = bsa.get(true)
-      this.formulaGroups.Allometry = bsa.get(false)
+    public created() {
+      this.formulaGroups['Centile Chart Based'] = Object.values(centileCorrections);
+      const bsa = toGrouping(Array.from(anthroCalculations.keys()), isBsa);
+      this.formulaGroups['Body Surface Area'] = bsa.get(true);
+      this.formulaGroups.Allometry = bsa.get(false);
     }
     // computed
-    public get description () {
-      if (this.formula === '') { return '' }
+    public get description() {
+      if (this.formula === '') { return ''; }
       if (this.formula === centileCorrections.Moore) {
-        return 'Find height for age centile, and then calculate the weight for age which would be on the equivalent centile'
+        return 'Find height for age centile, and then calculate the weight for age which would be on the equivalent centile';
       }
       if (this.formula === centileCorrections.McLaren) {
-        return 'Find the age which equates to the 50<sup>th</sup> centile for the height of the child, and lookup the 50<sup>th</sup> weight centile for that age'
+        return 'Find the age which equates to the 50<sup>th</sup> centile for the height of the child, and lookup the 50<sup>th</sup> weight centile for that age';
       }
       if (this.formula === centileCorrections.BMI) {
-        return 'Use the 50<sup>th</sup> centile BMI for age, and multiply by the height<sup>2</sup>'
+        return 'Use the 50<sup>th</sup> centile BMI for age, and multiply by the height<sup>2</sup>';
       }
-      return anthroCalculations.get(this.formula)!.description
+      return anthroCalculations.get(this.formula)!.description;
     }
-    public get value () {
-      if (this.formula === '') { return '' }
+    public get value() {
+      if (this.formula === '') { return ''; }
       if (this.isCentileCalc) {
         if (this.heightCm === '' || this.isMale === null) {
-          return ''
+          return '';
         }
         if (this.formula === centileCorrections.McLaren) {
-          return mcLarenObesityCorrection(this.heightCm, this.isMale, this.lengthCentiles(), this.weightCentiles())
+          return mcLarenObesityCorrection(this.heightCm, this.isMale, this.lengthCentiles(), this.weightCentiles());
         }
-        if (this.age === null) { return '' }
-        const ageDays = this.age.getAgeRangeInDays().avg()
+        if (this.age === null) { return ''; }
+        const ageDays = this.age.getAgeRangeInDays().avg();
         if (this.formula === centileCorrections.Moore) {
-          return mooreObesityCorrection(this.heightCm, ageDays, this.isMale, this.lengthCentiles(), this.weightCentiles())
+          return mooreObesityCorrection(this.heightCm, ageDays, this.isMale, this.lengthCentiles(), this.weightCentiles());
         }
         // else this.formula === centileCorrections.BMI
-        return bmiObesityCorrection(this.heightCm, ageDays, this.isMale, this.bmiCentiles())
+        return bmiObesityCorrection(this.heightCm, ageDays, this.isMale, this.bmiCentiles());
       }
-      return applyAnthropometry(anthroCalculations.get(this.formula)!, this.weightKg, this.heightCm, this.isMale) || ''
+      return applyAnthropometry(anthroCalculations.get(this.formula)!, this.weightKg, this.heightCm, this.isMale) || '';
     }
-    public get texFormulae () {
-      if (!this.formula || this.isCentileCalc) { return emptyArray }
-      return anthroCalculations.get(this.formula)!.katex
+    public get texFormulae() {
+      if (!this.formula || this.isCentileCalc) { return emptyArray; }
+      return anthroCalculations.get(this.formula)!.katex;
     }
-    public get requireAge () {
-      return this.formula === centileCorrections.Moore || this.formula === centileCorrections.BMI
+    public get requireAge() {
+      return this.formula === centileCorrections.Moore || this.formula === centileCorrections.BMI;
     }
-    public get requireWeight () {
-      const calc = anthroCalculations.get(this.formula)
-      return calc === void 0 ? false : !!calc.requiresMassKg
+    public get requireWeight() {
+      const calc = anthroCalculations.get(this.formula);
+      return calc === void 0 ? false : !!calc.requiresMassKg;
     }
-    public get requireHeight () {
-      if (this.isCentileCalc) { return true }
-      const calc = anthroCalculations.get(this.formula)
-      return calc === void 0 ? false : !!calc.requiresHeightCm
+    public get requireHeight() {
+      if (this.isCentileCalc) { return true; }
+      const calc = anthroCalculations.get(this.formula);
+      return calc === void 0 ? false : !!calc.requiresHeightCm;
     }
-    public get requireGender () {
-      if (this.isCentileCalc) { return true }
-      const calc = anthroCalculations.get(this.formula)
-      return calc === void 0 ? false : !!calc.requiresGender
+    public get requireGender() {
+      if (this.isCentileCalc) { return true; }
+      const calc = anthroCalculations.get(this.formula);
+      return calc === void 0 ? false : !!calc.requiresGender;
     }
-    public get isBsa () {
-      return isBsa(this.formula)
+    public get isBsa() {
+      return isBsa(this.formula);
     }
-    public get isCentileCalc () {
-      return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren || this.formula === centileCorrections.BMI
+    public get isCentileCalc() {
+      return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren || this.formula === centileCorrections.BMI;
     }
     // methods - more lik properties, but vue will make them observable if written as such
-    private weightCentiles () {
-      return this.pWeightCentiles || (this.pWeightCentiles = new UKWeightData())
+    private weightCentiles() {
+      return this.pWeightCentiles || (this.pWeightCentiles = new UKWeightData());
     }
-    private lengthCentiles () {
-      return this.pLengthCentiles || (this.pLengthCentiles = new UKLengthData())
+    private lengthCentiles() {
+      return this.pLengthCentiles || (this.pLengthCentiles = new UKLengthData());
     }
-    private bmiCentiles () {
-      return this.pBmiCentiles || (this.pBmiCentiles = new UKBMIData())
+    private bmiCentiles() {
+      return this.pBmiCentiles || (this.pBmiCentiles = new UKBMIData());
     }
 }
-function isBsa (test: string) {
-  return test.startsWith('body surface area')
+function isBsa(test: string) {
+  return test.startsWith('body surface area');
 }
 </script>
 

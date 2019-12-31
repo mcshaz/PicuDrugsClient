@@ -36,10 +36,10 @@
   </div>
 </template>
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator'
-import { WardLists, IDrugDB } from '@/services/drugDb'
-import { IVariableInfusionDrugVM, NumericRange } from '@/services/infusion-calculations'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
+import { WardLists, IDrugDB } from '@/services/drugDb';
+import { IVariableInfusionDrugVM, NumericRange } from '@/services/infusion-calculations';
 
 @Component
 export default class VariableInfusions extends Vue {
@@ -47,16 +47,16 @@ export default class VariableInfusions extends Vue {
     @Prop({ required: true })
     private chartPromise!: Promise<IVariableInfusionDrugVM[]>;
 
-    public created () {
+    public created() {
       if (this.chartPromise!) {
         this.chartPromise.then((data) => {
-          this.chart = data
-        })
+          this.chart = data;
+        });
       }
     }
 
-    public round (val: number) {
-      return NumericRange.sigFigures(val, 2)
+    public round(val: number) {
+      return NumericRange.sigFigures(val, 2);
     }
 }
 </script>

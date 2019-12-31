@@ -95,7 +95,15 @@
       "@vue/standard",
       "@vue/typescript"
     ],
-    "rules": {},
+    "rules": {
+      "space-before-function-paren": ["error", "never"],
+      "semi": ["error", "always"],
+      "no-useless-constructor": 0,
+      "comma-dangle": ["error", {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }]
+    },
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },

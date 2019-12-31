@@ -12,12 +12,12 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 
 type vueNumber = number | '';
 type nullBool = null | boolean;
-const termGestation = 40
+const termGestation = 40;
 @Component
 export default class WeeksGestation extends Vue {
     @Prop({ default: termGestation })
@@ -29,24 +29,24 @@ export default class WeeksGestation extends Vue {
     private maxGest = 43;
     private state = true;
 
-    public convertAndEmit (val: string) {
-      let numVal: '' | number
+    public convertAndEmit(val: string) {
+      let numVal: '' | number;
       if (!val) {
-        numVal = ''
+        numVal = '';
       } else {
-        const floatVal = parseFloat(val)
+        const floatVal = parseFloat(val);
         numVal = isNaN(floatVal)
           ? ''
-          : floatVal
+          : floatVal;
       }
-      this.state = !!numVal && this.minGest <= numVal && numVal <= this.maxGest
-      this.$emit('input', numVal)
+      this.state = !!numVal && this.minGest <= numVal && numVal <= this.maxGest;
+      this.$emit('input', numVal);
     }
 
     @Watch('disabled')
-    private disableChange (newVal: boolean) {
+    private disableChange(newVal: boolean) {
       if (newVal) {
-        this.convertAndEmit(termGestation.toString())
+        this.convertAndEmit(termGestation.toString());
       }
     }
 }

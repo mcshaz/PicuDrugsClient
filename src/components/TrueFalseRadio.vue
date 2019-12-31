@@ -10,8 +10,8 @@
   </b-form-radio-group>
 </template>
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Model } from 'vue-property-decorator'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Model } from 'vue-property-decorator';
 
 type vueNumber = number | '';
 type nullBool = null | boolean;
@@ -31,14 +31,14 @@ export default class TrueFalseRadio extends Vue {
   @Prop({ default: '' })
   public name!: string;
 
-  public get radioGrpName () {
-    return this.name || ('radioGrp_' + (this as any)._uid)
+  public get radioGrpName() {
+    return this.name || ('radioGrp_' + (this as any)._uid);
   }
 }
-function html5IdSafe (id: string) {
+function html5IdSafe(id: string) {
   if (id === '') {
-    throw new Error('id cannot be an empty string')
+    throw new Error('id cannot be an empty string');
   }
-  return id.replace(/\s/g, '+')
+  return id.replace(/\s/g, '+');
 }
 </script>

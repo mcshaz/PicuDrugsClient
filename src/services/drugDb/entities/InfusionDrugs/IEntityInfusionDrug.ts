@@ -1,6 +1,6 @@
-import { siUnit } from '../enums/siUnit'
-import { dilutionMethod } from '../enums/dilutionMethod'
-import { diluentFluid } from '../enums/diluentFluid'
+import { siUnit } from '../enums/siUnit';
+import { dilutionMethod } from '../enums/dilutionMethod';
+import { diluentFluid } from '../enums/diluentFluid';
 
 export interface IInfusionInfo {
     fullname: string;

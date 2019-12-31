@@ -1,4 +1,4 @@
-import { dbTableName } from '../entities/enums/dbTableName'
+import { dbTableName } from '../entities/enums/dbTableName';
 
 export interface INewServerDeletions {
     table: dbTableName;

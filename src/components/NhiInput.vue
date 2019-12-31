@@ -33,11 +33,11 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 // import { Validations } from 'vuelidate-property-decorators';
-import { Validation } from 'vuelidate'
-import { defaultSim } from '@/services/validation/getNHIVals'
+import { Validation } from 'vuelidate';
+import { defaultSim } from '@/services/validation/getNHIVals';
 
 type vueNumber = number | '';
 
@@ -51,12 +51,12 @@ export default class NhiInput extends Vue {
   @Prop({ required: true })
   private validator!: Validation;
 
-  public get nhi () {
-    return this.value
+  public get nhi() {
+    return this.value;
   }
-  public set nhi (value: string) {
-    this.$emit('input', value.toUpperCase())
-    this.validator.$touch()
+  public set nhi(value: string) {
+    this.$emit('input', value.toUpperCase());
+    this.validator.$touch();
   }
 }
 /*

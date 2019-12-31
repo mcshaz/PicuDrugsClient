@@ -111,21 +111,21 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator'
-import { exampleWeights } from '@/services/utilities/weightHelpers'
-import { siUnit, IEntityFixedDilution, IEntityFixedConcentration, dilutionMethod } from '@/services/drugDb'
-import { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution, prefixes } from '@/services/infusion-calculations'
-import { UKWeightData } from '@/services/anthropometry/'
-import { enumToValues, enumValueOptions } from '@/services/utilities/enumToValues'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
+import { exampleWeights } from '@/services/utilities/weightHelpers';
+import { siUnit, IEntityFixedDilution, IEntityFixedConcentration, dilutionMethod } from '@/services/drugDb';
+import { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution, prefixes } from '@/services/infusion-calculations';
+import { UKWeightData } from '@/services/anthropometry/';
+import { enumToValues, enumValueOptions } from '@/services/utilities/enumToValues';
 
 type vueNumber = number | '';
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
 @Component({
   provide: {
-    wtCentiles: new UKWeightData()
-  }
+    wtCentiles: new UKWeightData(),
+  },
 })
 export default class InfusionSandbox extends Vue {
   public dilutionMethods = enumToValues(dilutionMethod);
@@ -147,14 +147,14 @@ export default class InfusionSandbox extends Vue {
   public rate = 10;
   public concentration = 0.2;
 
-  public get infusionEntity (): IPatientFixedInfusionDrug {
+  public get infusionEntity(): IPatientFixedInfusionDrug {
     const returnVar = {
       fullname: this.name,
       siPrefix: this.ampPrefix,
       siUnitId: this.siUnitId,
       drugAmpuleConcentrations: [{
         concentration: (this.ampAmount || 0) / (this.ampVol || 1),
-        volume: this.ampVol
+        volume: this.ampVol,
       }],
       dilution: {
         dilutionMethodId: this.dilutionMethodId,
@@ -164,11 +164,11 @@ export default class InfusionSandbox extends Vue {
           volume: this.dilutionVol || null,
           stopMinutes: this.duration,
           rate: this.rate,
-          concentration: this.concentration
-        } as IPatientFixedConcentration]
-      } as IPatientFixedDilution
-    } as IPatientFixedInfusionDrug
-    return returnVar
+          concentration: this.concentration,
+        } as IPatientFixedConcentration],
+      } as IPatientFixedDilution,
+    } as IPatientFixedInfusionDrug;
+    return returnVar;
   }
 }
 

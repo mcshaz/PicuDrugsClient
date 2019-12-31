@@ -44,13 +44,13 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator'
-import { UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, CentileCollection } from '@/services/anthropometry/'
-import { centileString } from '@/services/utilities/centileString'
-import { ChildAge, msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge'
-import CentileCell from './CentileCell.vue'
-import DateInput from './DateInput.vue'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
+import { UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, CentileCollection } from '@/services/anthropometry/';
+import { centileString } from '@/services/utilities/centileString';
+import { ChildAge, msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
+import CentileCell from './CentileCell.vue';
+import DateInput from './DateInput.vue';
 
 type vueNumber = number | '';
 
@@ -68,8 +68,8 @@ export interface ICentileVals {
 @Component({
   components: {
     CentileCell,
-    DateInput
-  }
+    DateInput,
+  },
 })
 export default class CentileRow extends Vue implements ICentileVals {
     @Prop({ required: true })
@@ -97,57 +97,57 @@ export default class CentileRow extends Vue implements ICentileVals {
     @Inject('hcCentiles')
     private hcCentiles!: UKHeadCircumferenceData;
 
-    public get ageString () {
+    public get ageString() {
       if (!this.dob || !this.measureDate) {
-        return ''
+        return '';
       }
-      const age = ChildAge.ageOnDate(this.dob, this.measureDate)
-      let returnVar = age.years ? age.years + ' yr' : ''
-      returnVar += age.months ? age.months + ' mth' : ''
-      returnVar += age.years < 2 ? (age.days + ' day') : ''
-      return returnVar
+      const age = ChildAge.ageOnDate(this.dob, this.measureDate);
+      let returnVar = age.years ? age.years + ' yr' : '';
+      returnVar += age.months ? age.months + ' mth' : '';
+      returnVar += age.years < 2 ? (age.days + ' day') : '';
+      return returnVar;
     }
 
-    public get ageDays () {
+    public get ageDays() {
       return (!this.dob || !this.measureDate || this.dob > this.measureDate)
         ? null
-        : Math.floor((this.measureDate.getTime() - this.dob.getTime()) / msPerDay)
+        : Math.floor((this.measureDate.getTime() - this.dob.getTime()) / msPerDay);
     }
 
-    public get bmi () {
-      let returnVar: vueNumber
+    public get bmi() {
+      let returnVar: vueNumber;
       if (!this.wtKg || !this.lengthCm) {
-        returnVar = ''
+        returnVar = '';
       } else {
-        returnVar = UKBMIData.calculateBMI(this.wtKg, this.lengthCm)
-        returnVar = Number(returnVar.toFixed(1))
+        returnVar = UKBMIData.calculateBMI(this.wtKg, this.lengthCm);
+        returnVar = Number(returnVar.toFixed(1));
       }
-      this.$emit('bmi-change', returnVar)
-      return returnVar
+      this.$emit('bmi-change', returnVar);
+      return returnVar;
     }
-    public get wtCentile () {
-      return this.getCentile(this.wtKg, this.wtCentiles)
+    public get wtCentile() {
+      return this.getCentile(this.wtKg, this.wtCentiles);
     }
-    public get lengthCentile () {
-      return this.getCentile(this.lengthCm, this.lengthCentiles)
+    public get lengthCentile() {
+      return this.getCentile(this.lengthCm, this.lengthCentiles);
     }
-    public get hcCentile () {
-      return this.getCentile(this.hcCm, this.hcCentiles)
+    public get hcCentile() {
+      return this.getCentile(this.hcCm, this.hcCentiles);
     }
-    public get bmiCentile () {
-      return this.getCentile(this.bmi, this.bmiCentiles)
+    public get bmiCentile() {
+      return this.getCentile(this.bmi, this.bmiCentiles);
     }
 
-    private getCentile (value: vueNumber, cc: CentileCollection) {
+    private getCentile(value: vueNumber, cc: CentileCollection) {
       if (value && this.ageDays !== null && this.ageDays >= 0 && this.weeksGestation && this.weeksGestation >= 0 && this.weeksGestation <= 43) {
-        const genderData = this.isMale ? cc.maleRange : cc.femaleRange
-        const cga = this.weeksGestation + this.ageDays / 7
+        const genderData = this.isMale ? cc.maleRange : cc.femaleRange;
+        const cga = this.weeksGestation + this.ageDays / 7;
         if (cga < genderData.gestAgeData.minAge) {
-          return `data begins ${genderData.gestAgeData.minAge}/40`
+          return `data begins ${genderData.gestAgeData.minAge}/40`;
         }
-        return centileString(cc.cumSnormForAge(value, this.ageDays, this.isMale, this.weeksGestation) * 100)
+        return centileString(cc.cumSnormForAge(value, this.ageDays, this.isMale, this.weeksGestation) * 100);
       }
-      return void 0
+      return void 0;
     }
 }
 </script>

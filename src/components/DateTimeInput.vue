@@ -16,17 +16,17 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator'
-import DateInput from '@/components/DateInput.vue'
-import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
+import DateInput from '@/components/DateInput.vue';
+import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 
 interface IDates { value: number; text: string; /* disabled: boolean; */ }
 
 @Component({
   components: {
-    DateInput
-  }
+    DateInput,
+  },
 })
 export default class DateTimeInput extends Vue {
     @Prop({ default: null })
@@ -37,72 +37,72 @@ export default class DateTimeInput extends Vue {
     public time = '';
     private wasEmpty = true;
     private dates: IDates[] = getDateOptions();
-    public created () {
-      this.valueChange()
+    public created() {
+      this.valueChange();
     }
-    public setNow () {
-      const d = new Date()
-      this.$emit('input', d)
+    public setNow() {
+      const d = new Date();
+      this.$emit('input', d);
     }
     @Watch('value')
-    public valueChange () {
+    public valueChange() {
       if (this.value !== null) {
-        const d = new Date(this.value)
-        d.setHours(0, 0, 0, 0)
-        this.date = d.getTime()
-        this.time = `${this.value.getHours().toString().padStart(2, '0')}:${this.value.getMinutes().toString().padStart(2, '0')}`
-        this.wasEmpty = false
+        const d = new Date(this.value);
+        d.setHours(0, 0, 0, 0);
+        this.date = d.getTime();
+        this.time = `${this.value.getHours().toString().padStart(2, '0')}:${this.value.getMinutes().toString().padStart(2, '0')}`;
+        this.wasEmpty = false;
       } else {
-        this.date = null
-        this.time = ''
-        this.wasEmpty = true
+        this.date = null;
+        this.time = '';
+        this.wasEmpty = true;
       }
     }
     @Watch('date')
     @Watch('time')
-    public dateTimeChange () {
+    public dateTimeChange() {
       if (this.time === '' || this.date === null) {
         if (!this.wasEmpty) {
-          this.$emit('input', null)
-          this.wasEmpty = true
+          this.$emit('input', null);
+          this.wasEmpty = true;
         }
       } else {
-        this.wasEmpty = false
-        const returnVar = new Date(this.date)
-        returnVar.setHours(parseInt(this.time.substr(0, 2), 10), parseInt(this.time.substr(3, 2), 10))
-        this.$emit('input', returnVar)
+        this.wasEmpty = false;
+        const returnVar = new Date(this.date);
+        returnVar.setHours(parseInt(this.time.substr(0, 2), 10), parseInt(this.time.substr(3, 2), 10));
+        this.$emit('input', returnVar);
       }
     }
 }
 const formatter = new Intl.DateTimeFormat(navigator.languages as string[],
   { weekday: 'short',
     month: 'numeric',
-    day: 'numeric' })
-let pDtOptions: IDates[]
-function getDateOptions () {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+    day: 'numeric' });
+let pDtOptions: IDates[];
+function getDateOptions() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   if (!pDtOptions || pDtOptions[0].value !== today.getTime()) {
     pDtOptions = new Array(7).fill(today).map((t, indx) => {
-      const dt = new Date(t)
-      dt.setDate(dt.getDate() + indx)
-      let rel: string
+      const dt = new Date(t);
+      dt.setDate(dt.getDate() + indx);
+      let rel: string;
       switch (indx) {
         case 0:
-          rel = ' (today)'
-          break
+          rel = ' (today)';
+          break;
         case 1:
-          rel = ' (tomorrow)'
-          break
+          rel = ' (tomorrow)';
+          break;
         default:
-          rel = ''
+          rel = '';
       }
       return {
         value: dt.getTime(),
-        text: formatter.format(dt) + rel
-      }
-    })
+        text: formatter.format(dt) + rel,
+      };
+    });
   }
-  return pDtOptions
+  return pDtOptions;
 }
 </script>

@@ -538,13 +538,13 @@
 
 </template>
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator'
-import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine'
+import 'reflect-metadata';
+import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
+import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine';
 // import { NumericRange } from '@/services/infusion-calculations/Utilities/NumericRange';
-import { IDrugDB, IEntityInfusion, IEntityFixedInfusionDrug, IEntityDrugAmpuleConcentration, IEntityBolusDrug } from '@/services/drugDb'
-import { filterFixedInfusionsForPt, transformFixedInfusions, FixedInfusionDrugVM, filterTransformBolusesForPt, IBolusDrugVM } from '@/services/infusion-calculations'
-import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding'
+import { IDrugDB, IEntityInfusion, IEntityFixedInfusionDrug, IEntityDrugAmpuleConcentration, IEntityBolusDrug } from '@/services/drugDb';
+import { filterFixedInfusionsForPt, transformFixedInfusions, FixedInfusionDrugVM, filterTransformBolusesForPt, IBolusDrugVM } from '@/services/infusion-calculations';
+import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
 
 type vueNumber = number | '';
 
@@ -567,33 +567,33 @@ export default class StatusEpilepsySvg extends Vue {
   private ivMidazDbData!: PromiseLike<IEntityBolusDrug | undefined>;
   private imiMidazDbData!: PromiseLike<IEntityBolusDrug | undefined>;
 
-  public created () {
-    this.leveDbData = this.db.infusionDrugs.get(1000)
-    this.pivPhenyDbData = this.db.infusionDrugs.get(37)
-    this.buccalMidazDbData = this.db.bolusDrugs.get(1001)
-    this.ivMidazDbData = this.db.bolusDrugs.get(22)
-    this.imiMidazDbData = this.db.bolusDrugs.get(26)
+  public created() {
+    this.leveDbData = this.db.infusionDrugs.get(1000);
+    this.pivPhenyDbData = this.db.infusionDrugs.get(37);
+    this.buccalMidazDbData = this.db.bolusDrugs.get(1001);
+    this.ivMidazDbData = this.db.bolusDrugs.get(22);
+    this.imiMidazDbData = this.db.bolusDrugs.get(26);
   }
 
   @Watch('wtKg')
-  public updateInfusions () {
-    this.getInfusions()
+  public updateInfusions() {
+    this.getInfusions();
   }
 
-  private async getInfusions () {
+  private async getInfusions() {
     if (this.wtKg) {
       const drugs = await Promise.all([this.leveDbData,
         this.pivPhenyDbData,
         this.ivMidazDbData,
         this.imiMidazDbData,
-        this.buccalMidazDbData])
-      const wtSelectedInfusions = filterFixedInfusionsForPt(drugs.slice(0, 2) as IEntityFixedInfusionDrug[], this.wtKg)!
-      this.leve = transformFixedInfusions(this.wtKg, wtSelectedInfusions[0])
-      this.pivPheny = transformFixedInfusions(this.wtKg, wtSelectedInfusions[1])
-      const wtBoluses = filterTransformBolusesForPt(drugs.slice(2) as IEntityBolusDrug[], this.wtKg)
-      this.ivMidaz = wtBoluses[0]
-      this.imiMidaz = wtBoluses[1]
-      this.buccalMidaz = wtBoluses[2]
+        this.buccalMidazDbData]);
+      const wtSelectedInfusions = filterFixedInfusionsForPt(drugs.slice(0, 2) as IEntityFixedInfusionDrug[], this.wtKg)!;
+      this.leve = transformFixedInfusions(this.wtKg, wtSelectedInfusions[0]);
+      this.pivPheny = transformFixedInfusions(this.wtKg, wtSelectedInfusions[1]);
+      const wtBoluses = filterTransformBolusesForPt(drugs.slice(2) as IEntityBolusDrug[], this.wtKg);
+      this.ivMidaz = wtBoluses[0];
+      this.imiMidaz = wtBoluses[1];
+      this.buccalMidaz = wtBoluses[2];
     }
   }
 }

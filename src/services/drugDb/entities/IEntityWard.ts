@@ -1,4 +1,4 @@
-import { IEntityDefibModel } from './IEntityDefibModel'
+import { IEntityDefibModel } from './IEntityDefibModel';
 
 export interface IEntityWard {
     wardId: number;

@@ -1,9 +1,9 @@
-import { SiConcentration } from './Dosing/SiConcentration'
-import { IInfusionDrugVM } from './Interfaces/IInfusionDrugVM'
-import { DrugDoseUnit } from './Dosing/DrugDoseUnit'
-import { InfusionRateUnit } from './Dosing/InfusionRateUnit'
-import { SiUnitMeasure } from './Dosing/SiUnitMeasure'
-import { IFixedInfusionPeriodVM } from './IFixedInfusionPeriodVM'
+import { SiConcentration } from './Dosing/SiConcentration';
+import { IInfusionDrugVM } from './Interfaces/IInfusionDrugVM';
+import { DrugDoseUnit } from './Dosing/DrugDoseUnit';
+import { InfusionRateUnit } from './Dosing/InfusionRateUnit';
+import { SiUnitMeasure } from './Dosing/SiUnitMeasure';
+import { IFixedInfusionPeriodVM } from './IFixedInfusionPeriodVM';
 
 export class FixedInfusionDrugVM implements IInfusionDrugVM {
   public drugName!: string;
@@ -15,14 +15,14 @@ export class FixedInfusionDrugVM implements IInfusionDrugVM {
   public ampuleUnits!: SiConcentration;
   public diluentFluid: string = '';
   public concentrations: IFixedInfusionPeriodVM[] = [];
-  get calculatedDoseUnit (): DrugDoseUnit {
-    return this.rateUnit.toDrugDoseUnit()
+  get calculatedDoseUnit(): DrugDoseUnit {
+    return this.rateUnit.toDrugDoseUnit();
   }
   public rateUnit!: InfusionRateUnit;
-  set drawingUpUnits (value: SiUnitMeasure) {
-    this.ampuleUnits = new SiConcentration(value)
+  set drawingUpUnits(value: SiUnitMeasure) {
+    this.ampuleUnits = new SiConcentration(value);
   }
-  get drawingUpUnits (): SiUnitMeasure {
-    return this.ampuleUnits
+  get drawingUpUnits(): SiUnitMeasure {
+    return this.ampuleUnits;
   }
 }

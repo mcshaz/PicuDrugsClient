@@ -1,9 +1,9 @@
-import { CentileCollection } from './CentileCollection'
-import { Lms } from './Lms'
-import { GenderRange } from './GenderRange'
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
+import { GenderRange } from './GenderRange';
 
 export class UKHeadCircumferenceData extends CentileCollection {
-  constructor () {
+  constructor() {
     super({
       ageMonthsSinceTermRange: new GenderRange(3),
       lmsForGestAgeMale: [
@@ -489,7 +489,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 55.474, 0.02497),
         new Lms(1, 55.491, 0.02499),
         new Lms(1, 55.506, 0.02501),
-        new Lms(1, 55.52, 0.02501) ]
-    })
+        new Lms(1, 55.52, 0.02501) ],
+    });
   }
 }

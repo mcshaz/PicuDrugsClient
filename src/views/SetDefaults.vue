@@ -11,19 +11,19 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator'
-import WardSelect from '@/components/WardSelect.vue'
-import { IPatientData } from '@/components/ComponentCommunication'
-import { IAppData } from '@/services/drugDb'
-import { sortByStringProp } from '@/services/utilities/sortByProp'
+import 'reflect-metadata';
+import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import WardSelect from '@/components/WardSelect.vue';
+import { IPatientData } from '@/components/ComponentCommunication';
+import { IAppData } from '@/services/drugDb';
+import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
 @Component({
   components: {
-    WardSelect
-  }
+    WardSelect,
+  },
 })
 export default class SetDefaults extends Vue {
   public wardAbbrev = '';
@@ -32,24 +32,24 @@ export default class SetDefaults extends Vue {
   @Inject('appData')
   private appData!: IAppData;
 
-  public created () {
+  public created() {
     this.appData.getWardDefaults().then((wd) => {
       if (wd) {
-        this.boluses = wd.boluses
-        this.infusions = wd.infusions
-        this.wardAbbrev = wd.wardAbbrev
+        this.boluses = wd.boluses;
+        this.infusions = wd.infusions;
+        this.wardAbbrev = wd.wardAbbrev;
       }
-    })
+    });
   }
 
-  public submit (data: IPatientData) {
+  public submit(data: IPatientData) {
     if ((this.$refs.form as HTMLFormElement).checkValidity()) {
       this.appData.setWardDefaults({
         boluses: this.boluses,
         infusions: this.infusions,
         wardAbbrev: this.wardAbbrev,
-        formalSet: true
-      }).then(() => this.$router.push({ name: 'home' }))
+        formalSet: true,
+      }).then(() => this.$router.push({ name: 'home' }));
     }
   }
 }

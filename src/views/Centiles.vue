@@ -85,21 +85,21 @@
 </template>
 
 <script lang="ts">
-import 'reflect-metadata'
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, IAnthropometry } from '@/services/anthropometry/'
-import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString'
-import DobInput from '@/components/DobInput.vue'
-import WeeksGestation from '@/components/WeeksGestation.vue'
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue'
-import { ICentileVals } from CentileRow from '@/components/CentileRow.vue'
+import 'reflect-metadata';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, IAnthropometry } from '@/services/anthropometry/';
+import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString';
+import DobInput from '@/components/DobInput.vue';
+import WeeksGestation from '@/components/WeeksGestation.vue';
+import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
+import CentileRow, { ICentileVals } from '@/components/CentileRow.vue';
 
-import { sortByDateProp } from '@/services/utilities/sortByProp'
-import { chartType } from SvgCentiles from '@/components/SvgCentiles.vue'
-import NhiInput from '@/components/NhiInput.vue'
+import { sortByDateProp } from '@/services/utilities/sortByProp';
+import SvgCentiles, { chartType } from '@/components/SvgCentiles.vue';
+import NhiInput from '@/components/NhiInput.vue';
 
-import { msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge'
-import { PatientDBLocal, IGrowthMeasures, IPatient } from '@/services/patientDb'
+import { msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
+import { PatientDBLocal, IGrowthMeasures, IPatient } from '@/services/patientDb';
 
 type vueNumber = number | '';
 interface IIdCentileVals extends ICentileVals { rowId: symbol; }
@@ -109,11 +109,11 @@ interface IIdCentileVals extends ICentileVals { rowId: symbol; }
     wtCentiles: new UKWeightData(),
     lengthCentiles: new UKLengthData(),
     hcCentiles: new UKHeadCircumferenceData(),
-    bmiCentiles: new UKBMIData()
+    bmiCentiles: new UKBMIData(),
   },
   components: {
-    DobInput, WeeksGestation, TrueFalseRadio, CentileRow, SvgCentiles, NhiInput
-  }
+    DobInput, WeeksGestation, TrueFalseRadio, CentileRow, SvgCentiles, NhiInput,
+  },
 })
 export default class Centiles extends Vue {
   public nhi = '';
@@ -130,45 +130,45 @@ export default class Centiles extends Vue {
 
   private patientDb!: PatientDBLocal;
 
-  public created () {
-    this.patientDb = new PatientDBLocal()
-    this.today.setHours(0, 0, 0, 0)
+  public created() {
+    this.patientDb = new PatientDBLocal();
+    this.today.setHours(0, 0, 0, 0);
   }
 
-  public get canAdd () {
-    return !!(this.dob && this.isMale !== null && this.weeksGestation)
+  public get canAdd() {
+    return !!(this.dob && this.isMale !== null && this.weeksGestation);
   }
 
-  public addRow () {
+  public addRow() {
     this.measurements.push({
-      rowId: Symbol(),
+      rowId: Symbol('rowId'),
       measureDate: this.measurements.some((m) => (m.measureDate && m.measureDate.getTime()) === this.today.getTime()) ? null : this.today,
       today: this.today,
       wtKg: '',
       hcCm: '',
       lengthCm: '',
-      bmi: ''
-    })
+      bmi: '',
+    });
   }
 
-  public sort () {
-    sortByDateProp(this.measurements, 'measureDate')
+  public sort() {
+    sortByDateProp(this.measurements, 'measureDate');
   }
 
-  public clear () {
-    this.nhi = ''
-    this.isMale = null
-    this.weeksGestation = 40
-    this.dob = null
-    this.measurements = []
+  public clear() {
+    this.nhi = '';
+    this.isMale = null;
+    this.weeksGestation = 40;
+    this.dob = null;
+    this.measurements = [];
   }
 
-  public get disableSave () {
-    return !this.isNhiValid || this.dob === null || this.isMale === null
+  public get disableSave() {
+    return !this.isNhiValid || this.dob === null || this.isMale === null;
   }
 
-  public async save () {
-    this.sort()
+  public async save() {
+    this.sort();
     const saveData = {
       weeksGestation: this.weeksGestation || 40,
       dob: this.dob!,
@@ -179,39 +179,39 @@ export default class Centiles extends Vue {
             date: m.measureDate,
             weightKg: m.wtKg || void 0,
             hcCm: m.hcCm || void 0,
-            lengthCm: m.lengthCm || void 0
-          })
+            lengthCm: m.lengthCm || void 0,
+          });
         }
-        return prev
-      }, [] as IGrowthMeasures[])
-    } as IPatient
+        return prev;
+      }, [] as IGrowthMeasures[]),
+    } as IPatient;
     // not doing a put here in case in the future we have saved other details such as name we did not wish to overwrite
 
     if (!await this.patientDb.patients.update(this.nhi, saveData)) {
-      saveData.nhi = this.nhi
-      await this.patientDb.patients.add(saveData)
+      saveData.nhi = this.nhi;
+      await this.patientDb.patients.add(saveData);
     }
 
-    this.saved = true
-    const self = this
-    setTimeout(() => self.saved = false, 2000)
+    this.saved = true;
+    const self = this;
+    setTimeout(() => (self.saved = false), 2000);
   }
 
-  public deleteRow (rowId: symbol) {
-    const indx = this.measurements.findIndex((m) => m.rowId === rowId)
+  public deleteRow(rowId: symbol) {
+    const indx = this.measurements.findIndex((m) => m.rowId === rowId);
     if (indx !== -1) {
-      this.measurements.splice(indx, 1)
+      this.measurements.splice(indx, 1);
     }
   }
 
-  public async lookupNhi (isNhiValid: boolean) {
-    this.isNhiValid = isNhiValid
+  public async lookupNhi(isNhiValid: boolean) {
+    this.isNhiValid = isNhiValid;
     if (isNhiValid) {
-      const data = await this.patientDb.patients.get(this.nhi)
+      const data = await this.patientDb.patients.get(this.nhi);
       if (data) {
-        this.weeksGestation = data.weeksGestation
-        this.dob = data.dob
-        this.isMale = data.isMale
+        this.weeksGestation = data.weeksGestation;
+        this.dob = data.dob;
+        this.isMale = data.isMale;
         this.measurements = data.measurements.map((m) => ({
           rowId: Symbol(m.date.toString()),
           measureDate: m.date,
@@ -219,49 +219,49 @@ export default class Centiles extends Vue {
           wtKg: m.weightKg || '' as vueNumber,
           hcCm: m.hcCm || '' as vueNumber,
           lengthCm: m.lengthCm || '' as vueNumber,
-          bmi: '' as vueNumber
-        }))
-        this.addRow()
+          bmi: '' as vueNumber,
+        }));
+        this.addRow();
       }
     }
   }
 
-  public chart (chartName: chartType) {
+  public chart(chartName: chartType) {
     if (!this.dob || this.isMale === null) {
-      return
+      return;
     }
-    this.sort()
-    this.chartType = chartName
-    const dobTime = this.dob.getTime()
-    const prop = chartTypeToMeasurement(chartName)
+    this.sort();
+    this.chartType = chartName;
+    const dobTime = this.dob.getTime();
+    const prop = chartTypeToMeasurement(chartName);
     this.plotPoints = this.measurements.reduce((arr, m) => {
-      const v = m[prop] as vueNumber
+      const v = m[prop] as vueNumber;
       if (m.measureDate !== null && v !== '') {
         arr.push({
           ageDays: Math.floor((m.measureDate.getTime() - dobTime) / msPerDay),
-          measure: v
-        })
+          measure: v,
+        });
       }
-      return arr
-    }, [] as IAnthropometry[])
+      return arr;
+    }, [] as IAnthropometry[]);
     if (this.plotPoints.length) {
-      (this.$refs['centile-modal'] as any).show()
+      (this.$refs['centile-modal'] as any).show();
     }
   }
 }
 
-function chartTypeToMeasurement (chartName: chartType): keyof IIdCentileVals {
+function chartTypeToMeasurement(chartName: chartType): keyof IIdCentileVals {
   switch (chartName) {
     case 'weight':
-      return 'wtKg'
+      return 'wtKg';
     case 'length':
-      return 'lengthCm'
+      return 'lengthCm';
     case 'head-circumference':
-      return 'hcCm'
+      return 'hcCm';
     case 'BMI':
-      return 'bmi'
+      return 'bmi';
     default:
-      throw new Error(`unrecognised chart type:'${chartName}'`)
+      throw new Error(`unrecognised chart type:'${chartName}'`);
   }
 }
 </script>

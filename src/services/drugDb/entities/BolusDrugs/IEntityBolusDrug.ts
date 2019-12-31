@@ -1,7 +1,7 @@
 export interface IEntityBolusDrugBase {
     bolusDrugId: number;
     drugName: string;
-    conc_ml: number | null;
+    concMl: number | null;
     units: string;
     adultMax: number;
     min: number;

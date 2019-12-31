@@ -1,6 +1,6 @@
-import { ChildAge } from '@/services/infusion-calculations'
-import { IEntityWard, IEntityInfusion } from '@/services/drugDb'
-import { IMedianMatchResult } from '@/services/anthropometry/CentileRange'
+import { ChildAge } from '@/services/infusion-calculations';
+import { IEntityWard, IEntityInfusion } from '@/services/drugDb';
+import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
 
 export interface IPatientData { name: string; nhi: string; weeksGestation: number; age: ChildAge;
     isMale: null | boolean; weightKg: number; centileHTML: string; }

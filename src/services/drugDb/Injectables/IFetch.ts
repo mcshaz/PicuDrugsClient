@@ -1,4 +1,4 @@
-import { IServerChanges } from '../ServerCommunication/IServerChanges'
+import { IServerChanges } from '../ServerCommunication/IServerChanges';
 
 export interface IFetchUpdates {
     getDbUpdates(lastServerCheckUtc: Date | null): Promise<IServerChanges>;

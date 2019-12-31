@@ -1,12 +1,12 @@
-import { CentileCollection } from './CentileCollection'
-import { Lms } from './Lms'
-import { GenderRange } from './GenderRange'
+import { CentileCollection } from './CentileCollection';
+import { Lms } from './Lms';
+import { GenderRange } from './GenderRange';
 
 export class UKBMIData extends CentileCollection {
-  public static calculateBMI (weightKg: number, heightCm: number) {
-    return weightKg / Math.pow(heightCm / 100, 2)
+  public static calculateBMI(weightKg: number, heightCm: number) {
+    return weightKg / Math.pow(heightCm / 100, 2);
   }
-  constructor () {
+  constructor() {
     super({
       gestAgeWeeksRange: new GenderRange(43),
       lmsForGestAgeMale: [
@@ -512,7 +512,7 @@ export class UKBMIData extends CentileCollection {
         new Lms(-1.168, 21.674, 0.12542),
         new Lms(-1.167, 21.695, 0.12538),
         new Lms(-1.166, 21.715, 0.12534),
-        new Lms(-1.165, 21.735, 0.1253) ]
-    })
+        new Lms(-1.165, 21.735, 0.1253) ],
+    });
   }
 }

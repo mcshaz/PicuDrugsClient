@@ -1,8 +1,8 @@
-import { IEntityDefibModel } from '../entities/IEntityDefibModel'
-import { INewServerDeletions } from './IEntityDeletion'
-import { IEntityWard } from '../entities/IEntityWard'
-import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug'
-import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug'
+import { IEntityDefibModel } from '../entities/IEntityDefibModel';
+import { INewServerDeletions } from './IEntityDeletion';
+import { IEntityWard } from '../entities/IEntityWard';
+import { IEntityInfusion } from '../entities/InfusionDrugs/IEntityInfusionDrug';
+import { IEntityBolusDrug } from '../entities/BolusDrugs/IEntityBolusDrug';
 
 export interface IServerChanges {
     updateCheckStart: Date;

@@ -2,7 +2,7 @@ export interface IDobTestData { current: Date;
     dob: Date; yrOld: number;
     mthOld: number; dayOld: number; totalDays: number; }
 
-export function getData (): IDobTestData[] {
+export function getData(): IDobTestData[] {
   return [
     { current: new Date(2020, 0, 31),
       dob: new Date(2016, 0, 31),
@@ -47,6 +47,6 @@ export function getData (): IDobTestData[] {
       yrOld: 0,
       mthOld: 0,
       dayOld: 0,
-      totalDays: 0 }
-  ]
+      totalDays: 0 },
+  ];
 }
