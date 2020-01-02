@@ -1,12 +1,12 @@
 <template>
   <div class="anaphylaxis">
     <form>
-      <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
+      <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
           :state="!errMsg" :invalid-feedback="errMsg"
           class="was-validated" >
 
         <b-input-group append="kg">
-          <input class="form-control" name="weight" v-model.number="wtKg" placeholder="Weight" 
+          <input class="form-control" name="weight" v-model.number="wtKg" placeholder="Weight"
               type="number" required
               :min="minWt" :max="maxWt" autocomplete="off" step="0.1" />
         </b-input-group>

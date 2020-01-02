@@ -12,6 +12,7 @@ import TransportTimes from './views/TransportTimes.vue';
 import Anaphylaxis from './views/Anaphylaxis.vue';
 import Withdrawal from './views/Withdrawal.vue';
 import About from './views/About.vue';
+import GasCalcs from './views/GasCalcs.vue';
 
 Vue.use(Router);
 
@@ -79,6 +80,10 @@ export default new Router({
       path: '/anaphylaxis',
       name: 'anaphylaxis',
       component: Anaphylaxis,
+    }, {
+      path: '/gas-calcs',
+      name: 'gas-calculations',
+      component: GasCalcs,
     }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',

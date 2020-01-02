@@ -1,6 +1,6 @@
 
 import { getPrefix } from './getPrefix';
-import { getSiUnitAbbrev} from './getSiUnitAbbrev';
+import { getSiUnitAbbrev } from './getSiUnitAbbrev';
 import { siUnit } from '@/services/drugDb';
 export class SiUnitMeasure {
   get isUserSafePrefix(): boolean {

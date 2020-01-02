@@ -21,13 +21,13 @@ import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfu
 export default class WardChart extends Vue {
   public infusions: Promise<IVariableInfusionDrugVM[]> | null = null;
   public boluses: Array<IEntityBolusDrug | IEntityFixedInfusionDrug | string> = [];
-  @Prop({required: true})
+  @Prop({ required: true })
   private chartData!: IWardChartData;
   @Inject('db')
   private db!: IDrugDB;
   public created() {
     if (!this.chartData) {
-      this.$router.replace({name: 'home'});
+      this.$router.replace({ name: 'home' });
       return;
     }
     const wardList = new WardLists(this.db);

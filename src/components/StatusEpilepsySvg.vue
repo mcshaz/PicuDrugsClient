@@ -1,6 +1,6 @@
 <template>
   <!--unused namespaces:
-    xmlns:osb="http://www.openswatchbook.org/uri/2009/osb" 
+    xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
     xmlns:xlink="http://www.w3.org/1999/xlink"  -->
 <svg
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -191,7 +191,6 @@
       id="path6968"
       marker-end="url(#arrow)" />
 
-
   <path class="join" marker-end="url(#arrow)" d="M 156,150 H 116"/>
   <path class="join" marker-end="url(#arrow)" d="M 147,202 H 119"/>
 
@@ -344,7 +343,7 @@
     <tspan
         x="158"
         dy="1.2em">and no IV access insert IO</tspan>
-  </text>   
+  </text>
 
   <use href="#duration" x="161" y="139" />
   <text class="duration"
@@ -369,7 +368,6 @@
         x="133"
         dy="1.2em">access</tspan>
   </text>
-
 
   <rect
       class="peach"
@@ -552,7 +550,7 @@ type vueNumber = number | '';
 
 @Component({ filters: { roundToFixed } })
 export default class StatusEpilepsySvg extends Vue {
-  @Prop({required: true})
+  @Prop({ required: true })
   public wtKg!: vueNumber;
 
   public leve: FixedInfusionDrugVM | null = null;
@@ -585,10 +583,10 @@ export default class StatusEpilepsySvg extends Vue {
   private async getInfusions() {
     if (this.wtKg) {
       const drugs = await Promise.all([this.leveDbData,
-                       this.pivPhenyDbData,
-                       this.ivMidazDbData,
-                       this.imiMidazDbData,
-                       this.buccalMidazDbData]);
+        this.pivPhenyDbData,
+        this.ivMidazDbData,
+        this.imiMidazDbData,
+        this.buccalMidazDbData]);
       const wtSelectedInfusions = filterFixedInfusionsForPt(drugs.slice(0, 2) as IEntityFixedInfusionDrug[], this.wtKg)!;
       this.leve = transformFixedInfusions(this.wtKg, wtSelectedInfusions[0]);
       this.pivPheny = transformFixedInfusions(this.wtKg, wtSelectedInfusions[1]);
@@ -681,7 +679,7 @@ export default class StatusEpilepsySvg extends Vue {
   }
   .peach {
     fill: #fdeada;
-    stroke: #e46c0a;  
+    stroke: #e46c0a;
   }
   .green {
     fill: #bdf5e4;
@@ -689,7 +687,7 @@ export default class StatusEpilepsySvg extends Vue {
   }
   .blue {
     fill: #92d9fc;
-    stroke: #385d8a;  
+    stroke: #385d8a;
   }
   .yellow {
     fill: #ffff00;
@@ -716,4 +714,3 @@ export default class StatusEpilepsySvg extends Vue {
   }
   /* ]]> */
 </style>
-

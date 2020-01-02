@@ -8,19 +8,19 @@ const ampConc = ampDrugMg / ampVolMl;
 // const adultMax = 18;
 export const ampuleDescription = `${ampDrugMg} mg/${ampVolMl} mL`;
 export function getAdenosineDoses(wtKg: number) {
-    return new Array(5).fill(0).map((x, indx) => adenosineDoseFactory(indx + 1, wtKg));
+  return new Array(5).fill(0).map((x, indx) => adenosineDoseFactory(indx + 1, wtKg));
 }
 
 function adenosineDoseFactory(doseNo: number, wtKg: number) {
-    const dosePerKg = roundToFixed(doseNo * 0.1);
-    const doseMax = doseNo * 3;
-    const dose = wtKg < 30
-        ? roundToFixed(dosePerKg * wtKg, 2)
-        : doseMax;
-    return {
-        dose,
-        dosePerKg,
-        doseMax,
-        ampuleMl: syringeRounding(dose / ampConc),
-    };
+  const dosePerKg = roundToFixed(doseNo * 0.1);
+  const doseMax = doseNo * 3;
+  const dose = wtKg < 30
+    ? roundToFixed(dosePerKg * wtKg, 2)
+    : doseMax;
+  return {
+    dose,
+    dosePerKg,
+    doseMax,
+    ampuleMl: syringeRounding(dose / ampConc),
+  };
 }

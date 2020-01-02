@@ -8,7 +8,7 @@ export interface IChildAge { years: number; months: number | null; days: number 
 export interface IChildExactAge { years: number; months: number; days: number; }
 
 export class ChildAge implements IChildAge {
-  public static getAgeRangeInDays(age: IChildAge, now?: Date): NumericRange;
+  // public static getAgeRangeInDays(age: IChildAge, now?: Date): NumericRange;
   public static getAgeRangeInDays(dobOrAge: IChildAge | Date, now?: Date): NumericRange {
     if (dobOrAge instanceof Date) {
       return new NumericRange(ChildAge.getMinAgeInDays(dobOrAge, now));
@@ -28,7 +28,7 @@ export class ChildAge implements IChildAge {
 
   public static getMaxTotalDays(age: IChildAge) {
     return Math.round(age.years * daysPerYear + (typeof age.months === 'number' ? age.months : 11) * daysPerMonth +
-                      (typeof age.days === 'number' ? age.days : (daysPerMonth - 1) ));
+                      (typeof age.days === 'number' ? age.days : (daysPerMonth - 1)));
   }
 
   public static getMinTotalDays(age: IChildAge): number {
@@ -81,14 +81,13 @@ export class ChildAge implements IChildAge {
   }
 
   public totalMonthsEstimate(gestAge = 40) {
-    const returnVar = this.years + (typeof this.months === 'number' ? this.months : 6)
-        + (typeof this.days === 'number' ? this.days : 0 ) / daysPerMonth
-        - (this.years >= 2 ? 0 : ((40 - gestAge) / weeksPerMonth));
+    const returnVar = this.years + (typeof this.months === 'number' ? this.months : 6) +
+        (typeof this.days === 'number' ? this.days : 0) / daysPerMonth -
+        (this.years >= 2 ? 0 : ((40 - gestAge) / weeksPerMonth));
     return returnVar < 0
       ? 0
       : Math.round(returnVar);
   }
-
 
   public toString(): string {
     if (this.months === void 0) {

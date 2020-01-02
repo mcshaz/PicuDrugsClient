@@ -24,25 +24,25 @@ export abstract class CentileCollection {
     public readonly femaleRange: CentileRange;
 
     constructor(argObj: ILmsForAges) {
-        argObj.gestAgeWeeksRange = argObj.gestAgeWeeksRange || new GenderRange(23);
-        argObj.ageWeeksSinceTermRange = argObj.ageWeeksSinceTermRange || new GenderRange(4);
-        argObj.ageMonthsSinceTermRange = argObj.ageMonthsSinceTermRange || new GenderRange(3);
-        this.maleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.maleMin, argObj.lmsForGestAgeMale),
-            new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.maleMin, argObj.lmsForAgeWeeksMale),
-            new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.maleMin, argObj.lmsForAgeMonthsMale));
-        this.femaleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.femaleMin, argObj.lmsForGestAgeFemale),
-            new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.femaleMin, argObj.lmsForAgeWeeksFemale),
-            new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.femaleMin, argObj.lmsForAgeMonthsFemale));
+      argObj.gestAgeWeeksRange = argObj.gestAgeWeeksRange || new GenderRange(23);
+      argObj.ageWeeksSinceTermRange = argObj.ageWeeksSinceTermRange || new GenderRange(4);
+      argObj.ageMonthsSinceTermRange = argObj.ageMonthsSinceTermRange || new GenderRange(3);
+      this.maleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.maleMin, argObj.lmsForGestAgeMale),
+        new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.maleMin, argObj.lmsForAgeWeeksMale),
+        new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.maleMin, argObj.lmsForAgeMonthsMale));
+      this.femaleRange = new CentileRange(new LmsForGestAge(argObj.gestAgeWeeksRange.femaleMin, argObj.lmsForGestAgeFemale),
+        new LmsForAgeWeeks(argObj.ageWeeksSinceTermRange.femaleMin, argObj.lmsForAgeWeeksFemale),
+        new LmsForAgeMonths(argObj.ageMonthsSinceTermRange.femaleMin, argObj.lmsForAgeMonthsFemale));
     }
 
     public cumSnormForAge(measure: number, daysOfAge: number, isMale: boolean, totalWeeksGestAtBirth: number = termGestationWeeks) {
-        return this.lmsForAge(daysOfAge, isMale, totalWeeksGestAtBirth).cumSnormfromParam(measure);
+      return this.lmsForAge(daysOfAge, isMale, totalWeeksGestAtBirth).cumSnormfromParam(measure);
     }
     public zForAge(measure: number, daysOfAge: number, isMale: boolean, totalWeeksGestAtBirth: number = termGestationWeeks) {
-        return this.lmsForAge(daysOfAge, isMale, totalWeeksGestAtBirth).zFromParam(measure);
+      return this.lmsForAge(daysOfAge, isMale, totalWeeksGestAtBirth).zFromParam(measure);
     }
     public lmsForAge(daysSinceBirth: number, isMale: boolean, weeksGestAtBirth: number = termGestationWeeks) {
-        const range = isMale ? this.maleRange : this.femaleRange;
-        return range.lmsForAge(daysSinceBirth, weeksGestAtBirth);
+      const range = isMale ? this.maleRange : this.femaleRange;
+      return range.lmsForAge(daysSinceBirth, weeksGestAtBirth);
     }
 }

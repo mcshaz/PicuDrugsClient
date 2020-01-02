@@ -6,7 +6,7 @@
         <patient-age-weight-data @valid-submit="submit" :requireAge="infusions&&infusionsAvailable">
           <ward-select @ward="ward=$event" :ward-abbrev="wardName"
               @boluses="boluses=$event" :boluses="boluses"
-              @infusions="infusions=$event" :infusions="infusions" 
+              @infusions="infusions=$event" :infusions="infusions"
               @infusions-available="infusionsAvailable=$event" />
         </patient-age-weight-data>
       </b-col>
@@ -57,7 +57,7 @@ export default class Home extends Vue {
   private ward: IEntityWard | null = null;
   @Inject('appData')
   private appData!: IAppData;
-  @Prop({default: ''})
+  @Prop({ default: '' })
   private wardName!: string;
   private baseRef!: string;
 
@@ -81,8 +81,8 @@ export default class Home extends Vue {
     chartData.infusions = this.infusions;
     chartData.ward = this.ward;
     this.appData.setWardDefaults(
-        { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false});
-    this.$router.push({ name: 'ward-chart', params: { chartData }} as any);
+      { boluses: this.boluses, infusions: this.infusions, wardAbbrev: this.ward.abbrev, formalSet: false });
+    this.$router.push({ name: 'ward-chart', params: { chartData } } as any);
   }
 
   public get link() {

@@ -28,9 +28,9 @@ type vueNumber = number | '';
 
 @Component
 export default class InfusionSandboxTable extends Vue {
-    @Prop({required: true})
+    @Prop({ required: true })
     public wtKg!: number;
-    @Prop({required: true})
+    @Prop({ required: true })
     public drugData!: IPatientFixedInfusionDrug;
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
@@ -41,20 +41,19 @@ export default class InfusionSandboxTable extends Vue {
     private ageDays!: IMedianMatchResult;
 
     private created() {
-        this.ageDays = medianMatchAvg(this.wtCentiles.maleRange.ageDaysForMedian(this.wtKg),
-                                       this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg));
-        // using male range because for the data we have for the weight metric, these are both the same.
-        this.ageForWeight = ageString(this.wtCentiles.maleRange.gestAgeData.minAge, this.ageDays);
+      this.ageDays = medianMatchAvg(this.wtCentiles.maleRange.ageDaysForMedian(this.wtKg),
+        this.wtCentiles.femaleRange.ageDaysForMedian(this.wtKg));
+      // using male range because for the data we have for the weight metric, these are both the same.
+      this.ageForWeight = ageString(this.wtCentiles.maleRange.gestAgeData.minAge, this.ageDays);
     }
 
-    @Watch('drugData', {deep: true})
+    @Watch('drugData', { deep: true })
     private drugDataChange() {
-        if (this.drugData) {
-            this.patientInfusion = transformFixedInfusions(this.wtKg, this.drugData);
-        } else {
-            this.patientInfusion = null;
-        }
+      if (this.drugData) {
+        this.patientInfusion = transformFixedInfusions(this.wtKg, this.drugData);
+      } else {
+        this.patientInfusion = null;
+      }
     }
 }
 </script>
-

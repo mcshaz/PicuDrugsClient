@@ -67,7 +67,6 @@ export function tranformIInfusion(weight: number, drug: IPatientInfuionDrug, new
         }
       }
     }
-    newConc.ampuleDetails = drug.drugAmpuleConcentrations.map((dac) => Object.assign({ drawingUpVolume: newConc.drawingUpDose / dac.concentration}, dac));
+    newConc.ampuleDetails = drug.drugAmpuleConcentrations.map((dac) => Object.assign({ drawingUpVolume: newConc.drawingUpDose / dac.concentration }, dac));
   } // end for..of concentrations
 }
-

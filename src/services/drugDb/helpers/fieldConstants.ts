@@ -10,5 +10,3 @@ export const ageErr = `Age must be between ${minAge} and ${maxAgeMth / 12}yo (${
 export const maxRate = 10000.0;
 export const minRate = 0.0;
 export const rateErr = `Rate must be between ${minRate} and ${maxRate}`;
-
-

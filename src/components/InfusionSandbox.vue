@@ -93,7 +93,7 @@
         </tr>
       </thead>
       <tbody>
-        <infusion-sandbox-row v-for="w in weights" 
+        <infusion-sandbox-row v-for="w in weights"
             :key="w"
             :wtKg="w"
         />
@@ -149,24 +149,24 @@ export default class InfusionSandbox extends Vue {
 
   public get infusionEntity(): IPatientFixedInfusionDrug {
     const returnVar = {
-          fullname: this.name,
-          siPrefix: this.ampPrefix,
-          siUnitId: this.siUnitId,
-          drugAmpuleConcentrations: [{
-              concentration: (this.ampAmount || 0) / (this.ampVol || 1),
-              volume: this.ampVol,
-          }],
-          dilution: {
-                dilutionMethodId: this.dilutionMethodId,
-                siPrefix: this.infusionPrefix,
-                isPerMin: this.isPerMinute,
-                concentrations: [{
-                    volume: this.dilutionVol || null,
-                    stopMinutes: this.duration,
-                    rate: this.rate,
-                    concentration: this.concentration,
-              } as IPatientFixedConcentration],
-          } as IPatientFixedDilution,
+      fullname: this.name,
+      siPrefix: this.ampPrefix,
+      siUnitId: this.siUnitId,
+      drugAmpuleConcentrations: [{
+        concentration: (this.ampAmount || 0) / (this.ampVol || 1),
+        volume: this.ampVol,
+      }],
+      dilution: {
+        dilutionMethodId: this.dilutionMethodId,
+        siPrefix: this.infusionPrefix,
+        isPerMin: this.isPerMinute,
+        concentrations: [{
+          volume: this.dilutionVol || null,
+          stopMinutes: this.duration,
+          rate: this.rate,
+          concentration: this.concentration,
+        } as IPatientFixedConcentration],
+      } as IPatientFixedDilution,
     } as IPatientFixedInfusionDrug;
     return returnVar;
   }

@@ -1,16 +1,16 @@
 import { NumericRange } from './../../Utilities/NumericRange';
 
 export function cvlSizeFrench(weightKg: number): NumericRange {
-    if (weightKg < 10) {
-        return new NumericRange(4, 4.5);
-    }
-    if (weightKg < 20) {
-        return new NumericRange(4, 5);
-    }
-    if (weightKg < 40) {
-        return new NumericRange(5.5);
-    }
-    return new NumericRange(7);
+  if (weightKg < 10) {
+    return new NumericRange(4, 4.5);
+  }
+  if (weightKg < 20) {
+    return new NumericRange(4, 5);
+  }
+  if (weightKg < 40) {
+    return new NumericRange(5.5);
+  }
+  return new NumericRange(7);
 }
 
 // assuming inserted 1/2 way between mastoind & sternal notch

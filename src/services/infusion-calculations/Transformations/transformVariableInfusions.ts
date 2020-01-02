@@ -21,11 +21,10 @@ export function transformVariableInfusions(weight: number, infusions: IPatientVa
     tranformIInfusion(weight, inf, d);
     for (let i = 0; i < d.concentrations.length; i++) {
       const c = d.concentrations[i];
-      c.flowRange = NumericRange.op_Division(d.doseRange, c.oneMlHrDose);
+      c.flowRange = NumericRange.opDivision(d.doseRange, c.oneMlHrDose);
       c.detailName = inf.dilution.concentrations[i].doseCat || inf.abbrev;
     }
   }
   returnVar.length = nextIndex;
   return returnVar;
 }
-

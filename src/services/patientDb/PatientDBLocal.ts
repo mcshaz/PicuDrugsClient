@@ -10,9 +10,9 @@ export class PatientDBLocal extends Dexie {
     // ...other tables goes here...
 
     constructor() {
-        super('PatientDBLocal' + process.env.NODE_ENV);
-        this.version(1).stores({
-            patients: 'nhi',
-        });
+      super('PatientDBLocal' + process.env.NODE_ENV);
+      this.version(1).stores({
+        patients: 'nhi',
+      });
     }
 }

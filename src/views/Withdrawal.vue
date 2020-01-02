@@ -128,7 +128,7 @@
                 </select>
               </div><!--/input-group-append-->
             </b-input-group>
-            <vuelidate-message :isSelect="!$v.originalConc.$invalid" :validator="$v.originalConc.$invalid?$v.originalConc:$v.originalConcUnits" 
+            <vuelidate-message :isSelect="!$v.originalConc.$invalid" :validator="$v.originalConc.$invalid?$v.originalConc:$v.originalConcUnits"
                 :label="`the ${concLabel.description}${$v.originalConc.$invalid?'':' units'}`" :units="originalConcUnits?originalConcUnits.units:''"/>
             <template slot="description"  v-if="hasDifferentDefaults">
               <strong class="text-warning">*</strong> Please note different PICU vs. PCA/NCA concentrations.
@@ -136,7 +136,7 @@
           </b-form-group>
           <b-form-group label="last 24hrs:" label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch">
             <b-input-group :append="original24HrUnits">
-              <input type="number" v-model.number="$v.original24HrVol.$model" id="vol" 
+              <input type="number" v-model.number="$v.original24HrVol.$model" id="vol"
                   class="form-control" :class="getValidationClass($v.original24HrVol)">
             </b-input-group>
             <vuelidate-message :validator="$v.original24HrVol"
@@ -270,6 +270,7 @@ import { roundToFixed, roundToPrecision } from '@/services/infusion-calculations
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize';
 import { Validations } from 'vuelidate-property-decorators';
+import vue from 'vuelidate/vue';
 import { required, between, requiredIf, integer, minLength, ValidationRule } from 'vuelidate/lib/validators';
 import { Validation, validationMixin } from 'vuelidate';
 import { LeaveDirtyState } from '@/services/validation/LeaveDirtyState';
@@ -288,10 +289,10 @@ const defaultConcLimits = [1, 1000];
 
 @Component({
   components: {
-//    PatientAgeWeightData,
-      WithdrawalTable,
-      TrueFalseRadio,
-      VuelidateMessage,
+    //    PatientAgeWeightData,
+    WithdrawalTable,
+    TrueFalseRadio,
+    VuelidateMessage,
   },
   mixins: [ validationMixin ],
 })
@@ -447,7 +448,7 @@ export default class Withdrawal extends Vue {
   public get linearWeanInfo() {
     return !this.isClonidine && this.weaningDrug && this.weanDuration
       ? { weanOverDays: this.weanDuration,
-          weanAlternateDays: !this.weanDaily }
+        weanAlternateDays: !this.weanDaily }
       : null;
   }
   @Watch('originalDrug')
@@ -469,7 +470,7 @@ export default class Withdrawal extends Vue {
           }
       }
       if (this.originalConcUnits && (this.originalConcUnits.min === this.originalConcUnits.max || !this.$v.originalConc!.$dirty)) {
-          this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || '';
+        this.originalConc = this.getVal(this.originalConcUnits.default, this.originalConcUnits.min) || '';
       }
       const convKeys = Object.keys(this.originalDrug.conversion);
       if (convKeys.length === 1) {
@@ -541,18 +542,18 @@ export default class Withdrawal extends Vue {
   padding-left: 1em;
 }
 .custom-select.input-group-addon {
-	display: -ms-flexbox;
-	display: -webkit-box;
-	display: flex;
-	-ms-flex-align: center;
-	-webkit-box-align: center;
-	align-items: center;
-	margin-bottom: 0;
-	color: #495057;
-	text-align: left;
-	white-space: nowrap;
-	background-color: #e9ecef!important;
-	border-top-left-radius: 0;
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-align: center;
+    -webkit-box-align: center;
+    align-items: center;
+    margin-bottom: 0;
+    color: #495057;
+    text-align: left;
+    white-space: nowrap;
+    background-color: #e9ecef!important;
+    border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 .vol-eg {

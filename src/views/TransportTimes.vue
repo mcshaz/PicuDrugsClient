@@ -1,12 +1,12 @@
 <template>
   <div class="home">
     <h2>Starship Transport Times </h2>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Hospital:" 
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Hospital:"
           invalid-feedback="Please select a hospital" :state="!!hospital">
         <vue-single-select placeholder="hospital"  v-model="hospital" keyField="id" :filterBy="filterSearch"
             :options="hospitalOptions" :required="true" textField="label" />
       </b-form-group>
-      <b-form-group label-for="mode" label-cols-lg="2" label-cols-xl="2" label="Mode:" 
+      <b-form-group label-for="mode" label-cols-lg="2" label-cols-xl="2" label="Mode:"
             invalid-feedback="Please select a mode">
         <b-form-select v-model="mode" required >
             <option value="" disabled>select transport mode...</option>
@@ -44,8 +44,8 @@
           <span v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"></span>
         </template>
         <date-time-input v-model="arriveDest" id="arriveDest" name="arriveDest"/>
-      </b-form-group>   
-      <b-form-group label-for="timeAtCentre" label-cols-lg="2" label-cols-xl="2" label="Time @ centre:" 
+      </b-form-group>
+      <b-form-group label-for="timeAtCentre" label-cols-lg="2" label-cols-xl="2" label="Time @ centre:"
             invalid-feedback="Please select a duration">
         <template slot="description">
           <span class="time-estimate">estimate {{ timeAtCentre | timeFilter }}</span> &nbsp;
@@ -64,7 +64,7 @@
           <span v-html="timeStatsFilter(minsToReturn,'departing '+(hospital?hospital.label:'referring centre'))"></span>
         </template>
         <date-time-input v-model="arriveSS" id="arriveSS" name="arriveSS"/>
-      </b-form-group> 
+      </b-form-group>
   </div>
 </template>
 
@@ -73,6 +73,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { timeInCentre, getAirportDriveTime, getMMHDrive, getWaitakereDrive, IStats } from '@/services/transports/roadTimes';
 import { hospitals, IHospital } from '@/services/transports/timeData';
+import { timeFilter } from '@/services/transports/timeFilter';
 import VueSingleSelect from '@/components/vendor/VueSingleSelect.vue';
 import DateTimeInput from '@/components/DateTimeInput.vue';
 
@@ -99,7 +100,6 @@ export default class TransportTimes extends Vue {
     };
   });
 
-
   public hospital: ISearchableHospitals | null = null;
   public hospitalTimes: IHospital | null = null;
   public mode: modes = '';
@@ -118,29 +118,29 @@ export default class TransportTimes extends Vue {
       : hospitals[this.hospital.id] || null;
   }
 
-  public get minsToTakeOff()  {
+  public get minsToTakeOff() {
     if (this.hospitalTimes && this.mode && this.departSS && (this.mode === 'jet' || this.mode === 'prop')) {
-       return getAirportDriveTime(this.departSS);
+      return getAirportDriveTime(this.departSS);
     }
     return null;
   }
 
-  public get minsToArriveDest()  {
+  public get minsToArriveDest() {
     if (this.hospitalTimes && this.mode) {
-        if (this.departSS && this.mode === 'road') {
-          if (this.hospital!.id === 'Middlemore') {
-            return getMMHDrive(this.departSS);
-          }
-          if (this.hospital!.id === 'Waitakere') {
-            return getWaitakereDrive(this.departSS);
-          }
+      if (this.departSS && this.mode === 'road') {
+        if (this.hospital!.id === 'Middlemore') {
+          return getMMHDrive(this.departSS);
         }
-        return this.hospitalTimes[this.mode]!.there;
+        if (this.hospital!.id === 'Waitakere') {
+          return getWaitakereDrive(this.departSS);
+        }
+      }
+      return this.hospitalTimes[this.mode]!.there;
     }
     return null;
   }
 
-  public get minsToReturn()  {
+  public get minsToReturn() {
     if (this.hospitalTimes && this.mode) {
       if (this.departDest && this.mode === 'road') {
         if (this.hospital!.id === 'Middlemore') {
@@ -217,18 +217,9 @@ export default class TransportTimes extends Vue {
       : returnVar;
   }
 }
-
-function timeFilter(minutes: number) {
-  const hr = Math.floor(minutes / 60);
-  const min = minutes - hr * 60;
-  return hr + ':' + min.toString().padStart(2, '0');
-}
-
 </script>
 <style scoped>
   .time-estimate {
     color: indigo;
   }
 </style>
-
-

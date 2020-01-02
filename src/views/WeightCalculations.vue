@@ -11,7 +11,7 @@
                 response to medications in a bayesian analysis.
             </p>
             <p>
-                Similarly, when calculating target weight for people with eating disorders, the calculations here may be useful - however it may be more appropriate to use the 
+                Similarly, when calculating target weight for people with eating disorders, the calculations here may be useful - however it may be more appropriate to use the
                 <router-link to="/centiles">centile charting tools</router-link> to look at the weight centile band the patient was tracking along prior to the development of an eating disorder
                 (with the caveats that data is available and the prior centile band could reasonably be considered healthy for the individual).
             </p>
@@ -48,7 +48,7 @@
             </form>
             <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
                 <output v-if="!!value">
-                    {{value.toFixed(isBsa?2:(value<10)?1:0)}}
+                    {{ value.toFixed(isBsa ? 2 : (10 > value ? 0 : 1))}}
                     <span v-if="isBsa">m<sup>2</sup></span><span v-else>kg</span>
                 </output>
                 <div class="formula" v-if="!!texFormulae.length>0">
@@ -111,84 +111,84 @@ export default class WeightCalculations extends Vue {
     private pBmiCentiles?: UKBMIData;
 
     public created() {
-        this.formulaGroups['Centile Chart Based'] = Object.values(centileCorrections);
-        const bsa = toGrouping(Array.from(anthroCalculations.keys()), isBsa);
-        this.formulaGroups['Body Surface Area'] = bsa.get(true);
-        this.formulaGroups.Allometry = bsa.get(false);
+      this.formulaGroups['Centile Chart Based'] = Object.values(centileCorrections);
+      const bsa = toGrouping(Array.from(anthroCalculations.keys()), isBsa);
+      this.formulaGroups['Body Surface Area'] = bsa.get(true);
+      this.formulaGroups.Allometry = bsa.get(false);
     }
     // computed
     public get description() {
-        if (this.formula === '') { return ''; }
-        if (this.formula === centileCorrections.Moore) {
-            return 'Find height for age centile, and then calculate the weight for age which would be on the equivalent centile';
-        }
-        if (this.formula === centileCorrections.McLaren) {
-            return 'Find the age which equates to the 50<sup>th</sup> centile for the height of the child, and lookup the 50<sup>th</sup> weight centile for that age';
-        }
-        if (this.formula === centileCorrections.BMI) {
-            return 'Use the 50<sup>th</sup> centile BMI for age, and multiply by the height<sup>2</sup>';
-        }
-        return anthroCalculations.get(this.formula)!.description;
+      if (this.formula === '') { return ''; }
+      if (this.formula === centileCorrections.Moore) {
+        return 'Find height for age centile, and then calculate the weight for age which would be on the equivalent centile';
+      }
+      if (this.formula === centileCorrections.McLaren) {
+        return 'Find the age which equates to the 50<sup>th</sup> centile for the height of the child, and lookup the 50<sup>th</sup> weight centile for that age';
+      }
+      if (this.formula === centileCorrections.BMI) {
+        return 'Use the 50<sup>th</sup> centile BMI for age, and multiply by the height<sup>2</sup>';
+      }
+      return anthroCalculations.get(this.formula)!.description;
     }
     public get value() {
-        if (this.formula === '') { return ''; }
-        if (this.isCentileCalc) {
-            if (this.heightCm === '' || this.isMale === null) {
-                return '';
-            }
-            if (this.formula === centileCorrections.McLaren) {
-                return mcLarenObesityCorrection(this.heightCm, this.isMale, this.lengthCentiles(), this.weightCentiles());
-            }
-            if (this.age === null) { return ''; }
-            const ageDays = this.age.getAgeRangeInDays().avg();
-            if (this.formula === centileCorrections.Moore) {
-                return mooreObesityCorrection(this.heightCm, ageDays, this.isMale, this.lengthCentiles(), this.weightCentiles());
-            }
-            // else this.formula === centileCorrections.BMI
-            return bmiObesityCorrection(this.heightCm, ageDays, this.isMale, this.bmiCentiles());
+      if (this.formula === '') { return ''; }
+      if (this.isCentileCalc) {
+        if (this.heightCm === '' || this.isMale === null) {
+          return '';
         }
-        return applyAnthropometry(anthroCalculations.get(this.formula)!, this.weightKg, this.heightCm, this.isMale) || '';
+        if (this.formula === centileCorrections.McLaren) {
+          return mcLarenObesityCorrection(this.heightCm, this.isMale, this.lengthCentiles(), this.weightCentiles());
+        }
+        if (this.age === null) { return ''; }
+        const ageDays = this.age.getAgeRangeInDays().avg();
+        if (this.formula === centileCorrections.Moore) {
+          return mooreObesityCorrection(this.heightCm, ageDays, this.isMale, this.lengthCentiles(), this.weightCentiles());
+        }
+        // else this.formula === centileCorrections.BMI
+        return bmiObesityCorrection(this.heightCm, ageDays, this.isMale, this.bmiCentiles());
+      }
+      return applyAnthropometry(anthroCalculations.get(this.formula)!, this.weightKg, this.heightCm, this.isMale) || '';
     }
     public get texFormulae() {
-        if (!this.formula || this.isCentileCalc) { return emptyArray; }
-        return anthroCalculations.get(this.formula)!.katex;
+      if (!this.formula || this.isCentileCalc) { return emptyArray; }
+      return anthroCalculations.get(this.formula)!.katex;
     }
     public get requireAge() {
-        return this.formula === centileCorrections.Moore || this.formula === centileCorrections.BMI;
+      return this.formula === centileCorrections.Moore || this.formula === centileCorrections.BMI;
     }
     public get requireWeight() {
-        const calc = anthroCalculations.get(this.formula);
-        return calc === void 0 ? false : !!calc.requiresMassKg;
+      const calc = anthroCalculations.get(this.formula);
+      return calc === void 0 ? false : !!calc.requiresMassKg;
     }
     public get requireHeight() {
-        if (this.isCentileCalc) { return true; }
-        const calc = anthroCalculations.get(this.formula);
-        return calc === void 0 ? false : !!calc.requiresHeightCm;
+      if (this.isCentileCalc) { return true; }
+      const calc = anthroCalculations.get(this.formula);
+      return calc === void 0 ? false : !!calc.requiresHeightCm;
     }
     public get requireGender() {
-        if (this.isCentileCalc) { return true; }
-        const calc = anthroCalculations.get(this.formula);
-        return calc === void 0 ? false : !!calc.requiresGender;
+      if (this.isCentileCalc) { return true; }
+      const calc = anthroCalculations.get(this.formula);
+      return calc === void 0 ? false : !!calc.requiresGender;
     }
     public get isBsa() {
-        return isBsa(this.formula);
+      return isBsa(this.formula);
     }
     public get isCentileCalc() {
-        return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren || this.formula === centileCorrections.BMI;
+      return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren || this.formula === centileCorrections.BMI;
     }
     // methods - more lik properties, but vue will make them observable if written as such
     private weightCentiles() {
-        return this.pWeightCentiles || (this.pWeightCentiles = new UKWeightData());
+      return this.pWeightCentiles || (this.pWeightCentiles = new UKWeightData());
     }
     private lengthCentiles() {
-        return this.pLengthCentiles || (this.pLengthCentiles = new UKLengthData());
+      return this.pLengthCentiles || (this.pLengthCentiles = new UKLengthData());
     }
     private bmiCentiles() {
-        return this.pBmiCentiles || (this.pBmiCentiles = new UKBMIData());
+      return this.pBmiCentiles || (this.pBmiCentiles = new UKBMIData());
     }
 }
 function isBsa(test: string) {
-    return test.startsWith('body surface area');
+  return test.startsWith('body surface area');
 }
 </script>
 

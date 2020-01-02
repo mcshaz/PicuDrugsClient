@@ -7,7 +7,7 @@ export interface IPatientData { name: string; nhi: string; weeksGestation: numbe
 
 interface IWardChartBase { boluses: boolean; infusions: boolean; ward: IEntityWard; }
 
-export interface IWardChartData extends IPatientData, IWardChartBase {  }
+export interface IWardChartData extends IPatientData, IWardChartBase { }
 
 export interface IInfusionData extends IPatientData { drug: IEntityInfusion; }
 

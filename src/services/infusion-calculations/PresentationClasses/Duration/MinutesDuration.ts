@@ -1,15 +1,15 @@
 export class MinutesDuration {
-  public static op_Subtraction(a: MinutesDuration | number, b: MinutesDuration | number): MinutesDuration {
+  public static opSubtraction(a: MinutesDuration | number, b: MinutesDuration | number): MinutesDuration {
     const atot = typeof a === 'number' ? a : a.totalMins;
     const btot = typeof b === 'number' ? b : b.totalMins;
     return new MinutesDuration(atot - btot);
   }
-  public static op_Addition(a: MinutesDuration | number, b: MinutesDuration | number): MinutesDuration {
+  public static opAddition(a: MinutesDuration | number, b: MinutesDuration | number): MinutesDuration {
     const atot = typeof a === 'number' ? a : a.totalMins;
     const btot = typeof b === 'number' ? b : b.totalMins;
     return new MinutesDuration(atot + btot);
   }
-  public static op_Multiply(a: MinutesDuration | number, b: MinutesDuration | number): MinutesDuration {
+  public static opMultiply(a: MinutesDuration | number, b: MinutesDuration | number): MinutesDuration {
     const atot = typeof a === 'number' ? a : a.totalMins;
     const btot = typeof b === 'number' ? b : b.totalMins;
     return new MinutesDuration(atot * btot);
@@ -33,6 +33,6 @@ export class MinutesDuration {
     if (this.mins === 0) {
       return this.hours + ' hours';
     }
-    return`${this.hours} hours ${this.mins} mins`;
+    return `${this.hours} hours ${this.mins} mins`;
   }
 }

@@ -4,11 +4,11 @@ import { validationMixin } from 'vuelidate';
 
 const watchedValProps = ['$anyDirty', '$anyError', '$dirty', '$error', '$invalid'];
 // You can declare a mixin as the same style as components.
-@Component({mixins: [validationMixin]})
+@Component({ mixins: [validationMixin] })
 export default class EmitValidator extends Vue {
   private lastCode = 0;
 
-  @Watch('$v', {deep: true})
+  @Watch('$v', { deep: true })
   protected watchVal() {
     const newCode = this.getCode();
     if (newCode !== this.lastCode) {

@@ -3,21 +3,20 @@
     <slot>
     </slot>
     <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:">
-      <input class="form-control" type="text" name="name" id="name" v-model.trim="name" 
+      <input class="form-control" type="text" name="name" id="name" v-model.trim="name"
           placeholder="Patient Name" />
     </b-form-group>
     <nhi-input v-model="nhi" @invalid-state-change="nhiValidState=!$event.$invalid" />
-    <patient-age-data v-model="age" :exact="exactAge" :required="requireAge" />
+    <patient-age-data v-model="age" />
     <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2" >
       <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
     </b-form-group>
     <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
-    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" 
-          :state="errMsg===null?null:(errMsg==='')" 
+    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
+          :state="$v.weightKg.$invalid"
           class="was-validated" @blur="debounceCentiles.flush()" >
-        <template slot="invalid-feedback" v-if="!acceptWtWarn&&errMsg.startsWith('Weight')">
-          {{errMsg}}
-        </template>
+        <vuelidate-message :validator="$v.weightKg" label="weight" units="kg"
+            v-if="$v.weightKg.$error" />
         <template :slot="acceptWtWarn?'valid-feedback':'invalid-feedback'" v-else >
           <output v-if="lbWtCentile!==null" name="centile" id="centile" ref="centile">
             <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span>
@@ -35,7 +34,7 @@
             centile
           </output>
           <div>
-            <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn" :value="true" required
+            <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn"
                 v-if="alertLevel==='warning'||alertLevel==='danger'">
               I confirm this is the correct weight
             </b-form-checkbox>
@@ -44,8 +43,8 @@
         </template>
         <div class="form-inline" >
           <b-input-group append="kg">
-            <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" 
-                type="number" required ref="weight"
+            <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
+                type="number" ref="weight"
                 :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
           </b-input-group>
           <b-button variant="outline-primary" :disabled="(!isWeightEstimate&&!!weightKg)||!age" @click="wt4age" class="ml-3" >
@@ -100,11 +99,11 @@ export default class PatientAgeWeightData extends Vue {
   public isWeightEstimate = false;
   public errMsg = '';
 
-  @Prop({default: true})
+  @Prop({ default: true })
   private requireWeight!: boolean;
-  @Prop({default: false})
+  @Prop({ default: false })
   private exactAge!: boolean;
-  @Prop({default: false})
+  @Prop({ default: false })
   private requireAge!: boolean;
   private pAcceptWtWarn = false;
   private pAge: ChildAge | null = null;
@@ -113,12 +112,11 @@ export default class PatientAgeWeightData extends Vue {
   private nhiValidState: nullBool = null;
   private debounceCentiles = _.debounce(this.updateCentiles.bind(this), 450);
 
-// not to be watched
+  // not to be watched
   private wtData!: UKWeightData;
 
   public mounted() {
     this.wtData = new UKWeightData();
-    this.weightChange();
   }
 
   public get weightKg() { return this.pWeightKg; }
@@ -152,23 +150,6 @@ export default class PatientAgeWeightData extends Vue {
     (this.$refs.weight as HTMLInputElement).setCustomValidity(value ? '' : 'centiles');
     if (value && this.alertLevel === 'danger') {
       this.alertLevel = 'warning';
-    }
-  }
-  @Watch('weightKg')
-  @Watch('pAcceptWtWarn')
-  @Watch('alertLevel')
-  public weightChange() {
-    const validity = (this.$refs.weight as HTMLInputElement).validity;
-    if (validity.valueMissing) {
-      this.errMsg = 'Weight is required';
-    } else if (validity.rangeUnderflow || validity.rangeOverflow) {
-      this.errMsg = `Weight must be ${this.minWeight} – ${this.maxWeight} kg`;
-    } else if (this.alertLevel === 'success') {
-      this.errMsg = '';
-    } else {
-      this.errMsg = this.acceptWtWarn
-        ? ''
-        : 'Please confirm the weight has been double checked';
     }
   }
 

@@ -23,9 +23,8 @@ export function transformFixedInfusions(weight: number, ptDrug: IPatientFixedInf
     const unitsPerMin = v.rate / (d.rateUnit!.isPerMin ? 1 : 60);
     p.calculatedDose = unitsPerMin * v.durationMinutes * ampConversion;
     // p.diluentVolume = p.finalVolume - p.ampuleMl;
-    p.cumulativeStartTime = new MinutesDuration(v.stopMinutes - v.durationMinutes),
+    p.cumulativeStartTime = new MinutesDuration(v.stopMinutes - v.durationMinutes);
     p.duration = new MinutesDuration(v.durationMinutes);
   }
   return d;
 }
-

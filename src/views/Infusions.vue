@@ -2,15 +2,15 @@
   <div class="home">
     <h2>Drug Calculator - Individual drug infusions </h2>
     <patient-age-weight-data :exactAge="selectedDrug&&!selectedDrug.isTitratable">
-      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Drug:" 
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Drug:"
           invalid-feedback="Please select a drug" :state="!!selectedDrugVM">
-        <vue-single-select placeholder="please select a drug" 
+        <vue-single-select placeholder="please select a drug"
             label="fullname" v-model="selectedDrugVM" textField="label" keyField="id"
             :filterBy="filterSearch" :options="searchableDrugs" :required="true" />
       </b-form-group>
-      <b-form-group label-for="ampule" label-cols-lg="2" label-cols-xl="2" label="Ampule:" 
+      <b-form-group label-for="ampule" label-cols-lg="2" label-cols-xl="2" label="Ampule:"
             invalid-feedback="Please select an ampule">
-        <b-form-select v-model="selectedAmpuleIndx" :options="ampules" required 
+        <b-form-select v-model="selectedAmpuleIndx" :options="ampules" required
             :disabled="!ampules.length">
           <template slot="first">
             <option :value="null" disabled>ampule concentration...</option>
@@ -55,7 +55,7 @@ export default class Infusions extends Vue {
   private drugs!: IEntityInfusion[];
   @Inject('db')
   private db!: IDrugDB;
-  @Prop({default: ''})
+  @Prop({ default: '' })
   private abbrev!: string;
 
   public created() {
@@ -100,7 +100,6 @@ export default class Infusions extends Vue {
       }
     }
   }
-
 
   public get link() {
     return this.selectedDrug

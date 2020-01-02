@@ -5,7 +5,7 @@
     <form class="was-validated" @submit.prevent="submit" >
       <ward-select @ward="ward=$event" :ward-abbrev="wardName"
           @boluses="boluses=$event" :boluses="boluses"
-          @infusions="infusions=$event" :infusions="infusions" 
+          @infusions="infusions=$event" :infusions="infusions"
           @infusions-available="infusionsAvailable=$event" />
       <b-form-group label="Email:" label-cols-lg="2" label-cols-xl="2" :state="emailValidity"
           invalid-feedback="Please enter a valid email address" label-for="email" v-model="email"
@@ -29,7 +29,7 @@
         </tr>
       </thead>
       <tbody>
-        <multi-weight-row v-for="(w, indx) in weights" 
+        <multi-weight-row v-for="(w, indx) in weights"
             :key="w.wtKg"
             :wtKg="w.wtKg"
             @female-median-age="w.femaleM=$event"
@@ -85,14 +85,14 @@ export default class MultiWeight extends Vue {
   public infusionsAvailable = false;
   public email = '';
   public weights: IWtAge[] = exampleWeights
-      .map((wtKg) => ({ wtKg } as IWtAge));
+    .map((wtKg) => ({ wtKg } as IWtAge));
   public weightInEditor: vueNumber = '';
   public min = 0.1;
   public max = 100;
   private ward: IEntityWard | null = null;
   private defaultWardAbbrev = '';
 
-  @Prop({default: ''})
+  @Prop({ default: '' })
   private wardName!: string;
 
   public get emailValidity() {
@@ -128,10 +128,10 @@ export default class MultiWeight extends Vue {
       boluses: this.boluses,
       infusions: this.infusions,
       ward: this.ward,
-      weights: this.weights.map((w) => ({ wtKg: w.wtKg, estAge: medianMatchAvg(w.femaleM, w.maleM)})),
+      weights: this.weights.map((w) => ({ wtKg: w.wtKg, estAge: medianMatchAvg(w.femaleM, w.maleM) })),
       updateEmail: this.email,
     };
-    this.$router.push({ name: 'multi-chart', params: { chartData }} as any);
+    this.$router.push({ name: 'multi-chart', params: { chartData } } as any);
   }
 }
 </script>

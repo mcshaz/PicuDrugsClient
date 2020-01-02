@@ -3,7 +3,7 @@ import { ChildAge } from './ChildAge';
 
 export class PatientDetails {
   public Age: ChildAge | null = null;
-  public Name: string  = '';
+  public Name: string = '';
   public NHI: string = '';
   public ActualWeight: number = 0;
   get WorkingWeight(): number {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:" 
+    <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:"
         invalid-feedback="Please select a ward" :state="!!abbrev">
       <b-form-select v-model="abbrev" :options="wardOptions" :required="true" name="ward" id="ward" :state="!!abbrev">
         <template slot="first">
@@ -11,12 +11,12 @@
     <b-form-group label-cols-lg="2" label-cols-xl="2" label="Chart type:" invalid-feedback="Please select at least 1 chart"
         :state="boluses||infusions">
       <div role="group" tabindex="-1">
-        <b-form-checkbox class="custom-control-inline" @change="$emit('boluses', $event)" 
+        <b-form-checkbox class="custom-control-inline" @change="$emit('boluses', $event)"
             :checked="boluses" name="boluses" :required="!infusions" :state="boluses||infusions" >
           Bolus Drugs
         </b-form-checkbox>
-        <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event&&infusionsAvailable)" 
-            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions" 
+        <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event&&infusionsAvailable)"
+            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions"
             :required="!boluses" :state="boluses||infusions">
           Infusions
         </b-form-checkbox>
@@ -25,15 +25,15 @@
   </div>
       <!--
       <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input" @change="$emit('boluses', $event.target.checked)" 
+          <input type="checkbox" class="form-check-input" @change="$emit('boluses', $event.target.checked)"
               :checked="boluses" name="boluses" :required="!infusions"  />
           <label class="form-check-label" for="boluses">
             Bolus Drugs
           </label>
       </div>
       <div class="form-check form-check-inline">
-        <input type="checkbox" class="form-check-input" @change="$emit('infusions', $event.target.checked)" 
-            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions" 
+        <input type="checkbox" class="form-check-input" @change="$emit('infusions', $event.target.checked)"
+            :checked="infusions&&infusionsAvailable" :disabled="!infusionsAvailable" name="infusions"
             :required="!boluses" :state="boluses||infusions" />
         <label class="form-check-label" for="infusions">
           Infusions
@@ -57,11 +57,11 @@ export default class WardSelect extends Vue {
   private wards!: PromiseLike<IEntityWard[]>;
   @Inject('db')
   private db!: IDrugDB;
-  @Prop({default: ''})
+  @Prop({ default: '' })
   private wardAbbrev!: string;
-  @Prop({default: true})
+  @Prop({ default: true })
   private boluses!: boolean;
-  @Prop({default: true})
+  @Prop({ default: true })
   private infusions!: boolean;
   @Inject('appData')
   private appData!: IAppData;

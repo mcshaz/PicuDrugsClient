@@ -2,8 +2,8 @@ import { SiUnitMeasure } from './SiUnitMeasure';
 import { siUnit } from '@/services/drugDb';
 export class SiConcentration extends SiUnitMeasure {
   public perSeperator: string;
-  constructor(measure: SiUnitMeasure);
-  constructor(logSi: number, unit: siUnit);
+  // constructor(measure: SiUnitMeasure)
+  // constructor(logSi: number, unit: siUnit)
   constructor(measureOrLogSi: SiUnitMeasure | number, unit?: siUnit) {
     if (typeof measureOrLogSi === 'number') {
       super(measureOrLogSi, unit!);

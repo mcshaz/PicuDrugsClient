@@ -44,19 +44,19 @@ import { IVariableInfusionDrugVM, NumericRange } from '@/services/infusion-calcu
 @Component
 export default class VariableInfusions extends Vue {
     public chart: IVariableInfusionDrugVM[] = [];
-    @Prop({required: true})
+    @Prop({ required: true })
     private chartPromise!: Promise<IVariableInfusionDrugVM[]>;
 
     public created() {
-        if (this.chartPromise!) {
-            this.chartPromise.then((data) => {
-                this.chart = data;
-            });
-        }
+      if (this.chartPromise!) {
+        this.chartPromise.then((data) => {
+          this.chart = data;
+        });
+      }
     }
 
     public round(val: number) {
-        return NumericRange.sigFigures(val, 2);
+      return NumericRange.sigFigures(val, 2);
     }
 }
 </script>

@@ -197,11 +197,6 @@ export default {
       dropdownOpen: false,
     };
   },
-  watch: {
-    value(curr) {
-      this.selectedOption = curr;
-    },
-  },
   computed: {
     isRequired() {
       if (!this.required) {
@@ -215,58 +210,58 @@ export default {
   },
   watch: {
     searchText(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            this.pointer = -1;
-            if (this.searchText === null) {
-                this.matchingOptions = null;
-                return;
-            }
-            if (!this.searchText.length) {
-                this.matchingOptions = [...this.options].slice(0, this.maxResults);
-                return;
-            }
-            // minor performance enhancement
-            if (newVal.includes(oldVal) &&
+      if (newVal !== oldVal) {
+        this.pointer = -1;
+        if (this.searchText === null) {
+          this.matchingOptions = null;
+          return;
+        }
+        if (!this.searchText.length) {
+          this.matchingOptions = [...this.options].slice(0, this.maxResults);
+          return;
+        }
+        // minor performance enhancement
+        if (newVal.includes(oldVal) &&
                         this.matchingOptions &&
                         this.matchingOptions.length < this.maxResults) {
-                this.matchingOptions = this.matchingOptions.filter((option) =>
-                        this.filterBy(option, this.searchText));
-                return;
-            }
-            this.matchingOptions = this.options
-                    .filter((option) => this.filterBy(option, this.searchText))
-                    .slice(0, this.maxResults);
+          this.matchingOptions = this.matchingOptions.filter((option) =>
+            this.filterBy(option, this.searchText));
+          return;
         }
+        this.matchingOptions = this.options
+          .filter((option) => this.filterBy(option, this.searchText))
+          .slice(0, this.maxResults);
+      }
     },
     selectedOption(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            this.$emit('input', newVal);
-        }
+      if (newVal !== oldVal) {
+        this.$emit('input', newVal);
+      }
     },
     dropdownOpen(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            if (!newVal) {
-                this.searchText = null;
-                return;
-            }
-
-            if (!this.searchText) {
-                this.searchText = '';
-            }
-            const self = this;
-            this.$nextTick().then(() => {
-                self.$refs.search.select();
-            });
+      if (newVal !== oldVal) {
+        if (!newVal) {
+          this.searchText = null;
+          return;
         }
+
+        if (!this.searchText) {
+          this.searchText = '';
+        }
+        const self = this;
+        this.$nextTick().then(() => {
+          self.$refs.search.select();
+        });
+      }
     },
     value(newVal, oldVal) {
-        if (newVal !== oldVal) {
-            if (newVal && this.options.includes(newVal)) {
-                this.selectedOption = newVal;
-            } else {
-                this.selectedOption = null;
-            }
+      if (newVal !== oldVal) {
+        if (newVal && this.options.includes(newVal)) {
+          this.selectedOption = newVal;
+        } else {
+          this.selectedOption = null;
         }
+      }
     },
   },
   methods: {

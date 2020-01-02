@@ -19,7 +19,6 @@ export interface IEntityInfusion extends IInfusionInfo {
     infusionDrugId: number;
 }
 
-
 export interface IEntityDrugAmpuleConcentration {
     concentration: number;
     volume: number;

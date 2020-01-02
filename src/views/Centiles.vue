@@ -92,12 +92,12 @@ import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/cen
 import DobInput from '@/components/DobInput.vue';
 import WeeksGestation from '@/components/WeeksGestation.vue';
 import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
-import CentileRow from '@/components/CentileRow.vue';
-import { ICentileVals } from '@/components/CentileRow.vue';
+import CentileRow, { ICentileVals } from '@/components/CentileRow.vue';
+
 import { sortByDateProp } from '@/services/utilities/sortByProp';
-import SvgCentiles from '@/components/SvgCentiles.vue';
+import SvgCentiles, { chartType } from '@/components/SvgCentiles.vue';
 import NhiInput from '@/components/NhiInput.vue';
-import { chartType } from '@/components/SvgCentiles.vue';
+
 import { msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
 import { PatientDBLocal, IGrowthMeasures, IPatient } from '@/services/patientDb';
 
@@ -141,7 +141,7 @@ export default class Centiles extends Vue {
 
   public addRow() {
     this.measurements.push({
-      rowId: Symbol(),
+      rowId: Symbol('rowId'),
       measureDate: this.measurements.some((m) => (m.measureDate && m.measureDate.getTime()) === this.today.getTime()) ? null : this.today,
       today: this.today,
       wtKg: '',
@@ -184,7 +184,7 @@ export default class Centiles extends Vue {
         }
         return prev;
       }, [] as IGrowthMeasures[]),
-    }  as IPatient;
+    } as IPatient;
     // not doing a put here in case in the future we have saved other details such as name we did not wish to overwrite
 
     if (!await this.patientDb.patients.update(this.nhi, saveData)) {
@@ -194,7 +194,7 @@ export default class Centiles extends Vue {
 
     this.saved = true;
     const self = this;
-    setTimeout(() => self.saved = false, 2000);
+    setTimeout(() => (self.saved = false), 2000);
   }
 
   public deleteRow(rowId: symbol) {
@@ -213,13 +213,13 @@ export default class Centiles extends Vue {
         this.dob = data.dob;
         this.isMale = data.isMale;
         this.measurements = data.measurements.map((m) => ({
-            rowId: Symbol(m.date.toString()),
-            measureDate: m.date,
-            today: this.today,
-            wtKg: m.weightKg || '' as vueNumber,
-            hcCm: m.hcCm || '' as vueNumber,
-            lengthCm: m.lengthCm || '' as vueNumber,
-            bmi: '' as vueNumber,
+          rowId: Symbol(m.date.toString()),
+          measureDate: m.date,
+          today: this.today,
+          wtKg: m.weightKg || '' as vueNumber,
+          hcCm: m.hcCm || '' as vueNumber,
+          lengthCm: m.lengthCm || '' as vueNumber,
+          bmi: '' as vueNumber,
         }));
         this.addRow();
       }
@@ -251,17 +251,17 @@ export default class Centiles extends Vue {
 }
 
 function chartTypeToMeasurement(chartName: chartType): keyof IIdCentileVals {
-    switch (chartName) {
-      case 'weight':
-          return 'wtKg';
-      case 'length':
-          return 'lengthCm';
-      case 'head-circumference':
-          return 'hcCm';
-      case 'BMI':
-          return 'bmi';
-      default:
-          throw new Error(`unrecognised chart type:'${chartName}'`);
+  switch (chartName) {
+    case 'weight':
+      return 'wtKg';
+    case 'length':
+      return 'lengthCm';
+    case 'head-circumference':
+      return 'hcCm';
+    case 'BMI':
+      return 'bmi';
+    default:
+      throw new Error(`unrecognised chart type:'${chartName}'`);
   }
 }
 </script>

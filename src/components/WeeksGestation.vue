@@ -20,9 +20,9 @@ type nullBool = null | boolean;
 const termGestation = 40;
 @Component
 export default class WeeksGestation extends Vue {
-    @Prop({default: termGestation})
+    @Prop({ default: termGestation })
     private value!: number;
-    @Prop({default: false})
+    @Prop({ default: false })
     private disabled!: boolean;
 
     private minGest = 22;
@@ -30,24 +30,24 @@ export default class WeeksGestation extends Vue {
     private state = true;
 
     public convertAndEmit(val: string) {
-        let numVal: '' | number;
-        if (!val) {
-            numVal = '';
-        } else {
-            const floatVal = parseFloat(val);
-            numVal = isNaN(floatVal)
-                ? ''
-                : floatVal;
-        }
-        this.state = !!numVal && this.minGest <= numVal && numVal <= this.maxGest;
-        this.$emit('input', numVal);
+      let numVal: '' | number;
+      if (!val) {
+        numVal = '';
+      } else {
+        const floatVal = parseFloat(val);
+        numVal = isNaN(floatVal)
+          ? ''
+          : floatVal;
+      }
+      this.state = !!numVal && this.minGest <= numVal && numVal <= this.maxGest;
+      this.$emit('input', numVal);
     }
 
     @Watch('disabled')
     private disableChange(newVal: boolean) {
-        if (newVal) {
-            this.convertAndEmit(termGestation.toString());
-        }
+      if (newVal) {
+        this.convertAndEmit(termGestation.toString());
+      }
     }
 }
 </script>

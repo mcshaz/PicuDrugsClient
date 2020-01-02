@@ -1,5 +1,5 @@
-import {InfusionRateUnit} from '../Dosing/InfusionRateUnit';
-import {SiUnitMeasure} from '../Dosing/SiUnitMeasure';
+import { InfusionRateUnit } from '../Dosing/InfusionRateUnit';
+import { SiUnitMeasure } from '../Dosing/SiUnitMeasure';
 import { IConcentrationDetailVM } from './IConcentrationDetailVM';
 
 export interface IInfusionDrugVM {

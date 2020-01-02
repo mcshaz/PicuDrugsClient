@@ -20,15 +20,15 @@ type nullBool = null | boolean;
 export default class TrueFalseRadio extends Vue {
   @Model('change')
   public value!: boolean | null;
-  @Prop({required: true})
+  @Prop({ required: true })
   public trueLabel!: string;
-  @Prop({required: true})
+  @Prop({ required: true })
   public falseLabel!: string;
-  @Prop({default: true})
+  @Prop({ default: true })
   public stacked!: boolean;
-  @Prop({default: null})
+  @Prop({ default: null })
   public state!: boolean | null;
-  @Prop({default: ''})
+  @Prop({ default: '' })
   public name!: string;
 
   public get radioGrpName() {

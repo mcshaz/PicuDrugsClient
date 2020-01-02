@@ -21,65 +21,103 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --modern",
-    "lint": "vue-cli-service lint",
+    "lint": "vue-cli-service lint --fix",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit tests/unit/**/*.spec.ts"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.22",
-    "@fortawesome/free-solid-svg-icons": "^5.10.2",
-    "@fortawesome/vue-fontawesome": "^0.1.7",
-    "bootstrap-vue": "^2.0.0",
-    "global": "^4.4.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/vue-fontawesome": "^0.1.9",
+    "bootstrap-vue": "^2.1.0",
+    "core-js": "^3.4.4",
     "inversify": "^5.0.1",
     "jspdf": "^1.5.3",
-    "jspdf-autotable": "^3.2.4",
-    "katex": "^0.11.0",
+    "jspdf-autotable": "^3.2.11",
+    "katex": "^0.10.2",
     "lodash.debounce": "^4.0.8",
-    "node-sass": "^4.12.0",
     "reflect-metadata": "^0.1.13",
     "register-service-worker": "^1.6.2",
-    "sass-loader": "^8.0.0",
-    "vue": "^2.6.10",
-    "vue-class-component": "^7.1.0",
+    "vue": "^2.6.11",
+    "vue-class-component": "^7.0.2",
     "vue-katex": "https://github.com/lucpotage/vue-katex",
-    "vue-property-decorator": "^8.2.2",
+    "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.1.3",
     "vuelidate": "^0.7.4",
-    "vuelidate-property-decorators": "^1.0.27",
+    "vuelidate-property-decorators": "^1.0.28",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "@fluffy-spoon/substitute": "^1.89.0",
-    "@types/chai": "^4.2.1",
+    "@fluffy-spoon/substitute": "^1.107.0",
+    "@types/chai": "^4.2.7",
     "@types/chai-almost": "^1.0.1",
-    "@types/jspdf": "^1.3.1",
+    "@types/jspdf": "^1.3.3",
     "@types/lodash.debounce": "^4.0.6",
-    "@types/lolex": "^3.1.1",
+    "@types/lolex": "^5.1.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.4",
-    "@types/vuelidate": "^0.7.7",
-    "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-plugin-e2e-nightwatch": "^3.11.0",
-    "@vue/cli-plugin-pwa": "^3.11.0",
-    "@vue/cli-plugin-typescript": "^3.11.0",
-    "@vue/cli-plugin-unit-mocha": "^3.11.0",
-    "@vue/cli-service": "^3.11.0",
+    "@types/node": "^12.12.22",
+    "@types/vuelidate": "^0.7.9",
+    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-e2e-nightwatch": "^4.1.0",
+    "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-plugin-pwa": "^4.1.0",
+    "@vue/cli-plugin-router": "^4.1.0",
+    "@vue/cli-plugin-typescript": "^4.1.0",
+    "@vue/cli-plugin-unit-mocha": "^4.1.0",
+    "@vue/cli-service": "^4.1.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "@vue/eslint-config-typescript": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "chai": "^4.2.0",
     "chai-almost": "^1.0.1",
-    "fake-indexeddb": "^2.1.1",
-    "lolex": "^4.2.0",
-    "mocha": "^6.2.0",
-    "typescript": "^3.6.2",
-    "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8"
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "fake-indexeddb": "^3.0.0",
+    "lolex": "^5.1.2",
+    "mocha": "^6.2.2",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.0",
+    "typescript": "~3.5.3",
+    "vue-template-compiler": "^2.6.10"
   },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
     }
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard",
+      "@vue/typescript"
+    ],
+    "rules": {
+      "space-before-function-paren": ["error", "never"],
+      "semi": ["error", "always"],
+      "no-useless-constructor": 0,
+      "no-debugger": 1,
+      "comma-dangle": ["error", {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }]
+    },
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)"
+        ],
+        "env": {
+          "mocha": true
+        }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",
