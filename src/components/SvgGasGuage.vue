@@ -10,9 +10,9 @@
         <path :d="tankNearlyEmptyPath" fill="red" stroke="none"/>
         <path :d="tankUsedPath" fill="url(#diagonalHatch)" fill-opacity="0.6"
                 stroke="#aaa" stroke-width="1"/>
-        <path :d="kPaMinorTickPaths.map((p) => `M${p[1][0]} ${p[1][1]} L${p[2][0]} ${p[2][1]}`).join(' ')"
+        <path :d="barMinorTickPaths.map((p) => `M${p[1][0]} ${p[1][1]} L${p[2][0]} ${p[2][1]}`).join(' ')"
                 stroke="black" stroke-width="1"/>
-        <g id="major-ticks" v-for="t in kPaMajorTickPaths" :key="t[0]">
+        <g id="major-ticks" v-for="t in barMajorTickPaths" :key="t[0]">
             <line :x1="t[1][0]" :y1="t[1][1]" :x2="t[2][0]" :y2="t[2][1]"
                 stroke="black" stroke-width="2"/>
             <text :x="t[3][0]" :y="t[3][1]">
@@ -22,7 +22,8 @@
         <path id="guagePath" d="M -7 -7 L 14 -7 100 0 14 7 -7 7 Z" :transform="`rotate(${guageAngle} 0 0)`"
             fill="black" stroke="none"/>
         <circle cx="0" cy="0" r="2" fill="white" stroke="none"/>
-        <text class="pressure-units" x="0" y="23">KPa</text>
+        <text class="pressure-units" x="0" y="22">bar</text>
+        <text class="minor-pressure-units" x="0" y="39">(x 100 = kPa)</text>
     </svg>
 </template>
 <script lang="ts">
@@ -67,16 +68,16 @@ export default class SvgGasGuage extends Vue {
     }
 
     // psi = 3000 in thousands
-    public get kPaMinorTickPaths() {
-      const tickKPas = range(1000, 19000, 1000).filter((k) => k % 5000 !== 0);
+    public get barMinorTickPaths() {
+      const tickKPas = range(10, 190, 10).filter((k) => k % 5000 !== 0);
       return this.tickPaths(tickKPas, 97, 100);
     }
 
-    public get kPaMajorTickPaths() {
-      const tickKPas = range(0, 20000, 5000);
+    public get barMajorTickPaths() {
+      const tickKPas = range(0, 200, 50);
       const returnVar = this.tickPaths(tickKPas, 94, 100);
       for (const p of returnVar) {
-        p.push([p[2][0] * 0.71 - 1, p[2][1] * 0.84]);
+        p.push([p[2][0] * 0.82 - 2, p[2][1] * 0.83]);
       }
       return returnVar;
     }
@@ -124,5 +125,9 @@ function range(start: number, stop: number, step = 1) {
 .guage text {
   dominant-baseline: middle;
   text-anchor: middle;
+}
+text.minor-pressure-units {
+  font-size: 9pt;
+  fill: #444;
 }
 </style>
