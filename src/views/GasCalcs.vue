@@ -48,9 +48,9 @@
             </select>
           </b-form-group>
             <b-form-group label-for="start-pressure" label-cols-lg="3" label-cols-xl="2" label="Starting pressure:"
-                invalid-feedback="Please select a pressure" :description="startPressure + ' KPa'">
-            <b-input-group prepend="0" :append="selectedCylinder.kpaFull + ' KPa'">
-              <input class="custom-range" type="range" min="0" :max="selectedCylinder.kpaFull"
+                invalid-feedback="Please select a pressure" :description="startPressure + ' bar'">
+            <b-input-group prepend="0" :append="selectedCylinder.barFull + ' bar'">
+              <input class="custom-range" type="range" min="0" :max="selectedCylinder.barFull"
                   v-model.number="startPressure" id="start-pressure" name="start-pressure" />
             </b-input-group>
           </b-form-group>
@@ -61,14 +61,14 @@
           Using a total of {{totalGasUsed.toFixed()}} litres of gas
           <br>
           <span class="text-muted">
-            (commencing with {{(fractionStart * 100).toFixed()}}% of a full size
+            (commencing with {{(fractionStart * 100).toFixed()}}% of a size
             {{selectedSize}} tank =
             {{(selectedCylinder.litres * fractionStart).toFixed()}} litres)
-          </span>.
+          </span>
           <svg-gas-guage v-if="proportionRemain > 0" :fraction-begin="fractionStart"
-              :fraction-remain="proportionRemain" :full-value="selectedCylinder.kpaFull" />
+              :fraction-remain="proportionRemain" :full-value="selectedCylinder.barFull" />
           <div id="tanks-used" v-else>
-            {{roundedTanksUsed}} X
+            {{roundedTanksUsed}} x
             <img src="/img/gas-cylinder.svg" height="100" >
           </div>
         </b-card>
@@ -84,9 +84,7 @@ import { cylinderSizes, pressureToKpa, GasCylinder } from '@/services/transports
 import { timeFilter } from '@/services/transports/timeFilter';
 import SvgGasGuage from '@/components/SvgGasGuage.vue';
 type vueNumber = number | '';
-const units = [ 'KPa', 'Bar', 'PSI', 'Proportion' ] as const;
-
-interface ISelectOption { value: number; text: string; disabled?: boolean; }
+const units = [ 'Bar/kPa', 'PSI', 'Proportion' ] as const;
 
 @Component({
   components: {
@@ -126,11 +124,11 @@ export default class GasCalcs extends Vue {
   }
 
   public get fractionStart() {
-    return this.startPressure / this.selectedCylinder.kpaFull;
+    return this.startPressure / this.selectedCylinder.barFull;
   }
 
   public created() {
-    this.startPressure = this.selectedCylinder.kpaFull;
+    this.startPressure = this.selectedCylinder.barFull;
   }
 
   @Watch('minVol')

@@ -13,6 +13,7 @@ import Anaphylaxis from './views/Anaphylaxis.vue';
 import Withdrawal from './views/Withdrawal.vue';
 import About from './views/About.vue';
 import GasCalcs from './views/GasCalcs.vue';
+import AltitudeCalcs from './views/AltitudeCalcs.vue';
 
 Vue.use(Router);
 
@@ -84,6 +85,10 @@ export default new Router({
       path: '/gas-calcs',
       name: 'gas-calculations',
       component: GasCalcs,
+    }, {
+      path: '/altitude-calcs',
+      name: 'altitude-calculations',
+      component: AltitudeCalcs,
     }, { // NB THIS MUST COME LAST
       path: '/:wardName?',
       name: 'home',
