@@ -1,5 +1,5 @@
 export class GasCylinder {
-  constructor(readonly litres: number, readonly use = '', readonly kpaFull = 153) {
+  constructor(readonly litres: number, readonly use = '', readonly kpaFull = 15300) {
   }
 }
 

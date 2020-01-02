@@ -48,7 +48,7 @@
             </form>
             <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
                 <output v-if="!!value">
-                    {{ value.toFixed(isBsa ? 2 : (10 >= value ? 0 : 1))}}
+                    {{ value.toFixed(isBsa ? 2 : (10 > value ? 0 : 1))}}
                     <span v-if="isBsa">m<sup>2</sup></span><span v-else>kg</span>
                 </output>
                 <div class="formula" v-if="!!texFormulae.length>0">

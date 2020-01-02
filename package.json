@@ -99,6 +99,7 @@
       "space-before-function-paren": ["error", "never"],
       "semi": ["error", "always"],
       "no-useless-constructor": 0,
+      "no-debugger": 1,
       "comma-dangle": ["error", {
         "arrays": "always-multiline",
         "objects": "always-multiline"

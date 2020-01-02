@@ -73,6 +73,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { timeInCentre, getAirportDriveTime, getMMHDrive, getWaitakereDrive, IStats } from '@/services/transports/roadTimes';
 import { hospitals, IHospital } from '@/services/transports/timeData';
+import { timeFilter } from '@/services/transports/timeFilter';
 import VueSingleSelect from '@/components/vendor/VueSingleSelect.vue';
 import DateTimeInput from '@/components/DateTimeInput.vue';
 
@@ -216,13 +217,6 @@ export default class TransportTimes extends Vue {
       : returnVar;
   }
 }
-
-function timeFilter(minutes: number) {
-  const hr = Math.floor(minutes / 60);
-  const min = minutes - hr * 60;
-  return hr + ':' + min.toString().padStart(2, '0');
-}
-
 </script>
 <style scoped>
   .time-estimate {

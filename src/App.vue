@@ -41,6 +41,10 @@
               retrieval times
               <font-awesome-icon icon="plane-arrival" />
             </b-dropdown-item>
+            <b-dropdown-item to="/gas-calcs">
+              <font-awesome-icon icon="tachometer-alt" />
+              gas calculations
+            </b-dropdown-item>
             <b-dropdown-item to="/withdrawal">
               <!--?file-signature ?hands ?life-ring ?mortar-pestle ?notes-medical ?prescription bottle
                 ?sort-numeric-down-alt-->
