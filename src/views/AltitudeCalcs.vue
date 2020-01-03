@@ -32,10 +32,10 @@
                 <li>Pressure will be {{percentSea}}% of sea level.</li>
                 <li>Trapped gas will increase by {{percentVolIncr}}% of original volume.
                 </li>
-                <li>To achieve equivalent alveolar pressure of O<sub>2</sub>
+                <li>To achieve equivalent alveolar partial pressure of O<sub>2</sub>
                     <small class="text-muted">
-                        (assuming ventilating with a constant minute volume)
-                    </small>, FiO<sub>2</sub> will have to increase to {{equivalentFiO2}}
+                        (assuming a constant minute volume &amp; metabolic rate)
+                    </small>, FiO<sub>2</sub> will have to increase to {{equivalentFiO2}}.
                 </li>
             </ul>
         </b-card>

@@ -38,12 +38,12 @@
     "lodash.debounce": "^4.0.8",
     "reflect-metadata": "^0.1.13",
     "register-service-worker": "^1.6.2",
+    "vee-validate": "^3.2.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.0.2",
     "vue-katex": "https://github.com/lucpotage/vue-katex",
     "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.1.3",
-    "vuelidate": "^0.7.4",
     "vuelidate-property-decorators": "^1.0.28",
     "whatwg-fetch": "^3.0.0"
   },
@@ -96,14 +96,23 @@
       "@vue/typescript"
     ],
     "rules": {
-      "space-before-function-paren": ["error", "never"],
-      "semi": ["error", "always"],
+      "space-before-function-paren": [
+        "error",
+        "never"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ],
       "no-useless-constructor": 0,
       "no-debugger": 1,
-      "comma-dangle": ["error", {
-        "arrays": "always-multiline",
-        "objects": "always-multiline"
-      }]
+      "comma-dangle": [
+        "error",
+        {
+          "arrays": "always-multiline",
+          "objects": "always-multiline"
+        }
+      ]
     },
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
