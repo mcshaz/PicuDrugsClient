@@ -16,11 +16,11 @@
                 (with the caveats that data is available and the prior centile band could reasonably be considered healthy for the individual).
             </p>
             <form @submit.prevent :class="formula?'was-validated':''">
-                <b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula" >
+                <b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula">
                     <template slot="description">
                         <span v-html="description"> </span>
                     </template>
-                    <b-form-select v-model="formula" :required="true" name="formula" >
+                    <b-form-select v-model="formula" :required="true" name="formula">
                         <template slot="first">
                             <option :value="''" disabled>Select a formula to see details</option>
                             <optgroup v-for="(group, key) in formulaGroups" :key="key" :label="key">
@@ -33,13 +33,13 @@
                 </b-form-group>
                 <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender" />
                 <patient-age-data v-model="age" :required="requireAge" />
-                <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" >
+                <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:">
                     <b-input-group append="kg">
                     <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" :required="requireWeight"
                             type="number" autocomplete="off" step="any" />
                     </b-input-group>
                 </b-form-group>
-                <b-form-group label-for="height" label-cols-lg="2" label-cols-xl="2" label="Height:" >
+                <b-form-group label-for="height" label-cols-lg="2" label-cols-xl="2" label="Height:">
                     <b-input-group append="cm">
                     <input class="form-control" name="height" v-model.number="heightCm" placeholder="Height" required
                             type="number" autocomplete="off" step="any" />

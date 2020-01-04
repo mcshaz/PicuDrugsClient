@@ -12,7 +12,7 @@
         :state="boluses||infusions">
       <div role="group" tabindex="-1">
         <b-form-checkbox class="custom-control-inline" @change="$emit('boluses', $event)"
-            :checked="boluses" name="boluses" :required="!infusions" :state="boluses||infusions" >
+            :checked="boluses" name="boluses" :required="!infusions" :state="boluses||infusions">
           Bolus Drugs
         </b-form-checkbox>
         <b-form-checkbox class="custom-control-inline" @input="$emit('infusions', $event&&infusionsAvailable)"

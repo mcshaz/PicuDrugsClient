@@ -2,11 +2,11 @@
   <div class="gas-calcs">
     <h2>Gas usage calculations</h2>
     <b-row align-h="end">
-      <b-col lg="7" >
+      <b-col lg="7">
         <form @submit.prevent class="card p-2">
           <b-form-group label-for="min-vol" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter minute volume" label="Minute Volume">
-            <b-input-group append="L/min" >
+            <b-input-group append="L/min">
               <input class="form-control" type="number" min="0.5" max="10" step="0.1"
                   v-model.number="minVol" id="min-vol" name="min-vol" />
             </b-input-group>
@@ -34,14 +34,14 @@
             <template slot="description">
               <span class="time-estimate">{{ durationMins | timeFilter }}</span>
             </template>
-            <b-input-group prepend="5 min" append="12 hr" >
+            <b-input-group prepend="5 min" append="12 hr">
               <input class="custom-range" type="range" min="5" max="720"
                   v-model.number="durationMins" id="duration-mins" name="durationMins" />
             </b-input-group>
           </b-form-group>
           <b-form-group label-for="cylinder-size" label-cols-lg="3" label-cols-xl="2"
-              label="Cylinder Size:" invalid-feedback="Please select a size" >
-            <select v-model="selectedSize" class="custom-select" required id="cylinder-size" >
+              label="Cylinder Size:" invalid-feedback="Please select a size">
+            <select v-model="selectedSize" class="custom-select" required id="cylinder-size">
               <option v-for="(s, k) of cylinderSizes" :key="k" :value="k">
                 {{k + (s.use ? ` (${s.use})` : '') }}
               </option>
@@ -56,7 +56,7 @@
           </b-form-group>
         </form>
       </b-col>
-      <b-col xl="5" lg="5" >
+      <b-col xl="5" lg="5">
         <b-card header="Results:">
           Using a total of {{totalGasUsed.toFixed()}} litres of gas
           <br>
@@ -69,7 +69,7 @@
               :fraction-remain="proportionRemain" :full-value="selectedCylinder.barFull" />
           <div id="tanks-used" v-else>
             {{roundedTanksUsed}} x
-            <img src="/img/gas-cylinder.svg" height="100" >
+            <img src="/img/gas-cylinder.svg" height="100">
           </div>
         </b-card>
       </b-col>

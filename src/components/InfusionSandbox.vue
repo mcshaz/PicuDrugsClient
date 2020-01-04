@@ -2,8 +2,8 @@
   <div class="prinatableCharts">
     <h2>Drug Calculator - Create printable charts
     </h2>
-    <form class="was-validated" @submit.prevent="submit" >
-        <b-form-group label="drug name:" label-for="name" label-cols-lg="2" label-cols-xl="2" >
+    <form class="was-validated" @submit.prevent="submit">
+        <b-form-group label="drug name:" label-for="name" label-cols-lg="2" label-cols-xl="2">
                 <input id="name" type="text" v-model="name" class="form-control">
         </b-form-group>
         <b-form-group label="ampule:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
@@ -29,7 +29,7 @@
 
         </b-form-group>
 
-        <b-form-group label="Dilution Method:" label-for="dilutionMethod" label-cols-lg="2" label-cols-xl="2" >
+        <b-form-group label="Dilution Method:" label-for="dilutionMethod" label-cols-lg="2" label-cols-xl="2">
             <select class="custom-select" v-model="dilutionMethodId" id="dilutionMethod">
                 <option v-for="m in dilutionMethods" :key="m.value" :value="m.value">
                     {{m.text}}
@@ -59,25 +59,25 @@
             </select>
         </b-form-group>
 
-        <b-form-group label="Dilution Volume:" label-for="dilutionVol" label-cols-lg="2" label-cols-xl="2" >
+        <b-form-group label="Dilution Volume:" label-for="dilutionVol" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="ml">
                 <input id="dilutionVol" type="number" v-model="dilutionVol" class="form-control">
             </b-input-group>
         </b-form-group>
 
-        <b-form-group label="Duration:" label-for="duration" label-cols-lg="2" label-cols-xl="2" >
+        <b-form-group label="Duration:" label-for="duration" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="mins">
                 <input id="duration" type="number" v-model="duration" class="form-control">
             </b-input-group>
         </b-form-group>
 
-        <b-form-group label="rate:" label-for="rate" label-cols-lg="2" label-cols-xl="2" >
+        <b-form-group label="rate:" label-for="rate" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="ml">
                 <input id="rate" type="number" v-model="rate" class="form-control">
             </b-input-group>
         </b-form-group>
 
-        <b-form-group label="concentration:" label-for="concentration" label-cols-lg="2" label-cols-xl="2" >
+        <b-form-group label="concentration:" label-for="concentration" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="ml">
                 <input id="concentration" type="number" v-model="concentration" class="form-control">
             </b-input-group>

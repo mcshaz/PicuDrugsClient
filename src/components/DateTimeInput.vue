@@ -1,6 +1,6 @@
 <template>
     <div class="datetime form-inline">
-        <b-form-select v-model="date" :options="dates" >
+        <b-form-select v-model="date" :options="dates">
             <template slot="first">
                 <option :value="null" disabled>Please select a date</option>
             </template>

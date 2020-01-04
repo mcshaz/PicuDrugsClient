@@ -30,16 +30,16 @@
             </optgroup>
         </b-form-select>
       </b-form-group>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Depart Starship:" >
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Depart Starship:">
         <date-time-input v-model="departSS" id="depart" name="depart"/>
       </b-form-group>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Takeoff:" v-if="mode==='prop'||mode==='jet'" >
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Takeoff:" v-if="mode==='prop'||mode==='jet'">
         <template slot="description">
           <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"></span>
         </template>
         <date-time-input v-model="takeOff" id="takeoff" name="takeoff"/>
       </b-form-group>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Arrive ${hospital?hospital.label:''}:`" >
+      <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Arrive ${hospital?hospital.label:''}:`">
         <template slot="description">
           <span v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"></span>
         </template>
@@ -51,15 +51,15 @@
           <span class="time-estimate">estimate {{ timeAtCentre | timeFilter }}</span> &nbsp;
           <span v-html="timeStatsFilter(timeAtCentreStats)"></span>
         </template>
-        <b-input-group prepend="15" append="240" >
+        <b-input-group prepend="15" append="240">
           <input class="custom-range" type="range" min="15" max="240"
               v-model.number="timeAtCentre" id="timeAtCentre" name="timeAtCentre" />
         </b-input-group>
       </b-form-group>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Leave ${hospital?hospital.label:''}:`" >
+      <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Leave ${hospital?hospital.label:''}:`">
         <date-time-input v-model="departDest"/>
       </b-form-group>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Return to Starship:" >
+      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Return to Starship:">
         <template slot="description">
           <span v-html="timeStatsFilter(minsToReturn,'departing '+(hospital?hospital.label:'referring centre'))"></span>
         </template>

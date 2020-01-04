@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error" >
+        <b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error">
             <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI"/>
             <template slot="invalid-feedback" v-if="validator.$invalid">
                 <template v-if="validator.nhi.nhiChars===false">
@@ -13,7 +13,7 @@
             </template>
         </b-form-group>
         <!-- Modal Component -->
-        <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true" >
+        <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true">
             <p class="my-4">
                 The NHI contains information within the 7 characters which
                 allow computers to check if it is a valid value. This validation check is <em>failing</em>.

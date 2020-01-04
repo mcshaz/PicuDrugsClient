@@ -2,7 +2,7 @@
   <div class="alti-calcs">
     <h2>Altitude Calculations</h2>
     <b-row align-h="end">
-      <b-col lg="7" >
+      <b-col lg="7">
         <form @submit.prevent class="card p-2">
           <b-form-group label-for="fio2" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter fraction of inspired oxygen" :description="fio2.toString()">
@@ -17,7 +17,7 @@
           <b-form-group label-for="altitude" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter the altitude" label="Cabin Altitude">
             <b-input-group append="feet">
-              <select class="custom-select" v-model="altitude" id="altitude" name="altitude" >
+              <select class="custom-select" v-model="altitude" id="altitude" name="altitude">
                   <option v-for="n in 7" :key="n" :value="n * 1000">
                       {{n * 1000}}
                   </option>
@@ -26,7 +26,7 @@
           </b-form-group>
         </form>
       </b-col>
-      <b-col xl="5" lg="5" >
+      <b-col xl="5" lg="5">
         <b-card header="Results:">
             <ul>
                 <li>Pressure will be {{percentSea}}% of sea level.</li>

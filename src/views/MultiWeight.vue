@@ -2,7 +2,7 @@
   <div class="prinatableCharts">
     <h2>Drug Calculator - Create printable charts
     </h2>
-    <form class="was-validated" @submit.prevent="submit" >
+    <form class="was-validated" @submit.prevent="submit">
       <ward-select @ward="ward=$event" :ward-abbrev="wardName"
           @boluses="boluses=$event" :boluses="boluses"
           @infusions="infusions=$event" :infusions="infusions"
@@ -17,7 +17,7 @@
           </b-input-group-text>
         </b-input-group>
       </b-form-group>
-      <b-button type="submit" :disabled="!ward" >submit</b-button>
+      <b-button type="submit" :disabled="!ward">submit</b-button>
     </form>
     <table class="table table-striped">
       <thead>

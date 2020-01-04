@@ -13,17 +13,17 @@
                 :min="min"
                 :max="max"
                 step="any" />
-            <b-input-group-append :is-text="true" >
+            <b-input-group-append :is-text="true">
                 {{units}}<slot></slot>
             </b-input-group-append>
         </b-input-group>
-        <div v-if="typeof centile==='object'" class="centileInfo" >
+        <div v-if="typeof centile==='object'" class="centileInfo">
             <span class="prefix">{{centile.prefix}}&nbsp;</span>
             <span class="val">{{centile.val}}</span>
             <sup class="suffix">{{centile.suffix}}</sup>
             centile
         </div>
-        <div v-if="typeof centile==='string'" class="centileInfo" >
+        <div v-if="typeof centile==='string'" class="centileInfo">
             {{centile}}
         </div>
     </b-col>

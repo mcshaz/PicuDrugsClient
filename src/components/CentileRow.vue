@@ -35,7 +35,7 @@
             measure="bmi"
             :value="bmi"
             :centile="bmiCentile"
-            :read-only="true" >
+            :read-only="true">
           <span>
               kg/m<sup>2</sup>
           </span>

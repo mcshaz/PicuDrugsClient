@@ -3,7 +3,7 @@
     <form>
       <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
           :state="!errMsg" :invalid-feedback="errMsg"
-          class="was-validated" >
+          class="was-validated">
 
         <b-input-group append="kg">
           <input class="form-control" name="weight" v-model.number="wtKg" placeholder="Weight"

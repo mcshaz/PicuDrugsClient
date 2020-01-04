@@ -8,7 +8,7 @@
                     <path :d="minorTickParams.path" fill="none" stroke="gray" stroke-width="0.5"/>
                 </pattern>
                 <pattern v-if="yAxis&&xAxes.length" id="grid" :width="xAxes[0].majorTick" :height="yAxis.majorTick" patternUnits="userSpaceOnUse"
-                    :patternTransform="xAxes[0].majorTickOffset?`translate(-${xAxes[0].majorTickOffset},0)`:null" >
+                    :patternTransform="xAxes[0].majorTickOffset?`translate(-${xAxes[0].majorTickOffset},0)`:null">
                     <rect v-if="minorTickParams" :width="xAxes[0].majorTick" :height="yAxis.majorTick" fill="url(#smallGrid)"/>
                     <path :d="`M ${xAxes[0].majorTick} 0 L 0 0 0 ${yAxis.majorTick}`"
                             fill="none" stroke="gray" stroke-width="1"/>
@@ -26,18 +26,18 @@
                     {{cl.centile}}
                 </text>
             </g>
-            <g v-if="yAxis" >
+            <g v-if="yAxis">
                 <text :class="['y-label','left',yl.lgOnly?'large-only':'']" v-for="yl in yAxis.labels" :key="yl.hash" :x="padL-textClearance" :y="yl.position">
                     {{yl.label}}
                 </text>
             </g>
-            <g v-if="xAxes.length" >
+            <g v-if="xAxes.length">
                 <text class="x-label bottom" v-for="xl1 in xAxes[0].labels" :key="xl1.hash" :x="xl1.position"
                         :y="lowerMargin+textClearance">
                     {{xl1.label}}
                 </text>
             </g>
-            <g v-if="xAxes.length > 1" >
+            <g v-if="xAxes.length > 1">
                 <text class="x-label top" v-for="xl2 in xAxes[1].labels" :key="xl2.hash" :x="xl2.position"
                         :y="padTop-textClearance">
                     {{xl2.label}}

@@ -3,7 +3,7 @@
         <div
             :class="['FormDate',isValid===true?'valid':'',isValid===false?'invalid':'']"
             @keydown.capture.passive="keydown"
-            @blur.capture.passive="emitBlur" >
+            @blur.capture.passive="emitBlur">
             <input :required="required"
                 ref="first"
                 class="FormDate__input"

@@ -56,12 +56,12 @@
           />
         </b-container>
         <b-button-group>
-          <b-button :disabled="!canAdd" :variant="canAdd?'success':'warning'" @click="addRow" >
+          <b-button :disabled="!canAdd" :variant="canAdd?'success':'warning'" @click="addRow">
             <font-awesome-icon icon="calendar-plus" />
             Add data
             <font-awesome-icon icon="ruler" />
           </b-button>
-          <b-button @click="sort" >
+          <b-button @click="sort">
             <font-awesome-icon icon="sort-amount-down" />
             Sort
           </b-button>

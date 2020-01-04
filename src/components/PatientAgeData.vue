@@ -3,7 +3,7 @@
     <dob-input v-model="dob" @min-change="minDate=$event" />
     <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
       :state="$v.$invalid"
-      :invalid-feedback="errMsg" >
+      :invalid-feedback="errMsg">
       <div class="form-inline">
         <b-input-group append="years" class="mr-1">
           <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"

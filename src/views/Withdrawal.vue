@@ -32,7 +32,7 @@
         </b-card>
 
         <b-card no-body class="mb-1">
-          <b-card-header header-tag="header" class="p-1" role="tab" >
+          <b-card-header header-tag="header" class="p-1" role="tab">
             <b-button block href="#" v-b-toggle.clonidine-wean variant="info">Clonidine weaning protocol
               <small class="when-closed">(click to open)</small>
             </b-button>
@@ -58,7 +58,7 @@
         </b-card>
 
         <b-card no-body class="mb-1">
-          <b-card-header header-tag="header" class="p-1" role="tab" >
+          <b-card-header header-tag="header" class="p-1" role="tab">
             <b-button block v-b-toggle.PICU-total-vol variant="info">Finding the 24 hours infusion volume on a PICU chart
               <small class="when-closed">(click to open)</small>
             </b-button>
@@ -84,22 +84,22 @@
       </b-col>
       <form class="col-lg-5 order-lg-1" novalidate autocomplete="off">
         <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
-          <b-form-group label-for="weight" label="Weight:" label-cols-sm="4" label-cols-md="3" label-align-sm="right" >
+          <b-form-group label-for="weight" label="Weight:" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
             <b-input-group append="kg">
               <input class="form-control" id="weight" v-model.number="$v.wtKg.$model" placeholder="Weight"
                   type="number" step="0.1" :class="getValidationClass($v.wtKg)"/>
             </b-input-group>
             <vuelidate-message :validator="$v.wtKg" label="weight" units="kg" />
           </b-form-group>
-          <b-form-group label-for="age" label-cols-sm="4" label-cols-md="3" label="Age:" label-align-sm="right" >
+          <b-form-group label-for="age" label-cols-sm="4" label-cols-md="3" label="Age:" label-align-sm="right">
             <true-false-radio label="Age:" true-label="< 12 months old" false-label="≥ 1 year old" :state="!$v.lt1Year.$invalid"
-                v-model="$v.lt1Year.$model" name="age" >
+                v-model="$v.lt1Year.$model" name="age">
             </true-false-radio>
             <vuelidate-message :validator="$v.lt1Year" label="age" isSelect/>
           </b-form-group>
         </b-form-group><!--/patient-details-->
         <hr>
-        <b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg" >
+        <b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg">
           <template slot="label">
             Original pain/sedative <font-awesome-icon icon="prescription"/>
           </template>
@@ -107,7 +107,7 @@
             <select  id="original-drug" v-model="$v.originalDrugName.$model" class="custom-select"
                 :class="getValidationClass($v.originalDrugName)">
               <option value="" disabled>Please select …</option>
-              <optgroup v-for="gp in ddOpts" :key="gp[0]" :label="gp[0]" >
+              <optgroup v-for="gp in ddOpts" :key="gp[0]" :label="gp[0]">
                 <option v-for="wd in gp[1]" :key="wd.name" :value="wd.name">{{wd.name}}</option>
               </optgroup>
             </select>
@@ -124,7 +124,7 @@
                 <select v-model="$v.originalConcUnits.$model" id="unit-select" :class="getValidationClass($v.originalConcUnits)"
                     class="custom-select input-group-addon" v-if="!isPatch" :disabled="concentrations.length===1">
                   <option value="" disabled>…</option>
-                  <option v-for="conc in concentrations" :key="conc.units" :value="conc" >{{conc.units}}</option>
+                  <option v-for="conc in concentrations" :key="conc.units" :value="conc">{{conc.units}}</option>
                 </select>
               </div><!--/input-group-append-->
             </b-input-group>
@@ -155,7 +155,7 @@
             <select required id="weaning-drug" v-model="$v.weaningDrug.$model" class="custom-select"
                 :class="getValidationClass($v.weaningDrug)">
               <option value="" disabled>Please select …</option>
-              <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key" >{{key}}</option>
+              <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key">{{key}}</option>
             </select>
             <vuelidate-message isSelect :validator="$v.weaningDrug" label="the weaning medication"/>
           </b-form-group>
@@ -169,7 +169,7 @@
               how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
             </template>
           </b-form-group>
-          <b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right" >
+          <b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right">
             <true-false-radio label="Wean duration:" true-label="rapid" false-label="slower" v-model="rapidClonidineWean"
                 v-if="isClonidine">
             </true-false-radio>
@@ -203,7 +203,7 @@
         </b-alert>
         <withdrawal-table v-if="!$v.$invalid" ref="plan"
             :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
-            :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits" >
+            :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits">
           <ul class="row" id="entered-details">
             <li class="col-md-4">
               <h5>Details:</h5>

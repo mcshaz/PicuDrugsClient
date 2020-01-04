@@ -2,7 +2,7 @@
   <div class="home">
     <h2>Drug Calculator - Rescitation ± ICU infusion charts </h2>
     <b-row align-h="end">
-      <b-col lg="7" >
+      <b-col lg="7">
         <patient-age-weight-data @valid-submit="submit" :requireAge="infusions&&infusionsAvailable">
           <ward-select @ward="ward=$event" :ward-abbrev="wardName"
               @boluses="boluses=$event" :boluses="boluses"
@@ -10,7 +10,7 @@
               @infusions-available="infusionsAvailable=$event" />
         </patient-age-weight-data>
       </b-col>
-      <b-col xl="5" lg="5" >
+      <b-col xl="5" lg="5">
         <b-card header="Did you know:">
           <b-card-body>
             <ul>
@@ -18,7 +18,7 @@
                 you can permanently set the <router-link to="/browser-defaults">default selections for this page</router-link>.
               </li>
               <li v-if="link">
-                to provide a hyperlink to this ward in protocols etc., copy the link <a href="#" target="_self" >{{link}}</a>
+                to provide a hyperlink to this ward in protocols etc., copy the link <a href="#" target="_self">{{link}}</a>
               </li>
               <li>
                 do you write the date as {{dateEg}}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>

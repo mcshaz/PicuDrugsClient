@@ -1,8 +1,8 @@
 <template>
   <div role="tablist">
     <b-card no-body class="mb-1">
-      <div v-for="(drug, indx) in chart" :key="drug.drugName" >
-        <b-card-header header-tag="header" class="p-1" role="tab" >
+      <div v-for="(drug, indx) in chart" :key="drug.drugName">
+        <b-card-header header-tag="header" class="p-1" role="tab">
             <b-button block href="#" v-b-toggle="'accordion'+indx" variant="info">
                 <a :href="drug.link" class="text-white">{{drug.drugName}}</a>
                 <span>{{drug.note}}</span>
@@ -13,7 +13,7 @@
         </b-card-header>
         <b-collapse :id="'accordion'+indx" visible accordion="my-accordion" role="tabpanel">
             <b-card-body>
-                <b-card-text v-for="(conc, cIndx) in drug.concentrations" :key="conc.oneMlHrDose" :class="cIndx%2===0?'even':'odd'" >
+                <b-card-text v-for="(conc, cIndx) in drug.concentrations" :key="conc.oneMlHrDose" :class="cIndx%2===0?'even':'odd'">
                     <span>{{conc.detailName}}</span>
                     <span>{{round(conc.drawingUpDose)}}</span>
                     <span>{{drug.drawingUpUnits}}</span>

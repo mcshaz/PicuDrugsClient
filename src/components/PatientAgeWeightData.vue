@@ -8,13 +8,13 @@
     </b-form-group>
     <nhi-input v-model="nhi" @invalid-state-change="nhiValidState=!$event.$invalid" />
     <patient-age-data v-model="age" />
-    <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2" >
+    <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2">
       <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
     </b-form-group>
     <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
     <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
           :state="$v.weightKg.$invalid"
-          class="was-validated" @blur="debounceCentiles.flush()" >
+          class="was-validated" @blur="debounceCentiles.flush()">
         <vuelidate-message :validator="$v.weightKg" label="weight" units="kg"
             v-if="$v.weightKg.$error" />
         <template :slot="acceptWtWarn?'valid-feedback':'invalid-feedback'" v-else >
@@ -41,19 +41,19 @@
             {{errMsg}}
           </div>
         </template>
-        <div class="form-inline" >
+        <div class="form-inline">
           <b-input-group append="kg">
             <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
                 type="number" ref="weight"
                 :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
           </b-input-group>
-          <b-button variant="outline-primary" :disabled="(!isWeightEstimate&&!!weightKg)||!age" @click="wt4age" class="ml-3" >
+          <b-button variant="outline-primary" :disabled="(!isWeightEstimate&&!!weightKg)||!age" @click="wt4age" class="ml-3">
             Median Weight For Age
           </b-button>
         </div> <!-- end form-inline -->
       </b-form-group>
       <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
-        <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate" >
+        <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate">
           <b-form-radio id="estimate" :value="true">
             estimated weight
           </b-form-radio>
@@ -63,7 +63,7 @@
         </b-form-radio-group>
     </b-form-group>
     <slot name="after"></slot>
-    <b-button type="submit" :variant="alertLevel" >Create Chart</b-button>
+    <b-button type="submit" :variant="alertLevel">Create Chart</b-button>
   </form>
 </template>
 
