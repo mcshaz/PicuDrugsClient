@@ -3,15 +3,19 @@
     <h2>Gas usage calculations</h2>
     <b-row align-h="end">
       <b-col lg="7">
-        <form @submit.prevent class="card p-2">
-          <b-form-group label-for="min-vol" label-cols-lg="3" label-cols-xl="2"
+        <ValidationObserver v-slot="{ passes }">
+<form @submit.prevent class="card p-2">
+          <ValidationProvider v-slot="errors" name="Minute Volume">
+<b-form-group label-for="min-vol" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter minute volume" label="Minute Volume">
             <b-input-group append="L/min">
               <input class="form-control" type="number" min="0.5" max="10" step="0.1"
                   v-model.number="minVol" id="min-vol" name="min-vol" />
             </b-input-group>
           </b-form-group>
-          <b-form-group label-for="fio2" label-cols-lg="3" label-cols-xl="2"
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="fio2">
+<b-form-group label-for="fio2" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter fraction of inspired oxygen">
             <template slot="label">
               FiO<sub>2</sub>
@@ -19,7 +23,9 @@
             <input class="form-control" type="number" min="0.21" max="1" step="0.01"
                   v-model.number="fio2" id="fio2" name="fio2" />
           </b-form-group>
-          <b-form-group label-for="o2Rate" label-cols-lg="3" label-cols-xl="2"
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="o2Rate">
+<b-form-group label-for="o2Rate" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter consumption" :description="o2Rate.toFixed(1) + ' L/min'">
             <template slot="label">
               O<sub>2</sub> Consumption
@@ -29,7 +35,9 @@
                   :value="o2Rate" @input="o2Changed($event.target.value)" id="o2Rate" name="o2Rate" />
             </b-input-group>
           </b-form-group>
-          <b-form-group label-for="duration-mins" label-cols-lg="3" label-cols-xl="2" label="Time using cylinder:"
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="Time using cylinder:">
+<b-form-group label-for="duration-mins" label-cols-lg="3" label-cols-xl="2" label="Time using cylinder:"
                 invalid-feedback="Please select a duration">
             <template slot="description">
               <span class="time-estimate">{{ durationMins | timeFilter }}</span>
@@ -39,7 +47,9 @@
                   v-model.number="durationMins" id="duration-mins" name="durationMins" />
             </b-input-group>
           </b-form-group>
-          <b-form-group label-for="cylinder-size" label-cols-lg="3" label-cols-xl="2"
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="Cylinder Size:">
+<b-form-group label-for="cylinder-size" label-cols-lg="3" label-cols-xl="2"
               label="Cylinder Size:" invalid-feedback="Please select a size">
             <select v-model="selectedSize" class="custom-select" required id="cylinder-size">
               <option v-for="(s, k) of cylinderSizes" :key="k" :value="k">
@@ -47,14 +57,18 @@
               </option>
             </select>
           </b-form-group>
-            <b-form-group label-for="start-pressure" label-cols-lg="3" label-cols-xl="2" label="Starting pressure:"
+</ValidationProvider>
+            <ValidationProvider v-slot="errors" name="Starting pressure:">
+<b-form-group label-for="start-pressure" label-cols-lg="3" label-cols-xl="2" label="Starting pressure:"
                 invalid-feedback="Please select a pressure" :description="startPressure + ' bar'">
             <b-input-group prepend="0" :append="selectedCylinder.barFull + ' bar'">
               <input class="custom-range" type="range" min="0" :max="selectedCylinder.barFull"
                   v-model.number="startPressure" id="start-pressure" name="start-pressure" />
             </b-input-group>
           </b-form-group>
+</ValidationProvider>
         </form>
+</ValidationObserver>
       </b-col>
       <b-col xl="5" lg="5">
         <b-card header="Results:">

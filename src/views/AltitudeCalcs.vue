@@ -3,8 +3,10 @@
     <h2>Altitude Calculations</h2>
     <b-row align-h="end">
       <b-col lg="7">
-        <form @submit.prevent class="card p-2">
-          <b-form-group label-for="fio2" label-cols-lg="3" label-cols-xl="2"
+        <ValidationObserver v-slot="{ passes }">
+<form @submit.prevent class="card p-2">
+          <ValidationProvider v-slot="errors" name="fio2">
+<b-form-group label-for="fio2" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter fraction of inspired oxygen" :description="fio2.toString()">
             <template slot="label">
               FiO<sub>2</sub>
@@ -14,7 +16,9 @@
                     v-model.number="fio2" id="fio2" name="fio2" />
             </b-input-group>
           </b-form-group>
-          <b-form-group label-for="altitude" label-cols-lg="3" label-cols-xl="2"
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="Cabin Altitude">
+<b-form-group label-for="altitude" label-cols-lg="3" label-cols-xl="2"
                 invalid-feedback="please enter the altitude" label="Cabin Altitude">
             <b-input-group append="feet">
               <select class="custom-select" v-model="altitude" id="altitude" name="altitude">
@@ -24,7 +28,9 @@
               </select>
             </b-input-group>
           </b-form-group>
+</ValidationProvider>
         </form>
+</ValidationObserver>
       </b-col>
       <b-col xl="5" lg="5">
         <b-card header="Results:">

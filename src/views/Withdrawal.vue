@@ -82,28 +82,37 @@
           </b-collapse>
         </b-card>
       </b-col>
-      <form class="col-lg-5 order-lg-1" novalidate autocomplete="off">
-        <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
-          <b-form-group label-for="weight" label="Weight:" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
+      <ValidationObserver v-slot="{ passes }">
+<form class="col-lg-5 order-lg-1" novalidate autocomplete="off">
+        <ValidationProvider v-slot="errors" name="Patient details">
+<b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
+          <ValidationProvider v-slot="errors" name="Weight:">
+<b-form-group label-for="weight" label="Weight:" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
             <b-input-group append="kg">
               <input class="form-control" id="weight" v-model.number="$v.wtKg.$model" placeholder="Weight"
                   type="number" step="0.1" :class="getValidationClass($v.wtKg)"/>
             </b-input-group>
             <vuelidate-message :validator="$v.wtKg" label="weight" units="kg" />
           </b-form-group>
-          <b-form-group label-for="age" label-cols-sm="4" label-cols-md="3" label="Age:" label-align-sm="right">
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="Age:">
+<b-form-group label-for="age" label-cols-sm="4" label-cols-md="3" label="Age:" label-align-sm="right">
             <true-false-radio label="Age:" true-label="< 12 months old" false-label="≥ 1 year old" :state="!$v.lt1Year.$invalid"
                 v-model="$v.lt1Year.$model" name="age">
             </true-false-radio>
             <vuelidate-message :validator="$v.lt1Year" label="age" isSelect/>
           </b-form-group>
-        </b-form-group><!--/patient-details-->
+</ValidationProvider>
+        </b-form-group>
+</ValidationProvider><!--/patient-details-->
         <hr>
-        <b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg">
+        <ValidationProvider v-slot="errors" name="original-Rx">
+<b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg">
           <template slot="label">
             Original pain/sedative <font-awesome-icon icon="prescription"/>
           </template>
-          <b-form-group label="Medication:" label-for="original-drug" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
+          <ValidationProvider v-slot="errors" name="Medication:">
+<b-form-group label="Medication:" label-for="original-drug" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
             <select  id="original-drug" v-model="$v.originalDrugName.$model" class="custom-select"
                 :class="getValidationClass($v.originalDrugName)">
               <option value="" disabled>Please select …</option>
@@ -113,7 +122,9 @@
             </select>
             <vuelidate-message isSelect :validator="$v.originalDrugName" label="the original medication"/>
           </b-form-group>
-          <b-form-group label-for="conc" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired">
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="conc">
+<b-form-group label-for="conc" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired">
             <template slot="label">
               {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
             </template>
@@ -134,7 +145,9 @@
               <strong class="text-warning">*</strong> Please note different PICU vs. PCA/NCA concentrations.
             </template>
           </b-form-group>
-          <b-form-group label="last 24hrs:" label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch">
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="last 24hrs:">
+<b-form-group label="last 24hrs:" label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch">
             <b-input-group :append="original24HrUnits">
               <input type="number" v-model.number="$v.original24HrVol.$model" id="vol"
                   class="form-control" :class="getValidationClass($v.original24HrVol)">
@@ -145,13 +158,17 @@
               where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
             </template>
           </b-form-group>
-        </b-form-group><!--/original prescription-->
+</ValidationProvider>
+        </b-form-group>
+</ValidationProvider><!--/original prescription-->
         <hr>
         <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !this.isChloral">
           This equates to a total {{originalDrug.name}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
         </div>
-        <b-form-group label="Weaning medication" label-cols-xl="3" id="weaning-med" label-size="lg">
-          <b-form-group label="Oral:" label-for="weaning-drug" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
+        <ValidationProvider v-slot="errors" name="Weaning medication">
+<b-form-group label="Weaning medication" label-cols-xl="3" id="weaning-med" label-size="lg">
+          <ValidationProvider v-slot="errors" name="Oral:">
+<b-form-group label="Oral:" label-for="weaning-drug" label-cols-sm="4" label-cols-md="3" label-align-sm="right">
             <select required id="weaning-drug" v-model="$v.weaningDrug.$model" class="custom-select"
                 :class="getValidationClass($v.weaningDrug)">
               <option value="" disabled>Please select …</option>
@@ -159,7 +176,9 @@
             </select>
             <vuelidate-message isSelect :validator="$v.weaningDrug" label="the weaning medication"/>
           </b-form-group>
-          <b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right" v-show="!isClonidine">
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="Wean over:">
+<b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right" v-show="!isClonidine">
             <b-input-group append="days">
               <input type="number" step="1" v-model.number="$v.weanDuration.$model"
                   id="weanDuration" class="form-control" :class="getValidationClass($v.weanDuration)">
@@ -169,7 +188,9 @@
               how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
             </template>
           </b-form-group>
-          <b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right">
+</ValidationProvider>
+          <ValidationProvider v-slot="errors" name="Wean over:">
+<b-form-group label-cols-sm="4" label-cols-md="3" label="Wean over:" label-for="wean-duration" label-align-sm="right">
             <true-false-radio label="Wean duration:" true-label="rapid" false-label="slower" v-model="rapidClonidineWean"
                 v-if="isClonidine">
             </true-false-radio>
@@ -179,22 +200,27 @@
               how do I <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">determine the clonidine wean duration…</a>?
             </template>
           </b-form-group>
-        </b-form-group><!--/weaning medication-->
+</ValidationProvider>
+        </b-form-group>
+</ValidationProvider><!--/weaning medication-->
         <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
           This equates to a total <strong>daily</strong> <em> starting</em> enteral {{weaningDrug}} dose of
           <span class="nobr"><output>{{totalWeaning24Hrs.dailyCommence}} {{weaningDoseUnits}}</output>/<strong>day</strong></span>
           <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
         </div>
         <hr>
-        <b-form-group label="Prescriber name" label-cols-xl="3" label-for="prescriber-name">
+        <ValidationProvider v-slot="errors" name="Prescriber name">
+<b-form-group label="Prescriber name" label-cols-xl="3" label-for="prescriber-name">
           <input class="form-control" id="prescriber-name" v-model="$v.prescriber.$model" placeholder="your name"
                   type="text" :class="getValidationClass($v.prescriber)" autocomplete="name"/>
           <vuelidate-message :validator="$v.prescriber" label="your name" />
         </b-form-group>
+</ValidationProvider>
         <hr>
         <button type="reset" class="btn btn-warning mb-4" @click.prevent="clearAll()">Clear All <font-awesome-icon icon="eraser"/></button>
         <button type="button" class="btn btn-success mb-4 ml-2" :disabled="$v.invalid" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
       </form>
+</ValidationObserver>
     </b-row>
     <b-row>
       <b-col>

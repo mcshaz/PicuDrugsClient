@@ -1,18 +1,24 @@
 <template>
-  <form novalidate @submit.prevent="submit" class="card p-2" autocomplete="off">
+  <ValidationObserver v-slot="{ passes }">
+<form novalidate @submit.prevent="submit" class="card p-2" autocomplete="off">
     <slot>
     </slot>
-    <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:">
+    <ValidationProvider v-slot="errors" name="Name:">
+<b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:">
       <input class="form-control" type="text" name="name" id="name" v-model.trim="name"
           placeholder="Patient Name" />
     </b-form-group>
+</ValidationProvider>
     <nhi-input v-model="nhi" @invalid-state-change="nhiValidState=!$event.$invalid" />
     <patient-age-data v-model="age" />
-    <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2">
+    <ValidationProvider v-slot="errors" name="Gender:">
+<b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2">
       <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
     </b-form-group>
+</ValidationProvider>
     <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
-    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
+    <ValidationProvider v-slot="errors" name="Weight:">
+<b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
           :state="$v.weightKg.$invalid"
           class="was-validated" @blur="debounceCentiles.flush()">
         <vuelidate-message :validator="$v.weightKg" label="weight" units="kg"
@@ -52,7 +58,9 @@
           </b-button>
         </div> <!-- end form-inline -->
       </b-form-group>
-      <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
+</ValidationProvider>
+      <ValidationProvider v-slot="errors" name="Estimate:">
+<b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
         <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate">
           <b-form-radio id="estimate" :value="true">
             estimated weight
@@ -62,9 +70,11 @@
           </b-form-radio>
         </b-form-radio-group>
     </b-form-group>
+</ValidationProvider>
     <slot name="after"></slot>
     <b-button type="submit" :variant="alertLevel">Create Chart</b-button>
   </form>
+</ValidationObserver>
 </template>
 
 <script lang="ts">

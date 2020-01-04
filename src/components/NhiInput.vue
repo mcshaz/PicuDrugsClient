@@ -1,6 +1,7 @@
 <template>
     <div>
-        <b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error">
+        <ValidationProvider v-slot="errors" name="NHI:">
+<b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error">
             <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI"/>
             <template slot="invalid-feedback" v-if="validator.$invalid">
                 <template v-if="validator.nhi.nhiChars===false">
@@ -12,6 +13,7 @@
                 </template>
             </template>
         </b-form-group>
+</ValidationProvider>
         <!-- Modal Component -->
         <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true">
             <p class="my-4">

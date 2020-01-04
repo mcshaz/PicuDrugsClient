@@ -1,12 +1,14 @@
 <template>
     <div :class="pState===null?'':'was-validated'">
-        <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState">
+        <ValidationProvider v-slot="errors" name="DOB:">
+<b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState">
             <template slot="invalid-feedback">
                 must be between {{minString}} and {{maxString}}
             </template>
             <date-input :min="min" :max="max" v-model="dob"
                     @blur="onBlur($event)" :id="dob" :required="required" />
         </b-form-group>
+</ValidationProvider>
     </div>
 </template>
 

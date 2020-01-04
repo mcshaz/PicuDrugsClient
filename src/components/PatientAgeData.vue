@@ -1,7 +1,8 @@
 <template>
   <div class="was-validated">
     <dob-input v-model="dob" @min-change="minDate=$event" />
-    <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
+    <ValidationProvider v-slot="errors" name="Age:">
+<b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
       :state="$v.$invalid"
       :invalid-feedback="errMsg">
       <div class="form-inline">
@@ -19,6 +20,7 @@
         </b-input-group>
       </div>
     </b-form-group>
+</ValidationProvider>
   </div>
 </template>
 

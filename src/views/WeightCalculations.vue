@@ -15,8 +15,10 @@
                 <router-link to="/centiles">centile charting tools</router-link> to look at the weight centile band the patient was tracking along prior to the development of an eating disorder
                 (with the caveats that data is available and the prior centile band could reasonably be considered healthy for the individual).
             </p>
-            <form @submit.prevent :class="formula?'was-validated':''">
-                <b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula">
+            <ValidationObserver v-slot="{ passes }">
+<form @submit.prevent :class="formula?'was-validated':''">
+                <ValidationProvider v-slot="errors" name="Formula:">
+<b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula">
                     <template slot="description">
                         <span v-html="description"> </span>
                     </template>
@@ -31,21 +33,27 @@
                         </template>
                     </b-form-select>
                 </b-form-group>
+</ValidationProvider>
                 <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender" />
                 <patient-age-data v-model="age" :required="requireAge" />
-                <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:">
+                <ValidationProvider v-slot="errors" name="Weight:">
+<b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:">
                     <b-input-group append="kg">
                     <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" :required="requireWeight"
                             type="number" autocomplete="off" step="any" />
                     </b-input-group>
                 </b-form-group>
-                <b-form-group label-for="height" label-cols-lg="2" label-cols-xl="2" label="Height:">
+</ValidationProvider>
+                <ValidationProvider v-slot="errors" name="Height:">
+<b-form-group label-for="height" label-cols-lg="2" label-cols-xl="2" label="Height:">
                     <b-input-group append="cm">
                     <input class="form-control" name="height" v-model.number="heightCm" placeholder="Height" required
                             type="number" autocomplete="off" step="any" />
                     </b-input-group>
                 </b-form-group>
+</ValidationProvider>
             </form>
+</ValidationObserver>
             <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
                 <output v-if="!!value">
                     {{ value.toFixed(isBsa ? 2 : (10 > value ? 0 : 1))}}

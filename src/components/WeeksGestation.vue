@@ -1,6 +1,7 @@
 <template>
     <div class="weeks-gestation was-validated">
-        <b-form-group label-for="weeksGestation" label-cols-lg="2" label-cols-xl="2" label="Gestation:"
+        <ValidationProvider v-slot="errors" name="Gestation:">
+<b-form-group label-for="weeksGestation" label-cols-lg="2" label-cols-xl="2" label="Gestation:"
                 invalid-feedback="a number between 22 &amp; 43 weeks is required" :state="state">
         <b-input-group append="weeks">
             <input class="form-control" name="weeksGestation" id="weeksGestation"
@@ -8,6 +9,7 @@
                 :disabled="disabled" @input="convertAndEmit($event.target.value)" :value="value" />
         </b-input-group>
         </b-form-group>
+</ValidationProvider>
     </div>
 </template>
 
