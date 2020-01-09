@@ -11,49 +11,26 @@
                 response to medications in a bayesian analysis.
             </p>
             <p>
-                Similarly, when calculating target weight for people with eating disorders, the calculations here may be useful - however it may be more appropriate to use the
+                Similarly, when calculating target weight for people with eating disorders, the calculations here may be of use - however it may be more appropriate to use the
                 <router-link to="/centiles">centile charting tools</router-link> to look at the weight centile band the patient was tracking along prior to the development of an eating disorder
                 (with the caveats that data is available and the prior centile band could reasonably be considered healthy for the individual).
             </p>
-            <validation-observer v-slot="{ passes }">
-<form @submit.prevent :class="formula?'was-validated':''">
-                <validation-provider v-slot="errors" name="Formula">
-<b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula">
-                    <template #description>
-                        <span v-html="description"> </span>
-                    </template>
-                    <b-form-select v-model="formula" :required="true" name="formula">
-                        <template #first>
-                            <option :value="''" disabled>Select a formula to see details</option>
-                            <optgroup v-for="(group, key) in formulaGroups" :key="key" :label="key">
-                                <option v-for="opt in group" :key="opt" :value="opt">
-                                    {{opt}}
-                                </option>
-                            </optgroup>
-                        </template>
-                    </b-form-select>
-                </b-form-group>
-</validation-provider>
-                <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender" />
-                <patient-age-data v-model="age" :required="requireAge" />
-                <validation-provider v-slot="errors" name="Weight">
-<b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:">
-                    <b-input-group append="kg">
-                    <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" :required="requireWeight"
-                            type="number" autocomplete="off" step="any" />
-                    </b-input-group>
-                </b-form-group>
-</validation-provider>
-                <validation-provider v-slot="errors" name="Height">
-<b-form-group label-for="height" label-cols-lg="2" label-cols-xl="2" label="Height:">
-                    <b-input-group append="cm">
-                    <input class="form-control" name="height" v-model.number="heightCm" placeholder="Height" required
-                            type="number" autocomplete="off" step="any" />
-                    </b-input-group>
-                </b-form-group>
-</validation-provider>
+            <form @submit.prevent :class="formula?'was-validated':''" autocomplete="off">
+                <validated-select-group label="Formula" v-model="formula">
+                  <template>
+                      <option :value="''" disabled>Select a formula to see details</option>
+                      <optgroup v-for="(group, key) in formulaGroups" :key="key" :label="key">
+                          <option v-for="opt in group" :key="opt" :value="opt">
+                              {{opt}}
+                          </option>
+                      </optgroup>
+                  </template>
+                </validated-select-group>
+                <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender"/>
+                <patient-age-data v-model="age" :required="requireAge"/>
+                <validated-input-group label="Weight" append="kg" v-model="weightKg" placeholder="Weight" :required="requireWeight" type="number"/>
+                <validated-input-group label="Height" append="cm" v-model="heightCm" placeholder="Height" required type="number"/>
             </form>
-</validation-observer>
             <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
                 <output v-if="!!value">
                     {{ value.toFixed(isBsa ? 2 : (10 > value ? 0 : 1))}}

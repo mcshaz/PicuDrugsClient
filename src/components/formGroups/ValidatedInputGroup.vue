@@ -5,13 +5,12 @@
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
       <template #description v-else-if="rangeValue || $slots['range-value']">value: <strong class="range-value"><slot name="range-value">{{ rangeValue }}</slot></strong></template>
-      <b-input-group :prepend="prepend" :append="append" v-if="prepend || append">
-        <template #append v-if="append || $slots.append"><slot name="append">{{ append }}</slot></template>
+      <b-input-group>
+        <b-input-group-prepend is-text v-if="prepend || $slots.prepend"><slot name="prepend">{{ prepend }}</slot></b-input-group-prepend>
         <input class="form-control" :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled"
-            v-model="pValue" :id="pName" :name="pName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}">
+            v-model="pValue" :id="pName" :name="pName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}" :autocomplete="autocomplete">
+        <b-input-group-append is-text v-if="append || $slots.append"><slot name="append">{{ append }}</slot></b-input-group-append>
       </b-input-group>
-      <input class="form-control" :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled" v-else
-          v-model="pValue" :id="pName" :name="pName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}">
     </b-form-group>
   </validation-provider>
 </template>
@@ -23,9 +22,9 @@ import ValidatedInputEl from '@/mixins/ValidatedInputEl';
 @Component({})
 export default class ValidatedInputGroup extends Mixins(ValidatedInputEl) {
     @Prop({ default: void 0 })
-    append?: string;
-    @Prop({ default: void 0 })
     rangeValue?: string;
+    @Prop({ default: void 0 })
+    append?: string;
 }
 </script>
 

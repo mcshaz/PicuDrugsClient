@@ -20,7 +20,7 @@ export default class ValidatedFormEl extends Vue {
     @Prop({ default: 3 })
     labelColsXl!: number;
 
-    @Prop({ default:void 0 })
+    @Prop({ default: void 0 })
     rules: any;
     @Prop({ default: false })
     required!: boolean;
@@ -31,20 +31,20 @@ export default class ValidatedFormEl extends Vue {
     protected pName = ''
 
     public mounted() {
-        const endCol = /:$/;
-        let label!: string;
-        if (this.label) {
-            label = this.label.replace(endCol, '');
-        } else {
-            label = this.$slots.label!.map((vn) => (vn.text || (vn.elm as HTMLElement).innerText)).join('').trim();
-            if (!label) {
-            throw new Error('either a label="x" attribute or a <template #label> must be provided');
-            }
-            if (endCol.test(label)) {
-            throw new Error('the label slot must not end in a colon');
-            }
+      const endCol = /:$/;
+      let label!: string;
+      if (this.label) {
+        label = this.label.replace(endCol, '');
+      } else {
+        label = this.$slots.label!.map((vn) => (vn.text || (vn.elm as HTMLElement).innerText)).join('').trim();
+        if (!label) {
+          throw new Error('either a label="x" attribute or a <template #label> must be provided');
         }
-        this.pErrorLabel = this.errorLabel || label;
-        this.pName = this.name || label.replace(/\s+/g, '-');
+        if (endCol.test(label)) {
+          throw new Error('the label slot must not end in a colon');
+        }
+      }
+      this.pErrorLabel = this.errorLabel || label;
+      this.pName = this.name || label.replace(/\s+/g, '-');
     }
 }

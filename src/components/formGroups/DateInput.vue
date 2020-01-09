@@ -1,15 +1,15 @@
 <template>
     <div class="date-input">
-        <date-input-polyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value"
-                v-if="isDateSupported===dateElSupportValues.noSupport" @blur="$emit('blur', $event)" :id="id" :required="required"/>
+        <date-input-polyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" v-if="isDateSupported===dateElSupportValues.noSupport"
+              @blur="$emit('blur', $event)" :id="id" :required="required"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr"
-                :value-as-date.prop="value?new Date(value.getTime()-offset):null" :required="required"
+                :value-as-date.prop="valueAsDate" :required="required"
                 @blur="$emit('blur', $event)" @input.passive="$emit('input', $event.target.valueAsDate?new Date($event.target.valueAsDate.getTime()+offset):null)"
                 v-if="isDateSupported===dateElSupportValues.valueAsDateSupport" :name="name" :id="id" />
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr"
                 @blur="$emit('blur', $event)" v-else :name="name" :id="id" :required="required" />
-            <b-input-group-append :is-text="true">
+            <b-input-group-append is-text>
                 <font-awesome-icon icon="calendar-alt" />
             </b-input-group-append>
         </b-input-group>
@@ -63,6 +63,12 @@ export default class DateInput extends Vue {
       } else if (this.isDateSupported === dateElSupportValues.valueAsDateSupport) {
         this.offset = (this.value || new Date()).getTimezoneOffset() * 60000;
       }
+    }
+
+    public get valueAsDate() {
+      return this.value
+        ? new Date(this.value.getTime() - this.offset)
+        : null
     }
 
     public get dateStr() {

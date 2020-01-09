@@ -3,7 +3,7 @@
     <h2>Drug Calculator - Create printable charts
     </h2>
     <validation-observer v-slot="{ passes }">
-<form class="was-validated" @submit.prevent="submit">
+<form class="was-validated" @submit.prevent="passes(submit)">
         <validation-provider v-slot="errors" name="drug name:">
 <b-form-group label="drug name:" label-for="name" label-cols-lg="2" label-cols-xl="2">
                 <input id="name" type="text" v-model="name" class="form-control">

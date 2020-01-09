@@ -1,85 +1,85 @@
 <template>
   <div class="home">
     <h2>Starship Transport Times </h2>
-      <validation-provider v-slot="errors" name="Hospital">
+    <validation-provider v-slot="errors" name="Hospital">
 <b-form-group label-cols-lg="2" label-cols-xl="2" label="Hospital:"
-          invalid-feedback="Please select a hospital" :state="!!hospital">
-        <vue-single-select placeholder="hospital"  v-model="hospital" keyField="id" :filterBy="filterSearch"
-            :options="hospitalOptions" :required="true" textField="label" />
-      </b-form-group>
+        invalid-feedback="Please select a hospital" :state="!!hospital">
+      <vue-single-select placeholder="hospital"  v-model="hospital" keyField="id" :filterBy="filterSearch"
+          :options="hospitalOptions" :required="true" textField="label" />
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="Mode">
+    <validation-provider v-slot="errors" name="Mode">
 <b-form-group label-for="mode" label-cols-lg="2" label-cols-xl="2" label="Mode:"
-            invalid-feedback="Please select a mode">
-        <b-form-select v-model="mode" required >
-            <option value="" disabled>select transport mode...</option>
-            <option value="road" :disabled="!hospitalTimes||!hospitalTimes.road">
-              Road Ambulance
-              <!--<font-awesome-icon icon="ambulance" />-->
+          invalid-feedback="Please select a mode">
+      <b-form-select v-model="mode" required >
+          <option value="" disabled>select transport mode...</option>
+          <option value="road" :disabled="!hospitalTimes||!hospitalTimes.road">
+            Road Ambulance
+            <!--<font-awesome-icon icon="ambulance" />-->
+          </option>
+          <option value="rotary" :disabled="!hospitalTimes||!hospitalTimes.rotary">
+            Rotary Wing
+            <!--<font-awesome-icon icon="helicopter" />-->
+          </option>
+          <optgroup label="Fixed Wing">
+            <option value="prop" :disabled="!hospitalTimes||!hospitalTimes.prop">
+              Turboprop
+              <!--<font-awesome-icon icon="plane" />-->
             </option>
-            <option value="rotary" :disabled="!hospitalTimes||!hospitalTimes.rotary">
-              Rotary Wing
-              <!--<font-awesome-icon icon="helicopter" />-->
+            <option value="jet" :disabled="!hospitalTimes||!hospitalTimes.jet">
+              Jet
+              <!--<font-awesome-icon icon="fighter-jet" />-->
             </option>
-            <optgroup label="Fixed Wing">
-              <option value="prop" :disabled="!hospitalTimes||!hospitalTimes.prop">
-                Turboprop
-                <!--<font-awesome-icon icon="plane" />-->
-              </option>
-              <option value="jet" :disabled="!hospitalTimes||!hospitalTimes.jet">
-                Jet
-                <!--<font-awesome-icon icon="fighter-jet" />-->
-              </option>
-            </optgroup>
-        </b-form-select>
-      </b-form-group>
+          </optgroup>
+      </b-form-select>
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="Depart Starship:">
+    <validation-provider v-slot="errors" name="Depart Starship:">
 <b-form-group label-cols-lg="2" label-cols-xl="2" label="Depart Starship:">
-        <date-time-input v-model="departSS" id="depart" name="depart"/>
-      </b-form-group>
+      <date-time-input v-model="departSS" id="depart" name="depart"/>
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="Takeoff">
+    <validation-provider v-slot="errors" name="Takeoff">
 <b-form-group label-cols-lg="2" label-cols-xl="2" label="Takeoff:" v-if="mode==='prop'||mode==='jet'">
-        <template #description>
-          <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"></span>
-        </template>
-        <date-time-input v-model="takeOff" id="takeoff" name="takeoff"/>
-      </b-form-group>
+      <template #description>
+        <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"></span>
+      </template>
+      <date-time-input v-model="takeOff" id="takeoff" name="takeoff"/>
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="">
+    <validation-provider v-slot="errors" name="">
 <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Arrive ${hospital?hospital.label:''}:`">
-        <template #description>
-          <span v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"></span>
-        </template>
-        <date-time-input v-model="arriveDest" id="arriveDest" name="arriveDest"/>
-      </b-form-group>
+      <template #description>
+        <span v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"></span>
+      </template>
+      <date-time-input v-model="arriveDest" id="arriveDest" name="arriveDest"/>
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="Time @ centre:">
+    <validation-provider v-slot="errors" name="Time @ centre:">
 <b-form-group label-for="timeAtCentre" label-cols-lg="2" label-cols-xl="2" label="Time @ centre:"
-            invalid-feedback="Please select a duration">
-        <template #description>
-          <span class="time-estimate">estimate {{ timeAtCentre | timeFilter }}</span> &nbsp;
-          <span v-html="timeStatsFilter(timeAtCentreStats)"></span>
-        </template>
-        <b-input-group prepend="15" append="240">
-          <input class="custom-range" type="range" min="15" max="240"
-              v-model.number="timeAtCentre" id="timeAtCentre" name="timeAtCentre" />
-        </b-input-group>
-      </b-form-group>
+          invalid-feedback="Please select a duration">
+      <template #description>
+        <span class="time-estimate">estimate {{ timeAtCentre | timeFilter }}</span> &nbsp;
+        <span v-html="timeStatsFilter(timeAtCentreStats)"></span>
+      </template>
+      <b-input-group prepend="15" append="240">
+        <input class="custom-range" type="range" min="15" max="240"
+            v-model.number="timeAtCentre" id="timeAtCentre" name="timeAtCentre" />
+      </b-input-group>
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="">
+    <validation-provider v-slot="errors" name="">
 <b-form-group label-cols-lg="2" label-cols-xl="2" :label="`Leave ${hospital?hospital.label:''}:`">
-        <date-time-input v-model="departDest"/>
-      </b-form-group>
+      <date-time-input v-model="departDest"/>
+    </b-form-group>
 </validation-provider>
-      <validation-provider v-slot="errors" name="Return to Starship:">
+    <validation-provider v-slot="errors" name="Return to Starship:">
 <b-form-group label-cols-lg="2" label-cols-xl="2" label="Return to Starship:">
-        <template #description>
-          <span v-html="timeStatsFilter(minsToReturn,'departing '+(hospital?hospital.label:'referring centre'))"></span>
-        </template>
-        <date-time-input v-model="arriveSS" id="arriveSS" name="arriveSS"/>
-      </b-form-group>
+      <template #description>
+        <span v-html="timeStatsFilter(minsToReturn,'departing '+(hospital?hospital.label:'referring centre'))"></span>
+      </template>
+      <date-time-input v-model="arriveSS" id="arriveSS" name="arriveSS"/>
+    </b-form-group>
 </validation-provider>
   </div>
 </template>

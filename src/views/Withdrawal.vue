@@ -1,5 +1,5 @@
 <template>
-  <div id="withdrawal">
+  <validation-observer v-slot="{ formValid: valid }" ref="form" tag="div" id="withdrawal">
     <h2>Withdrawal Charting</h2>
     <b-row align-h="end" class="d-print-none">
       <b-col lg="7" order-lg="12" role="tablist">
@@ -83,93 +83,86 @@
           </b-collapse>
         </b-card>
       </b-col>
-      <validation-observer v-slot="{ formValid: valid }" ref="form" slim>
-        <form class="col-lg-5 order-lg-1" novalidate autocomplete="off" @reset.prevent="clearAll">
-          <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
-            <validated-input-group label="Weight" append="kg" v-model="wtKg" type="number" step="0.1" 
-                required min="1" max="200"/> <!--label-cols-sm="4" label-cols-md="3" label-align-sm="right"-->
-            <validated-true-false-radio label="Age" required true-label="< 12 months old" false-label="≥ 1 year old" 
-                v-model="lt1Year"/>
-          </b-form-group><!--/patient-details-->
-          <hr>
-          <b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg">
+      <form class="col-lg-5 order-lg-1" novalidate autocomplete="off" @reset.prevent="clearAll">
+        <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
+          <validated-input-group label="Weight" append="kg" v-model="wtKg" type="number" step="0.1"
+              required min="1" max="200"/> <!--label-cols-sm="4" label-cols-md="3" label-align-sm="right"-->
+          <validated-true-false-radio label="Age" required true-label="< 12 months old" false-label="≥ 1 year old"
+              v-model="lt1Year"/>
+        </b-form-group><!--/patient-details-->
+        <hr>
+        <b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg">
+          <template #label>
+            Original pain/sedative <font-awesome-icon icon="prescription"/>
+          </template>
+          <validated-select-group label="Medication" required>
+            <option value="" disabled>Please select …</option>
+            <optgroup v-for="gp in ddOpts" :key="gp[0]" :label="gp[0]">
+              <option v-for="wd in gp[1]" :key="wd.name" :value="wd.name">{{wd.name}}</option>
+            </optgroup>
+          </validated-select-group>
+          <validated-input-select-group :error-label="`${concLabel.description} ${originalConcUnits?originalConcUnits.units:''}`.trim()"
+              :prepend="isPatch?originalConcUnits.units:void 0" type="number" v-model="originalConc" ref="originalConc"
+              :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits.min" :max="originalConcLimits.max"
+              :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" select-name="unit-select"
+              v-if="isDailyDrugRequired">
             <template #label>
-              Original pain/sedative <font-awesome-icon icon="prescription"/>
+              {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
             </template>
-            <validated-select-group label="Medication" required>
+            <template v-if="!isPatch">
+              <option value="" disabled>…</option>
+              <option v-for="conc in concentrations" :key="conc.units" :value="conc">{{conc.units}}</option>
+            </template>
+            <template #description v-if="hasDifferentDefaults">
+              <strong class="text-warning">*</strong> Please note different PICU vs. PCA/NCA concentrations.
+            </template>
+          </validated-input-select-group>
+          <validated-input-group label="last 24hrs:" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
+              label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
+              invalid-feedback="errors[0]" :append="original24HrUnits" type="number" v-model="original24HrVol">
+            <template #description v-if="original24HrUnits==='ml'">
+              where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
+            </template>
+          </validated-input-group>
+        </b-form-group><!--/original prescription-->
+        <hr>
+        <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !this.isChloral">
+          This equates to a total {{originalDrug.name}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
+        </div>
+        <b-form-group label="Weaning plan" label-cols-xl="3" id="weaning-med" label-size="lg">
+          <validated-select-group name="weaning-med" label="Oral" v-model="weaningDrug">
+            <template>
               <option value="" disabled>Please select …</option>
-              <optgroup v-for="gp in ddOpts" :key="gp[0]" :label="gp[0]">
-                <option v-for="wd in gp[1]" :key="wd.name" :value="wd.name">{{wd.name}}</option>
-              </optgroup>
-            </validated-select-group>
-            <validated-input-select-group :error-label="`${concLabel.description} ${originalConcUnits?originalConcUnits.units:''}`.trim()"
-                :prepend="isPatch?originalConcUnits.units:void 0" type="number" v-model="originalConc" ref="originalConc"
-                :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits.min" :max="originalConcLimits.max"
-                :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" select-name="unit-select"
-                v-if="isDailyDrugRequired">
-              <template #label>
-                {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
-              </template>
-              <template v-if="!isPatch">
-                <option value="" disabled>…</option>
-                <option v-for="conc in concentrations" :key="conc.units" :value="conc">{{conc.units}}</option>
-              </template>
-              <template #description v-if="hasDifferentDefaults">
-                <strong class="text-warning">*</strong> Please note different PICU vs. PCA/NCA concentrations.
-              </template>
-            </validated-input-select-group>
-            <validated-input-group label="last 24hrs:" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
-                label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
-                invalid-feedback="errors[0]" :append="original24HrUnits" type="number" v-model="original24HrVol">
-              <template #description v-if="original24HrUnits==='ml'">
-                where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
+              <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key">{{key}}</option>
+            </template>
+          </validated-select-group>
+          <validated-bool-group label="Wean Duration" v-model="rapidClonidineWean" v-if="isClonidine"
+              true-label="rapid" false-label="slower">
+            <template #description>
+              how do I <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">determine the clonidine wean duration…</a>?
+            </template>
+          </validated-bool-group>
+          <template v-else>
+            <validated-input-group label="Wean over" rules="integer" append="days" type="number" step="1" v-model="weanDuration"
+                required min="2" max="41">
+              <template #description>
+                how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
               </template>
             </validated-input-group>
-          </b-form-group><!--/original prescription-->
-          <hr>
-          <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !this.isChloral">
-            This equates to a total {{originalDrug.name}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
-          </div>
-          <b-form-group label="Weaning plan" label-cols-xl="3" id="weaning-med" label-size="lg">
-            <validated-select-group name="weaning-med" label="Oral" v-model="weaningDrug">
-              <template>
-                <option value="" disabled>Please select …</option>
-                <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key">{{key}}</option>
-              </template>
-            </validated-select-group>
-            <validated-bool-group label="Wean Duration" v-model="rapidClonidineWean" v-if="isClonidine"
-                true-label="rapid" false-label="slower">
-              <template #description>
-                how do I <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">determine the clonidine wean duration…</a>?
-              </template>
-            </validated-bool-group>
-            <template v-else>
-              <validated-input-group label="Wean over" rules="integer" append="days" type="number" step="1" v-model="weanDuration"
-                  required min="2" max="41">
-                <template #description>
-                  how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
-                </template>
-              </validated-input-group>
-              <validated-bool-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily"/>
-            </template>
-          </b-form-group><!--Weaning plan-->
-          <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
-            This equates to a total <strong>daily</strong> <em> starting</em> enteral {{ weaningDrug }} dose of
-            <span class="nobr"><output>{{ totalWeaning24Hrs.dailyCommence }} {{ weaningDoseUnits }}</output>/<strong>day</strong></span>
-            <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
-          </div>
-          <hr>
-          <validated-input-group name="Prescriber name" type="text">
-            <b-form-group label="Prescriber name" label-cols-xl="3" label-for="prescriber-name">
-              <input class="form-control" id="prescriber-name" v-model="prescriber" placeholder="your name"
-                      type="text" :class="getValidationClass(invalid)" autocomplete="name" required min="2"/>
-            </b-form-group>
-          </validated-input-group>
-          <hr>
-          <button type="reset" class="btn btn-warning mb-4">Clear All <font-awesome-icon icon="eraser"/></button>
-          <button type="button" class="btn btn-success mb-4 ml-2" :disabled="formValid" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
-        </form>
-      </validation-observer>
+            <validated-bool-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily"/>
+          </template>
+        </b-form-group><!--Weaning plan-->
+        <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
+          This equates to a total <strong>daily</strong> <em> starting</em> enteral {{ weaningDrug }} dose of
+          <span class="nobr"><output>{{ totalWeaning24Hrs.dailyCommence }} {{ weaningDoseUnits }}</output>/<strong>day</strong></span>
+          <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
+        </div>
+        <hr>
+        <validated-input-group name="Prescriber name" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
+        <hr>
+        <button type="reset" class="btn btn-warning mb-4">Clear All <font-awesome-icon icon="eraser"/></button>
+        <button type="button" class="btn btn-success mb-4 ml-2" :disabled="formValid" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
+      </form>
     </b-row>
     <b-row>
       <b-col>
@@ -230,7 +223,7 @@
         </withdrawal-table >
       </b-col>
     </b-row>
-  </div>
+  </validation-observer>
 </template>
 <script lang="ts">
 import 'reflect-metadata';

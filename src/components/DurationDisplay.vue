@@ -9,15 +9,15 @@ import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 
 @Component({})
 export default class DurationDisplay extends Vue {
-    @Prop({required: true})
+    @Prop({ required: true })
     public value!: number;
 
     public get hrs() {
-        return Math.floor(this.value / 60);
+      return Math.floor(this.value / 60);
     }
 
     public get mins() {
-        return (this.value - this.hrs).toFixed().padStart(2, '0');
+      return (this.value - this.hrs).toFixed().padStart(2, '0');
     }
 }
 </script>

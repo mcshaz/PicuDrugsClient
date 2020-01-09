@@ -3,20 +3,21 @@
         :invalid-feedback="combinedErrors[0]" :state="errors[0] ? false : (changed ? true : null)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
-      <b-input-group :prepend="prepend">
+      <b-input-group>
+        <b-input-group-prepend is-text v-if="prepend || $slots.prepend"><slot name="prepend">{{ prepend }}</slot></b-input-group-prepend>
         <validation-provider v-slot="{ errors, changed }" :name="pErrorLabel" :rules="rules" ref="inputValProvider" slim>
           <input class="form-control" :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled"
-              v-model="pValue" :id="pName" :name="pName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}">
+              v-model="pValue" :id="pName" :name="pName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}" :autocomplete="autocomplete">
         </validation-provider>
-        <slot name="append" v-if="$slots.default">
+        <b-input-group-append is-text  v-if="$slots.default">
           <validation-provider v-slot="{ errors, changed }" class="input-group-append" tag="div" ref="selectValProvider" :name="pSelectErrorLabel"
               :rules="selectValidators" :title="selectTitle">
-            <select v-model="pSelectValue" :name="pSelectName" :id="pSelectName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}" 
+            <select v-model="pSelectValue" :name="pSelectName" :id="pSelectName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}"
                 :disabled="select-disabled" class="custom-select input-group-addon">
               <slot></slot>
             </select>
           </validation-provider><!--/input-group-append-->
-        </slot>
+        </b-input-group-append>
       </b-input-group>
     </b-form-group>
 </template>
@@ -45,7 +46,7 @@ export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl) 
   pSelectErrorLabel = '';
 
   created() {
-    this.pSelectName = this.selectName || this.pSelectTitle.replace(/\s+/g,'-');
+    this.pSelectName = this.selectName || this.pSelectTitle.replace(/\s+/g, '-');
     this.pSelectErrorLabel = this.selectErrorLabel || this.pSelectTitle;
   }
 

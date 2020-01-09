@@ -42,3 +42,46 @@ export const nhiChecksum: ValidationRuleSchema = {
   },
   message: 'A letter or number is mistyped',
 };
+
+function localeString(value: Date | string, includeTime = false) {
+  let limit = value instanceof Date
+    ? value
+    : new Date(value);
+  return includeTime
+    ? limit.toLocaleString()
+    : limit.toLocaleDateString();
+}
+
+function makeComparable(value: any) {
+  return isNaN(value)
+    ? Date.parse(value)
+    : +value;
+}
+
+export const before: ValidationRuleSchema = {
+    params: ["limit", "included", "displayTime"],
+    validate(value, { limit, included }: Record<string, any> = {}) {
+      value = makeComparable(value);
+      limit = makeComparable(limit)
+      return included === false
+        ? value < limit
+        : value <= limit;
+    },
+    message(fieldName, placeholders) {
+      return `The ${fieldName} field must come before ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
+    }
+}
+
+export const after: ValidationRuleSchema = {
+  params: ["limit", "included", "displayTime"],
+  validate(value, { limit, included }: Record<string, any> = {}) {
+    value = makeComparable(value);
+    limit = makeComparable(limit)
+    return included === false
+      ? value > limit
+      : value >= limit;
+  },
+  message(fieldName, placeholders) {
+    return `The ${fieldName} field must come after ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
+  }
+}

@@ -13,7 +13,7 @@
                 :min="min"
                 :max="max"
                 step="any">
-            <b-input-group-append :is-text="true">
+            <b-input-group-append is-text  :is-text="true">
                 {{units}}<slot></slot>
             </b-input-group-append>
         </b-input-group>

@@ -25,7 +25,7 @@ type vueNumber = number | '';
 type nullBool = null | boolean;
 
 @Component({})
-export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl)  {
+export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl) {
   @Model('change') // use change event rather than input
   public value!: boolean | null;
   @Prop({ required: true })
@@ -48,7 +48,7 @@ export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl)  {
   }
 
   public get radioGrpName() {
-    return this.name || ('radioGrp_' + this.pName); //(this as any)._uid
+    return this.name || ('radioGrp_' + this.pName); // (this as any)._uid
   }
 }
 </script>
