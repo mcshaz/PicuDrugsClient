@@ -37,8 +37,8 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
 
     constructor(@inject(TYPES.IFetchUpdates) updateProvider: IFetchUpdates,
                 @inject(TYPES.ILogger) logger: ILogger,
-                indexedDB: IDBFactory | undefined = void 0,
-                dbKeyRange: typeof IDBKeyRange | undefined = void 0) {
+      indexedDB: IDBFactory | undefined = void 0,
+      dbKeyRange: typeof IDBKeyRange | undefined = void 0) {
       if (indexedDB !== void 0) {
         Dexie.dependencies.indexedDB = indexedDB as IDBFactory;
       }
@@ -68,7 +68,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
       };
 
       window.addEventListener('unhandledrejection', promiseReject);
-      this.on('ready', async () => {
+      this.on('ready', async() => {
         await this.alignDB();
         window.removeEventListener('unhandledrejection', promiseReject);
       });
@@ -101,7 +101,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
             Object.keys(serverData.data).map((k) => `{${k}:length[${(serverData.data as any)[k].length}]}`)
               .join(','));
       if (vip) {
-        await Dexie.vip(async () => {
+        await Dexie.vip(async() => {
           await this.alignLocalData(serverData);
         });
       } else {
@@ -127,7 +127,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
       this.logger.debug('setting dbUpdatedTime');
       // for native promise/await implementations seems to work, but falls over in IE with promise polyfill unless
       // rewrapped in Dexie.vip
-      await Dexie.vip(async () => {
+      await Dexie.vip(async() => {
         await this.appData.put({
           dataType: appDataType.lastFetchServer,
           data: serverData.updateCheckStart.toString(),

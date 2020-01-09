@@ -71,7 +71,7 @@ export default class DateInput extends Vue {
     public set dateStr(value: string) {
       this.pDateStr = value;
       let dt!: Date;
-      if (value === '' || isNaN((dt = new Date(value)).valueOf())) {
+      if (value === '' || Number.isNaN((dt = new Date(value)).valueOf())) {
         if (this.wasDate) {
           this.$emit('value', null);
           this.wasDate = false;

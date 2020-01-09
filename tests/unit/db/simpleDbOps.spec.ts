@@ -35,7 +35,7 @@ describe('simple DB tests', () => {
   it('called IFetch only with null', () => emptyFetch.received(1).getDbUpdates(null));
   describe('single DB table items can be added', () => {
     const allTables = new DbTestTableHelpers();
-    before('adding single db items', async () => {
+    before('adding single db items', async() => {
       const allData = await fileFetch.getDbUpdates(null);
       allTables.setDb(db, (e) => {
         switch (e.tableCode) {
@@ -56,7 +56,7 @@ describe('simple DB tests', () => {
     });
     describe('can put, get & delete single items', () => {
       allTables.forEach((t) => {
-        it(t.name, async () => {
+        it(t.name, async() => {
           const entity = t.entities![0];
           const id = t.getId(entity);
           await t.table!.put(entity);
@@ -72,7 +72,7 @@ describe('simple DB tests', () => {
     });
     describe('can bulkput, find anyOf & bulkdelete single items', () => {
       allTables.forEach((t) => {
-        it(t.name, async () => {
+        it(t.name, async() => {
           const entity = t.entities![0];
           const id = t.getId(entity);
           await t.table!.bulkPut([entity]);
@@ -91,7 +91,7 @@ describe('simple DB tests', () => {
       });
     });
   });
-  after('delete db', async () => {
+  after('delete db', async() => {
     await db.delete();
   });
 });

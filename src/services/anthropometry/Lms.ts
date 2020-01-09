@@ -9,7 +9,7 @@ export class Lms {
     return new Lms(
       oppFraction * this.l + fraction * interpolWith.l,
       oppFraction * this.m + fraction * interpolWith.m,
-      oppFraction * this.s + fraction * interpolWith.s,
+      oppFraction * this.s + fraction * interpolWith.s
     );
   }
   public zFromParam(param: number) {

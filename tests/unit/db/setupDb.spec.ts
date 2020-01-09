@@ -16,7 +16,7 @@ describe('setup full local db from JSON', () => {
   let updated: Date;
   before('initialize db', () => {
     const fetch: IFetchUpdates = {
-      getDbUpdates: async () => {
+      getDbUpdates: async() => {
         const dbInit = await fileFetch.getDbUpdates(null);
         dbInit.updateCheckStart = updated = new Date();
         allTables.forEach((t) => {
@@ -46,7 +46,7 @@ describe('setup full local db from JSON', () => {
   });
   describe('data is added appropriately', () => {
     allTables.forEach((t) => {
-      it(`has ${t.name} added`, async () => {
+      it(`has ${t.name} added`, async() => {
         const removedEntity = t.entities!.pop();
         const dexieEntities = await t.table!.toArray();
         expect(dexieEntities).to.have.same.deep.members(t.entities!);
@@ -54,12 +54,12 @@ describe('setup full local db from JSON', () => {
         expect(dexieEntities.map((e) => t.getId(e))).to.not.include(t.getId(removedEntity));
       });
     });
-    it('has updated DB with server time', async () => {
+    it('has updated DB with server time', async() => {
       const updates = await db.appData.get(appDataType.lastFetchServer) as IDbAppData;
       expect(updates.data, 'updates.data [date]').to.equal(updated.toString());
     });
   });
-  after('delete db', async () => {
+  after('delete db', async() => {
     await db.delete();
   });
 });

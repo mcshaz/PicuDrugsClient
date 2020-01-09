@@ -15,8 +15,8 @@ interface IChartData {
 enum fixedChartBoundaries { gest, zeroTo52Weeks, twelveTo60Months, fiveToTenYears, tenYearsPlus }
 
 export function lmsChunkAroundAge(agesInDays: number[],
-                                  gestAgeWeeks: number,
-                                  centiles: CentileRange): IChartData | null {
+  gestAgeWeeks: number,
+  centiles: CentileRange): IChartData | null {
 // rules will be:
 // if single value, as per centile charts
 // if min age in weeks, go 1 gest week prior, otherwise go 1 month prior
@@ -96,8 +96,8 @@ function mergeGestAgeToSubsequent(centiles: CentileRange, startWeeks = 0, finish
 }
 
 function getFixedChartBoundaries(agesInDays: number[],
-                                 gestAgeWeeks: number,
-                                 centiles: CentileRange): Set<fixedChartBoundaries> {
+  gestAgeWeeks: number,
+  centiles: CentileRange): Set<fixedChartBoundaries> {
   // note for big stata sets iterating every member will not be the most efficient, but it is currently a quick and easy way to
   // get the min and maximum without having to iterate only if the value was not in range
   const returnVar = new Set<fixedChartBoundaries>();
