@@ -1,7 +1,7 @@
 <template>
   <div class="centiles">
     <h2>Drug Calculator - Centile Data</h2>
-    <ValidationObserver v-slot="{ passes }">
+    <validation-observer v-slot="{ passes }">
 <form @submit.prevent ref="base-data" class="card p-2" id="patientData-data">
         <nhi-input v-model="nhi" @invalid-state-change="lookupNhi(!$event.$invalid)" />
         <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
@@ -79,7 +79,7 @@
           </b-button>
         </b-button-group>
     </form>
-</ValidationObserver>
+</validation-observer>
     <b-modal id="centile-modal" ref="centile-modal" hide-footer ok-only :title="chartType+' centiles'" :lazy="true">
       <svg-centiles :measurements="plotPoints" :is-male="isMale" :chartType="chartType" :gestAgeWeeks="weeksGestation" />
     </b-modal>

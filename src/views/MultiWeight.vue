@@ -2,13 +2,13 @@
   <div class="prinatableCharts">
     <h2>Drug Calculator - Create printable charts
     </h2>
-    <ValidationObserver v-slot="{ passes }">
+    <validation-observer v-slot="{ passes }">
 <form class="was-validated" @submit.prevent="submit">
       <ward-select @ward="ward=$event" :ward-abbrev="wardName"
           @boluses="boluses=$event" :boluses="boluses"
           @infusions="infusions=$event" :infusions="infusions"
           @infusions-available="infusionsAvailable=$event" />
-      <ValidationProvider v-slot="errors" name="Email:">
+      <validation-provider v-slot="errors" name="Email">
 <b-form-group label="Email:" label-cols-lg="2" label-cols-xl="2" :state="emailValidity"
           invalid-feedback="Please enter a valid email address" label-for="email" v-model="email"
           description="To be notified if the charts for this department are altered/updated">
@@ -19,10 +19,10 @@
           </b-input-group-text>
         </b-input-group>
       </b-form-group>
-</ValidationProvider>
+</validation-provider>
       <b-button type="submit" :disabled="!ward">submit</b-button>
     </form>
-</ValidationObserver>
+</validation-observer>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -45,14 +45,14 @@
       <tfoot>
         <tr>
           <td>
-            <ValidationObserver v-slot="{ passes }">
+            <validation-observer v-slot="{ passes }">
 <form class="form-inline" @submit.prevent="addRow">
               <input type="number" class="form-control" v-model.number="weightInEditor" :min="min" :max="max" step="0.1">
               <b-button type="submit" :disabled="weightInEditor===''||weightInEditor<min||weightInEditor>max">
                 <font-awesome-icon icon="plus" />
               </b-button>
             </form>
-</ValidationObserver>
+</validation-observer>
           </td>
           <td colspan="3">
           </td>

@@ -12,7 +12,7 @@
                 :read-only="readOnly"
                 :min="min"
                 :max="max"
-                step="any" />
+                step="any">
             <b-input-group-append :is-text="true">
                 {{units}}<slot></slot>
             </b-input-group-append>
@@ -63,7 +63,7 @@ export default class CentileCell extends Vue {
         returnVar = '';
       } else {
         returnVar = parseFloat(valStr);
-        if (isNaN(returnVar) || returnVar < this.min || returnVar > this.max) {
+        if (Number.isNaN(returnVar) || returnVar < this.min || returnVar > this.max) {
           returnVar = '';
         }
       }

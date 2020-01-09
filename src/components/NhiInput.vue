@@ -1,19 +1,16 @@
 <template>
     <div>
-        <ValidationProvider v-slot="errors" name="NHI:">
-<b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error">
-            <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI"/>
-            <template slot="invalid-feedback" v-if="validator.$invalid">
-                <template v-if="validator.nhi.nhiChars===false">
-                    Must be 3 letters (NO 'I's or 'O's) followed by 4 numbers
+        <validation-provider v-slot="{errors, failedRules}" name="NHI" rules="exactLength:7|nhiRegex|nhiChecksum">
+            <b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error">
+                <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI"/>
+                <template #invalid-feedback v-if="validator.$invalid">
+                    <template v-if="failedRules">
+                        A letter or number is mistyped
+                        <b-button variant="link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
+                    </template>
                 </template>
-                <template v-else>
-                    A letter or number is mistyped
-                    <b-button variant="link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
-                </template>
-            </template>
-        </b-form-group>
-</ValidationProvider>
+            </b-form-group>
+        </validation-provider>
         <!-- Modal Component -->
         <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true">
             <p class="my-4">
@@ -37,28 +34,21 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-// import { Validations } from 'vuelidate-property-decorators';
-import { Validation } from 'vuelidate';
-import { defaultSim } from '@/services/validation/getNHIVals';
+import { defaultSim, nhiChecksum } from '@/services/validation/validators';
 
 type vueNumber = number | '';
 
 @Component({})
 export default class NhiInput extends Vue {
   public readonly simNHI = defaultSim;
-
   @Prop({ required: true })
   private value!: string;
-
-  @Prop({ required: true })
-  private validator!: Validation;
 
   public get nhi() {
     return this.value;
   }
   public set nhi(value: string) {
     this.$emit('input', value.toUpperCase());
-    this.validator.$touch();
   }
 }
 /*

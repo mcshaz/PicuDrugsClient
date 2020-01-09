@@ -1,14 +1,14 @@
 <template>
   <div class="home">
     <h2>Drug Calculator - Defaults for this browser </h2>
-    <ValidationObserver v-slot="{ passes }">
+    <validation-observer v-slot="{ passes }">
 <form @submit.prevent="submit" ref="form" class="card p-2">
         <ward-select @ward="wardAbbrev=$event.abbrev" :ward-abbrev="wardAbbrev"
                 @boluses="boluses=$event" :boluses="boluses"
                 @infusions="infusions=$event" :infusions="infusions" />
         <b-button type="submit">Set Defaults</b-button>
     </form>
-</ValidationObserver>
+</validation-observer>
   </div>
 </template>
 

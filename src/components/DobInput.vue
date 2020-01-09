@@ -1,14 +1,12 @@
 <template>
     <div :class="pState===null?'':'was-validated'">
-        <ValidationProvider v-slot="errors" name="DOB:">
-<b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState">
-            <template slot="invalid-feedback">
-                must be between {{minString}} and {{maxString}}
-            </template>
-            <date-input :min="min" :max="max" v-model="dob"
-                    @blur="onBlur($event)" :id="dob" :required="required" />
-        </b-form-group>
-</ValidationProvider>
+        <validation-provider v-slot="errors" name="DOB" mode="lazy">
+          <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2"
+                :state="state" description="date of birth" :invalid-feedback="errors[0]">
+              <date-input :min="min" :max="max" v-model="dob"
+                      @blur="onBlur($event)" :id="dob" :required="required" />
+          </b-form-group>
+        </validation-provider>
     </div>
 </template>
 
@@ -17,9 +15,6 @@ import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
 import DateInput from '@/components/DateInput.vue';
 import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
-import { between } from 'vuelidate/lib/validators';
-import { validationMixin } from 'vuelidate';
-import { Validations } from 'vuelidate-property-decorators';
 
 enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 
@@ -27,13 +22,12 @@ enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
   components: {
     DateInput,
   },
-  mixins: [ validationMixin ],
 })
 export default class DobInput extends Vue {
+    public max!: Date;
+    public state: boolean | null = null;
     private pDob: Date | null = null;
-    private pState: boolean | null = null;
     private pMin!: Date;
-    private max!: Date;
 
     // non vue properties = start with undefined
     private timeout?: number | NodeJS.Timer;
@@ -49,31 +43,18 @@ export default class DobInput extends Vue {
       this.setDates();
     }
 
-    @Validations()
-    public getValidations() {
-      return { dob: { between: between(this.min, this.max) } };
-    }
-
     public get dob() {
       return this.pDob;
     }
     public set dob(value: Date | null) {
       if (this.pDob !== value) {
         this.pDob = value;
-        this.setState(true);
-        this.$emit('input', value, this.$v);
+        this.$emit('input', value);
       }
     }
 
     public onBlur(evt: any) {
-      this.setState();
       this.$emit('blur', evt);
-    }
-
-    public setState(dateBeingEntered = false) {
-      this.pState = this.$v.dob!.$error && (dateBeingEntered && this.pDob!.getFullYear() < 1000)
-        ? null
-        : this.$v.dob!.$error;
     }
 
     private get min() { return this.pMin; }
@@ -90,11 +71,11 @@ export default class DobInput extends Vue {
       return shortFormatter.format(this.max);
     }
 
+    // watching the property - the property and pDOB are different as DOB < 1000 AD (i.e. date is being entered) will differ
     @Watch('value')
     private valuePropChanged(newVal: Date | null) {
       if (this.pDob !== newVal) {
         this.pDob = newVal;
-        this.setState();
       }
     }
 

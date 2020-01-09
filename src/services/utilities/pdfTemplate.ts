@@ -11,15 +11,15 @@ export function pdfTemplate(doc: jsPDF): BaseConfig {
       doc.setTextColor(40);
       doc.setFontStyle('normal');
 
-      doc.text('Report', data.settings.margin.left, 18);
+      doc.text('Report', (data.settings as any).margin.left, 18);
 
       // Footer
       doc.setFontSize(10);
       const bottom = doc.internal.pageSize.getHeight() - 10;
-      const right = doc.internal.pageSize.getWidth() - data.settings.margin.right;
+      const right = doc.internal.pageSize.getWidth() - (data.settings as any).margin.right;
       doc.text(`Page ${data.pageNumber} of ${data.pageCount}`, right, bottom, { align: 'right' });
       const now = new Date();
-      doc.text(`Printed ${shortFormatter.format(now)} ${now.toLocaleTimeString()}`, data.settings.margin.left, bottom);
+      doc.text(`Printed ${shortFormatter.format(now)} ${now.toLocaleTimeString()}`, (data.settings as any).margin.left, bottom);
     },
   };
 }

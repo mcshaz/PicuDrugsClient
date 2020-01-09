@@ -1,16 +1,16 @@
 <template>
   <div>
-    <ValidationProvider v-slot="errors" name="Ward:">
+    <validation-provider v-slot="errors" name="Ward">
 <b-form-group label-for="ward" label-cols-lg="2" label-cols-xl="2" label="Ward:"
         invalid-feedback="Please select a ward" :state="!!abbrev">
       <b-form-select v-model="abbrev" :options="wardOptions" :required="true" name="ward" id="ward" :state="!!abbrev">
-        <template slot="first">
+        <template #first>
           <option :value="''" disabled>Please select a ward</option>
         </template>
       </b-form-select>
     </b-form-group>
-</ValidationProvider>
-    <ValidationProvider v-slot="errors" name="Chart type:">
+</validation-provider>
+    <validation-provider v-slot="errors" name="Chart type:">
 <b-form-group label-cols-lg="2" label-cols-xl="2" label="Chart type:" invalid-feedback="Please select at least 1 chart"
         :state="boluses||infusions">
       <div role="group" tabindex="-1">
@@ -25,7 +25,7 @@
         </b-form-checkbox>
       </div>
     </b-form-group>
-</ValidationProvider>
+</validation-provider>
   </div>
       <!--
       <div class="form-check form-check-inline">

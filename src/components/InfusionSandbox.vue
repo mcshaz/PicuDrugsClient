@@ -2,14 +2,14 @@
   <div class="prinatableCharts">
     <h2>Drug Calculator - Create printable charts
     </h2>
-    <ValidationObserver v-slot="{ passes }">
+    <validation-observer v-slot="{ passes }">
 <form class="was-validated" @submit.prevent="submit">
-        <ValidationProvider v-slot="errors" name="drug name:">
+        <validation-provider v-slot="errors" name="drug name:">
 <b-form-group label="drug name:" label-for="name" label-cols-lg="2" label-cols-xl="2">
                 <input id="name" type="text" v-model="name" class="form-control">
         </b-form-group>
-</ValidationProvider>
-        <ValidationProvider v-slot="errors" name="ampule:">
+</validation-provider>
+        <validation-provider v-slot="errors" name="ampule">
 <b-form-group label="ampule:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
             <div class="input-group">
                 <input id="ampAmount" type="number" v-model="ampAmount" class="form-control">
@@ -32,9 +32,9 @@
             </b-input-group>
 
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
 
-        <ValidationProvider v-slot="errors" name="Dilution Method:">
+        <validation-provider v-slot="errors" name="Dilution Method:">
 <b-form-group label="Dilution Method:" label-for="dilutionMethod" label-cols-lg="2" label-cols-xl="2">
             <select class="custom-select" v-model="dilutionMethodId" id="dilutionMethod">
                 <option v-for="m in dilutionMethods" :key="m.value" :value="m.value">
@@ -42,9 +42,9 @@
                 </option>
             </select>
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
 
-        <ValidationProvider v-slot="errors" name="run infusion @:">
+        <validation-provider v-slot="errors" name="run infusion @:">
 <b-form-group label="run infusion @:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
             <div class="input-group-addon">
                 <select class="custom-select" v-model="infusionPrefix" id="infusionPrefix">
@@ -66,41 +66,41 @@
                 </option>
             </select>
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
 
-        <ValidationProvider v-slot="errors" name="Dilution Volume:">
+        <validation-provider v-slot="errors" name="Dilution Volume:">
 <b-form-group label="Dilution Volume:" label-for="dilutionVol" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="ml">
                 <input id="dilutionVol" type="number" v-model="dilutionVol" class="form-control">
             </b-input-group>
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
 
-        <ValidationProvider v-slot="errors" name="Duration:">
+        <validation-provider v-slot="errors" name="Duration">
 <b-form-group label="Duration:" label-for="duration" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="mins">
                 <input id="duration" type="number" v-model="duration" class="form-control">
             </b-input-group>
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
 
-        <ValidationProvider v-slot="errors" name="rate:">
+        <validation-provider v-slot="errors" name="rate">
 <b-form-group label="rate:" label-for="rate" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="ml">
                 <input id="rate" type="number" v-model="rate" class="form-control">
             </b-input-group>
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
 
-        <ValidationProvider v-slot="errors" name="concentration:">
+        <validation-provider v-slot="errors" name="concentration">
 <b-form-group label="concentration:" label-for="concentration" label-cols-lg="2" label-cols-xl="2">
             <b-input-group append="ml">
                 <input id="concentration" type="number" v-model="concentration" class="form-control">
             </b-input-group>
         </b-form-group>
-</ValidationProvider>
+</validation-provider>
     </form>
-</ValidationObserver>
+</validation-observer>
     <table class="table table-striped">
       <thead>
         <tr>

@@ -1,15 +1,15 @@
 <template>
     <div class="weeks-gestation was-validated">
-        <ValidationProvider v-slot="errors" name="Gestation:">
-<b-form-group label-for="weeksGestation" label-cols-lg="2" label-cols-xl="2" label="Gestation:"
-                invalid-feedback="a number between 22 &amp; 43 weeks is required" :state="state">
-        <b-input-group append="weeks">
-            <input class="form-control" name="weeksGestation" id="weeksGestation"
-                placeholder="Weeks Gestation" type="number" :min="minGest" :max="maxGest" required
-                :disabled="disabled" @input="convertAndEmit($event.target.value)" :value="value" />
-        </b-input-group>
-        </b-form-group>
-</ValidationProvider>
+        <validation-provider v-slot="errors" name="Gestation">
+          <b-form-group label-for="weeksGestation" label-cols-lg="2" label-cols-xl="2" label="Gestation:"
+                :invalid-feedback="errors[0]" :state="state">
+            <b-input-group append="weeks">
+              <input class="form-control" name="weeksGestation" id="weeksGestation"
+                  placeholder="Weeks Gestation" type="number" :min="minGest" :max="maxGest" required
+                  :disabled="disabled" @input="convertAndEmit($event.target.value)" :value="value">
+            </b-input-group>
+          </b-form-group>
+        </validation-provider>
     </div>
 </template>
 
@@ -37,7 +37,7 @@ export default class WeeksGestation extends Vue {
         numVal = '';
       } else {
         const floatVal = parseFloat(val);
-        numVal = isNaN(floatVal)
+        numVal = Number.isNaN(floatVal)
           ? ''
           : floatVal;
       }

@@ -1,80 +1,80 @@
 <template>
-  <ValidationObserver v-slot="{ passes }">
-<form novalidate @submit.prevent="submit" class="card p-2" autocomplete="off">
-    <slot>
-    </slot>
-    <ValidationProvider v-slot="errors" name="Name:">
-<b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:">
-      <input class="form-control" type="text" name="name" id="name" v-model.trim="name"
-          placeholder="Patient Name" />
-    </b-form-group>
-</ValidationProvider>
-    <nhi-input v-model="nhi" @invalid-state-change="nhiValidState=!$event.$invalid" />
-    <patient-age-data v-model="age" />
-    <ValidationProvider v-slot="errors" name="Gender:">
-<b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2">
-      <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
-    </b-form-group>
-</ValidationProvider>
-    <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
-    <ValidationProvider v-slot="errors" name="Weight:">
-<b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
-          :state="$v.weightKg.$invalid"
-          class="was-validated" @blur="debounceCentiles.flush()">
-        <vuelidate-message :validator="$v.weightKg" label="weight" units="kg"
-            v-if="$v.weightKg.$error" />
-        <template :slot="acceptWtWarn?'valid-feedback':'invalid-feedback'" v-else >
-          <output v-if="lbWtCentile!==null" name="centile" id="centile" ref="centile">
-            <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span>
-            <span class="val">{{lbWtCentile.val}}</span>
-            <sup class="suffix">{{lbWtCentile.suffix}}</sup>
-            <span class="note">{{lbWtCentile.note}}</span>
-            <span v-if="ubWtCentile">
-            –
-            <span class="prefix">{{ubWtCentile.prefix}}
-            &nbsp;
-            </span><span class="val">{{ubWtCentile.val}}</span>
-            <sup class="suffix">{{ubWtCentile.suffix}}</sup>
-            <span class="note">{{ubWtCentile.note}}</span>
-            </span>
-            centile
-          </output>
-          <div>
-            <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn"
-                v-if="alertLevel==='warning'||alertLevel==='danger'">
-              I confirm this is the correct weight
-            </b-form-checkbox>
-            {{errMsg}}
-          </div>
-        </template>
-        <div class="form-inline">
-          <b-input-group append="kg">
-            <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
-                type="number" ref="weight"
-                :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
-          </b-input-group>
-          <b-button variant="outline-primary" :disabled="(!isWeightEstimate&&!!weightKg)||!age" @click="wt4age" class="ml-3">
-            Median Weight For Age
-          </b-button>
-        </div> <!-- end form-inline -->
-      </b-form-group>
-</ValidationProvider>
-      <ValidationProvider v-slot="errors" name="Estimate:">
-<b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:">
-        <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate">
-          <b-form-radio id="estimate" :value="true">
-            estimated weight
-          </b-form-radio>
-          <b-form-radio id="exact" :value="false">
-            exact weight
-          </b-form-radio>
-        </b-form-radio-group>
-    </b-form-group>
-</ValidationProvider>
-    <slot name="after"></slot>
-    <b-button type="submit" :variant="alertLevel">Create Chart</b-button>
-  </form>
-</ValidationObserver>
+  <validation-observer v-slot="{ passes }">
+    <form novalidate @submit.prevent="passes(submit)" class="card p-2" autocomplete="off">
+      <slot>
+      </slot>
+      <validation-provider v-slot="errors" name="Name">
+        <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:" :invalid-feedback="errors[0]">
+          <input class="form-control" type="text" name="name" id="name" v-model.trim="name"
+              placeholder="Patient Name" />
+        </b-form-group>
+      </validation-provider>
+      <nhi-input v-model="nhi" />
+      <patient-age-data v-model="age" />
+      <validation-provider v-slot="errors" name="Gender">
+        <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2" :invalid-feedback="errors">
+          <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
+        </b-form-group>
+      </validation-provider>
+      <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
+      <validation-provider v-slot="errors" name="Weight">
+        <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
+            :state="errors[0]"
+            class="was-validated" @blur="debounceCentiles.flush()">
+          <template :slot="acceptWtWarn?'valid-feedback':'invalid-feedback'" >
+            <output v-if="lbWtCentile!==null" name="centile" id="centile" ref="centile">
+              <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span>
+              <span class="val">{{lbWtCentile.val}}</span>
+              <sup class="suffix">{{lbWtCentile.suffix}}</sup>
+              <span class="note">{{lbWtCentile.note}}</span>
+              <span v-if="ubWtCentile">
+              –
+              <span class="prefix">{{ubWtCentile.prefix}}
+              &nbsp;
+              </span><span class="val">{{ubWtCentile.val}}</span>
+              <sup class="suffix">{{ubWtCentile.suffix}}</sup>
+              <span class="note">{{ubWtCentile.note}}</span>
+              </span>
+              centile
+            </output>
+            <div>
+              <validation-provider v-slot="errors2" name="confirm weight" :rules="{required: {allowFalse: false}}">
+                <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn"
+                    v-if="alertLevel==='warning'||alertLevel==='danger'">
+                  I confirm this is the correct weight
+                </b-form-checkbox>
+                {{errors2[0]}}
+              </validation-provider>
+            </div>
+          </template>
+          <div class="form-inline">
+            <b-input-group append="kg">
+              <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
+                  type="number" ref="weight"
+                  :min="minWeight" :max="maxWeight" autocomplete="off" step="any" :class="alertLevel" />
+            </b-input-group>
+            <b-button variant="outline-primary" :disabled="(!isWeightEstimate&&!!weightKg)||!age" @click="wt4age" class="ml-3">
+              Median Weight For Age
+            </b-button>
+          </div> <!-- end form-inline -->
+        </b-form-group>
+      </validation-provider>
+      <validation-provider v-slot="errors" name="Estimate">
+        <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:" :invalid-feedback="errors[0]">
+          <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate">
+            <b-form-radio id="estimate" :value="true">
+              estimated weight
+            </b-form-radio>
+            <b-form-radio id="exact" :value="false">
+              exact weight
+            </b-form-radio>
+          </b-form-radio-group>
+        </b-form-group>
+      </validation-provider>
+      <slot name="after"></slot>
+      <b-button type="submit" :variant="alertLevel">Create Chart</b-button>
+    </form>
+  </validation-observer>
 </template>
 
 <script lang="ts">
@@ -107,7 +107,6 @@ export default class PatientAgeWeightData extends Vue {
   public minWeight = minWeightRecord();
   public maxWeight = maxWeightRecord();
   public isWeightEstimate = false;
-  public errMsg = '';
 
   @Prop({ default: true })
   private requireWeight!: boolean;
@@ -260,10 +259,7 @@ function alertLevel(level: alarmLevel) {
 input.form-control.warning:valid {
   border-color: #fd7e14;
 }
-input[type='number'] {
-  max-width: 7.5em;
-  min-width: 5em;
-}
+
 input.small-int {
   max-width: 6.3em;
 }

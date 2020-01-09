@@ -1,8 +1,8 @@
 <template>
   <div class="anaphylaxis">
-    <ValidationObserver v-slot="{ passes }">
+    <validation-observer v-slot="{ passes }">
 <form>
-      <ValidationProvider v-slot="errors" name="Weight:">
+      <validation-provider v-slot="errors" name="Weight">
 <b-form-group  label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
           :state="!errMsg" :invalid-feedback="errMsg"
           class="was-validated">
@@ -13,9 +13,9 @@
               :min="minWt" :max="maxWt" autocomplete="off" step="0.1" />
         </b-input-group>
       </b-form-group>
-</ValidationProvider>
+</validation-provider>
     </form>
-</ValidationObserver>
+</validation-observer>
     <status-epilepsy-svg :wtKg="wtKg" />
     <!--<anaphylaxis-svg :wtKg="wtKg"/>-->
     <!--<svt-svg :wtKg="wtKg"/>-->

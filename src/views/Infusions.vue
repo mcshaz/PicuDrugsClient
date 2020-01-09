@@ -2,25 +2,25 @@
   <div class="home">
     <h2>Drug Calculator - Individual drug infusions </h2>
     <patient-age-weight-data :exactAge="selectedDrug&&!selectedDrug.isTitratable">
-      <ValidationProvider v-slot="errors" name="Drug:">
+      <validation-provider v-slot="errors" name="Drug">
 <b-form-group label-cols-lg="2" label-cols-xl="2" label="Drug:"
           invalid-feedback="Please select a drug" :state="!!selectedDrugVM">
         <vue-single-select placeholder="please select a drug"
             label="fullname" v-model="selectedDrugVM" textField="label" keyField="id"
             :filterBy="filterSearch" :options="searchableDrugs" :required="true" />
       </b-form-group>
-</ValidationProvider>
-      <ValidationProvider v-slot="errors" name="Ampule:">
+</validation-provider>
+      <validation-provider v-slot="errors" name="Ampule">
 <b-form-group label-for="ampule" label-cols-lg="2" label-cols-xl="2" label="Ampule:"
             invalid-feedback="Please select an ampule">
         <b-form-select v-model="selectedAmpuleIndx" :options="ampules" required
             :disabled="!ampules.length">
-          <template slot="first">
+          <template #first>
             <option :value="null" disabled>ampule concentration...</option>
           </template>
         </b-form-select>
       </b-form-group>
-</ValidationProvider>
+</validation-provider>
     </patient-age-weight-data>
     <p v-if="link">
       to link to this drug in documentation etc., use the link <a href="#">{{link}}</a>

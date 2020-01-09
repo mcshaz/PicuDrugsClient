@@ -5,10 +5,8 @@ interface IStringProps {
 export function deepFreeze<T extends IStringProps>(obj: T) {
   // Retrieve the property names defined on object
   // Freeze properties before freezing self
-  for (const name of Object.getOwnPropertyNames(obj)) {
-    const value = obj[name] as any;
-    const type = typeof value;
-    if (type === 'object') {
+  for (const value of Object.values(obj)) {
+    if (typeof value === 'object' && value !== null) {
       deepFreeze(value);
     }
   }

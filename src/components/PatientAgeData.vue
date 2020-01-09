@@ -1,26 +1,31 @@
 <template>
   <div class="was-validated">
     <dob-input v-model="dob" @min-change="minDate=$event" />
-    <ValidationProvider v-slot="errors" name="Age:">
-<b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
-      :state="$v.$invalid"
-      :invalid-feedback="errMsg">
-      <div class="form-inline">
-        <b-input-group append="years" class="mr-1">
-          <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
-            :min="$v.years.$params.min" :max="$v.years.$params.max" ref="years" step="1" />
-        </b-input-group>
-        <b-input-group append="months" class="mr-1">
-          <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number"
-            :min="$v.months.$params.min" :max="$v.months.$params.max" ref="months" step="1" />
-        </b-input-group>
-        <b-input-group append="days">
-          <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number"
-            :min="$v.days.$params.min" :max="$v.days.$params.max" ref="days" step="1" />
-        </b-input-group>
-      </div>
-    </b-form-group>
-</ValidationProvider>
+    <validation-observer v-slot="{allErrors, valid}">
+      <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
+            :state="valid" :invalid-feedback="allErrors.years[0] || allErrors.months[0] || allErrors.days[0]">
+        <div class="form-inline">
+          <validation-provider vid="years" rules="integer"><!--todo exact-->
+            <b-input-group append="years" class="mr-1">
+              <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
+                min="0" :max="maxYears" ref="years" step="1" />
+            </b-input-group>
+          </validation-provider>
+          <validation-provider vid="months">
+            <b-input-group append="months" class="mr-1">
+              <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number"
+                min="0" max="24" ref="months" step="1" />
+            </b-input-group>
+          </validation-provider>
+          <validation-provider vid="days">
+            <b-input-group append="days">
+              <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number"
+                min="0" max="31" ref="days" step="1" />
+            </b-input-group>
+          </validation-provider>
+        </div>
+      </b-form-group>
+  </validation-observer>
   </div>
 </template>
 
@@ -28,35 +33,24 @@
 import 'reflect-metadata';
 import { ChildAge } from '@/services/infusion-calculations/';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
+import { maxYears } from '@/services/validation/validators';
 import DobInput from '@/components/DobInput.vue';
-import { maxYears, getAgeVals, getDOBVal } from '@/services/validation/getAgeOrDOBVals';
-import { validationMixin } from 'vuelidate';
-import { Validations } from 'vuelidate-property-decorators';
-import { between } from 'vuelidate/lib/validators';
+
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
 @Component({
   components: {
     DobInput,
   },
-  mixins: [ validationMixin ],
 })
 export default class PatientAgeData extends Vue {
+  private readonly maxYears = maxYears;
   private pYears: vueNumber = '';
   private pMonths: vueNumber = '';
   private pDays: vueNumber = '';
   private pDob: Date | null = null;
   private pMinDate: Date | null = null;
   private childAge?: ChildAge | null;
-
-  @Validations()
-  public getValidations() {
-    const vals = getAgeVals() as any;
-    if (this.minDate) {
-      vals.dob = between(this.minDate, new Date());
-    }
-    return vals;
-  }
 
   public get years() { return this.pYears; }
   public set years(years: vueNumber) {
@@ -174,10 +168,9 @@ export default class PatientAgeData extends Vue {
   */
 
   private ageDataChange() {
-    this.$v.$touch();
-    if (this.$v.$invalid || this.pYears === '') {
+    if (this.pYears === '') {
       if (this.childAge) {
-        this.$emit('input', this.childAge = null, this.$v);
+        this.$emit('input', (this.childAge = null));
       }
       return;
     }
@@ -197,7 +190,7 @@ export default class PatientAgeData extends Vue {
     } else {
       this.childAge = new ChildAge(this.pYears, mo, dyo);
     }
-    this.$emit('input', this.childAge, this.$v);
+    this.$emit('input', this.childAge);
   }
 
   private get minDate() { return this.pMinDate!; }
