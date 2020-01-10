@@ -64,7 +64,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
+import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import { anthroCalculations, applyAnthropometry } from '@/services/pharmacokinetics/anthroCalculations';
 import { mcLarenObesityCorrection, mooreObesityCorrection, bmiObesityCorrection } from '@/services/anthropometry/helpers/obesityCorrections';
@@ -79,7 +79,7 @@ const emptyArray: string[] = [];
 
 @Component({
   components: {
-    TrueFalseRadio, PatientAgeData, KatexElement,
+    ValidatedBoolRadioGroup, PatientAgeData, KatexElement,
   },
 })
 export default class WeightCalculations extends Vue {

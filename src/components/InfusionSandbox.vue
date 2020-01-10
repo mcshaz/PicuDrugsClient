@@ -1,127 +1,87 @@
 <template>
   <div class="prinatableCharts">
-    <h2>Drug Calculator - Create printable charts
-    </h2>
+    <h2>Drug Calculator - Create printable charts</h2>
     <validation-observer v-slot="{ passes }">
-<form class="was-validated" @submit.prevent="passes(submit)">
-        <validation-provider v-slot="errors" name="drug name:">
-<b-form-group label="drug name:" label-for="name" label-cols-lg="2" label-cols-xl="2">
-                <input id="name" type="text" v-model="name" class="form-control">
-        </b-form-group>
-</validation-provider>
+      <form class="was-validated" @submit.prevent="passes(submit)">
+        <validated-input-group label="drug name" type="text" v-model="name"/><!--label-cols-lg="2" label-cols-xl="2"-->
+
         <validation-provider v-slot="errors" name="ampule">
-<b-form-group label="ampule:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
+          <b-form-group label="ampule:" label-cols-lg="2" label-cols-xl="2" class="form-inline" :invalid-feedback="errors[0]">
             <div class="input-group">
-                <input id="ampAmount" type="number" v-model="ampAmount" class="form-control">
-                <div class="input-group-append select-input">
-                    <select class="custom-select" v-model="ampPrefix" id="ampPrefix">
-                        <option v-for="p in siPrefixes" :key="p.logValue" :value="p.logValue">
-                            {{p.fullName}}
-                        </option>
-                    </select>
-                    <select class="custom-select" v-model="siUnitId" id="siUnitId">
-                        <option v-for="u in siUnits" :key="u.value" :value="u.value">
-                            {{u.text}}
-                        </option>
-                    </select>
-                </div> <!--input-group-append-->
-            </div> <!--input-group-->
+              <input id="ampAmount" type="number" v-model="ampAmount" class="form-control" />
+              <div class="input-group-append select-input">
+                <select class="custom-select" v-model="ampPrefix" id="ampPrefix">
+                  <option
+                    v-for="p in siPrefixes"
+                    :key="p.logValue"
+                    :value="p.logValue"
+                  >{{p.fullName}}</option>
+                </select>
+                <select class="custom-select" v-model="siUnitId" id="siUnitId">
+                  <option v-for="u in siUnits" :key="u.value" :value="u.value">{{u.text}}</option>
+                </select>
+              </div><!--input-group-append-->
+            </div><!--input-group-->
             <label for="ampVol">in</label>
             <b-input-group append="ml">
-                <input id="ampVol" type="number" v-model="ampVol" class="form-control">
+              <input id="ampVol" type="number" v-model="ampVol" class="form-control" />
             </b-input-group>
+          </b-form-group>
+        </validation-provider>
 
-        </b-form-group>
-</validation-provider>
-
-        <validation-provider v-slot="errors" name="Dilution Method:">
-<b-form-group label="Dilution Method:" label-for="dilutionMethod" label-cols-lg="2" label-cols-xl="2">
-            <select class="custom-select" v-model="dilutionMethodId" id="dilutionMethod">
-                <option v-for="m in dilutionMethods" :key="m.value" :value="m.value">
-                    {{m.text}}
-                </option>
-            </select>
-        </b-form-group>
-</validation-provider>
+        <validated-select-group label="Dilution Method" v-model="dilutionMethodId" id="dilutionMethod">
+          <option v-for="m in dilutionMethods" :key="m.value" :value="m.value">{{m.text}}</option>
+        </validated-select-group>
 
         <validation-provider v-slot="errors" name="run infusion @:">
-<b-form-group label="run infusion @:" label-cols-lg="2" label-cols-xl="2" class="form-inline">
+          <b-form-group
+            label="run infusion @:"
+            label-cols-lg="2"
+            label-cols-xl="2"
+            :invalid-feedback="errors[0]"
+            class="form-inline">
             <div class="input-group-addon">
-                <select class="custom-select" v-model="infusionPrefix" id="infusionPrefix">
-                    <option v-for="p in siPrefixes" :key="p.logValue" :value="p.logValue">
-                        {{p.fullName}}
-                    </option>
-                </select>
-                <div class="input-group-append">
-                    {{siUnits.find(siUnitId).fullName}}
-                </div> <!--input-group-append-->
-            </div> <!--input-group-addon-->
+              <select class="custom-select" v-model="infusionPrefix" id="infusionPrefix">
+                <option v-for="p in siPrefixes" :key="p.logValue" :value="p.logValue">{{p.fullName}}</option>
+              </select>
+              <div class="input-group-append">{{siUnits.find(siUnitId).fullName}}</div><!--input-group-append-->
+            </div><!--input-group-addon-->
             <label for="isPerMinute">per</label>
             <select class="custom-select" v-model="isPerMinute" id="isPerMinute">
-                <option :value="true">
-                    minute
-                </option>
-                <option :value="false">
-                    hour
-                </option>
+              <option :value="true">minute</option>
+              <option :value="false">hour</option>
             </select>
-        </b-form-group>
-</validation-provider>
+          </b-form-group>
+        </validation-provider>
 
-        <validation-provider v-slot="errors" name="Dilution Volume:">
-<b-form-group label="Dilution Volume:" label-for="dilutionVol" label-cols-lg="2" label-cols-xl="2">
-            <b-input-group append="ml">
-                <input id="dilutionVol" type="number" v-model="dilutionVol" class="form-control">
-            </b-input-group>
-        </b-form-group>
-</validation-provider>
+        <validated-input-group label="Dilution Volume" append="ml" type="number" v-model="dilutionVol"/>
 
-        <validation-provider v-slot="errors" name="Duration">
-<b-form-group label="Duration:" label-for="duration" label-cols-lg="2" label-cols-xl="2">
-            <b-input-group append="mins">
-                <input id="duration" type="number" v-model="duration" class="form-control">
-            </b-input-group>
-        </b-form-group>
-</validation-provider>
+        <validated-input-group label="Duration" append="mins" type="number" v-model="duration"/>
 
-        <validation-provider v-slot="errors" name="rate">
-<b-form-group label="rate:" label-for="rate" label-cols-lg="2" label-cols-xl="2">
-            <b-input-group append="ml">
-                <input id="rate" type="number" v-model="rate" class="form-control">
-            </b-input-group>
-        </b-form-group>
-</validation-provider>
+        <validated-input-group label="rate" append="ml" type="number" v-model="rate"/>
 
-        <validation-provider v-slot="errors" name="concentration">
-<b-form-group label="concentration:" label-for="concentration" label-cols-lg="2" label-cols-xl="2">
-            <b-input-group append="ml">
-                <input id="concentration" type="number" v-model="concentration" class="form-control">
-            </b-input-group>
-        </b-form-group>
-</validation-provider>
-    </form>
-</validation-observer>
+        <validated-input-group label="concentration" append="ml" type="number" v-model="concentration"/>
+      </form>
+    </validation-observer>
     <table class="table table-striped">
       <thead>
         <tr>
           <th scope="col">kg</th>
           <th scope="col"></th>
-          <th scope="col">Female Median <small>(IQR)</small></th>
+          <th scope="col">
+            Female Median
+            <small>(IQR)</small>
+          </th>
           <th scope="col" class="small">remove</th>
         </tr>
       </thead>
       <tbody>
-        <infusion-sandbox-row v-for="w in weights"
-            :key="w"
-            :wtKg="w"
-        />
+        <infusion-sandbox-row v-for="w in weights" :key="w" :wtKg="w" />
       </tbody>
       <tfoot>
         <tr>
-          <td>
-          </td>
-          <td colspan="3">
-          </td>
+          <td></td>
+          <td colspan="3"></td>
         </tr>
       </tfoot>
     </table>
@@ -132,13 +92,30 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import { exampleWeights } from '@/services/utilities/weightHelpers';
-import { siUnit, IEntityFixedDilution, IEntityFixedConcentration, dilutionMethod } from '@/services/drugDb';
-import { IPatientFixedInfusionDrug, IPatientFixedConcentration, IPatientFixedDilution, prefixes } from '@/services/infusion-calculations';
+import {
+  siUnit,
+  IEntityFixedDilution,
+  IEntityFixedConcentration,
+  dilutionMethod
+} from '@/services/drugDb';
+import {
+  IPatientFixedInfusionDrug,
+  IPatientFixedConcentration,
+  IPatientFixedDilution,
+  prefixes
+} from '@/services/infusion-calculations';
 import { UKWeightData } from '@/services/anthropometry/';
-import { enumToValues, enumValueOptions } from '@/services/utilities/enumToValues';
+import {
+  enumToValues,
+  enumValueOptions
+} from '@/services/utilities/enumToValues';
 
 type vueNumber = number | '';
-interface ISelectOption { value: number; text: string; disabled?: boolean; }
+interface ISelectOption {
+  value: number;
+  text: string;
+  disabled?: boolean;
+}
 
 @Component({
   provide: {
@@ -170,26 +147,29 @@ export default class InfusionSandbox extends Vue {
       fullname: this.name,
       siPrefix: this.ampPrefix,
       siUnitId: this.siUnitId,
-      drugAmpuleConcentrations: [{
-        concentration: (this.ampAmount || 0) / (this.ampVol || 1),
-        volume: this.ampVol,
-      }],
+      drugAmpuleConcentrations: [
+        {
+          concentration: (this.ampAmount || 0) / (this.ampVol || 1),
+          volume: this.ampVol,
+        },
+      ],
       dilution: {
         dilutionMethodId: this.dilutionMethodId,
         siPrefix: this.infusionPrefix,
         isPerMin: this.isPerMinute,
-        concentrations: [{
-          volume: this.dilutionVol || null,
-          stopMinutes: this.duration,
-          rate: this.rate,
-          concentration: this.concentration,
-        } as IPatientFixedConcentration],
+        concentrations: [
+          {
+            volume: this.dilutionVol || null,
+            stopMinutes: this.duration,
+            rate: this.rate,
+            concentration: this.concentration,
+          } as IPatientFixedConcentration,
+        ],
       } as IPatientFixedDilution,
     } as IPatientFixedInfusionDrug;
     return returnVar;
   }
 }
-
 </script>
 <style scoped>
 .input-group-append.select-input {

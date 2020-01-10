@@ -16,7 +16,7 @@ import VModelReflector from '@/mixins/VModelReflector';
 import DateTimeInput from './DateTimeInput.vue';
 
 @Component({
-    components: { DateTimeInput },
+  components: { DateTimeInput },
 })
 export default class ValidatedDateTimeGroup extends Mixins(ValidatedFormEl, VModelReflector) {
 }

@@ -13,24 +13,20 @@ import 'reflect-metadata';
 import { Component, Watch, Mixins, Prop } from 'vue-property-decorator';
 import ValidatedFormEl from '@/mixins/ValidatedFormEl';
 import VModelReflector from '@/mixins/VModelReflector';
-import {mergeValidators} from '@/services/validation/mergeValidators';
-import DateInput from './DateInput.vue';
+import { mergeValidators } from '@/services/validation/mergeValidators';
+// import DateInputPolyfill from  '@/components/formGroups/DateInputPolyfill.vue';
 
-@Component({
-    components: {
-        DateInput,
-    }
-})
+@Component({})
 export default class ValidatedDateGroup extends Mixins(ValidatedFormEl, VModelReflector) {
-    @Prop({default: void 0})
+    @Prop({ default: void 0 })
     min?: Date;
-    @Prop({default: void 0})
+    @Prop({ default: void 0 })
     max?: Date;
 
     get pRules() {
-        return mergeValidators(this.rules, {
-            required: this.required, after: this.min, before: this.max
-        });
+      return mergeValidators(this.rules, {
+        required: this.required, after: this.min, before: this.max,
+      });
     }
 }
 </script>

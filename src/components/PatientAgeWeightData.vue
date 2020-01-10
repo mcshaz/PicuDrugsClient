@@ -11,12 +11,9 @@
       </validation-provider>
       <nhi-input v-model="nhi" />
       <patient-age-data v-model="age" />
-      <validation-provider v-slot="errors" name="Gender">
-        <b-form-group label="Gender:" label-cols-lg="2" label-cols-xl="2" :invalid-feedback="errors">
-          <true-false-radio true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
-        </b-form-group>
-      </validation-provider>
-      <weeks-gestation :disabled="!age||age.years>=2" v-model="weeksGestation" />
+      <validated-bool-group-radio label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
+      <validated-input-group label="Weeks Gestation" :disabled="!age||age.years>=2" v-model="weeksGestation" 
+        min="22" max="43" description="@ birth"/>
       <validation-provider v-slot="errors" name="Weight">
         <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
             :state="errors[0]"
@@ -82,8 +79,7 @@ import 'reflect-metadata';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import NhiInput from '@/components/NhiInput.vue';
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
-import WeeksGestation from '@/components/WeeksGestation.vue';
+import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import { ChildAge, daysPerMonth, GenericRange } from '@/services/infusion-calculations';
 import { UKWeightData, Lms } from '@/services/anthropometry/';
 import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/centileString';
@@ -94,7 +90,7 @@ type vueNumber = number | '';
 type nullBool = null | boolean;
 
 @Component({
-  components: { PatientAgeData, NhiInput, TrueFalseRadio, WeeksGestation },
+  components: { PatientAgeData, NhiInput, ValidatedBoolRadioGroup },
 })
 export default class PatientAgeWeightData extends Vue {
   public name = '';

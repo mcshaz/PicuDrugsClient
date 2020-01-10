@@ -11,7 +11,7 @@
         </validation-provider>
         <b-input-group-append is-text  v-if="$slots.default">
           <validation-provider v-slot="{ errors, changed }" class="input-group-append" tag="div" ref="selectValProvider" :name="pSelectErrorLabel"
-              :rules="selectValidators" :title="selectTitle">
+              :rules="selectRules" :title="selectTitle">
             <select v-model="pSelectValue" :name="pSelectName" :id="pSelectName" :class="{'is-invalid':errors[0],'is-valid':!errors[0]&&changed}"
                 :disabled="select-disabled" class="custom-select input-group-addon">
               <slot></slot>
@@ -31,7 +31,7 @@ export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl) 
   @Prop({ required: true })
   selectValue!: any;
   @Prop({ default: 'required' })
-  selectValidators?: any;
+  selectRules?: any;
   @Prop({ default: void 0 })
   selectTitle?: string;
   @Prop({ default: void 0 })

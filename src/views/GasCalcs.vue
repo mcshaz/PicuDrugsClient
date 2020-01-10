@@ -57,8 +57,8 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { cylinderSizes, pressureToKpa, GasCylinder } from '@/services/transports/GasCylinder';
 import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
-import ValidatedInputGroup from '@/components/ValidatedInputGroup.vue';
-import ValidatedSelectGroup from '@/components/ValidatedSelectGroup.vue';
+
+
 import SvgGasGuage from '@/components/SvgGasGuage.vue';
 import DurationDisplay from '@/components/DurationDisplay.vue';
 type vueNumber = number | '';
@@ -67,8 +67,6 @@ const units = [ 'Bar/kPa', 'PSI', 'Proportion' ] as const;
 @Component({
   components: {
     SvgGasGuage,
-    ValidatedInputGroup,
-    ValidatedSelectGroup,
     DurationDisplay,
   },
 })

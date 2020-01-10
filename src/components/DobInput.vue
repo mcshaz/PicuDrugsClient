@@ -13,7 +13,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import DateInput from '@/components/DateInput.vue';
+import DateInput from '@/components/formGroups/DateInputPolyfill.vue';
 import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
 
 enum dateElSupport { noSupport, elSupport, valueAsDateSupport }

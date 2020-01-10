@@ -15,11 +15,14 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
 // eslint-disable-next-line camelcase
 import { required, min_value, max_value, between, integer, required_if } from 'vee-validate/dist/rules';
-import { exactLength, nhiChecksum, nhiRegex } from '@/services/validation/validators';
+import { exactLength, nhiChecksum, nhiRegex, before, after } from '@/services/validation/validators';
 import { messages } from 'vee-validate/dist/locale/en.json';
 import { ValidationRuleSchema } from 'vee-validate/dist/types/types';
+import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
+import ValidatedSelectGroup from '@/components/formGroups/ValidatedSelectGroup.vue';
+import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 
-for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, exactLength, nhiChecksum, nhiRegex } as { [key: string]: ValidationRuleSchema; })) {
+for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, exactLength, nhiChecksum, nhiRegex, before, after } as { [key: string]: ValidationRuleSchema; })) {
   if (!validation.message) {
     validation.message = (messages as any)[rule];
   }
@@ -28,6 +31,9 @@ for (const [rule, validation] of Object.entries({ required, min_value, max_value
 
 Vue.component('validation-provider', ValidationProvider);
 Vue.component('validation-observer', ValidationObserver);
+Vue.component('validated-input-group', ValidatedInputGroup);
+Vue.component('validated-select-group', ValidatedSelectGroup);
+Vue.component('validated-date-group', ValidatedDateGroup);
 
 library.add(...[faCalendarAlt, faSyringe, faCalculator, faFilePrescription, faFileMedicalAlt,
   faRuler, faInfoCircle, faQuestion, faChartLine, faSave, faTrashAlt, faSortAmountDown, faAmbulance,

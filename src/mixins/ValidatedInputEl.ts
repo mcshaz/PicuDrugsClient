@@ -6,7 +6,7 @@ export default class ValidatedInputEl extends ValidatedFormEl {
     @Prop({ required: true })
     value!: number | string;
     @Prop({ default: 'number' })
-    type!: string & ('text' | 'number' | 'range');
+    type!: string & ('text' | 'number' | 'range' | 'email' | 'password');
     @Prop({ default: void 0 })
     min?: number;
     @Prop({ default: void 0 })
@@ -21,26 +21,26 @@ export default class ValidatedInputEl extends ValidatedFormEl {
     private pValue = '';
 
     public get pStep() {
-        if (this.type === 'text') {
-            return void 0;
-        }
-        if (this.step) {
-            return this.step;
-        };
-        let isInteger: boolean;
-        switch (typeof this.rules) {
-            case 'string':
-                isInteger = /(^|\|) ?integer ?($|\|)/.test(this.rules);
-                break;
-            case 'object':
-                isInteger = this.rules.integer
-                break;
-            default:
-                throw new Error('cannot parse rules property');
-        }
-        return isInteger
-            ? 1
-            : 'any';
+      if (this.type === 'text') {
+        return void 0;
+      }
+      if (this.step) {
+        return this.step;
+      };
+      let isInteger: boolean;
+      switch (typeof this.rules) {
+        case 'string':
+          isInteger = /(^|\|) ?integer ?($|\|)/.test(this.rules);
+          break;
+        case 'object':
+          isInteger = this.rules.integer;
+          break;
+        default:
+          throw new Error('cannot parse rules property');
+      }
+      return isInteger
+        ? 1
+        : 'any';
     }
 
     @Watch('value')

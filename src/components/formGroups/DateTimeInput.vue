@@ -18,7 +18,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import DateInput from '@/components/DateInput.vue';
+import DateInput from '@/components/formGroups/DateInput.vue';
 import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 
 interface IDates { value: number; text: string; /* disabled: boolean; */ }

@@ -8,8 +8,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
-import DateInput from '@/components/DateInput.vue';
-import DateInputPolyfill from '@/components/DateInputPolyfill.vue';
+import DateInputPolyfill from '@/components/formGroups/DateInputPolyfill.vue';
 
 @Component({
   components: {

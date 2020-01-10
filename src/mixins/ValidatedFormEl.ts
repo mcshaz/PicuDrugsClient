@@ -46,5 +46,8 @@ export default class ValidatedFormEl extends Vue {
       }
       this.pErrorLabel = this.errorLabel || label;
       this.pName = this.name || label.replace(/\s+/g, '-');
+      if (!/\w+/.test(this.pName)) {
+        this.pName = 'inpt-el-' + (this as any)._uid;
+      }
     }
 }

@@ -1,16 +1,17 @@
 <template>
     <div>
-        <validation-provider v-slot="{errors, failedRules}" name="NHI" rules="exactLength:7|nhiRegex|nhiChecksum">
-            <b-form-group label-for="nhi" label-cols-lg="2" label-cols-xl="2" label="NHI:" :state="validator.$error">
-                <input class="form-control" type="text" id="nhi" name="nhi" v-model.trim="nhi" placeholder="NHI"/>
-                <template #invalid-feedback v-if="validator.$invalid">
-                    <template v-if="failedRules">
-                        A letter or number is mistyped
-                        <b-button variant="link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
-                    </template>
-                </template>
-            </b-form-group>
-        </validation-provider>
+        <validated-input-group label="NHI" rules="exactLength:7|nhiRegex|nhiChecksum"
+                type="text" v-model="nhi" placeholder="NHI">
+            <template #invalid-feedback v-if="validator.$invalid" v-slot="{ failedRules, errors }">
+                <span v-if="failedRules.nhiChecksum">
+                    A letter or number is mistyped
+                    <b-button variant="link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
+                </span>
+                <span v-else>
+                    {{ errors[0] }}
+                </span>
+            </template>
+        </validated-input-group>
         <!-- Modal Component -->
         <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true">
             <p class="my-4">

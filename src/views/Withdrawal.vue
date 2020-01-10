@@ -1,5 +1,6 @@
 <template>
-  <validation-observer v-slot="{ formValid: valid }" ref="form" tag="div" id="withdrawal">
+  <validation-observer v-slot="{ invalid }" ref="form" tag="div" id="withdrawal">
+    <!--TODO f=change above to { formInvalid: invalid }-->
     <h2>Withdrawal Charting</h2>
     <b-row align-h="end" class="d-print-none">
       <b-col lg="7" order-lg="12" role="tablist">
@@ -166,10 +167,10 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-alert v-model="invalid" variant="dark">
+        <b-alert :show="invalid" variant="dark">
           The withdrawal plan will appear here after all the information in the form above is filled in and valid.
         </b-alert>
-        <withdrawal-table v-if="!formInvalid" ref="plan"
+        <withdrawal-table v-if="!invalid" ref="plan"
             :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
             :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits">
           <ul class="row" id="entered-details">
@@ -230,10 +231,8 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 // import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 import WithdrawalTable from '@/components/WithdrawalTable.vue';
-import ValidatedBoolRadioGroup from '@/components/ValidatedBoolRadioGroup.vue';
-import ValidatedSelectGroup from '@/components/ValidatedSelectGroup.vue';
-import ValidatedInputGroup from '@/components/ValidatedInputGroup.vue';
-import ValidatedInputSelectGroup from '@/components/ValidatedInputSelectGroup.vue';
+import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
+import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSelectGroup.vue';
 import { toGrouping } from '@/services/drugDb';
 import { withdrawalDrugs, IDrug, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
 import { roundToFixed, roundToPrecision } from '@/services/infusion-calculations/';
@@ -255,11 +254,9 @@ const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 
 @Component({
   components: {
-    //    PatientAgeWeightData,
+    // PatientAgeWeightData,
     WithdrawalTable,
     ValidatedBoolRadioGroup,
-    ValidatedSelectGroup,
-    ValidatedInputGroup,
   },
 })
 export default class Withdrawal extends Vue {

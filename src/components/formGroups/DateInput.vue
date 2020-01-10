@@ -19,7 +19,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import DateInputPolyfill from '@/components/DateInputPolyfill.vue';
+import DateInputPolyfill from '@/components/formGroups/DateInputPolyfill.vue';
 import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 import { dateElSupportValues, dateElSupport } from '@/services/utilities/html5ElementSupport';
 
@@ -68,7 +68,7 @@ export default class DateInput extends Vue {
     public get valueAsDate() {
       return this.value
         ? new Date(this.value.getTime() - this.offset)
-        : null
+        : null;
     }
 
     public get dateStr() {

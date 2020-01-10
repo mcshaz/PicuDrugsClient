@@ -51,8 +51,9 @@
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import { parseDate, dateInRange, dateOrder, shortFormatter } from '@/services/utilities/dateHelpers';
-import { vueNumber } from './PatientAgeData.vue';
 import { DatePart, datePartType } from '@/services/utilities/DatePart';
+
+type vueNumber = number | '';
 
 @Component({})
 export default class DateInputPolyfill extends Vue {

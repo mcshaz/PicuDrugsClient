@@ -24,9 +24,9 @@ import VModelReflector from '@/mixins/VModelReflector';
 
 @Component
 export default class ValidatedSelectGroup extends Mixins(ValidatedFormEl, VModelReflector) {
-  @Prop({default: void 0})
+  @Prop({ default: void 0 })
   prepend?: string;
-  @Prop({default: void 0})
+  @Prop({ default: void 0 })
   append?: string;
 }
 </script>

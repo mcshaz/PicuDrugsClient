@@ -50,7 +50,7 @@ import { UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, Centile
 import { centileString } from '@/services/utilities/centileString';
 import { ChildAge, msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
 import CentileCell from './CentileCell.vue';
-import DateInput from './DateInput.vue';
+import DateInput from  '@/components/formGroups/DateInput.vue'
 
 type vueNumber = number | '';
 
