@@ -12,7 +12,7 @@
       <nhi-input v-model="nhi" />
       <patient-age-data v-model="age" />
       <validated-bool-group-radio label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
-      <validated-input-group label="Weeks Gestation" :disabled="!age||age.years>=2" v-model="weeksGestation" 
+      <validated-input-group label="Weeks Gestation" :disabled="!age||age.years>=2" v-model="weeksGestation"
         min="22" max="43" description="@ birth"/>
       <validation-provider v-slot="errors" name="Weight">
         <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"

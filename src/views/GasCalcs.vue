@@ -58,7 +58,6 @@ import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { cylinderSizes, pressureToKpa, GasCylinder } from '@/services/transports/GasCylinder';
 import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
 
-
 import SvgGasGuage from '@/components/SvgGasGuage.vue';
 import DurationDisplay from '@/components/DurationDisplay.vue';
 type vueNumber = number | '';
