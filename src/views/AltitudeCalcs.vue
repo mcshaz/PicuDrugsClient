@@ -18,6 +18,7 @@
                 <template #label>
                   FiO
                   <sub>2</sub>
+                </template>
             </validated-input-group>
             <validated-select-group label="Cabin Altitude"
                 append="feet"

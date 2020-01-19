@@ -1,25 +1,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
+// import { linkTo } from '@storybook/addon-links';
 
-import MyButton from '../components/MyButton.vue';
+import ValidatedInputGroup from '../components/formGroups/ValidatedInputGroup.vue';
 
-storiesOf('Button', module)
-  .add('with text', () => ({
-    components: { MyButton },
-    template: '<my-button @click="action">Hello Button</my-button>',
+storiesOf('ValidatedInputGroup', module)
+  .add('neutral', () => ({
+    components: { ValidatedInputGroup },
+    template: '<validated-input-group label="test input" min="1" max="15" type="number" value="12" @input="action" />',
     methods: { action: action('clicked') },
   }))
-  .add('with JSX', () => ({
-    components: { MyButton },
-    render() {
-      return <my-button onClick={this.action}>With JSX</my-button>;
-    },
-    methods: { action: linkTo('Button', 'with some emoji') },
+  .add('valid', () => ({
+    components: { ValidatedInputGroup },
+    template: '<validated-input-group @click="action" />',
+    methods: { action: action('clicked') },
   }))
-  .add('with some emoji', () => ({
-    components: { MyButton },
-    template: '<my-button @click="action">😀 😎 👍 💯</my-button>',
+  .add('invalid', () => ({
+    components: { ValidatedInputGroup },
+    template: '<validated-input-group @click="action" />',
     methods: { action: action('clicked') },
   }));

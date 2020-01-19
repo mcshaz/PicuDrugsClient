@@ -36,10 +36,10 @@ export default class ValidatedFormEl extends Vue {
       if (this.label) {
         label = this.label.replace(endCol, '');
       } else {
-        label = this.$slots.label!.map((vn) => (vn.text || (vn.elm as HTMLElement).innerText)).join('').trim();
-        if (!label) {
+        if (!this.$slots.label) {
           throw new Error('either a label="x" attribute or a <template #label> must be provided');
         }
+        label = this.$slots.label.map((vn) => (vn.text || (vn.elm as HTMLElement).innerText)).join('').trim();
         if (endCol.test(label)) {
           throw new Error('the label slot must not end in a colon');
         }
