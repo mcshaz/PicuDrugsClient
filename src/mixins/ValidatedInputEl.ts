@@ -1,7 +1,8 @@
-import ValidatedFormEl from './ValidatedFormEl';
-import { Prop, Watch } from 'vue-property-decorator';
-import { stringify } from 'querystring';
+import ValidatedFormEl, { IValCtxt } from './ValidatedFormEl';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+// import { stringify } from 'querystring';
 
+@Component
 export default class ValidatedInputEl extends ValidatedFormEl {
     @Prop({ required: true })
     value!: number | string;
@@ -12,16 +13,16 @@ export default class ValidatedInputEl extends ValidatedFormEl {
     @Prop({ default: void 0 })
     max?: number;
     @Prop({ default: void 0 })
-    step?: number | string;
+    step?: number | 'any';
     @Prop({ default: void 0 })
     prepend?: string;
     @Prop({ default: void 0 })
     autocomplete?: string;
 
-    private pValue = '';
+    pValue: string | number = '';
 
     public get pStep() {
-      if (this.type === 'text') {
+      if (this.type !== 'number' && this.type !== 'range') {
         return void 0;
       }
       if (this.step) {
@@ -35,6 +36,9 @@ export default class ValidatedInputEl extends ValidatedFormEl {
         case 'object':
           isInteger = this.rules.integer;
           break;
+        case 'undefined':
+          isInteger = false;
+          break;
         default:
           throw new Error('cannot parse rules property');
       }
@@ -43,15 +47,24 @@ export default class ValidatedInputEl extends ValidatedFormEl {
         : 'any';
     }
 
-    @Watch('value')
+    public getInputClass(valContext?: IValCtxt) {
+      return {
+        'custom-range': this.type === 'range',
+        'form-control': this.type !== 'range',
+        ...this.getValidClass(valContext),
+      };
+    }
+
+    @Watch('value', { immediate: true })
     valueChanged(newVal: string | number) {
-      this.pValue = newVal.toString();
+      this.pValue = newVal;
     }
 
     @Watch('pValue')
     input(newVal: string | number) {
-      if (this.type !== 'text') {
-        newVal = parseFloat(this.pValue);
+      if (newVal === this.value) { return; }
+      if (this.type === 'number' || this.type === 'range') {
+        newVal = parseFloat(newVal as string);
         if (Number.isNaN(newVal as any)) {
           newVal = '';
         }

@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import { Component, Vue, Prop } from 'vue-property-decorator';
 
+export interface IValCtxt { dirty: boolean; validated: boolean; valid?: boolean; errors: string[], id: string }
+
 @Component
 export default class ValidatedFormEl extends Vue {
     @Prop({ default: '' })
@@ -26,11 +28,14 @@ export default class ValidatedFormEl extends Vue {
     required!: boolean;
     @Prop({ default: false })
     disabled!: boolean;
+    @Prop({ default: void 0 })
+    immediate!: boolean;
 
     protected pErrorLabel = '';
-    protected pName = ''
+    protected pName = '';
+    protected invalidId = '';
 
-    public mounted() {
+    public beforeMount() {
       const endCol = /:$/;
       let label!: string;
       if (this.label) {
@@ -49,5 +54,20 @@ export default class ValidatedFormEl extends Vue {
       if (!/\w+/.test(this.pName)) {
         this.pName = 'inpt-el-' + (this as any)._uid;
       }
+      this.invalidId = this.pName + '-live-feedback';
     }
+
+    public getValidClass(valContext?: IValCtxt) {
+      const state = this.getState(valContext);
+      return {
+        'is-valid': state === true,
+        'is-invalid': state === false,
+      };
+    }
+
+    protected getState(valContext?: IValCtxt) {
+      return valContext && (valContext.dirty || valContext.validated)
+        ? valContext.valid
+        : null;
+    };
 }

@@ -23,11 +23,7 @@ import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 
 interface IDates { value: number; text: string; /* disabled: boolean; */ }
 
-@Component({
-  components: {
-    DateInput,
-  },
-})
+@Component
 export default class DateTimeInput extends Vue {
     @Prop({ default: null })
     public value!: Date | null;

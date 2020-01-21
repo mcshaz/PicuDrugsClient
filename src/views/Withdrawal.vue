@@ -1,5 +1,5 @@
 <template>
-  <validation-observer v-slot="{ invalid }" ref="form" tag="div" id="withdrawal">
+  <validation-observer v-slot="{ passed }" ref="form" tag="form" id="withdrawal">
     <!--TODO f=change above to { formInvalid: invalid }-->
     <h2>Withdrawal Charting</h2>
     <b-row align-h="end" class="d-print-none">
@@ -120,7 +120,7 @@
           </validated-input-select-group>
           <validated-input-group label="last 24hrs:" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
               label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
-              invalid-feedback="errors[0]" :append="original24HrUnits" type="number" v-model="original24HrVol">
+              :append="original24HrUnits" type="number" v-model="original24HrVol">
             <template #description v-if="original24HrUnits==='ml'">
               where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
             </template>
@@ -159,18 +159,18 @@
           <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
         </div>
         <hr>
-        <validated-input-group name="Prescriber name" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
+        <validated-input-group label="Prescriber name" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
         <hr>
         <button type="reset" class="btn btn-warning mb-4">Clear All <font-awesome-icon icon="eraser"/></button>
-        <button type="button" class="btn btn-success mb-4 ml-2" :disabled="formValid" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
+        <button type="button" class="btn btn-success mb-4 ml-2" :disabled="!passed" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
       </form>
     </b-row>
     <b-row>
       <b-col>
-        <b-alert :show="invalid" variant="dark">
+        <b-alert :show="!passed" variant="dark">
           The withdrawal plan will appear here after all the information in the form above is filled in and valid.
         </b-alert>
-        <withdrawal-table v-if="!invalid" ref="plan"
+        <withdrawal-table v-if="passed" ref="plan"
             :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
             :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits">
           <ul class="row" id="entered-details">

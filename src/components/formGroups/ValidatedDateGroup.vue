@@ -1,10 +1,11 @@
 <template>
-  <validation-provider v-slot="{ errors, changed }" :name="pErrorLabel" :rules="pRules" slim>
+  <validation-provider v-slot="validationContext" :name="pErrorLabel" :rules="pRules" slim>
     <b-form-group :label-for="pName" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
-        :invalid-feedback="errors[0]" :state="errors[0] ? false : (changed ? true : null)" label-align-lg="right">
+        :invalid-feedback="errors[0]" :state="getState(validationContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
-      <date-input v-model="pValue" :min="min" :max="max" :required="required" :name="pName" :id="pName"/>
+      <date-input v-model="pValue" :min="min" :max="max" :required="required" :name="pName"
+          :id="pName" :class="getValClass(validationContext)"/>
     </b-form-group>
   </validation-provider>
 </template>
