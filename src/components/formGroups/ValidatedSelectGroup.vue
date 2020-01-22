@@ -1,12 +1,12 @@
 <template>
-  <validation-provider v-slot="valContext" :name="pErrorLabel" :rules="rules" slim>
+  <validation-provider v-slot="valContext" :name="pErrorLabel" :rules="rules" :immediate="immediate" slim>
     <b-form-group :label-for="pName" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
         :invalid-feedback="valContext.errors[0]" :state="getState(valContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
       <b-input-group>
         <b-input-group-prepend is-text v-if="prepend || $slots.prepend"><slot name="prepend">{{ prepend }}</slot></b-input-group-prepend>
-        <select class="form-control" :placeholder="placeholder" :required="required" :disabled="disabled"
+        <select class="custom-select" :placeholder="placeholder" :required="required" :disabled="disabled"
             v-model="pValue" :id="pName" :name="pName" :class="getValidClass(valContext)">
           <slot>
           </slot>

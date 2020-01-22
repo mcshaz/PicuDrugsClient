@@ -1,14 +1,14 @@
 <template>
     <div class="date-input">
         <date-input-polyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" v-if="isDateSupported===dateElSupportValues.noSupport"
-              @blur="$emit('blur', $event)" :id="id" :required="required"/>
+              @blur="$emit('blur', $event)" :id="id" :required="required" :class="cssClass"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr"
-                :value-as-date.prop="valueAsDate" :required="required"
+                :value-as-date.prop="valueAsDate" :required="required" :class="cssClass"
                 @blur="$emit('blur', $event)" @input.passive="$emit('input', $event.target.valueAsDate?new Date($event.target.valueAsDate.getTime()+offset):null)"
                 v-if="isDateSupported===dateElSupportValues.valueAsDateSupport" :name="name" :id="id" />
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr"
-                @blur="$emit('blur', $event)" v-else :name="name" :id="id" :required="required" />
+                @blur="$emit('blur', $event)" v-else :name="name" :id="id" :required="required" :class="cssClass"/>
             <b-input-group-append is-text>
                 <font-awesome-icon icon="calendar-alt" />
             </b-input-group-append>
@@ -35,6 +35,8 @@ export default class DateInput extends Vue {
     private pDateStr!: string;
     private wasDate?: boolean;
 
+    @Prop({ default: void 0 })
+    private cssClass?: string;
     @Prop({ default: void 0 })
     private min?: Date | null;
     @Prop({ default: void 0 })

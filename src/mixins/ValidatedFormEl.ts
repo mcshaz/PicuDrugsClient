@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Component, Vue, Prop } from 'vue-property-decorator';
 
-export interface IValCtxt { dirty: boolean; validated: boolean; valid?: boolean; errors: string[], id: string }
+export interface IValCtxt { dirty: boolean; validated: boolean; valid?: boolean; errors: string[] }
 
 @Component
 export default class ValidatedFormEl extends Vue {

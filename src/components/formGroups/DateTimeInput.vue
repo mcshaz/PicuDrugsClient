@@ -1,17 +1,14 @@
 <template>
     <div class="datetime form-inline">
-        <b-form-select v-model="date" :options="dates">
-            <template #first>
-                <option :value="null" disabled>Please select a date</option>
-            </template>
-        </b-form-select>
+        <date-input v-model="date" :min="dateMin" :max="dateMax" :required="required" :cssClass="cssClass"/>
         <b-input-group>
-            <input type="time" v-model="time" class="form-control">
+            <input type="time" v-model="time" class="form-control" :min="timeMin" :max="timeMax" :step="timeStep" :required="required"
+                :class="cssClass">
             <b-input-group-append is-text>
                 <font-awesome-icon icon="clock" />
             </b-input-group-append>
         </b-input-group>
-        <input class="form-control ml-2" type="button" value="Now" @click="setNow">
+        <input class="form-control ml-2 btn-secondary" type="button" value="Now" @click="setNow">
     </div>
 </template>
 
@@ -23,30 +20,64 @@ import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
 
 interface IDates { value: number; text: string; /* disabled: boolean; */ }
 
-@Component
+@Component({
+  components: { DateInput },
+})
 export default class DateTimeInput extends Vue {
     @Prop({ default: null })
     public value!: Date | null;
+    @Prop({ default: void 0 })
+    public min?: Date;
+    @Prop({ default: void 0 })
+    public max?: Date;
+    @Prop({ default: 60 })
+    public timeStep!: number;
+    @Prop({ default: void 0 })
+    public required?: boolean;
+    @Prop({ default: void 0 })
+    public cssClass?: string;
     // @Prop({default: () => today})
     // public min!: Date;
-    public date: number | null = null;
+    public date: Date | null = null;
     public time = '';
     private wasEmpty = true;
-    private dates: IDates[] = getDateOptions();
-    public created() {
-      this.valueChange();
+
+    public get dateMin() {
+      if (!this.min) { return void 0; }
+      const returnVar = new Date(this.min);
+      returnVar.setHours(0, 0, 0, 0);
+      return returnVar;
     }
+
+    public get dateMax() {
+      if (!this.max) { return void 0; }
+      const returnVar = new Date(this.max);
+      returnVar.setHours(0, 0, 0, 0);
+      return returnVar;
+    }
+
+    public get timeMin() {
+      if (!this.min || !this.date || this.date.valueOf() > this.dateMin!.valueOf()) { return void 0; }
+      return getLocalTimeString(this.min);
+    }
+
+    public get timeMax() {
+      if (!this.max || !this.date || this.date.valueOf() < this.dateMax!.valueOf()) { return void 0; }
+      return getLocalTimeString(this.max);
+    }
+
     public setNow() {
       const d = new Date();
       this.$emit('input', d);
     }
-    @Watch('value')
-    public valueChange() {
-      if (this.value !== null) {
-        const d = new Date(this.value);
+
+    @Watch('value', { immediate: true })
+    public valueChange(newVal: Date | null) {
+      if (newVal !== null) {
+        const d = new Date(newVal);
         d.setHours(0, 0, 0, 0);
-        this.date = d.getTime();
-        this.time = `${this.value.getHours().toString().padStart(2, '0')}:${this.value.getMinutes().toString().padStart(2, '0')}`;
+        this.date = d;
+        this.time = getLocalTimeString(newVal);
         this.wasEmpty = false;
       } else {
         this.date = null;
@@ -70,35 +101,8 @@ export default class DateTimeInput extends Vue {
       }
     }
 }
-const formatter = new Intl.DateTimeFormat(navigator.languages as string[],
-  { weekday: 'short',
-    month: 'numeric',
-    day: 'numeric' });
-let pDtOptions: IDates[];
-function getDateOptions() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (!pDtOptions || pDtOptions[0].value !== today.getTime()) {
-    pDtOptions = new Array(7).fill(today).map((t, indx) => {
-      const dt = new Date(t);
-      dt.setDate(dt.getDate() + indx);
-      let rel: string;
-      switch (indx) {
-        case 0:
-          rel = ' (today)';
-          break;
-        case 1:
-          rel = ' (tomorrow)';
-          break;
-        default:
-          rel = '';
-      }
-      return {
-        value: dt.getTime(),
-        text: formatter.format(dt) + rel,
-      };
-    });
-  }
-  return pDtOptions;
+function getLocalTimeString(dt: Date | number) {
+  if (!(dt instanceof Date)) { dt = new Date(dt); }
+  return `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
 }
 </script>

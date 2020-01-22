@@ -47,7 +47,7 @@ export default class ValidatedInputGroup extends Mixins(ValidatedInputEl) {
 </script>
 
 <style>
-input[type='number'] {
+input[type='number'].form-control {
     padding-right: calc(1.5em + 0.75rem);
 }
 </style>

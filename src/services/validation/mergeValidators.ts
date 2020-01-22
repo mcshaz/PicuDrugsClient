@@ -1,10 +1,10 @@
 
-export function mergeValidators(existing: object | string | undefined, newVals: object) {
+export function mergeValidators(existing: object | string | undefined, autoGen: object) {
   switch (typeof existing) {
     case 'undefined':
     case 'object':
       const returnVar = Object.assign({}, existing) as any;
-      for (const e of Object.entries(newVals)) {
+      for (const e of Object.entries(autoGen)) {
         if (e[1] !== void 0 && e[1] !== false) {
           returnVar[e[0]] = e[1];
         }
@@ -12,7 +12,7 @@ export function mergeValidators(existing: object | string | undefined, newVals: 
       return returnVar;
     case 'string':
       const vals = new Map<string, string | boolean>(existing.split('|').map((v) => v.split(':') as [string, string]));
-      for (const e of Object.entries(newVals)) {
+      for (const e of Object.entries(autoGen)) {
         switch (typeof e[1]) {
           case 'object':
             let aryArgs: any[];

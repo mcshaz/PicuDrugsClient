@@ -14,7 +14,7 @@ const baseObj = {
   methods: { input: action('input') },
   components: { DateTimeInput },
   props: {
-    nullVal: null,
+    nullVal: { default: null },
   },
 };
 

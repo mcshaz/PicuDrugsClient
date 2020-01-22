@@ -14,15 +14,16 @@ export default {
   ],
 };
 
-const getTemplate = updatableAttrFactory('<validated-bool-radio-group label="test input" :value="val" @input="input($event)" :disabled="isDisabled"/>');
+const getTemplate = updatableAttrFactory(`<validated-bool-radio-group label="test input" :value="val" @change="change($event)"
+  true-label="true label" false-label="false label" :disabled="isDisabled"/>`);
 
-const getBaseObj = ({ val = null, attr = void 0 }) => ({
+const getBaseObj = (val = null, attr = void 0) => ({
   components: { ValidatedBoolRadioGroup },
   template: getTemplate.insert(attr),
-  methods: { input: action('input') },
+  methods: { change: action('change') },
   props: {
     isDisabled: { default: boolean('disabled', false) },
-    val: boolean('value', val),
+    val: { default: boolean('value', val) },
   },
 });
 

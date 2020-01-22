@@ -19,13 +19,13 @@ const getTemplate = updatableAttrFactory(`<validated-select-group label="test in
     <option :value="3">Three</option>
   </validated-select-group>`);
 
-const getBaseObj = ({ val = null, attr = void 0 }) => ({
+const getBaseObj = (val = null, attr = void 0) => ({
   template: getTemplate.insert(attr),
   components: { ValidatedSelectGroup },
   methods: { input: action('input') },
   props: {
-    val,
-    isDisabled: boolean('disabled', false),
+    val: { default: val },
+    isDisabled: { default: boolean('disabled', false) },
   },
 });
 

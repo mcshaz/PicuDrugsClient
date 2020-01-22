@@ -68,7 +68,7 @@ export const before: ValidationRuleSchema = {
       : value <= limit;
   },
   message(fieldName, placeholders) {
-    return `The ${fieldName} field must come before ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
+    return `The ${fieldName} field must be ${placeholders!.included === false ? '' : 'on or '}before ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
   },
 };
 
@@ -82,6 +82,6 @@ export const after: ValidationRuleSchema = {
       : value >= limit;
   },
   message(fieldName, placeholders) {
-    return `The ${fieldName} field must come after ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
+    return `The ${fieldName} field must be ${placeholders!.included === false ? '' : 'on or '}after ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
   },
 };

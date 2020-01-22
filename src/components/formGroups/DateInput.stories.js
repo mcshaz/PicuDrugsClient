@@ -1,23 +1,27 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
+// import { withKnobs, date } from '@storybook/addon-knobs';
 // import { linkTo } from '@storybook/addon-links';
 
 import DateInput from './DateInput.vue';
 
 export default {
   title: 'formGroups/DateInput',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` })],
+  decorators: [
+    () => ({ template: `<form style="margin: 1em;"><story/></form>` }),
+    // withKnobs,
+  ],
 };
 
 const baseObj = {
   components: { DateInput },
   props: {
-    min: new Date(2020, 0, 1),
-    max: new Date(2020, 1, 1),
-    validDate: new Date(2020, 0, 15),
-    invalidDate: new Date(2020, 1, 15),
-    emptyDate: null,
+    min: { default: new Date(2020, 0, 1) },
+    max: { default: new Date(2020, 1, 1) },
+    validDate: { default: new Date(2020, 0, 15) },
+    invalidDate: { default: new Date(2020, 1, 15) },
+    emptyDate: { default: null },
   },
   methods: { input: action('input') },
 };

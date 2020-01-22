@@ -13,11 +13,11 @@ export default {
 const baseObj = {
   components: { DateInputPolyfill },
   props: {
-    min: new Date(2020, 0, 1),
-    max: new Date(2020, 1, 1),
-    validDate: new Date(2020, 0, 15),
-    invalidDate: new Date(2020, 1, 15),
-    emptyDate: null,
+    min: { default: new Date(2020, 0, 1) },
+    max: { default: new Date(2020, 1, 1) },
+    validDate: { default: new Date(2020, 0, 15) },
+    invalidDate: { default: new Date(2020, 1, 15) },
+    emptyDate: { default: null },
   },
   methods: { input: action('input') },
 };
