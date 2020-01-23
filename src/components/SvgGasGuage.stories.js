@@ -10,7 +10,7 @@ export default {
 };
 
 const getTemplate = updatableAttrFactory(`<svg-gas-guage :fraction-begin="fractionBegin"
-:fraction-remain="fractionRemain" fullPressure="153" />`);
+:fraction-remain="fractionRemain" fullPresBar="153" />`);
 
 const getBaseObj = (attr = void 0) => ({
   template: getTemplate.insert(attr),
@@ -26,13 +26,13 @@ export const defaults = () => getBaseObj();
 export const majorArcPositiveEnd = () => getBaseObj({ ':emptyAngle': 90, ':fullAngle': 300 });
 
 export const worksBurgerKnobs = () => {
-  const attrs = Object.fromEntries(['emptyAngle', 'fullAngle', 'fullPressure', 'pressureUnits'].map((p) => [':' + p, p]));
+  const attrs = Object.fromEntries(['emptyAngle', 'fullAngle', 'fullPresBar', 'pressureUnits'].map((p) => [':' + p, p]));
   const returnVar = getBaseObj(attrs);
   returnVar.props = { ...returnVar.props,
     ...{
       emptyAngle: { default: number('emptyAngle', 160, { range: true, max: 360, min: 0 }) },
       fullAngle: { default: number('fullAngle', 300, { range: true, max: 360, min: 0 }) },
-      fullPressure: { default: number('fullPressure', 153, { max: 160, min: 1 }) },
+      fullPresBar: { default: number('fullPresBar', 153, { max: 160, min: 1 }) },
       pressureUnits: { default: select('pressureUnits', ['KPa', 'Bar', 'PSI'], 'KPa') },
     } };
   console.log(returnVar);

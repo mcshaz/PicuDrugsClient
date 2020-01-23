@@ -10,20 +10,20 @@
         <path :d="tankNearlyEmptyPath" fill="red" stroke="none"/>
         <path :d="tankUsedPath" fill="url(#diagonalHatch)" fill-opacity="0.6"
                 stroke="#aaa" stroke-width="1"/>
-        <path :d="barMinorTickPaths.map((p) => `M${p[1][0]} ${p[1][1]} L${p[2][0]} ${p[2][1]}`).join(' ')"
+        <path :d="tickPaths.minor.map((p) => `M${p[0][0]} ${p[0][1]} L${p[1][0]} ${p[1][1]}`).join(' ')"
                 stroke="black" stroke-width="1"/>
-        <g id="major-ticks" v-for="t in barMajorTickPaths" :key="t[0]">
-            <line :x1="t[1][0]" :y1="t[1][1]" :x2="t[2][0]" :y2="t[2][1]"
+        <g id="major-ticks" v-for="t in tickPaths.major" :key="t[3]">
+            <line :x1="t[0][0]" :y1="t[0][1]" :x2="t[1][0]" :y2="t[1][1]"
                 stroke="black" stroke-width="2"/>
-            <text :x="t[3][0]" :y="t[3][1]">
-              {{t[0]}}
+            <text :x="t[2][0]" :y="t[2][1]">
+              {{t[3]}}
             </text>
         </g>
         <path id="guagePath" d="M -7 -7 L 14 -7 100 0 14 7 -7 7 Z" :transform="`rotate(${guageAngle} 0 0)`"
             fill="black" stroke="none"/>
         <circle cx="0" cy="0" r="2" fill="white" stroke="none"/>
-        <text class="pressure-units" x="0" y="22">bar</text>
-        <text class="minor-pressure-units" x="0" y="39">(x 100 = kPa)</text>
+        <text class="pressure-units" x="0" y="22">{{ isPSI ? 'PSI' : 'bar' }}</text>
+        <text class="minor-pressure-units" x="0" y="39" v-if="!isPSI">(x 100 = kPa)</text>
     </svg>
 </template>
 <script lang="ts">
@@ -39,7 +39,7 @@ export default class SvgGasGuage extends Vue {
     @Prop({ default: 300 })
     public fullAngle!: number;
     @Prop({ required: true })
-    public fullPressure!: number;
+    public fullPresBar!: number;
     @Prop({ default: 'KPa' })
     public pressureUnits!: 'KPa' | 'Bar' | 'PSI';
     @Prop({ required: true })
@@ -67,18 +67,21 @@ export default class SvgGasGuage extends Vue {
       return this.emptyAngle + this.fractionRemain * this.angleSpan;
     }
 
-    // psi = 3000 in thousands
-    public get barMinorTickPaths() {
-      const tickKPas = range(10, 190, 10).filter((k) => k % 5000 !== 0);
-      return this.tickPaths(tickKPas, 97, 100);
+    public get isPSI() {
+      return this.pressureUnits === 'PSI';
     }
 
-    public get barMajorTickPaths() {
-      const tickKPas = range(0, 200, 50);
-      const returnVar = this.tickPaths(tickKPas, 94, 100);
-      for (const p of returnVar) {
-        p.push([p[2][0] * 0.82 - 2, p[2][1] * 0.83]);
-      }
+    public get tickPaths() {
+      const ranges = this.isPSI
+        ? steps(1000, 100, 3000)
+        : steps(50, 10, 200);
+      const psiToBar = (n: number) => n * 0.06894757;
+      const returnVar = {
+        major: this.tickPathsFromVals(this.isPSI ? ranges.major.map(psiToBar) : ranges.major, 94, 100),
+        minor: this.tickPathsFromVals(this.isPSI ? ranges.minor.map(psiToBar) : ranges.minor, 97, 100),
+      };
+      const positionFactor = this.isPSI ? [0.71, 0.83] : [0.80, 0.83];
+      returnVar.major.forEach((p, indx) => (p as any).push([p[1][0] * positionFactor[0], p[1][1] * positionFactor[1]], ranges.major[indx]));
       return returnVar;
     }
 
@@ -99,12 +102,12 @@ export default class SvgGasGuage extends Vue {
       return `${startArc[0]} ${startArc[1]} A${radius} ${radius} 0 ${greaterArc} 0 ${finishArc[0]} ${finishArc[1]}`;
     }
 
-    private tickPaths(values: number[], innerRadius: number, outerRadius: number) {
+    private tickPathsFromVals(values: number[], innerRadius: number, outerRadius: number) {
       const innerToOuter = outerRadius / innerRadius;
       return values.map((v) => {
-        const start = this.mapPosition(v / this.fullPressure, innerRadius);
+        const start = this.mapPosition(v / this.fullPresBar, innerRadius);
         const end = start.map((s) => s * innerToOuter);
-        return [v, start, end] as [number, [number, number], [number, number]];
+        return [start, end] as [[number, number], [number, number]];
       });
     }
 
@@ -119,6 +122,13 @@ export default class SvgGasGuage extends Vue {
 
 function range(start: number, stop: number, step = 1) {
   return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
+}
+
+function steps(majorStep: number, minorStep: number, max: number) {
+  return {
+    major: range(0, max, majorStep),
+    minor: range(minorStep, max - minorStep, minorStep).filter((s) => s % majorStep !== 0),
+  };
 }
 
 </script>

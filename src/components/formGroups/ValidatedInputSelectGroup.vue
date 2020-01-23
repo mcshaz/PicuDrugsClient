@@ -1,18 +1,19 @@
 <template>
+  <validation-observer v-slot="observerContext">
     <b-form-group :label-for="pName" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
-        :invalid-feedback="errors.join(' AND ')" :state="state" label-align-lg="right">
+        :invalid-feedback="Object.values(observerContext.errors).flat().join(' AND ')" :state="getState(observerContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
       <b-input-group>
         <b-input-group-prepend is-text v-if="prepend || $slots.prepend"><slot name="prepend">{{ prepend }}</slot></b-input-group-prepend>
         <validation-provider v-slot="valContextInput" :name="pErrorLabel" :rules="rules" ref="inputValProvider" :immediate="immediate" slim>
           <input class="form-control" :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled"
-              v-model="pValue" :id="pName" :name="pName" :class="getDualValidClass(valContextInput, 0)" :autocomplete="autocomplete">
+              v-model="pValue" :id="pName" :name="pName" :class="getValidClass(valContextInput)" :autocomplete="autocomplete">
         </validation-provider>
         <b-input-group-append>
           <validation-provider v-slot="valContextSelect" class="input-group-append" tag="div" ref="selectValProvider" :immediate="immediate" :name="pSelectErrorLabel"
               :rules="selectRules">
-            <select v-model="pSelectValue" :name="pSelectName" :id="pSelectName" :class="getDualValidClass(valContextSelect, 1)" :required="required"
+            <select v-model="pSelectValue" :name="pSelectName" :id="pSelectName" :class="getValidClass(valContextSelect)" :required="required"
                 :disabled="disabled" class="custom-select input-group-addon">
               <slot></slot>
             </select>
@@ -20,6 +21,7 @@
         </b-input-group-append>
       </b-input-group>
     </b-form-group>
+  </validation-observer>
 </template>
 <script lang="ts">
 import 'reflect-metadata';
@@ -43,8 +45,6 @@ export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl) 
   pSelectValue: any = '';
   pSelectName = '';
   pSelectErrorLabel = '';
-  errorsCombined: [string[], string[]] = [[], []];
-  stateCombined: [null | boolean, null | boolean] = [null, null];
 
   beforeMount() {
     this.pSelectName = this.selectName || (this.pName + '-select-append');
@@ -52,34 +52,7 @@ export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl) 
   }
 
   get pSelectLabel() {
-    return this.selectTitle || (this.label + ' units');
-  }
-
-  get errors() {
-    return this.errorsCombined.flat();
-  }
-
-  get state() {
-    if (this.stateCombined[0] === null && this.stateCombined[1] === null) {
-      return null;
-    }
-    if (this.stateCombined[0] === false || this.stateCombined[1] === false) {
-      return false;
-    }
-    return true;
-  }
-
-  getDualValidClass(valContext: IValCtxt, index: number) {
-    if (valContext.errors) {
-      console.log(valContext.errors);
-      if (!areArraysEqual(this.errorsCombined[index], valContext.errors)) {
-        Vue.set(this.errorsCombined, index, valContext.errors);
-      }
-      if (this.stateCombined[index] !== this.getState(valContext)) {
-        Vue.set(this.stateCombined, index, this.getState(valContext));
-      }
-    }
-    return this.getValidClass(valContext);
+    return this.selectTitle || `[${this.label}] UNITS`;
   }
 
   @Watch('selectValue', { immediate: true })
@@ -94,16 +67,6 @@ export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl) 
   }
 }
 
-function areArraysEqual(arr1: string[], arr2: string[]) {
-  if (arr1.length !== arr2.length) { return false; }
-  if (arr1 === arr2) { return true; }
-  for (let i = 0; i < arr1.length; ++i) {
-    if (arr1[i] !== arr2[i]) {
-      return false;
-    }
-  }
-  return true;
-}
 </script>
 
 <style>
