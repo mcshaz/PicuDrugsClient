@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-import BootstrapVue from 'bootstrap-vue';
+// import BootstrapVue from 'bootstrap-vue';
+import { FormGroupPlugin, InputGroupPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './registerServiceWorker';
@@ -14,7 +15,7 @@ import { faCalendarAlt, faSyringe, faCalculator, faFilePrescription, faFileMedic
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
 // eslint-disable-next-line camelcase
-import { required, min_value, max_value, between, integer, required_if } from 'vee-validate/dist/rules';
+import { required, min_value, max_value, between, integer, required_if, oneOf } from 'vee-validate/dist/rules';
 import { exactLength, nhiChecksum, nhiRegex, before, after } from '@/services/validation/validators';
 import { messages } from 'vee-validate/dist/locale/en.json';
 import { ValidationRuleSchema } from 'vee-validate/dist/types/types';
@@ -22,7 +23,7 @@ import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue
 import ValidatedSelectGroup from '@/components/formGroups/ValidatedSelectGroup.vue';
 import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 
-for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, exactLength, nhiChecksum, nhiRegex, before, after } as { [key: string]: ValidationRuleSchema; })) {
+for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, oneOf, exactLength, nhiChecksum, nhiRegex, before, after } as { [key: string]: ValidationRuleSchema; })) {
   if (!validation.message) {
     validation.message = (messages as any)[rule];
   }
@@ -43,7 +44,8 @@ library.add(...[faCalendarAlt, faSyringe, faCalculator, faFilePrescription, faFi
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 // to import individual components https://bootstrap-vue.js.org/docs/#vue-cli-3
-Vue.use(BootstrapVue);
+Vue.use(FormGroupPlugin);
+Vue.use(InputGroupPlugin);
 
 Vue.config.productionTip = false;
 

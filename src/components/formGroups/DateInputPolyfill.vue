@@ -55,7 +55,7 @@ import { DatePart, datePartType } from '@/services/utilities/DatePart';
 
 type vueNumber = number | '';
 
-@Component({})
+@Component
 export default class DateInputPolyfill extends Vue {
     public isValid: null | boolean = null;
 

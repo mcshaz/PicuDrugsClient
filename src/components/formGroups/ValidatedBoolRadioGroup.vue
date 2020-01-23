@@ -21,11 +21,14 @@ import 'reflect-metadata';
 import { Component, Prop, Vue, Model, Mixins, Watch } from 'vue-property-decorator';
 import { mergeValidators } from '@/services/validation/mergeValidators';
 import ValidatedFormEl from '@/mixins/ValidatedFormEl';
+import { BFormRadio, BFormRadioGroup } from 'bootstrap-vue';
 
 type vueNumber = number | '';
 type nullBool = null | boolean;
 
-@Component({})
+@Component({
+  components: { BFormRadio, BFormRadioGroup },
+})
 export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl) {
   @Model('change') // use change event rather than input
   public value!: boolean | null;

@@ -35,20 +35,20 @@ const degreesToRadians = Math.PI / 180;
 @Component
 export default class SvgGasGuage extends Vue {
     @Prop({ default: 160 })
-    public startAngle!: number;
+    public emptyAngle!: number;
     @Prop({ default: 300 })
-    public endAngle!: number;
+    public fullAngle!: number;
     @Prop({ required: true })
-    public fullValue!: number;
+    public fullPressure!: number;
     @Prop({ default: 'KPa' })
-    public units!: string;
+    public pressureUnits!: 'KPa' | 'Bar' | 'PSI';
     @Prop({ required: true })
     public fractionRemain!: number;
     @Prop({ default: 1 })
     public fractionBegin!: number;
 
     public get angleSpan() {
-      return this.endAngle - this.startAngle;
+      return this.fullAngle - this.emptyAngle;
     }
 
     public get tankFullPath() {
@@ -64,7 +64,7 @@ export default class SvgGasGuage extends Vue {
     }
 
     public get guageAngle() {
-      return this.startAngle + this.fractionRemain * this.angleSpan;
+      return this.emptyAngle + this.fractionRemain * this.angleSpan;
     }
 
     // psi = 3000 in thousands
@@ -95,20 +95,21 @@ export default class SvgGasGuage extends Vue {
     private arcBase(fractionStart: number, fractionEnd: number, radius: number) {
       const startArc = this.mapPosition(fractionStart, radius);
       const finishArc = this.mapPosition(fractionEnd, radius);
-      return `${startArc[0]} ${startArc[1]} A${radius} ${radius} 0 0 0 ${finishArc[0]} ${finishArc[1]}`;
+      const greaterArc = Math.abs(fractionStart - fractionEnd) * this.angleSpan > 180 ? 1 : 0;
+      return `${startArc[0]} ${startArc[1]} A${radius} ${radius} 0 ${greaterArc} 0 ${finishArc[0]} ${finishArc[1]}`;
     }
 
     private tickPaths(values: number[], innerRadius: number, outerRadius: number) {
       const innerToOuter = outerRadius / innerRadius;
       return values.map((v) => {
-        const start = this.mapPosition(v / this.fullValue, innerRadius);
+        const start = this.mapPosition(v / this.fullPressure, innerRadius);
         const end = start.map((s) => s * innerToOuter);
         return [v, start, end] as [number, [number, number], [number, number]];
       });
     }
 
     private mapPosition(fraction: number, radius = 100): [number, number] {
-      const angle = this.startAngle + this.angleSpan * fraction;
+      const angle = this.emptyAngle + this.angleSpan * fraction;
       return [
         Math.cos(angle * degreesToRadians) * radius,
         Math.sin(angle * degreesToRadians) * radius,

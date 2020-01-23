@@ -41,7 +41,7 @@
             {{(selectedCylinder.litres * fractionStart).toFixed()}} litres)
           </span>
           <svg-gas-guage v-if="proportionRemain > 0" :fraction-begin="fractionStart"
-              :fraction-remain="proportionRemain" :full-value="selectedCylinder.barFull" />
+              :fraction-remain="proportionRemain" :full-pressure="selectedCylinder.barFull" />
           <div id="tanks-used" v-else>
             {{roundedTanksUsed}} x
             <img src="/img/gas-cylinder.svg" height="100">
