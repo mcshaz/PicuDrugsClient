@@ -1,5 +1,6 @@
 <template>
     <span class="duration"><span class="hrs">{{hrs}}</span><small class="unit">h</small>
+    &nbsp;
     <span class="mins">{{mins}}</span><small class="unit">m</small>
     </span>
 </template>
@@ -17,7 +18,7 @@ export default class DurationDisplay extends Vue {
     }
 
     public get mins() {
-      return (this.value - this.hrs).toFixed().padStart(2, '0');
+      return (this.value - this.hrs * 60).toFixed().padStart(2, '0');
     }
 }
 </script>

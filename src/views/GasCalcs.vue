@@ -5,22 +5,22 @@
       <b-col lg="7">
         <form @submit.prevent class="card p-2" novalidate>
           <validated-input-group label="Minute Volume" append="L/min" type="number" min="0.1" max="10" step="0.1" v-model="minVol"/>
-          <validated-input-group type="number" min="0.21" max="1" step="0.01" v-model="fio2">
+          <validated-input-group type="number" min="0.21" max="1" step="0.01" v-model="fio2" name="FiO2">
             <template #label>
               FiO<sub>2</sub>
             </template>
           </validated-input-group>
-          <validated-input-group label="O2 Consumption" type="number" min="0" max="40" required append="L/min">
+          <validated-input-group label="O2 Flows" v-model="o2Rate" type="number" min="0" max="40" required append="L/min" name="O2Consump">
             <template #label>
               O<sub>2</sub> Consumption
             </template>
           </validated-input-group >
           <validated-input-group label="Time using cylinder" type="range" v-model="durationMins" prepend="5 min" append="12 hr" min="5" max="720">
             <template #range-value>
-              <duration-display :value="durationMins"/>
+              <strong>value:</strong> <duration-display :value="durationMins"/>
             </template>
           </validated-input-group>
-          <validated-select-group label="Cylinder Size" required >
+          <validated-select-group label="Cylinder Size" v-model="selectedSize" required >
             <template>
               <option v-for="(s, k) of cylinderSizes" :key="k" :value="k">
                 {{k + (s.use ? ` (${s.use})` : '') }}
@@ -28,7 +28,14 @@
             </template>
           </validated-select-group>
           <validated-input-group label="Starting pressure" type="range" :range-value="startPressure + ' bar'" prepend="0" :append="selectedCylinder.barFull + ' bar'"
-              min="0" :max="selectedCylinder.barFull"/>
+              min="0" :max="selectedCylinder.barFull" v-model="startPressure"/>
+          <validated-select-group label="Pressure units" v-model="selectedUnits" required >
+            <template>
+              <option v-for="u of units" :key="u" :value="u">
+                {{u}}
+              </option>
+            </template>
+          </validated-select-group>
         </form>
       </b-col>
       <b-col xl="5" lg="5">
@@ -41,7 +48,8 @@
             {{(selectedCylinder.litres * fractionStart).toFixed()}} litres)
           </span>
           <svg-gas-guage v-if="proportionRemain > 0" :fraction-begin="fractionStart"
-              :fraction-remain="proportionRemain" :full-pressure="selectedCylinder.barFull" />
+              :pressure-units="selectedUnits.split('/')[0]"
+              :fraction-remain="proportionRemain" :full-pres-bar="selectedCylinder.barFull" />
           <div id="tanks-used" v-else>
             {{roundedTanksUsed}} x
             <img src="/img/gas-cylinder.svg" height="100">
@@ -61,7 +69,7 @@ import { roundToFixed } from '@/services/infusion-calculations/Utilities/roundin
 import SvgGasGuage from '@/components/SvgGasGuage.vue';
 import DurationDisplay from '@/components/DurationDisplay.vue';
 type vueNumber = number | '';
-const units = [ 'Bar/kPa', 'PSI', 'Proportion' ] as const;
+const units = [ 'Bar/kPa', 'PSI' ] as const; // 'fraction'
 
 @Component({
   components: {
@@ -79,7 +87,7 @@ export default class GasCalcs extends Vue {
   public startPressure: number = 0;
 
   public units = units;
-  public selectedUnit = 'KPa';
+  public selectedUnits = units[0];
 
   public get totalGasUsed() {
     return (this.o2Rate || 0) * this.durationMins;

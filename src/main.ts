@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 // import BootstrapVue from 'bootstrap-vue';
-import { FormGroupPlugin, InputGroupPlugin } from 'bootstrap-vue';
+import { FormGroupPlugin, InputGroupPlugin, NavbarPlugin, DropdownPlugin, LayoutPlugin, CardPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './registerServiceWorker';
@@ -46,6 +46,10 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 // to import individual components https://bootstrap-vue.js.org/docs/#vue-cli-3
 Vue.use(FormGroupPlugin);
 Vue.use(InputGroupPlugin);
+Vue.use(NavbarPlugin);
+Vue.use(DropdownPlugin);
+Vue.use(LayoutPlugin);
+Vue.use(CardPlugin);
 
 Vue.config.productionTip = false;
 

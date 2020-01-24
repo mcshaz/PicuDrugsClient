@@ -40,7 +40,6 @@ export default class DateTimeInput extends Vue {
     // public min!: Date;
     public date: Date | null = null;
     public time = '';
-    private wasEmpty = true;
 
     public get dateMin() {
       if (!this.min) { return void 0; }
@@ -68,6 +67,7 @@ export default class DateTimeInput extends Vue {
 
     public setNow() {
       const d = new Date();
+      d.setSeconds(0, 0);
       this.$emit('input', d);
     }
 
@@ -78,26 +78,24 @@ export default class DateTimeInput extends Vue {
         d.setHours(0, 0, 0, 0);
         this.date = d;
         this.time = getLocalTimeString(newVal);
-        this.wasEmpty = false;
       } else {
         this.date = null;
         this.time = '';
-        this.wasEmpty = true;
       }
     }
     @Watch('date')
     @Watch('time')
     public dateTimeChange() {
       if (this.time === '' || this.date === null) {
-        if (!this.wasEmpty) {
+        if (this.value) {
           this.$emit('input', null);
-          this.wasEmpty = true;
         }
       } else {
-        this.wasEmpty = false;
         const returnVar = new Date(this.date);
-        returnVar.setHours(parseInt(this.time.substr(0, 2), 10), parseInt(this.time.substr(3, 2), 10));
-        this.$emit('input', returnVar);
+        returnVar.setHours(parseInt(this.time.substring(0, 2), 10), parseInt(this.time.substring(3), 10));
+        if (!this.value || this.value.valueOf() !== returnVar.valueOf()) {
+          this.$emit('input', returnVar);
+        }
       }
     }
 }
@@ -106,3 +104,13 @@ function getLocalTimeString(dt: Date | number) {
   return `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}`;
 }
 </script>
+<!--
+<style>
+input[type="date"] {
+  min-width: 10.2em;
+}
+input[type="time"] {
+  min-width: 9.4em;
+}
+</style>
+-->

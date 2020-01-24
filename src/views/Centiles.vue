@@ -4,7 +4,7 @@
     <validation-observer>
       <form @submit.prevent ref="base-data" class="card p-2" id="patientData-data">
         <nhi-input v-model="nhi" @invalid-state-change="lookupNhi(!$event.$invalid)" />
-        <validated-bool-radio-group label="Gender:" true-label="Male" false-label="Female" v-model="isMale" />
+        <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" />
         <validated-input-group label="Weeks Gestation" description="@ birth" v-model="weeksGestation"
             min="22" max="43"/>
         <dob-input v-model="dob" />

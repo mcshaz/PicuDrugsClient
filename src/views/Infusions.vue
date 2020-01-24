@@ -2,15 +2,14 @@
   <div class="home">
     <h2>Drug Calculator - Individual drug infusions</h2>
     <patient-age-weight-data :exactAge="selectedDrug&&!selectedDrug.isTitratable">
-      <validated-single-select
+      <validated-input-group
+            type="text"
             placeholder="please select a drug"
-            label="fullname"
+            label="Drug"
             v-model="selectedDrugVM"
-            textField="label"
-            keyField="id"
-            :filterBy="filterSearch"
-            :options="searchableDrugs"
+            :datalist="searchableDrugs"
             required
+            :rules="{ oneOf: searchableDrugs }"
           />
       <validated-select-group label="Ampule"
             v-model="selectedAmpuleIndx"
@@ -36,37 +35,26 @@ import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { SiUnitMeasure } from '@/services/infusion-calculations';
 import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
 import { IEntityInfusion, IDrugDB, appDataType } from '@/services/drugDb';
-import VueSingleSelect from '@/components/vendor/VueSingleSelect.vue';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
-interface ISearchableDrug {
-  label: string;
-  id: number;
-  searchable: string;
-}
 interface ISelectOption {
   value: number;
   text: string;
   disabled?: boolean;
 }
 
-const sepChar = '|';
-
 @Component({
   components: {
     PatientAgeWeightData,
-    VueSingleSelect,
   },
 })
 export default class Infusions extends Vue {
-  public searchableDrugs: ISearchableDrug[] = [];
-  public selectedDrugVM: ISearchableDrug | null = null;
-  public ampules: ISelectOption[] = [];
+  public searchableDrugs: string[] = [];
+  public selectedDrugName: string = '';
   public selectedAmpuleIndx: number | null = null;
-  private selectedDrug: IEntityInfusion | null = null;
 
   private baseRef!: string;
-  private drugs!: IEntityInfusion[];
+  private drugs!: Map<string, IEntityInfusion>;
   @Inject('db')
   private db!: IDrugDB;
   @Prop({ default: '' })
@@ -75,15 +63,11 @@ export default class Infusions extends Vue {
   public created() {
     const drugsReady = this.db.infusionDrugs.toArray().then(data => {
       sortByStringProp(data, 'fullname');
-      this.drugs = data; // data.filter((i) => !(i as any).isTitratable) as IEntityFixedInfusionDrug[];
-      this.searchableDrugs = data.map(
-        d =>
-          ({
-            label: d.fullname,
-            id: d.infusionDrugId,
-            searchable: (d.fullname + sepChar + (d.abbrev || '')).toLowerCase(),
-          } as ISearchableDrug)
-      );
+      this.drugs = new Map<string, IEntityInfusion>();
+      for (const d of data) {
+        this.drugs.set(d.fullname, d);
+        if (d.abbrev) { this.drugs.set(d.abbrev, d); }
+      }
     });
     this.baseRef = window.location.origin + this.$route.path;
     if (!this.baseRef.endsWith('/')) {
@@ -91,53 +75,38 @@ export default class Infusions extends Vue {
     }
     if (this.abbrev) {
       this.baseRef = this.baseRef.slice(0, -1 - this.abbrev.length);
-      drugsReady.then(() => {
-        const searchFor = sepChar + this.abbrev.toLowerCase();
-        this.selectedDrugVM =
-          this.searchableDrugs.find(d => d.searchable.endsWith(searchFor)) ||
-          null;
-      });
+      drugsReady.then(() => (this.selectedDrugName = this.abbrev));
     }
   }
 
-  @Watch('selectedDrugVM')
-  public selectionChange(
-    newVal: ISearchableDrug | null,
-    oldVal: ISearchableDrug | null
-  ) {
-    if (newVal !== oldVal) {
-      this.selectedDrug = newVal
-        ? this.drugs.find(d => d.infusionDrugId === newVal.id) || null
-        : null;
-      if (this.selectedDrug) {
-        this.ampules = this.selectedDrug.drugAmpuleConcentrations.map(
-          (c, indx) =>
-            ({
-              value: indx,
-              text: `${c.concentration * c.volume} ${new SiUnitMeasure(
-                this.selectedDrug!.siPrefix,
-                this.selectedDrug!.siUnitId
-              ).toString()} in ${c.volume} ml`,
-            } as ISelectOption)
-        );
-        if (this.ampules.length === 1) {
-          this.selectedAmpuleIndx = 0;
-        }
-      } else {
-        this.ampules = [];
-        this.selectedAmpuleIndx = null;
-      }
+  public get selectedDrug() {
+    return this.drugs.get(this.selectedDrugName);
+  }
+
+  public get ampules() {
+    if (this.selectedDrug) {
+      return this.selectedDrug.drugAmpuleConcentrations.map((c, indx) =>
+        ({
+          value: indx,
+          text: `${c.concentration * c.volume} ${new SiUnitMeasure(
+            this.selectedDrug!.siPrefix,
+            this.selectedDrug!.siUnitId
+          ).toString()} in ${c.volume} ml`,
+        } as ISelectOption)
+      );
     }
+    return [];
+  }
+
+  @Watch('ampules')
+  public selectionChange(newVal: ISelectOption[]) {
+    this.selectedAmpuleIndx = newVal.length === 1 ? 0 : null;
   }
 
   public get link() {
     return this.selectedDrug
       ? this.baseRef + encodeURIComponent(this.selectedDrug.abbrev)
       : '';
-  }
-
-  public filterSearch(option: ISearchableDrug, searchText: string) {
-    return option.searchable.includes(searchText.toString().toLowerCase());
   }
 }
 </script>

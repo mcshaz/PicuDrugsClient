@@ -4,7 +4,7 @@
       <b-form-group :label-for="pName" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl" label-align-lg="right" :state="getState(validationContext)">
         <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
         <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
-        <template #description v-else-if="pRangeValue || $slots['range-value']">value: <strong class="range-value"><slot name="range-value">{{ pRangeValue }}</slot></strong></template>
+        <template #description v-else-if="pRangeValue || $slots['range-value']"><slot name="range-value">value: <strong class="range-value">{{ pRangeValue }}</strong></slot></template>
         <b-input-group>
           <b-input-group-prepend is-text v-if="pPrepend || $slots.prepend"><slot name="prepend">{{ pPrepend }}</slot></b-input-group-prepend>
           <input :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled" :list="datalistId"

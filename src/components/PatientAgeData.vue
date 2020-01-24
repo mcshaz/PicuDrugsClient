@@ -2,7 +2,7 @@
   <div class="was-validated">
     <dob-input v-model="dob" @min-change="minDate=$event" />
     <validation-observer v-slot="{allErrors, valid}">
-      <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
+      <b-form-group id="ageymd" label="Age" label-cols-lg="2" label-cols-xl="2"
             :state="valid" :invalid-feedback="allErrors.years[0] || allErrors.months[0] || allErrors.days[0]">
         <div class="form-inline">
           <validation-provider vid="years" rules="integer"><!--todo exact-->

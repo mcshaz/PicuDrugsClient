@@ -1,14 +1,10 @@
 <template>
     <div class="date-input">
-        <date-input-polyfill :min="min" :max="max" @input="$emit('input',$event)" :value="value" v-if="isDateSupported===dateElSupportValues.noSupport"
+        <date-input-polyfill v-model="pDate" v-if="isDateSupported===dateElSupportValues.noSupport"
               @blur="$emit('blur', $event)" :id="id" :required="required" :class="cssClass"/>
         <b-input-group v-else>
-            <input class="form-control" type="date" :min="minStr" :max="maxStr"
-                :value-as-date.prop="valueAsDate" :required="required" :class="cssClass"
-                @blur="$emit('blur', $event)" @input.passive="$emit('input', $event.target.valueAsDate?new Date($event.target.valueAsDate.getTime()+offset):null)"
-                v-if="isDateSupported===dateElSupportValues.valueAsDateSupport" :name="name" :id="id" />
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr"
-                @blur="$emit('blur', $event)" v-else :name="name" :id="id" :required="required" :class="cssClass"/>
+                @blur="$emit('blur', $event)" :name="name" :id="id" :required="required" :class="cssClass"/>
             <b-input-group-append is-text>
                 <font-awesome-icon icon="calendar-alt" />
             </b-input-group-append>
@@ -31,9 +27,6 @@ import { dateElSupportValues, dateElSupport } from '@/services/utilities/html5El
 export default class DateInput extends Vue {
     public readonly isDateSupported: dateElSupportValues;
     public readonly dateElSupportValues: typeof dateElSupportValues;
-    public offset = 0;
-    private pDateStr!: string;
-    private wasDate?: boolean;
 
     @Prop({ default: void 0 })
     private cssClass?: string;
@@ -54,43 +47,26 @@ export default class DateInput extends Vue {
       super();
       this.isDateSupported = dateElSupport;
       this.dateElSupportValues = dateElSupportValues;
-      if (this.isDateSupported === dateElSupportValues.elSupport) {
-        this.pDateStr = '';
-      }
-    }
-
-    public created() {
-      if (this.isDateSupported === dateElSupportValues.elSupport && this.value) {
-        this.pDateStr = ymdFormat(this.value);
-      } else if (this.isDateSupported === dateElSupportValues.valueAsDateSupport) {
-        this.offset = (this.value || new Date()).getTimezoneOffset() * 60000;
-      }
-    }
-
-    public get valueAsDate() {
-      return this.value
-        ? new Date(this.value.getTime() - this.offset)
-        : null;
     }
 
     public get dateStr() {
-      return this.pDateStr;
+      if (!this.value || Number.isNaN(this.value.valueOf())) {
+        return '';
+      }
+      const returnVar = new Date(this.value);
+      returnVar.setMinutes(-returnVar.getTimezoneOffset());
+      return ymdFormat(returnVar);
     }
-    public set dateStr(value: string) {
-      this.pDateStr = value;
+    public set dateStr(newVal: string) {
       let dt!: Date;
-      if (value === '' || Number.isNaN((dt = new Date(value)).valueOf())) {
-        if (this.wasDate) {
-          this.$emit('value', null);
-          this.wasDate = false;
-        }
+      if (this.value && (newVal === '' || Number.isNaN((dt = new Date(newVal)).valueOf()))) {
+        this.$emit('value', null);
         return;
       }
-      if (dt.getHours() !== 0 || dt.getMinutes() !== 0) { // because it is interpreted as utc midnight
-        dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset());
+      dt.setMinutes(dt.getTimezoneOffset());
+      if (dt.valueOf() !== (this.value ? this.value.valueOf() : null)) {
+        this.$emit('value', dt);
       }
-      this.$emit('value', dt);
-      this.wasDate = true;
     }
 
     public get minStr() {

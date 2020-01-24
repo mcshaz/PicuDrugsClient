@@ -49,8 +49,8 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import { parseDate, dateInRange, dateOrder, shortFormatter } from '@/services/utilities/dateHelpers';
+import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
+import { parseDateUtc0, dateInRange, dateOrder, shortFormatter, ymdFormat } from '@/services/utilities/dateHelpers';
 import { DatePart, datePartType } from '@/services/utilities/DatePart';
 
 type vueNumber = number | '';
@@ -69,18 +69,11 @@ export default class DateInputPolyfill extends Vue {
     private pDate: Date | null = null;
 
     @Prop({ default: null })
-    private value!: Date | null;
-    @Prop({ default: null })
-    private min!: Date | null;
-    @Prop({ default: null })
-    private max!: Date | null;
+    private value!: string;
     @Prop({ default: false })
     private required!: boolean;
 
     public created() {
-      if (this.min && this.max && this.min > this.max) {
-        throw new RangeError('min must be <= max');
-      }
       this.dateArgs = [this.first, this.second, this.third];
       this.dateArgs.sort((a, b) => {
         if (a.part === 'year') {
@@ -94,12 +87,21 @@ export default class DateInputPolyfill extends Vue {
         }
         return 1;
       });
+    }
+
+    @Watch('value', { immediate: true })
+    public valueChanged(newVal: string) {
       if (this.value) {
-        this.dateArgs[0].setValue(this.value.getFullYear().toString(), false);
-        this.dateArgs[1].setValue((this.value.getMonth() + 1).toString(), false);
-        this.dateArgs[2].setValue(this.value.getDate().toString(), false);
+        this.pDate = new Date(this.value + 'T00:00+00:00');
+        this.dateArgs[0].setValue(this.pDate.getFullYear().toString(), false);
+        this.dateArgs[1].setValue((this.pDate.getMonth() + 1).toString(), false);
+        this.dateArgs[2].setValue(this.pDate.getDate().toString(), false);
+      } else {
+        this.pDate = null;
+        this.dateArgs[0].setValue('');
+        this.dateArgs[1].setValue('');
+        this.dateArgs[2].setValue('');
       }
-      this.pDate = this.value;
     }
 
     public setValue(val: string, pos: 'first' | 'second' | 'third' = 'third') {
@@ -143,37 +145,40 @@ export default class DateInputPolyfill extends Vue {
     private emitBlur(evt: FocusEvent) {
       const relatedTarget = evt.relatedTarget;
       if (relatedTarget !== this.$refs.year && relatedTarget !== this.$refs.month && relatedTarget !== this.$refs.year) {
-        if ((this.pDate && this.pDate.getTime()) !== (this.value && this.value.getTime())) {
-          this.$emit('change', this.pDate);
-        }
         this.$emit('blur', evt);
       }
     }
 
     private emitDate() {
-      const timestamp = parseDate(this.dateArgs[0].value, this.dateArgs[1].value, this.dateArgs[2].value);
+      const timestamp = parseDateUtc0(this.dateArgs[0].value, this.dateArgs[1].value, this.dateArgs[2].value);
       if (!timestamp) {
         if (this.pDate) {
-          this.$emit('input', this.pDate = null);
+          this.pDate = null;
+          this.$emit('input', '');
           this.isValid = null;
         }
       } else if (!this.pDate || this.pDate.getTime() !== timestamp.getTime()) {
-        this.$emit('input', this.pDate = timestamp);
+        this.pDate = timestamp;
+        this.$emit('input', ymdFormat(timestamp));
+        /*
         const thirdEl = this.$refs.third as HTMLInputElement;
-        if (this.min && timestamp < this.min) {
-          if (this.max && timestamp > this.max) {
-            thirdEl.setCustomValidity(`date must be between ${shortFormatter.format(this.min)} and ${shortFormatter.format(this.max)}`);
+        const min = this.min ? new Date(this.min) : null;
+        const max = this.max ? new Date(this.max) : null;
+        if (this.min && timestamp < min) {
+          if (this.max && timestamp > max) {
+            thirdEl.setCustomValidity(`date must be between ${shortFormatter.format(min)} and ${shortFormatter.format(max)}`);
           } else {
-            thirdEl.setCustomValidity(`date must be >= ${shortFormatter.format(this.min)}`);
+            thirdEl.setCustomValidity(`date must be >= ${shortFormatter.format(min)}`);
           }
           this.isValid = false;
-        } else if (this.max && timestamp > this.max) {
-          thirdEl.setCustomValidity(`date must be <= ${shortFormatter.format(this.max)}`);
+        } else if (this.max && timestamp > max) {
+          thirdEl.setCustomValidity(`date must be <= ${shortFormatter.format(max)}`);
           this.isValid = false;
         } else {
           thirdEl.setCustomValidity('');
           this.isValid = true;
         }
+        */
       }
     }
 }

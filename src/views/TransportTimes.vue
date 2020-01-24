@@ -1,56 +1,51 @@
 <template>
   <div class="home">
     <h2>Starship Transport Times</h2>
-    <validation-provider v-slot="errors" name="Hospital">
-      <b-form-group
-        label-cols-lg="2"
-        label-cols-xl="2"
-        label="Hospital:"
-        :invalid-feedback="errors[0]"
-        :state="!!hospital"
-      >
-        <vue-single-select
-          placeholder="hospital"
-          v-model="hospital"
-          keyField="id"
-          :filterBy="filterSearch"
-          :options="hospitalOptions"
-          required
-          textField="label"
-        />
-      </b-form-group>
-    </validation-provider>
-    <validated-select-group label="Mode" required>
+      <validated-input-group
+        type="text"
+        label="Hospital"
+        placeholder="hospital"
+        v-model="hospitalName"
+        :datalist="hospitalNames"
+        :rules="{ oneOf: hospitalNames }"
+        required
+      />
+    <validated-select-group label="Mode" required v-model="mode">
       <option value disabled>select transport mode...</option>
-      <option value="road" :disabled="!hospitalTimes||!hospitalTimes.road">
+      <option value="road" :disabled="!selectedHospital||!selectedHospital.road">
         Road Ambulance
         <!--<font-awesome-icon icon="ambulance" />-->
       </option>
-      <option value="rotary" :disabled="!hospitalTimes||!hospitalTimes.rotary">
+      <option value="rotary" :disabled="!selectedHospital||!selectedHospital.rotary">
         Rotary Wing
         <!--<font-awesome-icon icon="helicopter" />-->
       </option>
       <optgroup label="Fixed Wing">
-        <option value="prop" :disabled="!hospitalTimes||!hospitalTimes.prop">
+        <option value="prop" :disabled="!selectedHospital||!selectedHospital.prop">
           Turboprop
           <!--<font-awesome-icon icon="plane" />-->
         </option>
-        <option value="jet" :disabled="!hospitalTimes||!hospitalTimes.jet">
+        <option value="jet" :disabled="!selectedHospital||!selectedHospital.jet">
           Jet
           <!--<font-awesome-icon icon="fighter-jet" />-->
         </option>
       </optgroup>
     </validated-select-group>
-    <validated-date-time-group label="Depart Starship:" v-model="departSS" required />
+    <validated-date-time-group label="Depart Starship" v-model="departSS" required />
     <validated-date-time-group label="Takeoff" v-if="mode==='prop'||mode==='jet'" v-model="takeOff">
       <template #description>
-        <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"></span>
+        <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"/>
       </template>
     </validated-date-time-group>
     <validated-date-time-group
-      :label="`Arrive ${hospital?hospital.label:''}:`" :name="arrive-dest"
+      name="arriveDest"
       v-model="arriveDest"
     >
+      <template #label>
+        Arrive
+          <span v-if="selectedHospital">{{ selectedHospital.name }}</span>
+          <small v-else class="text-muted">[select place]</small>
+      </template>
       <template #description>
         <span
           v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"
@@ -66,20 +61,27 @@
       type="range"
       v-model="timeAtCentre"
     >
-      <template #description>
-        <span class="time-estimate">estimate {{ timeAtCentre | timeFilter }}</span> &nbsp;
+      <template #prepend>15<small class="text-muted">min</small></template>
+      <template #append>4<small class="text-muted">hr</small></template>
+      <template #range-value>
+        <span class="time-estimate">estimate <span v-html="timeDisplay(timeAtCentre)"/></span> &nbsp;
         <span v-html="timeStatsFilter(timeAtCentreStats)"></span>
       </template>
     </validated-input-group>
     <validated-date-time-group
-      :label="`Leave ${hospital?hospital.label:''}:`"
-      name="depart-dest"
+      name="departDest"
       v-model="departDest"
-    />
-    <validated-date-time-group label="Return to Starship:" v-model="arriveSS">
+    >
+      <template #label>
+        Leave
+          <span v-if="selectedHospital">{{ selectedHospital.name }}</span>
+          <small v-else class="text-muted">[select place]</small>
+      </template>
+    </validated-date-time-group>
+    <validated-date-time-group label="Return to Starship" v-model="arriveSS">
       <template #description>
         <span
-          v-html="timeStatsFilter(minsToReturn,'departing '+(hospital?hospital.label:'referring centre'))"
+          v-html="timeStatsFilter(minsToReturn,'departing '+(selectedHospital?selectedHospital.name:'referring centre'))"
         ></span>
       </template>
     </validated-date-time-group>
@@ -97,59 +99,50 @@ import {
   IStats
 } from '@/services/transports/roadTimes';
 import { hospitals, IHospital } from '@/services/transports/timeData';
-import { timeFilter } from '@/services/transports/timeFilter';
-import VueSingleSelect from '@/components/vendor/VueSingleSelect.vue';
-import DateTimeInput from '@/components/formGroups/DateTimeInput.vue';
+import { timeDisplay } from '@/services/transports/timeDisplay';
+import ValidatedDateTimeGroup from '@/components/formGroups/ValidatedDateTimeGroup.vue';
 
-const sepChar = '|';
-interface ISearchableHospitals {
-  id: string;
-  label: string;
-  searchable: string;
-}
 type modes = 'prop' | 'jet' | 'road' | 'rotary' | '';
 
 @Component({
   components: {
-    VueSingleSelect,
-    DateTimeInput,
-  },
-  filters: {
-    timeFilter,
+    ValidatedDateTimeGroup,
   },
 })
 export default class TransportTimes extends Vue {
-  public hospitalOptions: ISearchableHospitals[] = Object.keys(hospitals).map(
-    h => {
-      const alt = hospitals[h].alt;
-      return {
-        id: h,
-        label: alt ? `${h} (${alt})` : h,
-        searchable: h.toLowerCase() + sepChar + (alt || '').toLowerCase(),
-      };
-    }
-  );
-
-  public hospital: ISearchableHospitals | null = null;
-  public hospitalTimes: IHospital | null = null;
+  public hospitalName: string = '';
+  public hospitalNames: string[] = []
   public mode: modes = '';
   public arriveDest: Date | null = null;
   public timeAtCentreStats = timeInCentre;
   public arriveSS: Date | null = null;
-  private departSS: Date | null = new Date();
+  private departSS: Date | null = null;
   private takeOff: Date | null = null;
   private timeAtCentre = timeInCentre.p50;
   private departDest: Date | null = null;
 
-  @Watch('hospital')
-  public hospitalChange() {
-    this.hospitalTimes =
-      this.hospital === null ? null : hospitals[this.hospital.id] || null;
+  public created() {
+    this.hospitalNames = Object.entries(hospitals).map(([name, props]) => props.alt
+      ? `${name} (${props.alt})`
+      : name);
+    this.departSS = new Date();
+    this.departSS.setSeconds(0, 0);
+  }
+
+  public get selectedHospital() {
+    if (this.hospitalName && this.hospitalName.length) {
+      const name = this.hospitalName.replace(/ \(.+/, '');
+      const returnVar = hospitals[name];
+      if (returnVar) {
+        return { name, ...returnVar };
+      }
+    }
+    return null;
   }
 
   public get minsToTakeOff() {
     if (
-      this.hospitalTimes &&
+      this.selectedHospital &&
       this.mode &&
       this.departSS &&
       (this.mode === 'jet' || this.mode === 'prop')
@@ -160,31 +153,31 @@ export default class TransportTimes extends Vue {
   }
 
   public get minsToArriveDest() {
-    if (this.hospitalTimes && this.mode) {
+    if (this.selectedHospital && this.mode) {
       if (this.departSS && this.mode === 'road') {
-        if (this.hospital!.id === 'Middlemore') {
+        if (this.selectedHospital.name === 'Middlemore') {
           return getMMHDrive(this.departSS);
         }
-        if (this.hospital!.id === 'Waitakere') {
+        if (this.selectedHospital.name === 'Waitakere') {
           return getWaitakereDrive(this.departSS);
         }
       }
-      return this.hospitalTimes[this.mode]!.there;
+      return this.selectedHospital[this.mode]!.there;
     }
     return null;
   }
 
   public get minsToReturn() {
-    if (this.hospitalTimes && this.mode) {
+    if (this.selectedHospital && this.mode) {
       if (this.departDest && this.mode === 'road') {
-        if (this.hospital!.id === 'Middlemore') {
+        if (this.selectedHospital.name === 'Middlemore') {
           return getMMHDrive(this.departDest);
         }
-        if (this.hospital!.id === 'Waitakere') {
+        if (this.selectedHospital.name === 'Waitakere') {
           return getWaitakereDrive(this.departDest);
         }
       }
-      return this.hospitalTimes[this.mode]!.back;
+      return this.selectedHospital[this.mode]!.back;
     }
     return null;
   }
@@ -238,19 +231,19 @@ export default class TransportTimes extends Vue {
     }
   }
 
-  public filterSearch(option: ISearchableHospitals, searchText: string) {
-    return option.searchable.includes(searchText.toString().toLowerCase());
+  public timeDisplay(minutes: number) {
+    return timeDisplay(minutes);
   }
 
   public timeStatsFilter(minutes?: IStats, from = '') {
     if (!minutes) {
       return '';
     }
-    const returnVar = `median ${timeFilter(
+    const returnVar = `median ${timeDisplay(
       minutes.p50
-    )} min <small class="iqr">(IQR ${timeFilter(minutes.p25)}–${timeFilter(
+    )} min <span class="iqr">(IQR ${timeDisplay(minutes.p25)}–${timeDisplay(
       minutes.p75
-    )})</small>`;
+    )})</span>`;
     return from ? `${returnVar} from ${from}` : returnVar;
   }
 }

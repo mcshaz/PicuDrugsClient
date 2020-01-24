@@ -6,7 +6,7 @@
         <validated-input-group label="drug name" type="text" v-model="name"/><!--label-cols-lg="2" label-cols-xl="2"-->
 
         <validation-provider v-slot="errors" name="ampule">
-          <b-form-group label="ampule:" label-cols-lg="2" label-cols-xl="2" class="form-inline" :invalid-feedback="errors[0]">
+          <b-form-group label="ampule" label-cols-lg="2" label-cols-xl="2" class="form-inline" :invalid-feedback="errors[0]">
             <div class="input-group">
               <input id="ampAmount" type="number" v-model="ampAmount" class="form-control" />
               <div class="input-group-append select-input">

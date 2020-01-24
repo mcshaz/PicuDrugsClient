@@ -1,7 +1,7 @@
 <template>
     <div :class="pState===null?'':'was-validated'">
         <validation-provider v-slot="errors" name="DOB" mode="lazy">
-          <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2"
+          <b-form-group label="DOB" label-for="dob" label-cols-lg="2" label-cols-xl="2"
                 :state="state" description="date of birth" :invalid-feedback="errors[0]">
               <date-input :min="min" :max="max" v-model="dob"
                       @blur="onBlur($event)" :id="dob" :required="required" />

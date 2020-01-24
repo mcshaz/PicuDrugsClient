@@ -15,7 +15,7 @@
       <b-form-group
         label-cols-lg="2"
         label-cols-xl="2"
-        label="Chart type:"
+        label="Chart type"
         :invalid-feedback="errors[0]"
         :state="errors[0] ? false : (changed ? true : null)"
       >

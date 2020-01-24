@@ -118,7 +118,7 @@
               <strong class="text-warning">*</strong> Please note different PICU vs. PCA/NCA concentrations.
             </template>
           </validated-input-select-group>
-          <validated-input-group label="last 24hrs:" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
+          <validated-input-group label="last 24hrs" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
               label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
               :append="original24HrUnits" type="number" v-model="original24HrVol">
             <template #description v-if="original24HrUnits==='ml'">

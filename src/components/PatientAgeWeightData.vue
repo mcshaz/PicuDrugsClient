@@ -4,7 +4,7 @@
       <slot>
       </slot>
       <validation-provider v-slot="errors" name="Name">
-        <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name:" :invalid-feedback="errors[0]">
+        <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name" :invalid-feedback="errors[0]">
           <input class="form-control" type="text" name="name" id="name" v-model.trim="name"
               placeholder="Patient Name" />
         </b-form-group>
@@ -15,7 +15,7 @@
       <validated-input-group label="Weeks Gestation" :disabled="!age||age.years>=2" v-model="weeksGestation"
         min="22" max="43" description="@ birth"/>
       <validation-provider v-slot="errors" name="Weight">
-        <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
+        <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight"
             :state="errors[0]"
             class="was-validated" @blur="debounceCentiles.flush()">
           <template :slot="acceptWtWarn?'valid-feedback':'invalid-feedback'" >
@@ -57,7 +57,7 @@
         </b-form-group>
       </validation-provider>
       <validation-provider v-slot="errors" name="Estimate">
-        <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate:" :invalid-feedback="errors[0]">
+        <b-form-group label-cols-lg="2" label-cols-xl="2" label="Estimate" :invalid-feedback="errors[0]">
           <b-form-radio-group name="weight-estimate" v-model="isWeightEstimate">
             <b-form-radio id="estimate" :value="true">
               estimated weight

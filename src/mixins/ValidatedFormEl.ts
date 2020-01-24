@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Component, Vue, Prop } from 'vue-property-decorator';
 
-export interface IValCtxt { dirty: boolean; validated: boolean; valid?: boolean; errors: string[] }
+export interface IValCtxt { dirty: boolean; validated: boolean; touched: boolean; valid?: boolean; errors: string[] }
 
 @Component
 export default class ValidatedFormEl extends Vue {
@@ -40,9 +40,9 @@ export default class ValidatedFormEl extends Vue {
       let label!: string;
       if (this.label) {
         label = this.label.replace(endCol, '');
-      } else {
+      } else if (!this.name) {
         if (!this.$slots.label) {
-          throw new Error('either a label="x" attribute or a <template #label> must be provided');
+          throw new Error('either a label="x" or name="x" attribute must be provided');
         }
         label = this.$slots.label.map((vn) => (vn.text || (vn.elm as HTMLElement).innerText)).join('').trim();
         if (endCol.test(label)) {
@@ -50,7 +50,7 @@ export default class ValidatedFormEl extends Vue {
         }
       }
       this.pErrorLabel = this.errorLabel || label;
-      this.pName = this.name || label.replace(/\s+/g, '-');
+      this.pName = this.name || label.replace(/[^\w]+/g, '-');
       if (!/\w+/.test(this.pName)) {
         this.pName = 'inpt-el-' + (this as any)._uid;
       }
@@ -66,7 +66,7 @@ export default class ValidatedFormEl extends Vue {
     }
 
     protected getState(valContext?: IValCtxt) {
-      return valContext && (valContext.dirty || valContext.validated)
+      return valContext && (valContext.touched || valContext.validated)
         ? valContext.valid
         : null;
     };
