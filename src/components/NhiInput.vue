@@ -1,22 +1,24 @@
 <template>
     <div>
         <validated-input-group label="NHI" rules="exactLength:7|nhiRegex|nhiChecksum"
-                type="text" v-model="nhi" placeholder="NHI">
-            <template #invalid-feedback v-if="validator.$invalid" v-slot="{ failedRules, errors }">
-                <span v-if="failedRules.nhiChecksum">
+                type="text" v-model="nhi" placeholder="NHI" :immediate="immediate" :required="required">
+            <template #invalid-feedback="{ valContext }">
+                <span v-if="valContext.failedRules.nhiChecksum">
                     A letter or number is mistyped
                     <b-button variant="link" v-b-modal.nhi-explain>(more info <font-awesome-icon icon="question" />)</b-button>
                 </span>
-                <span v-else>
-                    {{ errors[0] }}
+                <span v-else-if="valContext && valContext.errors">
+                    {{ valContext.errors[0] }}
                 </span>
             </template>
         </validated-input-group>
         <!-- Modal Component -->
-        <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true">
+        <b-modal id="nhi-explain" title="Info on NZ NHI" :ok-only="true"
+                header-bg-variant="dark"
+                header-text-variant="light">
             <p class="my-4">
                 The NHI contains information within the 7 characters which
-                allow computers to check if it is a valid value. This validation check is <em>failing</em>.
+                allow computers to check if it is a valid value. This validation check is currently <em>failing</em>.
             </p>
             <p>
                 If you are creating a ficticious patient for simulation activities, either leave the NHI
@@ -36,14 +38,23 @@
 import 'reflect-metadata';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { defaultSim, nhiChecksum } from '@/services/validation/validators';
+import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
 
 type vueNumber = number | '';
 
-@Component({})
+@Component({
+  components: {
+    ValidatedInputGroup,
+  },
+})
 export default class NhiInput extends Vue {
   public readonly simNHI = defaultSim;
   @Prop({ required: true })
   private value!: string;
+  @Prop({ default: void 0 })
+  private required?: boolean;
+  @Prop({ default: void 0 })
+  private immediate?: boolean;
 
   public get nhi() {
     return this.value;

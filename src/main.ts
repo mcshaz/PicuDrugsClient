@@ -2,7 +2,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 // import BootstrapVue from 'bootstrap-vue';
-import { FormGroupPlugin, InputGroupPlugin, NavbarPlugin, DropdownPlugin, LayoutPlugin, CardPlugin } from 'bootstrap-vue';
+import { FormGroupPlugin, InputGroupPlugin, NavbarPlugin,
+  DropdownPlugin, LayoutPlugin, CardPlugin, ButtonPlugin, ModalPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './registerServiceWorker';
@@ -16,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
 // eslint-disable-next-line camelcase
 import { required, min_value, max_value, between, integer, required_if, oneOf } from 'vee-validate/dist/rules';
+import { requiredIfEmpty } from '@/services/validation/requiredIfEmpty';
 import { exactLength, nhiChecksum, nhiRegex, before, after } from '@/services/validation/validators';
 import { messages } from 'vee-validate/dist/locale/en.json';
 import { ValidationRuleSchema } from 'vee-validate/dist/types/types';
@@ -23,7 +25,7 @@ import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue
 import ValidatedSelectGroup from '@/components/formGroups/ValidatedSelectGroup.vue';
 import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 
-for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, oneOf, exactLength, nhiChecksum, nhiRegex, before, after } as { [key: string]: ValidationRuleSchema; })) {
+for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, oneOf, exactLength, nhiChecksum, nhiRegex, before, after, requiredIfEmpty } as { [key: string]: ValidationRuleSchema; })) {
   if (!validation.message) {
     validation.message = (messages as any)[rule];
   }
@@ -50,6 +52,8 @@ Vue.use(NavbarPlugin);
 Vue.use(DropdownPlugin);
 Vue.use(LayoutPlugin);
 Vue.use(CardPlugin);
+Vue.use(ButtonPlugin);
+Vue.use(ModalPlugin);
 
 Vue.config.productionTip = false;
 

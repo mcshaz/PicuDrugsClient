@@ -1,5 +1,5 @@
 <template>
-  <validation-provider v-slot="validationContext" :name="pErrorLabel" :rules="pRules" :immediate="immediate" slim>
+  <validation-provider v-slot="validationContext" :vid="pName" :name="pErrorLabel" :rules="pRules" :immediate="immediate" slim>
     <b-form-group :label-for="pName" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
         :invalid-feedback="validationContext.errors[0]" :state="getState(validationContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>

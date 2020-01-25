@@ -1,7 +1,6 @@
 <template>
-    <span class="duration"><span class="hrs">{{hrs}}</span><small class="unit">h</small>
-    &nbsp;
-    <span class="mins">{{mins}}</span><small class="unit">m</small>
+    <span class="duration"><span class="hrs" v-if="hrs">{{hrs}}<small class="unit">h</small></span>
+    <span class="mins">{{mins}}<small class="unit">m</small></span>
     </span>
 </template>
 <script lang="ts">

@@ -1,26 +1,20 @@
 <template>
-    <div :class="pState===null?'':'was-validated'">
-        <validation-provider v-slot="errors" name="DOB" mode="lazy">
-          <b-form-group label="DOB" label-for="dob" label-cols-lg="2" label-cols-xl="2"
-                :state="state" description="date of birth" :invalid-feedback="errors[0]">
-              <date-input :min="min" :max="max" v-model="dob"
-                      @blur="onBlur($event)" :id="dob" :required="required" />
-          </b-form-group>
-        </validation-provider>
-    </div>
+  <validated-date-group :min="min" :max="max" v-model="dob" :rules="rules"
+      @blur="onBlur($event)" :name="dob" :required="required" :immediate="immediate"
+      label="DOB" description="date of birth"/>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import DateInput from '@/components/formGroups/DateInputPolyfill.vue';
+import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
 
 enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 
 @Component({
   components: {
-    DateInput,
+    ValidatedDateGroup,
   },
 })
 export default class DobInput extends Vue {
@@ -32,12 +26,16 @@ export default class DobInput extends Vue {
     // non vue properties = start with undefined
     private timeout?: number | NodeJS.Timer;
 
-    @Prop({ default: false })
-    private required!: boolean;
+    @Prop({ default: void 0 })
+    private required?: boolean;
+    @Prop({ default: void 0 })
+    private immediate?: boolean;
     @Prop({ default: null })
     private value!: Date | null;
     @Prop({ default: 122 }) // current longest lifespan in modern history
     private maxYears!: number;
+    @Prop({ default: void 0 })
+    rules: any;
 
     public created() {
       this.setDates();

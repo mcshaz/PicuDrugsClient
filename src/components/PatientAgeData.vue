@@ -1,40 +1,45 @@
 <template>
-  <div class="was-validated">
-    <dob-input v-model="dob" @min-change="minDate=$event" />
-    <validation-observer v-slot="{allErrors, valid}">
-      <b-form-group id="ageymd" label="Age" label-cols-lg="2" label-cols-xl="2"
-            :state="valid" :invalid-feedback="allErrors.years[0] || allErrors.months[0] || allErrors.days[0]">
+    <validation-observer v-slot="allErrors" tag="div">
+      <dob-input v-model="dob" @min-change="minDate=$event" :immediate="immediate" :disabled="disabled"
+          :rules="{ requiredIfEmpty: required!==false ? { target: 'years' } : false }"/>
+      <b-form-group id="ageymd" label="Age:" label-cols-lg="3" label-cols-xl="3" label-align-lg="right"
+            :state="immediate!==false ? !combineErrors(allErrors) : getState(allErrors)" :invalid-feedback="combineErrors(allErrors)">
         <div class="form-inline">
-          <validation-provider vid="years" rules="integer"><!--todo exact-->
+          <validation-provider vid="years" name="years" :rules="{ integer: true, requiredIfEmpty: required!==false ? { target: 'DOB' } : false  }"
+              v-slot="valContext" :immediate="immediate" slim><!--todo exact-->
             <b-input-group append="years" class="mr-1">
               <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
-                min="0" :max="maxYears" ref="years" step="1" />
+                min="0" :max="maxYears" ref="years" step="1" :class="getValidClass(valContext)"
+                :disabled="disabled"/>
             </b-input-group>
           </validation-provider>
-          <validation-provider vid="months">
-            <b-input-group append="months" class="mr-1">
+          <validation-provider vid="months" name="months" v-slot="valContext"
+              :rules="{required_if: ['years', 0], required: exact!==false}" :immediate="immediate" slim>
+            <b-input-group append="months" class="mr-1" rules="integer">
               <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number"
-                min="0" max="24" ref="months" step="1" />
+                min="0" max="24" ref="months" step="1" :class="getValidClass(valContext)"
+                :disabled="disabled"/>
             </b-input-group>
           </validation-provider>
-          <validation-provider vid="days">
-            <b-input-group append="days">
+          <validation-provider vid="days" name="days" slim :immediate="immediate" v-slot="valContext">
+            <b-input-group append="days" rules="integer">
               <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number"
-                min="0" max="31" ref="days" step="1" />
+                min="0" max="31" ref="days" step="1" :class="getValidClass(valContext, 'days')"
+                :disabled="disabled" :required="exact"/>
             </b-input-group>
           </validation-provider>
         </div>
       </b-form-group>
   </validation-observer>
-  </div>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
 import { ChildAge } from '@/services/infusion-calculations/';
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
+import { Component, Prop, Vue, Mixins, Watch } from 'vue-property-decorator';
 import { maxYears } from '@/services/validation/validators';
 import DobInput from '@/components/DobInput.vue';
+import StateWatcher from '@/mixins/StateWatcher';
 
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
@@ -43,14 +48,25 @@ export type vueNumber = number | ''; // todo https://stackoverflow.com/questions
     DobInput,
   },
 })
-export default class PatientAgeData extends Vue {
+export default class PatientAgeData extends Mixins(StateWatcher) {
+  @Prop({ required: true })
+  value!: ChildAge | null;
+  @Prop({ default: false })
+  required!: boolean;
+  @Prop({ default: false })
+  disabled!: boolean;
+  @Prop({ default: false })
+  exact!: boolean;
+  @Prop({ default: false })
+  immediate!: boolean;
+
   private readonly maxYears = maxYears;
   private pYears: vueNumber = '';
   private pMonths: vueNumber = '';
   private pDays: vueNumber = '';
   private pDob: Date | null = null;
   private pMinDate: Date | null = null;
-  private childAge?: ChildAge | null;
+  private childAge: ChildAge | null = null;
 
   public get years() { return this.pYears; }
   public set years(years: vueNumber) {
@@ -145,7 +161,14 @@ export default class PatientAgeData extends Vue {
     (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
       (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0;
   }
-
+  combineErrors(observerContext: any) {
+    return Object.entries(observerContext.errors).reduce((accum, e) => {
+      if (e[0] !== 'DOB') {
+        accum.push(...(e[1] as any[]));
+      }
+      return accum;
+    }, [] as any[]).join(' AND ');
+  }
   /*
   public get errMsg() {
     if (this.pYears === '' && this.pMonths === '' && this.pDays === '') {
@@ -166,6 +189,12 @@ export default class PatientAgeData extends Vue {
     return '';
   }
   */
+  @Watch('value', { immediate: true })
+  private valueChanged(newVal: ChildAge | null) {
+    if (newVal !== this.childAge) {
+      this.childAge = newVal;
+    }
+  }
 
   private ageDataChange() {
     if (this.pYears === '') {
@@ -210,18 +239,8 @@ export default class PatientAgeData extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+
+input.small-int {
+  max-width: 6.3em;
 }
 </style>

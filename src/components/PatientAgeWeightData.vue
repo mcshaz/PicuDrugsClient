@@ -256,7 +256,4 @@ input.form-control.warning:valid {
   border-color: #fd7e14;
 }
 
-input.small-int {
-  max-width: 6.3em;
-}
 </style>

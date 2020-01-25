@@ -34,7 +34,7 @@
     <validated-date-time-group label="Depart Starship" v-model="departSS" required />
     <validated-date-time-group label="Takeoff" v-if="mode==='prop'||mode==='jet'" v-model="takeOff">
       <template #description>
-        <span v-html="timeStatsFilter(minsToTakeOff,'departing Starship')"/>
+        <duration-stats :value="minsToTakeOff" departFrom="departing Starship"/>
       </template>
     </validated-date-time-group>
     <validated-date-time-group
@@ -47,9 +47,7 @@
           <small v-else class="text-muted">[select place]</small>
       </template>
       <template #description>
-        <span
-          v-html="timeStatsFilter(minsToArriveDest,mode==='prop'||mode==='jet'?'takeoff':'departing Starship')"
-        ></span>
+        <duration-stats :value="minsToArriveDest" :departFrom="mode==='prop'||mode==='jet'?'takeoff':'departing Starship'"/>
       </template>
     </validated-date-time-group>
     <validated-input-group
@@ -64,8 +62,8 @@
       <template #prepend>15<small class="text-muted">min</small></template>
       <template #append>4<small class="text-muted">hr</small></template>
       <template #range-value>
-        <span class="time-estimate">estimate <span v-html="timeDisplay(timeAtCentre)"/></span> &nbsp;
-        <span v-html="timeStatsFilter(timeAtCentreStats)"></span>
+        <span class="time-estimate">estimate <duration-display :value="timeAtCentre"/></span> &nbsp;
+        <duration-stats :value="timeAtCentreStats"/>
       </template>
     </validated-input-group>
     <validated-date-time-group
@@ -80,9 +78,7 @@
     </validated-date-time-group>
     <validated-date-time-group label="Return to Starship" v-model="arriveSS">
       <template #description>
-        <span
-          v-html="timeStatsFilter(minsToReturn,'departing '+(selectedHospital?selectedHospital.name:'referring centre'))"
-        ></span>
+        <duration-stats :value="minsToReturn" :departFrom="selectedHospital?selectedHospital.name:'referring centre'"/>
       </template>
     </validated-date-time-group>
   </div>
@@ -99,7 +95,8 @@ import {
   IStats
 } from '@/services/transports/roadTimes';
 import { hospitals, IHospital } from '@/services/transports/timeData';
-import { timeDisplay } from '@/services/transports/timeDisplay';
+import DurationDisplay from '@/components/DurationDisplay.vue';
+import DurationStats from '@/components/DurationStats.vue';
 import ValidatedDateTimeGroup from '@/components/formGroups/ValidatedDateTimeGroup.vue';
 
 type modes = 'prop' | 'jet' | 'road' | 'rotary' | '';
@@ -107,6 +104,8 @@ type modes = 'prop' | 'jet' | 'road' | 'rotary' | '';
 @Component({
   components: {
     ValidatedDateTimeGroup,
+    DurationDisplay,
+    DurationStats,
   },
 })
 export default class TransportTimes extends Vue {
@@ -229,22 +228,6 @@ export default class TransportTimes extends Vue {
       nextTime.setMinutes(nextTime.getMinutes() + this.minsToReturn.p50);
       this.arriveSS = nextTime;
     }
-  }
-
-  public timeDisplay(minutes: number) {
-    return timeDisplay(minutes);
-  }
-
-  public timeStatsFilter(minutes?: IStats, from = '') {
-    if (!minutes) {
-      return '';
-    }
-    const returnVar = `median ${timeDisplay(
-      minutes.p50
-    )} min <span class="iqr">(IQR ${timeDisplay(minutes.p25)}–${timeDisplay(
-      minutes.p75
-    )})</span>`;
-    return from ? `${returnVar} from ${from}` : returnVar;
   }
 }
 </script>

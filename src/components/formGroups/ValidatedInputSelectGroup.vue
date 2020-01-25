@@ -1,7 +1,7 @@
 <template>
   <validation-observer v-slot="observerContext">
     <b-form-group :label-for="pName" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
-        :invalid-feedback="Object.values(observerContext.errors).flat().join(' AND ')" :state="getState(observerContext)" label-align-lg="right">
+        :invalid-feedback="combineErrors(observerContext)" :state="getState(observerContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
       <b-input-group>
@@ -27,10 +27,11 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch, Mixins } from 'vue-property-decorator';
 import ValidatedInputEl from '@/mixins/ValidatedInputEl';
+import CombineErrors from '@/mixins/CombineErrors';
 import { IValCtxt } from '@/mixins/ValidatedFormEl';
 
 @Component({})
-export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl) {
+export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl, CombineErrors) {
   @Prop({ required: true })
   selectValue!: any;
   @Prop({ default: 'required' })

@@ -59,13 +59,13 @@ export default class DateInput extends Vue {
     }
     public set dateStr(newVal: string) {
       let dt!: Date;
-      if (this.value && (newVal === '' || Number.isNaN((dt = new Date(newVal)).valueOf()))) {
-        this.$emit('value', null);
+      if ((newVal === '' || Number.isNaN((dt = new Date(newVal)).valueOf())) && this.value) {
+        this.$emit('input', null);
         return;
       }
       dt.setMinutes(dt.getTimezoneOffset());
       if (dt.valueOf() !== (this.value ? this.value.valueOf() : null)) {
-        this.$emit('value', dt);
+        this.$emit('input', dt);
       }
     }
 

@@ -104,4 +104,9 @@ export class ChildAge implements IChildAge {
       ? `${this.years} y ${this.months} m`
       : `${this.years} y`;
   }
+
+  public valueOf() {
+    return this.days === null ? 15.5 : this.days + (this.months === null ? 6.1 : this.months) * 100 +
+      this.years * 10000;
+  }
 }

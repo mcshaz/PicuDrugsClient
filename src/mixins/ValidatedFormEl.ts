@@ -1,10 +1,11 @@
 import 'reflect-metadata';
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Mixins } from 'vue-property-decorator';
+import StateWatcher from './StateWatcher';
 
 export interface IValCtxt { dirty: boolean; validated: boolean; touched: boolean; valid?: boolean; errors: string[] }
 
 @Component
-export default class ValidatedFormEl extends Vue {
+export default class ValidatedFormEl extends Mixins(StateWatcher) {
     @Prop({ default: '' })
     label!: string;
     @Prop({ default: void 0 })
@@ -56,18 +57,4 @@ export default class ValidatedFormEl extends Vue {
       }
       this.invalidId = this.pName + '-live-feedback';
     }
-
-    public getValidClass(valContext?: IValCtxt) {
-      const state = this.getState(valContext);
-      return {
-        'is-valid': state === true,
-        'is-invalid': state === false,
-      };
-    }
-
-    protected getState(valContext?: IValCtxt) {
-      return valContext && (valContext.touched || valContext.validated)
-        ? valContext.valid
-        : null;
-    };
 }
