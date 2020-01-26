@@ -28,7 +28,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch, Mixins } from 'vue-property-decorator';
 import ValidatedInputEl from '@/mixins/ValidatedInputEl';
 import CombineErrors from '@/mixins/CombineErrors';
-import { IValCtxt } from '@/mixins/ValidatedFormEl';
+import { IValCtxt } from '@/mixins/StateWatcher';
 
 @Component({})
 export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl, CombineErrors) {

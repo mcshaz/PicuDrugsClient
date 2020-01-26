@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Component, Vue } from 'vue-property-decorator';
 
-export interface IValCtxt { dirty: boolean; validated: boolean; touched: boolean; valid?: boolean; errors: string[] }
+export interface IValCtxt { dirty: boolean; validated: boolean; touched: boolean; changed: boolean; valid?: boolean; errors: string[] }
 
 @Component
 export default class StateWatcher extends Vue {
@@ -16,8 +16,13 @@ export default class StateWatcher extends Vue {
 
   protected getState(valContext?: IValCtxt) {
     // if (contextName) console.log(contextName, valContext);
+    if (valContext!.touched) { return valContext!.valid; }
+    if (valContext!.validated && !valContext!.valid) { return false; }
+    return null;
+    /*
     return valContext && (valContext.touched || valContext.validated)
       ? valContext.valid
       : null;
+    */
   };
 }

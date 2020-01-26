@@ -1,4 +1,5 @@
-import ValidatedFormEl, { IValCtxt } from './ValidatedFormEl';
+import { IValCtxt } from './StateWatcher';
+import ValidatedFormEl from './ValidatedFormEl';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 // import { stringify } from 'querystring';
 

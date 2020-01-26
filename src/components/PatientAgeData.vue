@@ -1,6 +1,6 @@
 <template>
     <validation-observer v-slot="allErrors" tag="div">
-      <dob-input v-model="dob" @min-change="minDate=$event" :immediate="immediate" :disabled="disabled"
+      <dob-input v-model="dob" @min-change="minChange($event)" :immediate="immediate" :disabled="disabled"
           :rules="{ requiredIfEmpty: required!==false ? { target: 'years' } : false }"/>
       <b-form-group id="ageymd" label="Age:" label-cols-lg="3" label-cols-xl="3" label-align-lg="right"
             :state="immediate!==false ? !combineErrors(allErrors) : getState(allErrors)" :invalid-feedback="combineErrors(allErrors)">
@@ -40,6 +40,7 @@ import { Component, Prop, Vue, Mixins, Watch } from 'vue-property-decorator';
 import { maxYears } from '@/services/validation/validators';
 import DobInput from '@/components/DobInput.vue';
 import StateWatcher from '@/mixins/StateWatcher';
+import { isEquivalent } from '@/mixins/VModelReflector';
 
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
@@ -61,107 +62,79 @@ export default class PatientAgeData extends Mixins(StateWatcher) {
   immediate!: boolean;
 
   private readonly maxYears = maxYears;
-  private pYears: vueNumber = '';
-  private pMonths: vueNumber = '';
-  private pDays: vueNumber = '';
-  private pDob: Date | null = null;
-  private pMinDate: Date | null = null;
   private childAge: ChildAge | null = null;
+  private pAgeCalcDate?: Date;
 
-  public get years() { return this.pYears; }
+  public get years() { return this.childAge ? this.childAge.years : ''; }
   public set years(years: vueNumber) {
-    if (years === this.pYears) {
+    if (years === this.years) {
       return;
     }
     if (typeof years === 'number') {
-      this.pYears = Math.floor(years);
-    } else {
-      this.pYears = '';
+      if (this.childAge) {
+        this.childAge.years = years;
+      } else {
+        this.childAge = new ChildAge({ years });
+      }
+    } else if (this.childAge!.months === null && this.childAge!.days === null) {
+      this.childAge = null;
     }
-    this.pDob = null;
-    this.ageDataChange();
   }
 
-  public get months() { return this.pMonths; }
+  public get months() {
+    if (this.childAge === null) {
+      return '';
+    }
+    return this.childAge.months === null ? '' : this.childAge.months;
+  }
   public set months(months: vueNumber) {
-    if (months === this.pMonths) {
+    if (months === this.months) {
       return;
     }
-    if (typeof months === 'number') {
-      if (this.pYears === '') {
-        this.pYears = 0;
-      }
-      if (months > 12) {
-        this.pYears = Math.floor(this.pYears + (months / 12));
-        months = months % 12;
-      }
-      this.pMonths = Math.floor(months);
+    if (this.childAge) {
+      this.childAge!.months = months === '' ? null : months;
     } else {
-      this.pMonths = '';
+      months = months as number;
+      this.childAge = new ChildAge({ months });
     }
-    this.pDob = null;
-    this.ageDataChange();
   }
 
-  public get days() { return this.pDays; }
+  public get days() {
+    if (this.childAge === null) {
+      return '';
+    }
+    return this.childAge.days === null ? '' : this.childAge.days;
+  }
   public set days(days: vueNumber) {
-    if (days === this.pDays) {
+    if (days === this.days) {
       return;
     }
-    if (typeof days === 'number') {
-      if (this.pMonths === '') {
-        this.pMonths = 0;
-      }
-      if (this.pYears === '') {
-        this.pYears = 0;
-      }
-      if (days > 28) {
-        const workingDate = new Date();
-        let dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
-        while (days >= dInPriorMonth) {
-          days = days - dInPriorMonth;
-          this.pMonths = (this.pMonths || 0) + 1;
-          workingDate.setMonth(workingDate.getMonth() - 1);
-          dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
-        }
-      }
-      this.pDays = days;
+    if (this.childAge) {
+      this.childAge.days = days === '' ? null : days;
     } else {
-      this.pDays = '';
+      days = days as number;
+      this.childAge = new ChildAge({ days });
     }
-    this.pDob = null;
-    this.ageDataChange();
   }
 
   public get dob() {
-    return this.pDob;
+    return this.childAge === null ? null : this.childAge.dob;
   }
-
   public set dob(dob: Date | null) {
-    this.pDob = dob;
-    if (dob === null) {
-      this.setAgeTabs(false);
+    if (dob === this.dob) {
       return;
     }
-    const now = new Date();
-    if (dob < this.minDate || dob > now) { // not handling 122yr 11mo 30d on tickover of night as edge case & irrelevant
-      this.pDays = this.pMonths = this.pYears = '';
-      this.setAgeTabs(false);
-      return;
+    if (this.childAge) {
+      this.childAge.dob = dob;
+    } else {
+      dob = dob as Date;
+      this.childAge = new ChildAge({ dob });
     }
-    const age = ChildAge.ageOnDate(dob, now);
-    this.pYears = age.years;
-    this.pMonths = age.months;
-    this.pDays = age.days;
-    this.ageDataChange();
-    this.setAgeTabs(true);
+    (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
+      (this.$refs.days as HTMLInputElement).tabIndex = dob !== null ? -1 : 0;
   }
 
-  public setAgeTabs(isValidDOB: boolean) {
-    (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
-      (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0;
-  }
-  combineErrors(observerContext: any) {
+  private combineErrors(observerContext: any) {
     return Object.entries(observerContext.errors).reduce((accum, e) => {
       if (e[0] !== 'DOB') {
         accum.push(...(e[1] as any[]));
@@ -169,6 +142,7 @@ export default class PatientAgeData extends Mixins(StateWatcher) {
       return accum;
     }, [] as any[]).join(' AND ');
   }
+
   /*
   public get errMsg() {
     if (this.pYears === '' && this.pMonths === '' && this.pDays === '') {
@@ -189,49 +163,36 @@ export default class PatientAgeData extends Mixins(StateWatcher) {
     return '';
   }
   */
-  @Watch('value', { immediate: true })
+  @Watch('value', { immediate: true, deep: true })
   private valueChanged(newVal: ChildAge | null) {
-    if (newVal !== this.childAge) {
-      this.childAge = newVal;
+    if (newVal === null) {
+      this.childAge = null;
+    } else if (!isEquivalent(this.childAge, newVal)) {
+      this.childAge = new ChildAge(newVal);
     }
   }
 
+  @Watch('childAge', { deep: true })
   private ageDataChange() {
-    if (this.pYears === '') {
-      if (this.childAge) {
-        this.$emit('input', (this.childAge = null));
-      }
-      return;
+    if (!isEquivalent(this.childAge, this.value)) {
+      this.pAgeCalcDate = new Date();
+      this.pAgeCalcDate.setHours(0, 0, 0, 0);
+      this.$emit('input', this.childAge);
     }
-    const mo = typeof this.pMonths === 'number'
-      ? this.pMonths
-      : null;
-    const dyo = typeof this.pDays === 'number'
-      ? this.pDays
-      : null;
-    if (this.childAge) {
-      if (this.childAge.years === this.pYears && this.childAge.months === mo && this.childAge.days === dyo) {
-        return;
-      }
-      this.childAge.years = this.pYears;
-      this.childAge.months = mo;
-      this.childAge.days = dyo;
-    } else {
-      this.childAge = new ChildAge(this.pYears, mo, dyo);
-    }
-    this.$emit('input', this.childAge);
   }
 
-  private get minDate() { return this.pMinDate!; }
-  private set minDate(value: Date) {
-    if (this.pMinDate) { // must be a new day
-      if (this.pDob !== null) {
-        this.dob = this.pDob;
-      } else if (this.days !== '') {
-        this.days++;
+  private minChange(value: Date) {
+    if (this.pAgeCalcDate) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      if (now > this.pAgeCalcDate) {
+        if (this.dob) {
+          this.childAge!.dob = this.childAge!.dob; // force reevaluation
+        } else if (this.days) {
+          this.days++;
+        }
       }
     }
-    this.pMinDate = value;
   }
 }
 

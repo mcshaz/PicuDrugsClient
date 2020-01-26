@@ -2,10 +2,8 @@ import 'reflect-metadata';
 import { Component, Prop, Mixins } from 'vue-property-decorator';
 import StateWatcher from './StateWatcher';
 
-export interface IValCtxt { dirty: boolean; validated: boolean; touched: boolean; valid?: boolean; errors: string[] }
-
 @Component
-export default class ValidatedFormEl extends Mixins(StateWatcher) {
+export default class ValidatedFormEl extends StateWatcher {
     @Prop({ default: '' })
     label!: string;
     @Prop({ default: void 0 })

@@ -30,7 +30,7 @@ const getBaseObj = (val = null, attr = void 0, slotContent = void 0) => ({
 
 export const neutral = () => getBaseObj();
 
-export const errorRequired = () => getBaseObj(new Date(2020, 2, 2), { immediate: void 0 });
+export const errorRequired = () => getBaseObj(null, { immediate: void 0, required: void 0 });
 
 export const errorMax = () => getBaseObj(new Date(2020, 2, 2), { immediate: void 0, max: new Date(2020, 1, 12) });
 
