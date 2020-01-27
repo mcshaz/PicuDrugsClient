@@ -30,7 +30,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/services/**/*.ts", "CentileCollection.ts", "src/components/PatientAgeWeightData.stories.js", "src/components/PatientAgeData.stories.js"
+    "src/services/**/*.ts", "CentileCollection.ts", "src/components/AgeValidatedWeight.stories.js", "src/components/PatientAgeData.stories.js"
   ],
   "exclude": [
     "node_modules"

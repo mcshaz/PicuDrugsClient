@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h2>Drug Calculator - Individual drug infusions</h2>
-    <patient-age-weight-data :exactAge="selectedDrug&&!selectedDrug.isTitratable">
+    <age-validated-weight :exactAge="selectedDrug&&!selectedDrug.isTitratable">
       <validated-input-group
             type="text"
             placeholder="please select a drug"
@@ -21,7 +21,7 @@
             {{ a.text }}
           </option>
       </validated-select-group>
-    </patient-age-weight-data>
+    </age-validated-weight>
     <p v-if="link">
       to link to this drug in documentation etc., use the link
       <a href="#">{{link}}</a>
@@ -33,7 +33,7 @@
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { SiUnitMeasure } from '@/services/infusion-calculations';
-import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
+import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import { IEntityInfusion, IDrugDB, appDataType } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
@@ -45,7 +45,7 @@ interface ISelectOption {
 
 @Component({
   components: {
-    PatientAgeWeightData,
+    AgeValidatedWeight,
   },
 })
 export default class Infusions extends Vue {

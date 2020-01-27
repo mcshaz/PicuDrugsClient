@@ -229,7 +229,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-// import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
+// import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import WithdrawalTable from '@/components/WithdrawalTable.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSelectGroup.vue';
@@ -254,7 +254,7 @@ const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 
 @Component({
   components: {
-    // PatientAgeWeightData,
+    // AgeValidatedWeight,
     WithdrawalTable,
     ValidatedBoolRadioGroup,
   },

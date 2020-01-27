@@ -3,12 +3,28 @@
     <h2>Drug Calculator - Rescitation ± ICU infusion charts </h2>
     <b-row align-h="end">
       <b-col lg="7">
-        <patient-age-weight-data @valid-submit="submit" :requireAge="infusions&&infusionsAvailable">
-          <ward-select @ward="ward=$event" :ward-abbrev="wardName"
-              @boluses="boluses=$event" :boluses="boluses"
-              @infusions="infusions=$event" :infusions="infusions"
-              @infusions-available="infusionsAvailable=$event" />
-        </patient-age-weight-data>
+        <validation-observer v-slot="{passes}" slim>
+          <form novalidate @submit.prevent="passes(submit)" class="card p-2" autocomplete="off">
+            <validation-provider v-slot="errors" name="Name">
+              <b-form-group label-for="name" label-cols-lg="2" label-cols-xl="2" label="Name" :invalid-feedback="errors[0]">
+                <input class="form-control" type="text" name="name" id="name" v-model.trim="name"
+                    placeholder="Patient Name" pattern="^[a-zA-Z]" />
+              </b-form-group>
+            </validation-provider>
+            <nhi-input v-model="nhi" />
+            <patient-age-data v-model="age" />
+            <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
+            <validated-input-group label="Weeks Gestation" :disabled="!age||age.years>=2" v-model="weeksGestation"
+              min="22" max="43" description="@ birth"/>
+            <age-validated-weight @valid-submit="submit" :requireAge="infusions&&infusionsAvailable"/>
+            <validated-bool-radio-group label="Weight is" v-model="isWeightEstimate" true-label="estimated" false-label="exact">
+            <ward-select @ward="ward=$event" :ward-abbrev="wardName"
+                @boluses="boluses=$event" :boluses="boluses"
+                @infusions="infusions=$event" :infusions="infusions"
+                @infusions-available="infusionsAvailable=$event" />
+            <b-button type="submit" :variant="alertLevel">Create Chart</b-button>
+          </form>
+        </validation-observer>
       </b-col>
       <b-col xl="5" lg="5">
         <b-card header="Did you know:">
@@ -35,7 +51,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
-import PatientAgeWeightData from '@/components/PatientAgeWeightData.vue';
+import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import WardSelect from '@/components/WardSelect.vue';
 import { IPatientData, IWardChartData } from '@/components/ComponentCommunication';
 import { IEntityWard, IAppData } from '@/services/drugDb';
@@ -45,7 +61,7 @@ interface ISelectOption { value: number; text: string; disabled?: boolean; }
 
 @Component({
   components: {
-    PatientAgeWeightData,
+    AgeValidatedWeight,
     WardSelect,
   },
 })

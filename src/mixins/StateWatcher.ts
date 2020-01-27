@@ -7,7 +7,10 @@ export interface IValCtxt { dirty: boolean; validated: boolean; touched: boolean
 export default class StateWatcher extends Vue {
   public getValidClass(valContext?: IValCtxt) {
     // if (ctxtName) console.log(ctxtName, valContext);
-    const state = this.getState(valContext);
+    return this.getClassForState(this.getState(valContext));
+  }
+
+  protected getClassForState(state: null | boolean) {
     return {
       'is-valid': state === true,
       'is-invalid': state === false,
@@ -15,14 +18,13 @@ export default class StateWatcher extends Vue {
   }
 
   protected getState(valContext?: IValCtxt) {
-    // if (contextName) console.log(contextName, valContext);
-    if (valContext!.touched) { return valContext!.valid; }
+    /* // if (contextName) console.log(contextName, valContext);
+    if (valContext!.touched) { return valContext!.valid!; }
     if (valContext!.validated && !valContext!.valid) { return false; }
     return null;
-    /*
-    return valContext && (valContext.touched || valContext.validated)
-      ? valContext.valid
-      : null;
     */
+    return valContext && (valContext.touched || valContext.validated)
+      ? valContext.valid!
+      : null;
   };
 }
