@@ -3,7 +3,7 @@
     <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
         label-align-lg="right" :state="getAndStoreState(observerCtxt)">
       <template #description v-if="lbWtCentile!==null">
-        <output name="centile" id="centile" ref="centile">
+        <output name="centile" id="centile" ref="centile" :class="centileClass">
           <span class="prefix">{{lbWtCentile.prefix}}&nbsp;</span>
           <span class="val">{{lbWtCentile.val}}</span>
           <sup class="suffix">{{lbWtCentile.suffix}}</sup>
@@ -23,7 +23,7 @@
         <validation-provider name="confirm weight checkbox" immediate
             :rules="{required: {allowFalse: false}}" v-if="requireAccept">
           <b-form-checkbox v-model="acceptWtWarn" name="acceptWtWarn">
-            <em>I confirm this is the correct weight!</em>
+            <em class="confirm">I confirm this is the correct weight!</em>
           </b-form-checkbox>
         </validation-provider>
         {{ combineErrors(observerCtxt) }}
@@ -31,7 +31,7 @@
       <validation-provider name="Weight" vid="weight" :immediate="immediate" class="form-inline" tag="div">
         <b-input-group append="kg">
           <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
-              type="number" :required="required" @blur="debounceCentiles.flush()"
+              type="number" :required="required" @blur="flush"
               :min="minWeight" :max="maxWeight" step="any" :class="wtClass"/>
         </b-input-group>
         <b-button variant="outline-primary" :disabled="disableMedianWt" @click="medianWt4age" class="ml-3">
@@ -89,7 +89,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   private wtData!: UKWeightData;
   private centileString?: string;
 
-  public created() {
+  public beforeCreate() {
     this.wtData = new UKWeightData();
   }
 
@@ -115,6 +115,12 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   public get requireAccept() {
     return (this.alertLevel === 'warning' || this.alertLevel === 'danger') &&
       (this.minWeight <= this.weightKg && this.weightKg <= this.maxWeight);
+  }
+
+  public get centileClass() {
+    return (this.alertLevel === 'warning' || this.alertLevel === 'danger')
+      ? 'text-warning'
+      : 'text-info';
   }
 
   public get feedbackName() {
@@ -147,13 +153,14 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   @Watch('weeksGestation')
   @Watch('childAge', { deep: true })
   public flush() {
+    this.debounceCentiles();
     this.debounceCentiles.flush();
   }
 
   @Watch('weightKg')
   public watchWeightKg(weight: vueNumber) {
     if (weight === '') {
-      this.debounceCentiles.flush();
+      this.flush();
     } else {
       this.debounceCentiles();
     }
@@ -162,7 +169,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   @Watch('value', { immediate: true })
   public watchValue(newVal: vueNumber) {
     this.weightKg = newVal;
-    this.debounceCentiles.flush();
+    this.flush();
   }
 
   @Watch('ubWtCentile', { deep: true })
@@ -250,5 +257,7 @@ function alertLevel(level: alarmLevel) {
 input.form-control.warning:valid {
   border-color: #fd7e14;
 }
-
+.confirm {
+  font-size: 106%;
+}
 </style>

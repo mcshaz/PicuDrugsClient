@@ -17,7 +17,7 @@
             <validated-input-group label="Weeks Gestation" :disabled="!age||age.years>=2" v-model="weeksGestation"
               min="22" max="43" description="@ birth"/>
             <age-validated-weight @valid-submit="submit" :requireAge="infusions&&infusionsAvailable"/>
-            <validated-bool-radio-group label="Weight is" v-model="isWeightEstimate" true-label="estimated" false-label="exact">
+            <validated-bool-radio-group label="Weight is" v-model="isWeightEstimate" true-label="estimate" false-label="exact"/>
             <ward-select @ward="ward=$event" :ward-abbrev="wardName"
                 @boluses="boluses=$event" :boluses="boluses"
                 @infusions="infusions=$event" :infusions="infusions"
