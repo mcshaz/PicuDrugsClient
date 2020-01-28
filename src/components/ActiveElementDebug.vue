@@ -1,5 +1,5 @@
 <template>
-    <b-card title="focused element:" >
+    <b-card title="focused element:">
       <b-card-text>
         {{focusEl}}
       </b-card-text>

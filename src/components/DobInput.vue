@@ -1,55 +1,45 @@
 <template>
-    <div :class="pState===null?'':'was-validated'" >
-        <b-form-group label="DOB:" label-for="dob" label-cols-lg="2" label-cols-xl="2" :state="pState" >
-            <template slot="invalid-feedback">
-                must be between {{minString}} and {{maxString}}
-            </template>
-            <date-input :min="min" :max="max" v-model="dob"
-                    @blur="onBlur($event)" :id="dob" :required="required" />
-        </b-form-group>
-    </div>
+  <validated-date-group :min="min" :max="max" v-model="dob" :rules="rules" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
+      @blur="onBlur($event)" :name="dob" :required="required" :immediate="immediate"
+      label="DOB" description="date of birth"/>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import DateInput from '@/components/DateInput.vue';
+import { Component, Prop, Vue, Emit, Watch, Mixins } from 'vue-property-decorator';
+import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
-import { between } from 'vuelidate/lib/validators';
-import { validationMixin } from 'vuelidate';
-import { Validations } from 'vuelidate-property-decorators';
+import LabelColWidth from '../mixins/LabelColWidth';
 
 enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 
 @Component({
   components: {
-    DateInput,
+    ValidatedDateGroup,
   },
-  mixins: [ validationMixin ],
 })
-export default class DobInput extends Vue {
+export default class DobInput extends Mixins(LabelColWidth) {
+    public max!: Date;
+    public state: boolean | null = null;
     private pDob: Date | null = null;
-    private pState: boolean | null = null;
     private pMin!: Date;
-    private max!: Date;
 
     // non vue properties = start with undefined
     private timeout?: number | NodeJS.Timer;
 
-    @Prop({ default: false })
-    private required!: boolean;
+    @Prop({ default: void 0 })
+    private required?: boolean;
+    @Prop({ default: void 0 })
+    private immediate?: boolean;
     @Prop({ default: null })
     private value!: Date | null;
     @Prop({ default: 122 }) // current longest lifespan in modern history
     private maxYears!: number;
+    @Prop({ default: void 0 })
+    rules: any;
 
     public created() {
       this.setDates();
-    }
-
-    @Validations()
-    public getValidations() {
-      return { dob: { between: between(this.min, this.max) } };
     }
 
     public get dob() {
@@ -58,20 +48,12 @@ export default class DobInput extends Vue {
     public set dob(value: Date | null) {
       if (this.pDob !== value) {
         this.pDob = value;
-        this.setState(true);
-        this.$emit('input', value, this.$v);
+        this.$emit('input', value);
       }
     }
 
     public onBlur(evt: any) {
-      this.setState();
       this.$emit('blur', evt);
-    }
-
-    public setState(dateBeingEntered = false) {
-      this.pState = this.$v.dob!.$error && (dateBeingEntered && this.pDob!.getFullYear() < 1000)
-        ? null
-        : this.$v.dob!.$error;
     }
 
     private get min() { return this.pMin; }
@@ -88,11 +70,11 @@ export default class DobInput extends Vue {
       return shortFormatter.format(this.max);
     }
 
+    // watching the property - the property and pDOB are different as DOB < 1000 AD (i.e. date is being entered) will differ
     @Watch('value')
     private valuePropChanged(newVal: Date | null) {
       if (this.pDob !== newVal) {
         this.pDob = newVal;
-        this.setState();
       }
     }
 

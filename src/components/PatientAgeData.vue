@@ -1,153 +1,147 @@
 <template>
-  <div class="was-validated">
-    <dob-input v-model="dob" @min-change="minDate=$event" />
-    <b-form-group id="ageymd" label="Age:" label-cols-lg="2" label-cols-xl="2"
-      :state="$v.$invalid"
-      :invalid-feedback="errMsg" >
-      <div class="form-inline">
-        <b-input-group append="years" class="mr-1">
-          <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
-            :min="$v.years.$params.min" :max="$v.years.$params.max" ref="years" step="1" />
-        </b-input-group>
-        <b-input-group append="months" class="mr-1">
-          <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number"
-            :min="$v.months.$params.min" :max="$v.months.$params.max" ref="months" step="1" />
-        </b-input-group>
-        <b-input-group append="days">
-          <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number"
-            :min="$v.days.$params.min" :max="$v.days.$params.max" ref="days" step="1" />
-        </b-input-group>
-      </div>
-    </b-form-group>
-  </div>
+    <validation-observer v-slot="allErrors" tag="div">
+      <dob-input v-model="dob" @min-change="minChange($event)" :immediate="immediate" :disabled="disabled"
+          :rules="{ requiredIfEmpty: required!==false ? { target: 'years' } : false }" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"/>
+      <b-form-group id="ageymd" label="Age:" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl" label-align-lg="right"
+            :state="immediate!==false ? !combineErrors(allErrors) : getState(allErrors)" :invalid-feedback="combineErrors(allErrors)">
+        <div class="form-inline">
+          <validation-provider vid="years" name="years" :rules="{ integer: true, requiredIfEmpty: required!==false ? { target: 'DOB' } : false  }"
+              v-slot="valContext" :immediate="immediate" slim><!--todo exact-->
+            <b-input-group append="years" class="mr-1">
+              <input class="form-control small-int" name="years" id="years" v-model.number="years" placeholder="yrs" type="number"
+                min="0" :max="maxYears" ref="years" step="1" :class="getValidClass(valContext)"
+                :disabled="disabled"/>
+            </b-input-group>
+          </validation-provider>
+          <validation-provider vid="months" name="months" v-slot="valContext"
+              :rules="{required_if: ['years', 0], required: exact!==false}" :immediate="immediate" slim>
+            <b-input-group append="months" class="mr-1" rules="integer">
+              <input class="form-control small-int" name="months" id="months" v-model.number="months" placeholder="mths" type="number"
+                min="0" max="24" ref="months" step="1" :class="getValidClass(valContext)"
+                :disabled="disabled"/>
+            </b-input-group>
+          </validation-provider>
+          <validation-provider vid="days" name="days" slim :immediate="immediate" v-slot="valContext">
+            <b-input-group append="days" rules="integer">
+              <input class="form-control small-int" name="days" id="days" v-model.number="days" placeholder="days" type="number"
+                min="0" max="31" ref="days" step="1" :class="getValidClass(valContext, 'days')"
+                :disabled="disabled" :required="exact"/>
+            </b-input-group>
+          </validation-provider>
+        </div>
+      </b-form-group>
+  </validation-observer>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
 import { ChildAge } from '@/services/infusion-calculations/';
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
+import { Component, Prop, Vue, Mixins, Watch } from 'vue-property-decorator';
+import { maxYears } from '@/services/validation/validators';
 import DobInput from '@/components/DobInput.vue';
-import { maxYears, getAgeVals, getDOBVal } from '@/services/validation/getAgeOrDOBVals';
-import { validationMixin } from 'vuelidate';
-import { Validations } from 'vuelidate-property-decorators';
-import { between } from 'vuelidate/lib/validators';
+import StateWatcher from '@/mixins/StateWatcher';
+import { isEquivalent } from '@/mixins/VModelReflector';
+import LabelColWidth from '../mixins/LabelColWidth';
+
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
 @Component({
   components: {
     DobInput,
   },
-  mixins: [ validationMixin ],
 })
-export default class PatientAgeData extends Vue {
-  private pYears: vueNumber = '';
-  private pMonths: vueNumber = '';
-  private pDays: vueNumber = '';
-  private pDob: Date | null = null;
-  private pMinDate: Date | null = null;
-  private childAge?: ChildAge | null;
+export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) {
+  @Prop({ required: true })
+  value!: ChildAge | null;
+  @Prop({ default: false })
+  required!: boolean;
+  @Prop({ default: false })
+  disabled!: boolean;
+  @Prop({ default: false })
+  exact!: boolean;
+  @Prop({ default: false })
+  immediate!: boolean;
 
-  @Validations()
-  public getValidations() {
-    const vals = getAgeVals() as any;
-    if (this.minDate) {
-      vals.dob = between(this.minDate, new Date());
-    }
-    return vals;
-  }
+  private readonly maxYears = maxYears;
+  private childAge: ChildAge | null = null;
+  private pAgeCalcDate?: Date;
 
-  public get years() { return this.pYears; }
+  public get years() { return this.childAge ? this.childAge.years : ''; }
   public set years(years: vueNumber) {
-    if (years === this.pYears) {
+    if (years === this.years) {
       return;
     }
     if (typeof years === 'number') {
-      this.pYears = Math.floor(years);
-    } else {
-      this.pYears = '';
+      if (this.childAge) {
+        this.childAge.years = years;
+      } else {
+        this.childAge = new ChildAge({ years });
+      }
+    } else if (this.childAge!.months === null && this.childAge!.days === null) {
+      this.childAge = null;
     }
-    this.pDob = null;
-    this.ageDataChange();
   }
 
-  public get months() { return this.pMonths; }
+  public get months() {
+    if (this.childAge === null) {
+      return '';
+    }
+    return this.childAge.months === null ? '' : this.childAge.months;
+  }
   public set months(months: vueNumber) {
-    if (months === this.pMonths) {
+    if (months === this.months) {
       return;
     }
-    if (typeof months === 'number') {
-      if (this.pYears === '') {
-        this.pYears = 0;
-      }
-      if (months > 12) {
-        this.pYears = Math.floor(this.pYears + (months / 12));
-        months = months % 12;
-      }
-      this.pMonths = Math.floor(months);
+    if (this.childAge) {
+      this.childAge!.months = months === '' ? null : months;
     } else {
-      this.pMonths = '';
+      months = months as number;
+      this.childAge = new ChildAge({ months });
     }
-    this.pDob = null;
-    this.ageDataChange();
   }
 
-  public get days() { return this.pDays; }
+  public get days() {
+    if (this.childAge === null) {
+      return '';
+    }
+    return this.childAge.days === null ? '' : this.childAge.days;
+  }
   public set days(days: vueNumber) {
-    if (days === this.pDays) {
+    if (days === this.days) {
       return;
     }
-    if (typeof days === 'number') {
-      if (this.pMonths === '') {
-        this.pMonths = 0;
-      }
-      if (this.pYears === '') {
-        this.pYears = 0;
-      }
-      if (days > 28) {
-        const workingDate = new Date();
-        let dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
-        while (days >= dInPriorMonth) {
-          days = days - dInPriorMonth;
-          this.pMonths = (this.pMonths || 0) + 1;
-          workingDate.setMonth(workingDate.getMonth() - 1);
-          dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
-        }
-      }
-      this.pDays = days;
+    if (this.childAge) {
+      this.childAge.days = days === '' ? null : days;
     } else {
-      this.pDays = '';
+      days = days as number;
+      this.childAge = new ChildAge({ days });
     }
-    this.pDob = null;
-    this.ageDataChange();
   }
 
   public get dob() {
-    return this.pDob;
+    return this.childAge === null ? null : this.childAge.dob;
   }
-
   public set dob(dob: Date | null) {
-    this.pDob = dob;
-    if (dob === null) {
-      this.setAgeTabs(false);
+    if (dob === this.dob) {
       return;
     }
-    const now = new Date();
-    if (dob < this.minDate || dob > now) { // not handling 122yr 11mo 30d on tickover of night as edge case & irrelevant
-      this.pDays = this.pMonths = this.pYears = '';
-      this.setAgeTabs(false);
-      return;
+    if (this.childAge) {
+      this.childAge.dob = dob;
+    } else {
+      dob = dob as Date;
+      this.childAge = new ChildAge({ dob });
     }
-    const age = ChildAge.ageOnDate(dob, now);
-    this.pYears = age.years;
-    this.pMonths = age.months;
-    this.pDays = age.days;
-    this.ageDataChange();
-    this.setAgeTabs(true);
+    (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
+      (this.$refs.days as HTMLInputElement).tabIndex = dob !== null ? -1 : 0;
   }
 
-  public setAgeTabs(isValidDOB: boolean) {
-    (this.$refs.years as HTMLInputElement).tabIndex = (this.$refs.months as HTMLInputElement).tabIndex =
-      (this.$refs.days as HTMLInputElement).tabIndex = isValidDOB ? -1 : 0;
+  private combineErrors(observerContext: any) {
+    return Object.entries(observerContext.errors).reduce((accum, e) => {
+      if (e[0] !== 'DOB') {
+        accum.push(...(e[1] as any[]));
+      }
+      return accum;
+    }, [] as any[]).join(' AND ');
   }
 
   /*
@@ -170,44 +164,36 @@ export default class PatientAgeData extends Vue {
     return '';
   }
   */
-
-  private ageDataChange() {
-    this.$v.$touch();
-    if (this.$v.$invalid || this.pYears === '') {
-      if (this.childAge) {
-        this.$emit('input', this.childAge = null, this.$v);
-      }
-      return;
+  @Watch('value', { immediate: true, deep: true })
+  private valueChanged(newVal: ChildAge | null) {
+    if (newVal === null) {
+      this.childAge = null;
+    } else if (!isEquivalent(this.childAge, newVal)) {
+      this.childAge = new ChildAge(newVal);
     }
-    const mo = typeof this.pMonths === 'number'
-      ? this.pMonths
-      : null;
-    const dyo = typeof this.pDays === 'number'
-      ? this.pDays
-      : null;
-    if (this.childAge) {
-      if (this.childAge.years === this.pYears && this.childAge.months === mo && this.childAge.days === dyo) {
-        return;
-      }
-      this.childAge.years = this.pYears;
-      this.childAge.months = mo;
-      this.childAge.days = dyo;
-    } else {
-      this.childAge = new ChildAge(this.pYears, mo, dyo);
-    }
-    this.$emit('input', this.childAge, this.$v);
   }
 
-  private get minDate() { return this.pMinDate!; }
-  private set minDate(value: Date) {
-    if (this.pMinDate) { // must be a new day
-      if (this.pDob !== null) {
-        this.dob = this.pDob;
-      } else if (this.days !== '') {
-        this.days++;
+  @Watch('childAge', { deep: true })
+  private ageDataChange() {
+    if (!isEquivalent(this.childAge, this.value)) {
+      this.pAgeCalcDate = new Date();
+      this.pAgeCalcDate.setHours(0, 0, 0, 0);
+      this.$emit('input', this.childAge);
+    }
+  }
+
+  private minChange(value: Date) {
+    if (this.pAgeCalcDate) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      if (now > this.pAgeCalcDate) {
+        if (this.dob) {
+          this.childAge!.dob = this.childAge!.dob; // force reevaluation
+        } else if (this.days) {
+          this.days++;
+        }
       }
     }
-    this.pMinDate = value;
   }
 }
 
@@ -215,18 +201,8 @@ export default class PatientAgeData extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+
+input.small-int {
+  max-width: 6.3em;
 }
 </style>

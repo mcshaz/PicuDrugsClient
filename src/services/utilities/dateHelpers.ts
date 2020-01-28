@@ -1,5 +1,5 @@
 // note in current form will intentionally not parse dates < 1000 AD
-export function parseDate(yyyy: string, mm: string, dd: string) {
+export function parseDateUtc0(yyyy: string, mm: string, dd: string) {
   const yr = Number(yyyy);
   // double negative below is to exclude NaN
   if (!(yr >= 1000)) {
@@ -11,6 +11,7 @@ export function parseDate(yyyy: string, mm: string, dd: string) {
   if (timestamp.getFullYear() !== yr || timestamp.getMonth() !== m || timestamp.getDate() !== d) {
     return null;
   }
+  timestamp.setMinutes(-timestamp.getTimezoneOffset());
   return timestamp;
 }
 

@@ -9,7 +9,7 @@ chai.use(chaiAlmost());
 describe('fixedVMConversion', () => {
   let dbDatum: IEntityFixedInfusionDrug[];
   const expectedDatum = getFixedInfusionVMTestData();
-  before('get data', async () => {
+  before('get data', async() => {
     const m = new ToArrayMap<IFixedVMTestData, IEntityFixedInfusionDrug>(expectedDatum,
       (d) => [d.infusionDrugId]);
     const dbInit = await fileFetch.getDbUpdates(null);

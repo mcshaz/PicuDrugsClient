@@ -22,13 +22,13 @@ export interface ICentileLines {
 }
 
 export function svgPaths(dataPoints: IAnthropometry[],
-                         gestAgeWeeks: number,
-                         centiles: CentileRange,
-                         padL: number,
-                         padTop: number,
-                         width: number,
-                         height: number,
-                         pathType = pathTypes.polyline): ICentileLines | null {
+  gestAgeWeeks: number,
+  centiles: CentileRange,
+  padL: number,
+  padTop: number,
+  width: number,
+  height: number,
+  pathType = pathTypes.polyline): ICentileLines | null {
   const centileChart = lmsChunkAroundAge(dataPoints.map((p) => p.ageDays), gestAgeWeeks, centiles);
   if (centileChart !== null) {
     const dataRange = dataPoints.map((p) => p.measure);

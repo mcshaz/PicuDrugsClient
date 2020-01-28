@@ -11,7 +11,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item-dropdown>
-            <template slot="button-content">
+            <template #button-content>
               <font-awesome-icon icon="file-medical-alt" />
               Calculations
             </template>

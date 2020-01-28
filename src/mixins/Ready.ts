@@ -9,7 +9,7 @@ export default class Ready extends Vue {
       return this.$nextTick();
     }
     return new Promise((resolve, reject) => {
-      setTimeout(async () => {
+      setTimeout(async() => {
         await this.$nextTick();
         resolve();
       });

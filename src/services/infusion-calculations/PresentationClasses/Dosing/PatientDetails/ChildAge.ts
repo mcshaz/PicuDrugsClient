@@ -7,6 +7,9 @@ const weeksPerMonth = daysPerMonth / 7;
 export interface IChildAge { years: number; months: number | null; days: number | null; }
 export interface IChildExactAge { years: number; months: number; days: number; }
 
+interface IAgeConstructorArgs { years?: number; months?: number; days?:number; }
+interface IDobConstructorArgs { dob: Date }
+
 export class ChildAge implements IChildAge {
   // public static getAgeRangeInDays(age: IChildAge, now?: Date): NumericRange;
   public static getAgeRangeInDays(dobOrAge: IChildAge | Date, now?: Date): NumericRange {
@@ -71,9 +74,100 @@ export class ChildAge implements IChildAge {
     return returnVar;
   }
 
-  constructor(public years: number,
-              public months: number | null,
-              public days: number | null) {
+  private pYears!: number;
+  private pMonths!: number | null;
+  private pDays!: number | null;
+  private pDob!: Date | null;
+
+  public get years() { return this.pYears; }
+  public set years(value: number) {
+    if (value !== this.pYears) {
+      if (value < 0 || value > 122) {
+        throw new RangeError('years must be between 0 and 122');
+      }
+      this.pYears = Math.floor(value);
+      this.pDob = null;
+    }
+  }
+  public get months() { return this.pMonths; }
+  public set months(value: number | null) {
+    if (value !== this.pMonths) {
+      if (value === null) {
+        this.pMonths = null;
+      } else if (value < 0) {
+        throw new RangeError('months cannot be negative');
+      } else {
+        if (value > 11) {
+          this.pYears += Math.floor(value / 12);
+          value = value % 12;
+        }
+        this.pMonths = Math.floor(value);
+      }
+      this.pDob = null;
+    }
+  }
+  public get days() { return this.pDays; }
+  public set days(value: number | null) {
+    if (value !== this.pDays) {
+      if (value === null) {
+        this.pDays = null;
+      } else if (value < 0) {
+        throw new RangeError('days cannot be negative');
+      } else {
+        if (value > 28) {
+          const workingDate = new Date();
+          let dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
+          while (value >= dInPriorMonth) {
+            value -= dInPriorMonth;
+            this.pMonths! += 1;
+            workingDate.setMonth(workingDate.getMonth() - 1);
+            dInPriorMonth = ChildAge.daysInPriorMonth(workingDate);
+          }
+        }
+        this.pDays = value;
+      }
+      this.pDob = null;
+    }
+  }
+  public get dob() { return this.pDob; }
+  public set dob(value: Date | null) {
+    this.pDob = value;
+    if (value !== null) {
+      var ageVars = ChildAge.ageOnDate(value);
+      this.pDays = ageVars.days;
+      this.pMonths = ageVars.months;
+      this.pYears = ageVars.years;
+    }
+  }
+
+  constructor(ageData: IDobConstructorArgs | IAgeConstructorArgs | ChildAge | number, months?: number, days?: number) {
+    if (ageData instanceof ChildAge) {
+      this.pDob = ageData.dob;
+      this.pDays = ageData.days;
+      this.pMonths = ageData.months;
+      this.pYears = ageData.years;
+    } else if ((ageData as IDobConstructorArgs).dob) {
+      this.dob = (ageData as IDobConstructorArgs).dob;
+    } else {
+      if (arguments.length > 1) {
+        ageData = {
+          years: ageData as number,
+          months,
+          days,
+        };
+      }
+      ageData = ageData as IAgeConstructorArgs;
+      if (ageData.years === void 0 && ageData.months === void 0 && ageData.days === void 0) {
+        throw new TypeError('1 of years, months or days must be provided');
+      }
+      this.years = ageData.years || 0;
+      if (ageData.months === void 0) {
+        this.months = ageData.days === void 0 ? null : 0;
+      } else {
+        this.months = ageData.months;
+      }
+      this.days = ageData.days === void 0 ? null : ageData.days;
+    }
   }
 
   public getAgeRangeInDays() {
@@ -90,18 +184,23 @@ export class ChildAge implements IChildAge {
   }
 
   public toString(): string {
-    if (this.months === void 0) {
-      return `${this.years} years`;
+    if (this.months === null) {
+      return `${this.pYears} years`;
     }
-    if (this.days === void 0) {
-      return `${this.years} years ${this.months} months`;
+    if (this.days === null) {
+      return `${this.pYears} years ${this.pMonths} months`;
     }
-    return `${this.years} years ${this.months} months ${this.days} days`;
+    return `${this.pYears} years ${this.pMonths} months ${this.pDays} days`;
   }
 
   public toShortString(): string {
-    return (this.months !== void 0)
-      ? `${this.years} y ${this.months} m`
-      : `${this.years} y`;
+    return (this.pMonths !== null)
+      ? `${this.pYears} y ${this.pMonths} m`
+      : `${this.pYears} y`;
+  }
+
+  public valueOf() {
+    return (this.pDays === null ? 15.5 : this.pDays) + (this.pMonths === null ? 6.1 : this.pMonths) * 100 +
+      this.pYears * 10000 + (this.pDob === null ? 0 : 0.2);
   }
 }

@@ -10,7 +10,7 @@ export class DatePart {
       return true;
     }
     const dVal = Number(day);
-    if (isNaN(dVal)) {
+    if (Number.isNaN(dVal)) {
       return false;
     }
     if (dVal > 31) {
@@ -26,7 +26,7 @@ export class DatePart {
       return false;
     }
     const yVal = Number(year);
-    if (isNaN(yVal)) {
+    if (Number.isNaN(yVal)) {
       return false;
     }
     if (yVal < 1000) {
@@ -45,7 +45,7 @@ export class DatePart {
       return true;
     }
     const mVal = Number(month);
-    if (isNaN(mVal)) {
+    if (Number.isNaN(mVal)) {
       return false;
     }
     if (mVal > 12) {

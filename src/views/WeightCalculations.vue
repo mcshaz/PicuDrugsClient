@@ -11,40 +11,25 @@
                 response to medications in a bayesian analysis.
             </p>
             <p>
-                Similarly, when calculating target weight for people with eating disorders, the calculations here may be useful - however it may be more appropriate to use the
+                Similarly, when calculating target weight for people with eating disorders, the calculations here may be of use - however it may be more appropriate to use the
                 <router-link to="/centiles">centile charting tools</router-link> to look at the weight centile band the patient was tracking along prior to the development of an eating disorder
                 (with the caveats that data is available and the prior centile band could reasonably be considered healthy for the individual).
             </p>
-            <form @submit.prevent :class="formula?'was-validated':''">
-                <b-form-group label-for="formula" label-cols-lg="2" label-cols-xl="2" label="Formula:" invalid-feedback="Please select a formula" >
-                    <template slot="description">
-                        <span v-html="description"> </span>
-                    </template>
-                    <b-form-select v-model="formula" :required="true" name="formula" >
-                        <template slot="first">
-                            <option :value="''" disabled>Select a formula to see details</option>
-                            <optgroup v-for="(group, key) in formulaGroups" :key="key" :label="key">
-                                <option v-for="opt in group" :key="opt" :value="opt">
-                                    {{opt}}
-                                </option>
-                            </optgroup>
-                        </template>
-                    </b-form-select>
-                </b-form-group>
-                <true-false-radio label="Gender:" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender" />
-                <patient-age-data v-model="age" :required="requireAge" />
-                <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:" >
-                    <b-input-group append="kg">
-                    <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight" :required="requireWeight"
-                            type="number" autocomplete="off" step="any" />
-                    </b-input-group>
-                </b-form-group>
-                <b-form-group label-for="height" label-cols-lg="2" label-cols-xl="2" label="Height:" >
-                    <b-input-group append="cm">
-                    <input class="form-control" name="height" v-model.number="heightCm" placeholder="Height" required
-                            type="number" autocomplete="off" step="any" />
-                    </b-input-group>
-                </b-form-group>
+            <form @submit.prevent :class="formula?'was-validated':''" autocomplete="off">
+                <validated-select-group label="Formula" v-model="formula">
+                  <template>
+                      <option :value="''" disabled>Select a formula to see details</option>
+                      <optgroup v-for="(group, key) in formulaGroups" :key="key" :label="key">
+                          <option v-for="opt in group" :key="opt" :value="opt">
+                              {{opt}}
+                          </option>
+                      </optgroup>
+                  </template>
+                </validated-select-group>
+                <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :required="requireGender"/>
+                <patient-age-data v-model="age" :required="requireAge"/>
+                <validated-input-group label="Weight" append="kg" v-model="weightKg" placeholder="Weight" :required="requireWeight" type="number"/>
+                <validated-input-group label="Height" append="cm" v-model="heightCm" placeholder="Height" required type="number"/>
             </form>
             <b-alert variant="info" show v-if="!!value||texFormulae.length>0">
                 <output v-if="!!value">
@@ -79,7 +64,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
-import TrueFalseRadio from '@/components/TrueFalseRadio.vue';
+import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import { anthroCalculations, applyAnthropometry } from '@/services/pharmacokinetics/anthroCalculations';
 import { mcLarenObesityCorrection, mooreObesityCorrection, bmiObesityCorrection } from '@/services/anthropometry/helpers/obesityCorrections';
@@ -87,6 +72,7 @@ import { UKWeightData, UKBMIData, UKLengthData } from '@/services/anthropometry/
 import { ChildAge } from '@/services/infusion-calculations';
 import { toGrouping } from '@/services/drugDb/helpers/toGrouping';
 import KatexElement from 'vue-katex/src/components/KatexElement.vue';
+import { BAlert } from 'bootstrap-vue';
 
 type vueNumber = number | '';
 enum centileCorrections { BMI = 'Body Mass Index Method', Moore = 'Moore Method', McLaren = 'McLaren Method' }
@@ -94,7 +80,7 @@ const emptyArray: string[] = [];
 
 @Component({
   components: {
-    TrueFalseRadio, PatientAgeData, KatexElement,
+    ValidatedBoolRadioGroup, PatientAgeData, KatexElement, BAlert,
   },
 })
 export default class WeightCalculations extends Vue {

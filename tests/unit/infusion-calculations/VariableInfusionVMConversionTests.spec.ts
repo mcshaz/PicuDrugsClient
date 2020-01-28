@@ -11,7 +11,7 @@ chai.use(chaiAlmost());
 describe('variableVMConversion', () => {
   let dbDatum: IEntityVariableInfusionDrug[][];
   const testDatum = getVariableInfusionVMTestData();
-  before('get data', async () => {
+  before('get data', async() => {
     const am = new ToArrayMap<IVariableVMTestData, IEntityVariableInfusionDrug>(testDatum, (d) => d.infusionDrugIds);
     const dbInit = await fileFetch.getDbUpdates(null);
     dbDatum = am.match(dbInit.data.infusionDrugs as IEntityVariableInfusionDrug[], (d) => d.infusionDrugId)

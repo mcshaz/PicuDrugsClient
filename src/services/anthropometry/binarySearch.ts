@@ -4,7 +4,7 @@ export enum searchComparison { lessThanMin, inRange, greaterThanMax }
 export interface ISearchResult { comparison: searchComparison; lowerBound?: number; upperBound?: number; }
 
 export function binarySearch(lookup: (index: number) => number,
-                             target: number, minIndex: number, maxIndex: number): ISearchResult {
+  target: number, minIndex: number, maxIndex: number): ISearchResult {
   const minVal = lookup(minIndex);
   if (minVal > target) {
     return { comparison: searchComparison.lessThanMin };
