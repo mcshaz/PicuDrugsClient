@@ -19,6 +19,8 @@ export default class ValidatedInputEl extends ValidatedFormEl {
     prepend?: string;
     @Prop({ default: void 0 })
     autocomplete?: string;
+    @Prop({ default: void 0 })
+    trim?: boolean;
 
     pValue: string | number = '';
 
@@ -69,6 +71,8 @@ export default class ValidatedInputEl extends ValidatedFormEl {
         if (Number.isNaN(newVal as any)) {
           newVal = '';
         }
+      } else if (this.type === 'text' && this.trim) {
+        newVal = (newVal as string).trim();
       }
       this.$emit('input', newVal);
     }

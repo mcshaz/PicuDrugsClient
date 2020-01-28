@@ -8,7 +8,7 @@
         <b-input-group>
           <b-input-group-prepend is-text v-if="pPrepend || $slots.prepend"><slot name="prepend">{{ pPrepend }}</slot></b-input-group-prepend>
           <input :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled" :list="datalistId"
-              v-model="pValue" :id="pName" :name="pName" :autocomplete="autocomplete" :aria-describedby="invalidId" :class="getInputClass(validationContext)">
+              v-model="pValue" :id="pName" :name="pName" :autocomplete="autocomplete" :aria-describedby="invalidId" :class="getInputClass(validationContext)" :pattern="pattern">
           <b-input-group-append is-text v-if="pAppend || $slots.append"><slot name="append">{{ pAppend }}</slot></b-input-group-append>
         </b-input-group>
         <template #invalid-feedback :id="invalidId">
@@ -33,6 +33,8 @@ export default class ValidatedInputGroup extends Mixins(ValidatedInputEl) {
     append?: string;
     @Prop({ default: void 0 })
     datalist?: Array<string | number>;
+    @Prop({ default: void 0 })
+    pattern?: string;
 
     public get pPrepend() {
       return this.type !== 'range'

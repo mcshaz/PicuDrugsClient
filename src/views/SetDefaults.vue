@@ -3,13 +3,10 @@
     <h2>Drug Calculator - Defaults for this browser</h2>
     <validation-observer v-slot="{ passes, invalid }">
       <form @submit.prevent="passes(submit)" ref="form" class="card p-2">
-        <ward-select
-          @ward="wardAbbrev=$event.abbrev"
-          :ward-abbrev="wardAbbrev"
-          @boluses="boluses=$event"
-          :boluses="boluses"
-          @infusions="infusions=$event"
-          :infusions="infusions"
+        <chart-type
+          v-model="ward"
+          :boluses.sync="boluses"
+          :infusions.sync="infusions"
         />
         <b-button type="submit" :disabled="invalid" >Set Defaults</b-button>
       </form>
@@ -20,7 +17,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-import WardSelect from '@/components/WardSelect.vue';
+import ChartType from '@/components/ChartType.vue';
 import { IPatientData } from '@/components/ComponentCommunication';
 import { IAppData } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
@@ -33,7 +30,7 @@ interface ISelectOption {
 
 @Component({
   components: {
-    WardSelect,
+    ChartType,
   },
 })
 export default class SetDefaults extends Vue {

@@ -15,7 +15,7 @@ export const exactLength: ValidationRuleSchema = {
 
 export const nhiRegex: ValidationRuleSchema = {
   validate(value: string) {
-    return /^([A-HJ-NP-Z]{3}\d{4}|SIM0000)$/.test(value);
+    return /^([A-HJ-NP-Z]{3}\d{4}|SIM000\d)$/.test(value);
   },
   // eslint-disable-next-line quotes
   message: "Must be 3 letters (NO 'I's or 'O's) followed by 4 numbers",
@@ -23,6 +23,7 @@ export const nhiRegex: ValidationRuleSchema = {
 
 export const nhiChecksum: ValidationRuleSchema = {
   validate(value: string) {
+    if (/^SIM000\d$/.test(value)) { return true; }
     const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     const checkSum = parseInt(value.slice(-1), 10);
     value = value.slice(0, -1).toUpperCase();
@@ -36,7 +37,7 @@ export const nhiChecksum: ValidationRuleSchema = {
       cum += val * multiplier--;
     }
     const modulus = cum % 11;
-    return modulus === 1
+    return modulus <= 1
       ? checkSum === 0
       : (checkSum === 11 - modulus);
   },

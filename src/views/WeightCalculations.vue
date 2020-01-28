@@ -72,6 +72,7 @@ import { UKWeightData, UKBMIData, UKLengthData } from '@/services/anthropometry/
 import { ChildAge } from '@/services/infusion-calculations';
 import { toGrouping } from '@/services/drugDb/helpers/toGrouping';
 import KatexElement from 'vue-katex/src/components/KatexElement.vue';
+import { BAlert } from 'bootstrap-vue';
 
 type vueNumber = number | '';
 enum centileCorrections { BMI = 'Body Mass Index Method', Moore = 'Moore Method', McLaren = 'McLaren Method' }
@@ -79,7 +80,7 @@ const emptyArray: string[] = [];
 
 @Component({
   components: {
-    ValidatedBoolRadioGroup, PatientAgeData, KatexElement,
+    ValidatedBoolRadioGroup, PatientAgeData, KatexElement, BAlert,
   },
 })
 export default class WeightCalculations extends Vue {

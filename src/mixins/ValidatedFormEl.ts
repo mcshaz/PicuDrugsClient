@@ -1,9 +1,10 @@
 import 'reflect-metadata';
 import { Component, Prop, Mixins } from 'vue-property-decorator';
 import StateWatcher from './StateWatcher';
+import LabelColWidth from './LabelColWidth';
 
 @Component
-export default class ValidatedFormEl extends StateWatcher {
+export default class ValidatedFormEl extends Mixins(StateWatcher, LabelColWidth) {
     @Prop({ default: '' })
     label!: string;
     @Prop({ default: void 0 })
@@ -16,10 +17,6 @@ export default class ValidatedFormEl extends StateWatcher {
     // for id & name attribute:
     @Prop({ default: void 0 })
     name?: string;
-    @Prop({ default: 3 })
-    labelColsLg!: number;
-    @Prop({ default: 3 })
-    labelColsXl!: number;
 
     @Prop({ default: void 0 })
     rules: any;

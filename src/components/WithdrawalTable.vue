@@ -157,6 +157,9 @@ import { roundToFixed } from '@/services/infusion-calculations/';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
 import jsPDF from 'jspdf';
+// eslint-disable-next-line import/no-duplicates
+import 'jspdf-autotable';
+// eslint-disable-next-line import/no-duplicates
 import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
 
 import { pdfTemplate } from '@/services/utilities/pdfTemplate';

@@ -6,12 +6,12 @@
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
       <b-input-group>
         <b-input-group-prepend is-text v-if="prepend || $slots.prepend"><slot name="prepend">{{ prepend }}</slot></b-input-group-prepend>
-        <validation-provider v-slot="valContextInput" :name="pErrorLabel" :rules="rules" ref="inputValProvider" :immediate="immediate" slim>
+        <validation-provider v-slot="valContextInput" :name="pErrorLabel" :rules="rules" :immediate="immediate" slim>
           <input class="form-control" :type="type" :min="min" :max="max" :step="step" :placeholder="placeholder" :required="required" :disabled="disabled"
               v-model="pValue" :id="pName" :name="pName" :class="getValidClass(valContextInput)" :autocomplete="autocomplete">
         </validation-provider>
         <b-input-group-append>
-          <validation-provider v-slot="valContextSelect" class="input-group-append" tag="div" ref="selectValProvider" :immediate="immediate" :name="pSelectErrorLabel"
+          <validation-provider v-slot="valContextSelect" class="input-group-append" tag="div" :immediate="immediate" :name="pSelectErrorLabel"
               :rules="selectRules">
             <select v-model="pSelectValue" :name="pSelectName" :id="pSelectName" :class="getValidClass(valContextSelect)" :required="required"
                 :disabled="disabled" class="custom-select input-group-addon">
@@ -53,7 +53,7 @@ export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl, 
   }
 
   get pSelectLabel() {
-    return this.selectTitle || `[${this.label}] UNITS`;
+    return this.selectTitle || `[${this.label || this.pName}] UNITS`;
   }
 
   @Watch('selectValue', { immediate: true })

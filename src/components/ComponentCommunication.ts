@@ -2,14 +2,15 @@ import { ChildAge } from '@/services/infusion-calculations';
 import { IEntityWard, IEntityInfusion } from '@/services/drugDb';
 import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
 
-export interface IPatientData { name: string; nhi: string; weeksGestation: number; age: ChildAge;
-    isMale: null | boolean; weightKg: number; centileHTML: string; }
+export interface IPatientData { name: string; nhi: string; weeksGestation: number | '';
+    age: ChildAge | null; isMale: boolean | null; isWtEstimate: boolean; weightKg: number;
+    centileString: string; }
 
-interface IWardChartBase { boluses: boolean; infusions: boolean; ward: IEntityWard; }
+export interface IWardChartBase { boluses: boolean; infusions: boolean; ward: IEntityWard; }
 
 export interface IWardChartData extends IPatientData, IWardChartBase { }
 
-export interface IInfusionData extends IPatientData { drug: IEntityInfusion; }
+export interface IInfusionData extends IPatientData { drug: IEntityInfusion; age: ChildAge; }
 
 export interface IMultiWeightInfo { estAge: IMedianMatchResult; wtKg: number; }
 

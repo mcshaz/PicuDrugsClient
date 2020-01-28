@@ -4,15 +4,15 @@
         :invalid-feedback="valContext.errors[0]" :state="getState(valContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
-      <b-radio-group :checked="value" @change="$emit('change', $event)" v-model="pValue"
-            :stacked="stacked" :name="radioGrpName" :state="getState(valContext)">
+      <b-form-radio-group :checked="value" @change="$emit('change', $event)" v-model="pValue"
+            :stacked="stacked" :name="radioGrpName" :state="getState(valContext)" :class="stacked?'':'inline-shim'">
         <b-form-radio :value="true" :disabled="disabled">
           {{trueLabel}}
         </b-form-radio>
         <b-form-radio :value="false" :disabled="disabled">
           {{falseLabel}}
         </b-form-radio>
-      </b-radio-group>
+      </b-form-radio-group>
     </b-form-group>
   </validation-provider>
 </template>
@@ -62,3 +62,14 @@ export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl) {
   }
 }
 </script>
+<style lang="scss">
+@import "bootstrap/scss/_functions.scss";
+@import "bootstrap/scss/_variables.scss";
+@import "bootstrap/scss/mixins/_breakpoints.scss";
+
+@include media-breakpoint-up(lg) {
+  .inline-shim {
+    margin-top: 0.4rem;
+  }
+}
+</style>

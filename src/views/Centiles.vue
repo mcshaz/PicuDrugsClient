@@ -127,6 +127,7 @@ import CentileRow, { ICentileVals } from '@/components/CentileRow.vue';
 import { sortByDateProp } from '@/services/utilities/sortByProp';
 import SvgCentiles, { chartType } from '@/components/SvgCentiles.vue';
 import NhiInput from '@/components/NhiInput.vue';
+import { BButtonGroup } from 'bootstrap-vue';
 
 import { msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
 import {
@@ -153,6 +154,7 @@ interface IIdCentileVals extends ICentileVals {
     CentileRow,
     SvgCentiles,
     NhiInput,
+    BButtonGroup,
   },
 })
 export default class Centiles extends Vue {

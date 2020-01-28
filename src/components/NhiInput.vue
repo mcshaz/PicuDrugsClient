@@ -1,6 +1,6 @@
 <template>
     <div>
-        <validated-input-group label="NHI" rules="exactLength:7|nhiRegex|nhiChecksum"
+        <validated-input-group label="NHI" rules="exactLength:7|nhiRegex|nhiChecksum" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
                 type="text" v-model="nhi" placeholder="NHI" :immediate="immediate" :required="required">
             <template #invalid-feedback="{ valContext }">
                 <span v-if="valContext.failedRules.nhiChecksum">
@@ -18,16 +18,16 @@
                 header-text-variant="light">
             <p class="my-4">
                 The NHI contains information within the 7 characters which
-                allow computers to check if it is a valid value. This validation check is currently <em>failing</em>.
+                allow computers to check if it is a valid value <span class="text-muted">(a 'checksum')</span>. This validation check is currently <em>failing</em>.
             </p>
             <p>
                 If you are creating a ficticious patient for simulation activities, either leave the NHI
-                blank, or use the NHI <strong>'{{simNHI}}'</strong>.
-                This is the <em>only</em> invalid NHI which will pass validation.
+                blank, or use the NHI <strong>SIM0000</strong> through to <strong>SIM0009</strong>.
+                These are the <em>only</em> invalid NHIs which will pass validation.
             </p>
             <p>
                 If you work in a country other than NZ, please <a href="mailto:brentm@adhb.govt.nz">email
-                the program author (Brent)</a> with details and he will set up validation for your particular
+                the program author (Brent)</a> with details and he can set up validation for your particular
                 institution.
             </p>
         </b-modal>
@@ -36,9 +36,9 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { defaultSim, nhiChecksum } from '@/services/validation/validators';
+import { Component, Prop, Vue, Watch, Mixins } from 'vue-property-decorator';
 import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
+import LabelColWidth from '@/mixins/LabelColWidth';
 
 type vueNumber = number | '';
 
@@ -47,8 +47,7 @@ type vueNumber = number | '';
     ValidatedInputGroup,
   },
 })
-export default class NhiInput extends Vue {
-  public readonly simNHI = defaultSim;
+export default class NhiInput extends Mixins(LabelColWidth) {
   @Prop({ required: true })
   private value!: string;
   @Prop({ default: void 0 })

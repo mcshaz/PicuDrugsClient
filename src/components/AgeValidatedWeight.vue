@@ -71,7 +71,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   @Prop({ default: 40 })
   private weeksGestation!: vueNumber;
   @Prop({ default: null })
-  private childAge!: ChildAge;
+  private age!: ChildAge;
   @Prop({ default: null })
   private isMale!: boolean | null;
   @Prop({ default: true })
@@ -109,7 +109,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   }
 
   public get disableMedianWt() {
-    return !!this.weightKg || !this.childAge;
+    return !!this.weightKg || !this.age;
   }
 
   public get requireAccept() {
@@ -138,10 +138,10 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   }
 
   public get minWeight() {
-    return minWeightRecord(this.childAge ? ChildAge.getMinTotalDays(this.childAge!) / daysPerMonth : void 0);
+    return minWeightRecord(this.age ? ChildAge.getMinTotalDays(this.age!) / daysPerMonth : void 0);
   }
   public get maxWeight() {
-    return maxWeightRecord(this.childAge ? ChildAge.getMaxTotalDays(this.childAge!) / daysPerMonth : void 0);
+    return maxWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age!) / daysPerMonth : void 0);
   }
 
   @Watch('isWeightEstimate')
@@ -151,7 +151,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
 
   @Watch('isMale')
   @Watch('weeksGestation')
-  @Watch('childAge', { deep: true })
+  @Watch('age', { deep: true })
   public flush() {
     this.debounceCentiles();
     this.debounceCentiles.flush();
@@ -177,7 +177,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   public watchCentilStr() {
     const innerText = (this.$refs.centile as HTMLOutputElement).innerText;
     if (this.centileString !== innerText) {
-      this.$emit('centile:change', (this.centileString = innerText));
+      this.$emit('update:centile-string', (this.centileString = innerText));
     }
   }
 
@@ -227,10 +227,10 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
 
   private lmsRange() {
     const returnVar = new GenericRange<Lms>();
-    if (!this.childAge) {
+    if (!this.age) {
       return returnVar;
     }
-    const ageDays = this.childAge.getAgeRangeInDays();
+    const ageDays = this.age.getAgeRangeInDays();
     returnVar.lowerBound = this.wtData.lmsForAge(ageDays.upperBound, this.isMale === null ? true : this.isMale, this.weeksGestation || 40);
     if (this.isMale !== null && ageDays.lowerBound === ageDays.upperBound) {
       return returnVar;

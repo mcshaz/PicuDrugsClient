@@ -3,14 +3,10 @@
     <h2>Drug Calculator - Create printable charts</h2>
     <validation-observer v-slot="{ passes, invalid }">
       <form class="was-validated" @submit.prevent="passes(submit)">
-        <ward-select
-          @ward="ward=$event"
-          :ward-abbrev="wardName"
-          @boluses="boluses=$event"
-          :boluses="boluses"
-          @infusions="infusions=$event"
-          :infusions="infusions"
-          @infusions-available="infusionsAvailable=$event"
+        <chart-type
+          v-model="ward"
+          :boluses.sync="boluses"
+          :infusions.sync="infusions"
         />
         <validated-input-group label="Email" type="email"
             v-model="email"
@@ -85,7 +81,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
-import WardSelect from '@/components/WardSelect.vue';
+import ChartType from '@/components/ChartType.vue';
 import { IMultiWardChartData } from '@/components/ComponentCommunication';
 import { IEntityWard, IAppData } from '@/services/drugDb';
 import MultiWeightRow from '@/components/MultiWeightRow.vue';
@@ -106,7 +102,7 @@ interface IWtAge {
 }
 @Component({
   components: {
-    WardSelect,
+    ChartType,
     MultiWeightRow,
   },
   provide: {

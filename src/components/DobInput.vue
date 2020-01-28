@@ -1,14 +1,15 @@
 <template>
-  <validated-date-group :min="min" :max="max" v-model="dob" :rules="rules"
+  <validated-date-group :min="min" :max="max" v-model="dob" :rules="rules" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"
       @blur="onBlur($event)" :name="dob" :required="required" :immediate="immediate"
       label="DOB" description="date of birth"/>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Emit, Watch, Mixins } from 'vue-property-decorator';
 import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
+import LabelColWidth from '../mixins/LabelColWidth';
 
 enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 
@@ -17,7 +18,7 @@ enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
     ValidatedDateGroup,
   },
 })
-export default class DobInput extends Vue {
+export default class DobInput extends Mixins(LabelColWidth) {
     public max!: Date;
     public state: boolean | null = null;
     private pDob: Date | null = null;

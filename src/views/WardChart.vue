@@ -33,7 +33,7 @@ export default class WardChart extends Vue {
     const wardList = new WardLists(this.db);
     if (this.chartData!.infusions) {
       this.infusions = wardList.getVariableInfusions(this.chartData.ward).then((data) => {
-        const selected = filterVariableInfusionsForPt(data, this.chartData.weightKg, this.chartData.age.totalMonthsEstimate(this.chartData.weeksGestation));
+        const selected = filterVariableInfusionsForPt(data, this.chartData.weightKg, this.chartData.age!.totalMonthsEstimate(this.chartData.weeksGestation || 40));
         return transformVariableInfusions(this.chartData.weightKg, selected);
       });
     }

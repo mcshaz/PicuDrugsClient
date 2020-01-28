@@ -1,8 +1,8 @@
 <template>
     <validation-observer v-slot="allErrors" tag="div">
       <dob-input v-model="dob" @min-change="minChange($event)" :immediate="immediate" :disabled="disabled"
-          :rules="{ requiredIfEmpty: required!==false ? { target: 'years' } : false }"/>
-      <b-form-group id="ageymd" label="Age:" label-cols-lg="3" label-cols-xl="3" label-align-lg="right"
+          :rules="{ requiredIfEmpty: required!==false ? { target: 'years' } : false }" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl"/>
+      <b-form-group id="ageymd" label="Age:" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl" label-align-lg="right"
             :state="immediate!==false ? !combineErrors(allErrors) : getState(allErrors)" :invalid-feedback="combineErrors(allErrors)">
         <div class="form-inline">
           <validation-provider vid="years" name="years" :rules="{ integer: true, requiredIfEmpty: required!==false ? { target: 'DOB' } : false  }"
@@ -41,6 +41,7 @@ import { maxYears } from '@/services/validation/validators';
 import DobInput from '@/components/DobInput.vue';
 import StateWatcher from '@/mixins/StateWatcher';
 import { isEquivalent } from '@/mixins/VModelReflector';
+import LabelColWidth from '../mixins/LabelColWidth';
 
 export type vueNumber = number | ''; // todo https://stackoverflow.com/questions/55682288/export-and-import-a-typescript-type-alias-from-d-ts-file
 
@@ -49,7 +50,7 @@ export type vueNumber = number | ''; // todo https://stackoverflow.com/questions
     DobInput,
   },
 })
-export default class PatientAgeData extends Mixins(StateWatcher) {
+export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) {
   @Prop({ required: true })
   value!: ChildAge | null;
   @Prop({ default: false })
