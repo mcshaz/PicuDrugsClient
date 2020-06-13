@@ -31,7 +31,7 @@
       <validation-provider name="Weight" vid="weight" :immediate="immediate" class="form-inline" tag="div">
         <b-input-group append="kg">
           <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
-              type="number" :required="required" @blur="flush"
+              type="number" :required="required" @blur="debounceCentiles.flush()"
               :min="minWeight" :max="maxWeight" step="any" :class="wtClass"/>
         </b-input-group>
         <b-button variant="outline-primary" :disabled="disableMedianWt" @click="medianWt4age" class="ml-3">

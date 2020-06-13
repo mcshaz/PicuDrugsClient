@@ -1,5 +1,5 @@
 <template>
-  <validation-observer v-slot="{ invalid, touched }" ref="mainObserver" tag="div" id="withdrawal">
+  <validation-observer v-slot="{ invalid }" ref="mainObserver" tag="div" id="withdrawal">
     <!--TODO f=change above to { formInvalid: invalid }-->
     <h2>Withdrawal Charting</h2>
     <b-row align-h="end" class="d-print-none">
@@ -165,73 +165,13 @@
         <button type="button" class="btn btn-success mb-4 ml-2" :disabled="invalid" @click.passive="$refs.plan.createPDF()"><font-awesome-icon icon="print"/> Print <font-awesome-icon icon="file-pdf"/></button>
       </form>
     </b-row>
-    <b-row>
-      <b-col>
-        <b-alert :show="invalid" variant="dark">
-          The withdrawal plan will appear here after all the information in the form above is filled in and valid.
-        </b-alert>
-        <withdrawal-table v-if="!invalid && touched" ref="plan"
-            :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
-            :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits">
-          <ul class="row" id="entered-details">
-            <li class="col-md-4">
-              <h5>Details:</h5>
-              <dl>
-                <dt>weight</dt>
-                  <dd>{{wtKg}} kg</dd>
-                <dt>age group</dt>
-                  <dd v-if='lt1Year'>
-                    &lt; 12 months
-                  <dd v-else>
-                    ≥ 1 year old
-                  </dd>
-                  <dt>data entered by</dt>
-                    <dd>{{prescriber}}</dd>
-              </dl>
-            </li>
-            <li class="col-md-4"><h5>Original medication:</h5>
-              <dl>
-                <dt>drug</dt>
-                  <dd>{{originalDrugName}}</dd>
-                <dt>{{concLabel.label}}</dt>
-                  <dd class="units" v-if="isPatch">
-                    {{originalConcUnits.units}} {{originalConcVal}}
-                  </dd>
-                  <dd class="units" v-else>
-                    {{originalConcVal}} {{originalConcUnits.units}}
-                  </dd>
-                  <template v-if="isDailyDrugRequired">
-                    <dt>per 24 hours</dt>
-                    <dd>{{original24HrVol}} {{original24HrUnits}}</dd>
-                  </template>
-              </dl>
-            </li>
-            <li class="col-md-4"><h5>Weaning medication:</h5>
-              <dl>
-                <dt>drug</dt>
-                  <dd>{{weaningDrug}}</dd>
-                <dt>weaning duration</dt>
-                  <dd v-if="isClonidine">
-                    <span v-if="rapidClonidineWean">rapid</span>
-                    <span v-else>slow</span>
-                  </dd>
-                  <dd v-else>{{weanDuration}} days
-                    <span class="text-muted" v-if="!weanDaily">(alternate day)</span>
-                  </dd>
-              </dl>
-            </li>
-          </ul>
-        </withdrawal-table >
-      </b-col>
-    </b-row>
   </validation-observer>
 </template>
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-// import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
-import WithdrawalTable from '@/components/WithdrawalTable.vue';
-import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
+import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
+import NHI from '@/components/NhiInput.vue';
 import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSelectGroup.vue';
 import { toGrouping } from '@/services/drugDb';
 import { withdrawalDrugs, IDrug, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
@@ -256,8 +196,7 @@ const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 @Component({
   components: {
     // AgeValidatedWeight,
-    WithdrawalTable,
-    ValidatedBoolRadioGroup,
+
     ValidatedInputSelectGroup,
     BAlert,
   },
@@ -270,7 +209,9 @@ export default class Withdrawal extends Vue {
   public weanDuration: vueNumber = '';
   public original24HrVol: vueNumber = '';
   public weanDaily = true;
-  public lt1Year: null | boolean = null;
+  public dob: Date | null = null;
+  public ptName = '';
+  public nhi = '';
   public opiodBenzoVis = getViewportSize() >= bootstrapSizes.lg ;
   public clonidineVis = false;
   public picuVolVis = false;
@@ -399,6 +340,11 @@ export default class Withdrawal extends Vue {
         weanAlternateDays: !this.weanDaily }
       : null;
   }
+  public get lt1Year() {
+    return this.dob
+      ? this.dob.getTime() < 0 // todo
+      : null;
+  }
   @Watch('originalDrug')
   @Watch('wtKg')
   public setDefaultUnits() {
@@ -436,7 +382,9 @@ export default class Withdrawal extends Vue {
     this.originalConcVal = '';
     this.originalConcUnits = null;
     this.weanDaily = true;
-    this.lt1Year = null;
+    this.nhi = '';
+    this.dob = null;
+    this.ptName = '';
     this.weaningDrug = '';
     this.opiodBenzoVis = false;
     this.clonidineVis = false;
