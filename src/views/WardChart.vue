@@ -31,13 +31,13 @@ export default class WardChart extends Vue {
       return;
     }
     const wardList = new WardLists(this.db);
-    if (this.chartData!.infusions) {
+    if (this.chartData!.charts.includes('infusion')) {
       this.infusions = wardList.getVariableInfusions(this.chartData.ward).then((data) => {
         const selected = filterVariableInfusionsForPt(data, this.chartData.weightKg, this.chartData.age!.totalMonthsEstimate(this.chartData.weeksGestation || 40));
         return transformVariableInfusions(this.chartData.weightKg, selected);
       });
     }
-    if (this.chartData.boluses) {
+    if (this.chartData.charts.includes('bolus')) {
       wardList.getBolusDrugs(this.chartData.ward).then((data) => {
         this.boluses = data;
       });

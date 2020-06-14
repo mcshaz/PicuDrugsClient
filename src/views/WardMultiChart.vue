@@ -46,7 +46,7 @@ export default class WardMultiChart extends Vue {
           () => (this as any).$bvToast.show('email-failed-toast'));
     }
     const wardList = new WardLists(this.db);
-    if (this.chartData!.infusions) {
+    if (this.chartData!.charts.includes('infusion')) {
       const allInfusions = wardList.getVariableInfusions(this.chartData.ward);
       for (const w of this.chartData.weights) {
         const ageMonths = w.estAge.gestation < 40
@@ -58,7 +58,7 @@ export default class WardMultiChart extends Vue {
         }));
       }
     }
-    if (this.chartData.boluses) {
+    if (this.chartData.charts.includes('bolus')) {
       wardList.getBolusDrugs(this.chartData.ward).then((data) => {
         this.boluses = data;
       });

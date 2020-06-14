@@ -6,7 +6,7 @@ export { IEntityVariableInfusionDrug, IEntityVariableDilution, IVariableDilution
 export { IEntityFixedDilution, IEntityFixedInfusionDrug, IEntityFixedConcentration } from './entities/InfusionDrugs/IEntityFixedInfusionDrug';
 export { IEntityDefibModel } from './entities/IEntityDefibModel';
 export { INewServerDeletions } from './ServerCommunication/IEntityDeletion';
-export { IEntityWard } from './entities/IEntityWard';
+export { IEntityWard, definedCharts } from './entities/IEntityWard';
 export { dilutionMethod } from './entities/enums/dilutionMethod';
 export { diluentFluid, diluentFluidName } from './entities/enums/diluentFluid';
 export { siUnit } from './entities/enums/siUnit';

@@ -19,7 +19,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import ChartType from '@/components/ChartType.vue';
 import { IPatientData } from '@/components/ComponentCommunication';
-import { IAppData } from '@/services/drugDb';
+import { IAppData, definedCharts } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption {
@@ -35,16 +35,14 @@ interface ISelectOption {
 })
 export default class SetDefaults extends Vue {
   public wardAbbrev = '';
-  public infusions = true;
-  public boluses = true;
+  public charts: definedCharts[] = [];
   @Inject('appData')
   private appData!: IAppData;
 
   public created() {
     this.appData.getWardDefaults().then(wd => {
       if (wd) {
-        this.boluses = wd.boluses;
-        this.infusions = wd.infusions;
+        this.charts = wd.chartTypes,
         this.wardAbbrev = wd.wardAbbrev;
       }
     });
@@ -54,8 +52,7 @@ export default class SetDefaults extends Vue {
     if ((this.$refs.form as HTMLFormElement).checkValidity()) {
       this.appData
         .setWardDefaults({
-          boluses: this.boluses,
-          infusions: this.infusions,
+          chartTypes: this.charts,
           wardAbbrev: this.wardAbbrev,
           formalSet: true,
         })

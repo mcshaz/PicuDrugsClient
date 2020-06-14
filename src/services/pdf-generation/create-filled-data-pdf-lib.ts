@@ -1,13 +1,7 @@
 import { PDFDocument, PDFFont, rgb } from 'pdf-lib';
 import { PdfTableValues } from './pdf-table-values-pdf-lib';
+import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 
-interface IWithdrawalRegime {
-    dayNo: number;
-    date: string;
-    regularDose: string;
-    frequency: string;
-    rescueDose: string;
-}
 interface IChartPatientDetails {
     nhi: string; 
     weight: string; 
@@ -15,7 +9,7 @@ interface IChartPatientDetails {
     medicine:string; 
     route: string;
     prescriber: string;
-    regime: IWithdrawalRegime[];
+    regime: WeanDay[];
 }
 export async function createFilledDataStream(details: IChartPatientDetails, doc: PDFDocument, widthOfTextAtSize: (txt: string, size: number) => number) {
     if (!details.regime.length) {
@@ -31,28 +25,26 @@ export async function createFilledDataStream(details: IChartPatientDetails, doc:
         doc.addPage(firstDonorPage);
     }
     let cellTVs = new PdfTableValues(doc, [134, 179], [77.25, 285], [cols, gridsRows], 15);
-    const beginTexts = [
-        cellTVs.setCoords(details.regime.map(r => r.dayNo.toString()),
-            { getWidth, size }),
-        cellTVs.setCoords(details.regime.map(r => r.date.toString()),
-            { getWidth, rowNo: 1, size }),
-        cellTVs.setCoords(details.regime.map(r => r.regularDose.toString()),
-            { getWidth, rowNo: 2, size }),
-        cellTVs.setCoords(details.regime.map(r => r.frequency.toString()),
-            { getWidth, rowNo: 3, size }),
-    ];
+    cellTVs.setCoords([...details.regime.keys(), details.regime.length].slice(1).map(String),
+        { getWidth, size }),
+    cellTVs.setCoords(details.regime.map(r => r.weanDateString),
+        { getWidth, rowNo: 1, size }),
+    cellTVs.setCoords(details.regime.map(r => r.regularDose.toString()),
+        { getWidth, rowNo: 2, size }),
+    cellTVs.setCoords(details.regime.map(r => r.frequency.toString()),
+        { getWidth, rowNo: 3, size }),
     cellTVs.startCoord[1] = 369;
-    beginTexts.push(cellTVs.setCoords(details.regime.map(r => r.rescueDose.toString()),
-        { getWidth, size, color: toRGB('e9262c') }));
+    cellTVs.setCoords(details.regime.map(r => r.rescueDose.toString()),
+        { getWidth, size, color: toRGB('e9262c') });
     cellTVs.gridsPerPage[0] = 1;
     cellTVs.startCoord = [80, 162];
     cellTVs.offsetCoord[0] = 0;
     size = 11;
     const medArray = new Array<string>(Math.ceil(details.regime.length / cols));
     // by not providing getwidth, we provide the default (0) which should left align
-    beginTexts.push(cellTVs.setCoords(medArray.fill(details.medicine), { size }));
+    cellTVs.setCoords(medArray.fill(details.medicine), { size });
     cellTVs.startCoord[0] = 323;
-    beginTexts.push(cellTVs.setCoords(medArray.fill(details.route), { size }));
+    cellTVs.setCoords(medArray.fill(details.route), { size });
     
     size = 12;
     for (let p = 0; p < pagesRequired; ++p) {

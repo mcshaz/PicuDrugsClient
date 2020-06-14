@@ -34,7 +34,7 @@
               type="number" :required="required" @blur="debounceCentiles.flush()"
               :min="minWeight" :max="maxWeight" step="any" :class="wtClass"/>
         </b-input-group>
-        <b-button variant="outline-primary" :disabled="disableMedianWt" @click="medianWt4age" class="ml-3">
+        <b-button v-if="allowMedianWeight" variant="outline-primary" :disabled="disableMedianWt" @click="medianWt4age" class="ml-3">
           Median Weight For Age
         </b-button>
       </validation-provider> <!-- end form-inline -->
@@ -78,6 +78,8 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   private required!: boolean;
   @Prop({ default: false })
   private immediate!: boolean;
+  @Prop({ default: true })
+  private allowMedianWeight!: boolean;
 
   private acceptWtWarn = false;
   private weightKg: vueNumber = '';
