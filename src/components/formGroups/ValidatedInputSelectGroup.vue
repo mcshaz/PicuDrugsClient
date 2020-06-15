@@ -25,21 +25,25 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Watch, Mixins } from 'vue-property-decorator';
 import ValidatedInputEl from '@/mixins/ValidatedInputEl';
 import CombineErrors from '@/mixins/CombineErrors';
-import { IValCtxt } from '@/mixins/StateWatcher';
+// import { IValCtxt } from '@/mixins/StateWatcher';
 
 @Component({})
 export default class ValidatedInputSelectGroup extends Mixins(ValidatedInputEl, CombineErrors) {
   @Prop({ required: true })
   selectValue!: any;
+
   @Prop({ default: 'required' })
   selectRules?: any;
+
   @Prop({ default: void 0 })
   selectTitle?: string;
+
   @Prop({ default: void 0 })
   selectName?: string;
+
   @Prop({ default: void 0 })
   selectErrorLabel?: string;
 

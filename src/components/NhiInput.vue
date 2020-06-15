@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Mixins } from 'vue-property-decorator';
 import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
 import LabelColWidth from '@/mixins/LabelColWidth';
 
@@ -50,14 +50,17 @@ type vueNumber = number | '';
 export default class NhiInput extends Mixins(LabelColWidth) {
   @Prop({ required: true })
   private value!: string;
+
   @Prop({ default: void 0 })
   private required?: boolean;
+
   @Prop({ default: void 0 })
   private immediate?: boolean;
 
   public get nhi() {
     return this.value;
   }
+
   public set nhi(value: string) {
     this.$emit('input', value.toUpperCase());
   }

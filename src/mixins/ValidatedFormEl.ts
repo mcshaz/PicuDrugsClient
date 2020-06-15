@@ -7,23 +7,30 @@ import LabelColWidth from './LabelColWidth';
 export default class ValidatedFormEl extends Mixins(StateWatcher, LabelColWidth) {
     @Prop({ default: '' })
     label!: string;
+
     @Prop({ default: void 0 })
     description?: string;
+
     @Prop({ default: void 0 })
     placeholder?: string;
+
     // for errors:
     @Prop({ default: void 0 })
     errorLabel?: string;
+
     // for id & name attribute:
     @Prop({ default: void 0 })
     name?: string;
 
     @Prop({ default: void 0 })
     rules: any;
+
     @Prop({ default: false })
     required!: boolean;
+
     @Prop({ default: false })
     disabled!: boolean;
+
     @Prop({ default: void 0 })
     immediate!: boolean;
 

@@ -23,8 +23,10 @@ export default class WardChart extends Vue {
   public boluses: Array<IEntityBolusDrug | IEntityFixedInfusionDrug | string> = [];
   @Prop({ required: true })
   private chartData!: IWardChartData;
+
   @Inject('db')
   private db!: IDrugDB;
+
   public created() {
     if (!this.chartData) {
       this.$router.replace({ name: 'home' });

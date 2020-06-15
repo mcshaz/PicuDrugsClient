@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Watch, Mixins } from 'vue-property-decorator';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import NhiInput from '@/components/NhiInput.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
@@ -68,16 +68,22 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
 
   @Prop({ required: true })
   private value!: vueNumber;
+
   @Prop({ default: 40 })
   private weeksGestation!: vueNumber;
+
   @Prop({ default: null })
   private age!: ChildAge;
+
   @Prop({ default: null })
   private isMale!: boolean | null;
+
   @Prop({ default: true })
   private required!: boolean;
+
   @Prop({ default: false })
   private immediate!: boolean;
+
   @Prop({ default: true })
   private allowMedianWeight!: boolean;
 
@@ -142,6 +148,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   public get minWeight() {
     return minWeightRecord(this.age ? ChildAge.getMinTotalDays(this.age!) / daysPerMonth : void 0);
   }
+
   public get maxWeight() {
     return maxWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age!) / daysPerMonth : void 0);
   }

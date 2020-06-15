@@ -25,7 +25,7 @@ export class UKWeightData extends CentileCollection {
         new Lms(0.782, 3.5551, 0.12851),
         new Lms(0.76, 3.7172, 0.12412),
         new Lms(0.739, 3.8702, 0.12085),
-        new Lms(0.2442, 4.0603, 0.13807) ],
+        new Lms(0.2442, 4.0603, 0.13807)],
       lmsForGestAgeFemale: [
         new Lms(1.326, 0.5589, 0.17378),
         new Lms(1.278, 0.6584, 0.17716),
@@ -47,7 +47,7 @@ export class UKWeightData extends CentileCollection {
         new Lms(0.501, 3.413, 0.12481),
         new Lms(0.453, 3.5539, 0.11855),
         new Lms(0.404, 3.6743, 0.11308),
-        new Lms(0.2024, 3.8352, 0.1406) ],
+        new Lms(0.2024, 3.8352, 0.1406)],
       lmsForAgeWeeksMale: [
         new Lms(0.2331, 4.3671, 0.13497),
         new Lms(0.2237, 4.659, 0.13215),
@@ -58,7 +58,7 @@ export class UKWeightData extends CentileCollection {
         new Lms(0.1894, 5.8346, 0.12157),
         new Lms(0.184, 6.0242, 0.12001),
         new Lms(0.1789, 6.2019, 0.1186),
-        new Lms(0.174, 6.369, 0.11732) ],
+        new Lms(0.174, 6.369, 0.11732)],
       lmsForAgeWeeksFemale: [
         new Lms(0.1789, 4.0987, 0.13805),
         new Lms(0.1582, 4.3476, 0.13583),
@@ -69,7 +69,7 @@ export class UKWeightData extends CentileCollection {
         new Lms(0.0779, 5.3618, 0.12861),
         new Lms(0.0648, 5.5295, 0.1277),
         new Lms(0.0525, 5.6883, 0.12691),
-        new Lms(0.0407, 5.8393, 0.12622) ],
+        new Lms(0.0407, 5.8393, 0.12622)],
       lmsForAgeMonthsMale: [
         new Lms(0.1738, 6.3762, 0.11727),
         new Lms(0.1553, 7.0023, 0.11316),
@@ -308,7 +308,7 @@ export class UKWeightData extends CentileCollection {
         new Lms(-0.708, 69.289, 0.13139),
         new Lms(-0.711, 69.3693, 0.13122),
         new Lms(-0.714, 69.447, 0.13105),
-        new Lms(-0.718, 69.524, 0.13088) ],
+        new Lms(-0.718, 69.524, 0.13088)],
       lmsForAgeMonthsFemale: [
         new Lms(0.0402, 5.8458, 0.12619),
         new Lms(-0.005, 6.4237, 0.12402),

@@ -19,6 +19,7 @@ import { IStats } from '@/services/transports/roadTimes';
 export default class DurationStats extends Vue {
     @Prop({ required: true })
     value: IStats | undefined;
+
     @Prop({ default: '' })
     departFrom!: string;
 }

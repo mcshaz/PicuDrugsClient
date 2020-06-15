@@ -28,7 +28,7 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Inject, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 const degreesToRadians = Math.PI / 180;
 
@@ -36,14 +36,19 @@ const degreesToRadians = Math.PI / 180;
 export default class SvgGasGuage extends Vue {
     @Prop({ default: 160 })
     public emptyAngle!: number;
+
     @Prop({ default: 300 })
     public fullAngle!: number;
+
     @Prop({ required: true })
     public fullPresBar!: number;
+
     @Prop({ default: 'KPa' })
     public pressureUnits!: 'KPa' | 'Bar' | 'PSI';
+
     @Prop({ required: true })
     public fractionRemain!: number;
+
     @Prop({ default: 1 })
     public fractionBegin!: number;
 
@@ -90,8 +95,8 @@ export default class SvgGasGuage extends Vue {
     }
 
     private segmentPath(fractionStart: number, fractionEnd: number, radius = 100) {
-      const startArc = this.mapPosition(fractionStart, radius);
-      const finishArc = this.mapPosition(fractionEnd, radius);
+      // const startArc = this.mapPosition(fractionStart, radius);
+      // const finishArc = this.mapPosition(fractionEnd, radius);
       return 'M0 0 L' + this.arcBase(fractionStart, fractionEnd, radius) + ' Z';
     }
 

@@ -6,7 +6,7 @@ import { updatableAttrFactory } from '@/services/storybook/updatableAttrFactory'
 
 export default {
   title: 'svg/GasGuage',
-  decorators: [() => ({ template: `<div style="width: 40%;"><story/></div>` }), withKnobs],
+  decorators: [() => ({ template: '<div style="width: 40%;"><story/></div>' }), withKnobs],
 };
 
 const getTemplate = updatableAttrFactory(`<svg-gas-guage :fraction-begin="fractionBegin"
@@ -28,13 +28,15 @@ export const majorArcPositiveEnd = () => getBaseObj({ ':emptyAngle': 90, ':fullA
 export const worksBurgerKnobs = () => {
   const attrs = Object.fromEntries(['emptyAngle', 'fullAngle', 'fullPresBar', 'pressureUnits'].map((p) => [':' + p, p]));
   const returnVar = getBaseObj(attrs);
-  returnVar.props = { ...returnVar.props,
+  returnVar.props = {
+    ...returnVar.props,
     ...{
       emptyAngle: { default: number('emptyAngle', 160, { range: true, max: 360, min: 0 }) },
       fullAngle: { default: number('fullAngle', 300, { range: true, max: 360, min: 0 }) },
       fullPresBar: { default: number('fullPresBar', 153, { max: 160, min: 1 }) },
       pressureUnits: { default: select('pressureUnits', ['KPa', 'Bar', 'PSI'], 'KPa') },
-    } };
+    },
+  };
   console.log(returnVar);
   return returnVar;
 };

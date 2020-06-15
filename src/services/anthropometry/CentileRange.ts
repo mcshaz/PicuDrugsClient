@@ -10,7 +10,7 @@ import { linearInterpolate } from './linearInterpolate';
 export const weeksPerMonth = daysPerMonth / 7;
 export const maximumGestationalCorrection = 40;
 
-export interface IMedianMatchResult {ageDays: number; matchType: searchComparison; gestation: number; }
+export interface IMedianMatchResult {ageDays: number; matchType: searchComparison; gestation: number }
 
 export class CentileRange {
   private static linearInterpolateOnDelegate(delegate: (index: number) => number, bounds: ISearchResult, target: number) {
@@ -66,6 +66,7 @@ export class CentileRange {
     }
     return this.ageMonthsData.maxLms();
   }
+
   public ageDaysForZ(z: number, param: number) {
     // making a negative a bit of a hack to make monotonically increasing
     return this.ageDaysFor(-z, (ages: AgeRange, indx: number) => -ages.lookup[indx].zFromParam(param));

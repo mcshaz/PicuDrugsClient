@@ -18,7 +18,7 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Model, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Prop, Model, Mixins, Watch } from 'vue-property-decorator';
 import { mergeValidators } from '@/services/validation/mergeValidators';
 import ValidatedFormEl from '@/mixins/ValidatedFormEl';
 import { BFormRadio, BFormRadioGroup } from 'bootstrap-vue';
@@ -32,10 +32,13 @@ type nullBool = null | boolean;
 export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl) {
   @Model('change') // use change event rather than input
   public value!: boolean | null;
+
   @Prop({ required: true })
   public trueLabel!: string;
+
   @Prop({ required: true })
   public falseLabel!: string;
+
   @Prop({ default: true })
   public stacked!: boolean;
 

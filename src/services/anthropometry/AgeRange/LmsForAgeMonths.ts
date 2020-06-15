@@ -1,5 +1,5 @@
 import { AgeRange, integer, ceaseCorrectingAtDaysOfAge, termGestationWeeks, daysPerMonth } from './AgeRange';
-import { Lms } from '../Lms';
+// import { Lms } from '../Lms';
 
 export class LmsForAgeMonths extends AgeRange {
   public toAgeUnits(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {

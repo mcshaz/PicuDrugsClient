@@ -1,7 +1,7 @@
 import chai from 'chai'; // import { expect } from 'chai';
 import chaiAlmost from 'chai-almost'; // By default, chai-almost allows a tolerance of 1 x 10-6
 import { dilutionMethod, IEntityVariableInfusionDrug, siUnit } from '@/services/drugDb';
-import { ToArrayMap, concatSets, toMap } from './utilities/toMap';
+import { ToArrayMap, concatSets } from './utilities/toMap';
 import { fileFetch } from '../../test-resources/FileFetch';
 import { filterVariableInfusionsForPt } from '@/services/infusion-calculations/Transformations/Calculations/filterVariableInfusionsForPt';
 import { IVariableInfusionDrugVM, NumericRange, InfusionRateUnit, SiUnitMeasure } from '@/services/infusion-calculations';

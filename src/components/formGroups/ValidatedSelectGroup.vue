@@ -18,7 +18,7 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Watch, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 import ValidatedFormEl from '@/mixins/ValidatedFormEl';
 import VModelReflector from '@/mixins/VModelReflector';
 
@@ -26,6 +26,7 @@ import VModelReflector from '@/mixins/VModelReflector';
 export default class ValidatedSelectGroup extends Mixins(ValidatedFormEl, VModelReflector) {
   @Prop({ default: void 0 })
   prepend?: string;
+
   @Prop({ default: void 0 })
   append?: string;
 }

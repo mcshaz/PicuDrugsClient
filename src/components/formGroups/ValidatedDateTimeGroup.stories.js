@@ -9,7 +9,7 @@ import { withKnobs } from '@storybook/addon-knobs';
 
 export default {
   title: 'formGroups/ValidatedDateTimeGroup',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` }), withKnobs],
+  decorators: [() => ({ template: '<form style="margin: 1em;"><story/></form>' }), withKnobs],
 };
 
 const getTemplate = updatableAttrFactory('<validated-date-time-group label="test input" :value="val" @input="input($event)"/>');

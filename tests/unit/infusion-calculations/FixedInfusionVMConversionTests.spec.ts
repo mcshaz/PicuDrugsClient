@@ -43,7 +43,7 @@ describe('fixedVMConversion', () => {
     });
   });
 });
-interface IFixedVMTestData {wt: number; ageMth: number; infusionDrugId: number; vm: FixedInfusionDrugVM; }
+interface IFixedVMTestData {wt: number; ageMth: number; infusionDrugId: number; vm: FixedInfusionDrugVM }
 function getFixedInfusionVMTestData(): IFixedVMTestData[] {
   return [{
     wt: 10, // Dilution Method Id: 7 wt: 10

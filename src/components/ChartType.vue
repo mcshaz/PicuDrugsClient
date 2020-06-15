@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Inject, Prop, Mixins } from 'vue-property-decorator';
 import { IEntityWard, IDrugDB, IAppData, definedCharts } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 import StateWatcher from '@/mixins/StateWatcher';
@@ -86,18 +86,22 @@ import LabelColWidth from '@/mixins/LabelColWidth';
     BFormCheckboxGroup,
   },
 })
-export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) {
+export default class ChartSelection extends Mixins(StateWatcher, LabelColWidth) {
   private selectedWard: IEntityWard | null = null;
-  public wardOptions: { value: string; text: string; disabled?: boolean; }[] = [];
+  public wardOptions: { value: string; text: string; disabled?: boolean }[] = [];
 
   @Inject('db')
   private db!: IDrugDB;
+
   @Prop({ default: '' })
   private wardAbbrev!: string;
+
   @Prop({ default: ['boluses', 'anaphylaxis'] as definedCharts[] })
   private chartTypes: definedCharts[] = [];
+
   @Inject('appData')
   private appData!: IAppData;
+
   // unwatched
   private wards!: PromiseLike<IEntityWard[]>;
   private chartsTouched!: boolean;
@@ -130,6 +134,7 @@ export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) 
   public get abbrev() {
     return this.selectedWard?.abbrev || '';
   }
+
   public set abbrev(value: string) {
     if (value !== this.abbrev) {
       if (value === '') {
@@ -141,8 +146,8 @@ export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) 
           const searchFor = value.toLowerCase();
           const foundWard = wards.find(w => w.abbrev.toLowerCase() === searchFor) || null;
           if (this.selectedWard !== foundWard) {
-              this.$emit('update:ward', foundWard);
-              this.selectedWard = foundWard;
+            this.$emit('update:ward', foundWard);
+            this.selectedWard = foundWard;
           }
           if (foundWard && !this.chartsTouched) {
             this.charts = foundWard.defaultCharts;
@@ -155,6 +160,7 @@ export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) 
   public get charts() {
     return this.chartTypes;
   }
+
   public set charts(value: definedCharts[]) {
     if (!setsEquivalent(value, this.chartTypes)) {
       this.$emit('update:chartTypes', value);
@@ -162,7 +168,7 @@ export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) 
     }
   }
 }
-function setsEquivalent<T>(ar1:T[], ar2:T[]) {
+function setsEquivalent<T>(ar1: T[], ar2: T[]) {
   return ar1.length === ar2.length && ar1.every((a) => ar2.includes(a));
 }
 </script>

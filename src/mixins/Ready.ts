@@ -8,7 +8,7 @@ export default class Ready extends Vue {
     if (process.env.NODE_ENV === 'production') {
       return this.$nextTick();
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(async() => {
         await this.$nextTick();
         resolve();

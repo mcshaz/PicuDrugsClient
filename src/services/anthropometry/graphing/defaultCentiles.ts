@@ -1,7 +1,7 @@
 
 import { inverseCumSNorm } from './inverseCumSNorm';
 
-const centileZTuppleHalf: Array<[number, number]> = [ 0.4, 2, 9, 25 ].map((cent) =>
+const centileZTuppleHalf: Array<[number, number]> = [0.4, 2, 9, 25].map((cent) =>
   [cent, inverseCumSNorm(cent / 100)]);
 
 const defaultCentiles: Array<[number, number]> = (centileZTuppleHalf.concat(

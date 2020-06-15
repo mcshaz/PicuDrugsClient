@@ -4,7 +4,7 @@ import { RuleParamSchema, ValidationRuleSchema } from 'vee-validate/dist/types/t
 const isEmptyArray = (v: any) => Array.isArray(v) && v.length === 0;
 
 const testEmpty = (value: any) =>
-  isEmptyArray(value) || [false, null, undefined].includes(value) || !String(value).trim().length;
+  isEmptyArray(value) || [false, null, void 0].includes(value) || !String(value).trim().length;
 
 export const requiredIfEmpty: ValidationRuleSchema = {
   params: [{

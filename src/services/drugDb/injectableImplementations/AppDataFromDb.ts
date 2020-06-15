@@ -18,6 +18,7 @@ export class AppDataFromDexie implements IAppData {
     }
     return void 0;
   }
+
   public async setWardDefaults(wardDefaults: IWardDefaults) {
     if (!wardDefaults.formalSet) {
       const data = await this.getWardDefaults();

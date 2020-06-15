@@ -1,4 +1,4 @@
-export function roundToFixed(value: number, decimals: number = 1): number {
+export function roundToFixed(value: number, decimals = 1): number {
   const multiplier = Math.pow(10, decimals);
   return Math.round(value * multiplier + Number.EPSILON) / multiplier;
 }
@@ -24,4 +24,11 @@ export function syringeRounding(ml: number) {
     return roundToNearest(ml, 0.2);
   }
   return Math.round(ml);
+}
+
+export function weightRounding(wtKg: number) {
+  if (wtKg < 20) {
+    return roundToFixed(wtKg, 1);
+  }
+  return Math.round(wtKg);
 }

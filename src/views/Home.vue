@@ -52,15 +52,15 @@ import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import ChartType from '@/components/ChartType.vue';
 import NhiInput from '@/components/NhiInput.vue';
-import PatientAgeData from '@/components/PatientAgeData.vue';
+import PatientAgeData, { vueNumber } from '@/components/PatientAgeData.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import { IWardChartData } from '@/components/ComponentCommunication';
 import { IEntityWard, IAppData, definedCharts } from '@/services/drugDb';
 import { dateOrder } from '@/services/utilities/dateHelpers';
-import { vueNumber } from '../components/PatientAgeData.vue';
+
 import { ChildAge } from '../services/infusion-calculations';
 
-interface ISelectOption { value: number; text: string; disabled?: boolean; }
+interface ISelectOption { value: number; text: string; disabled?: boolean }
 
 @Component({
   components: {
@@ -85,6 +85,7 @@ export default class Home extends Vue {
   public dateEg = dateOrder.join('');
   @Inject('appData')
   private appData!: IAppData;
+
   @Prop({ default: '' })
   private wardName!: string;
 

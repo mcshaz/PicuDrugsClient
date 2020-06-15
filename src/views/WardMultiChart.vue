@@ -18,8 +18,7 @@ import VariableInfusions from '@/components/VariableInfusions.vue';
 import { IMultiWardChartData } from '@/components/ComponentCommunication';
 import { WardLists, IDrugDB, IEntityBolusDrug, IEntityFixedInfusionDrug, IRegisterEmail } from '@/services/drugDb';
 import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM, daysPerMonth } from '@/services/infusion-calculations';
-
-import { weeksPerMonth } from '../services/anthropometry';
+// import { weeksPerMonth } from '../services/anthropometry';
 
 @Component({
   components: {
@@ -31,10 +30,13 @@ export default class WardMultiChart extends Vue {
   public boluses: Array<IEntityBolusDrug | IEntityFixedInfusionDrug | string> = [];
   @Prop({ required: true })
   private chartData!: IMultiWardChartData;
+
   @Inject('db')
   private db!: IDrugDB;
+
   @Inject('serverCom')
   private serverCom!: IRegisterEmail;
+
   public created() {
     if (!this.chartData) {
       this.$router.replace({ name: 'booklet' });

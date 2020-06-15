@@ -44,7 +44,7 @@ export class Lookup<TKey, TValue> {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
+// eslint-disable-next-line max-classes-per-file
 export class ToArrayMap<TValue, MValue> {
     private readonly pMatchedToIds: Array<[TValue, number[]]>;
     private readonly pKeyToMatchedIndex: Lookup<number, number>;

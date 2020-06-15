@@ -37,8 +37,8 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
-import { WardLists, IDrugDB } from '@/services/drugDb';
+import { Component, Vue, Prop } from 'vue-property-decorator';
+// import { WardLists, IDrugDB } from '@/services/drugDb';
 import { IVariableInfusionDrugVM, NumericRange } from '@/services/infusion-calculations';
 
 @Component

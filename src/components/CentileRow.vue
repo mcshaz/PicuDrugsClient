@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
+import { Component, Prop, Vue, Inject } from 'vue-property-decorator';
 import { UKWeightData, UKBMIData, UKLengthData, UKHeadCircumferenceData, CentileCollection } from '@/services/anthropometry/';
 import { centileString } from '@/services/utilities/centileString';
 import { ChildAge, msPerDay } from '@/services/infusion-calculations/PresentationClasses/Dosing/PatientDetails/ChildAge';
@@ -74,26 +74,37 @@ export interface ICentileVals {
 export default class CentileRow extends Vue implements ICentileVals {
     @Prop({ required: true })
     public dob!: Date | null;
+
     @Prop({ required: true })
     public isMale!: boolean;
+
     @Prop({ required: true })
     public weeksGestation!: vueNumber;
+
     @Prop({ required: true })
     public today!: Date;
+
     @Prop({ required: true })
     public wtKg!: vueNumber;
+
     @Prop({ required: true })
     public hcCm!: vueNumber;
+
     @Prop({ required: true })
     public lengthCm!: vueNumber;
+
     @Prop({ required: true })
     public measureDate!: Date | null;
+
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
+
     @Inject('bmiCentiles')
     private bmiCentiles!: UKBMIData;
+
     @Inject('lengthCentiles')
     private lengthCentiles!: UKLengthData;
+
     @Inject('hcCentiles')
     private hcCentiles!: UKHeadCircumferenceData;
 
@@ -125,15 +136,19 @@ export default class CentileRow extends Vue implements ICentileVals {
       this.$emit('bmi-change', returnVar);
       return returnVar;
     }
+
     public get wtCentile() {
       return this.getCentile(this.wtKg, this.wtCentiles);
     }
+
     public get lengthCentile() {
       return this.getCentile(this.lengthCm, this.lengthCentiles);
     }
+
     public get hcCentile() {
       return this.getCentile(this.hcCm, this.hcCentiles);
     }
+
     public get bmiCentile() {
       return this.getCentile(this.bmi, this.bmiCentiles);
     }

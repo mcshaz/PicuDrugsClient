@@ -16,11 +16,11 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue, Inject } from 'vue-property-decorator';
 import ChartType from '@/components/ChartType.vue';
-import { IPatientData } from '@/components/ComponentCommunication';
+// import { IPatientData } from '@/components/ComponentCommunication';
 import { IAppData, definedCharts } from '@/services/drugDb';
-import { sortByStringProp } from '@/services/utilities/sortByProp';
+// import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption {
   value: number;
@@ -42,22 +42,20 @@ export default class SetDefaults extends Vue {
   public created() {
     this.appData.getWardDefaults().then(wd => {
       if (wd) {
-        this.charts = wd.chartTypes,
+        this.charts = wd.chartTypes;
         this.wardAbbrev = wd.wardAbbrev;
       }
     });
   }
 
-  public submit(data: IPatientData) {
-    if ((this.$refs.form as HTMLFormElement).checkValidity()) {
-      this.appData
-        .setWardDefaults({
-          chartTypes: this.charts,
-          wardAbbrev: this.wardAbbrev,
-          formalSet: true,
-        })
-        .then(() => this.$router.push({ name: 'home' }));
-    }
+  public submit() {
+    this.appData
+      .setWardDefaults({
+        chartTypes: this.charts,
+        wardAbbrev: this.wardAbbrev,
+        formalSet: true,
+      })
+      .then(() => this.$router.push({ name: 'home' }));
   }
 }
 </script>

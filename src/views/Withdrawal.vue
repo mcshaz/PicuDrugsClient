@@ -167,23 +167,23 @@
         </form>
       </validation-observer>
     </b-row>
-  <div>
+  </div>
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import NHI from '@/components/NhiInput.vue';
 import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSelectGroup.vue';
 import { toGrouping } from '@/services/drugDb';
-import { withdrawalDrugs, IDrug, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
-import { roundToFixed, roundToPrecision, ChildAge } from '@/services/infusion-calculations/';
-import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
+import { withdrawalDrugs, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
+import { roundToPrecision, ChildAge } from '@/services/infusion-calculations/';
+// import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize';
 import { BAlert } from 'bootstrap-vue';
 import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
-import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { createPDF } from '@/services/pdf-generation/create-filled-data-pdf-lib';
 
 // import { regexDescribe } from '@/services/validation/regexDescribe';
 // import jsPDF from 'jspdf';
@@ -195,13 +195,13 @@ type vueNumber = number | '';
 const emptyObj = Object.freeze({});
 const emptyArray = Object.freeze([]) as [];
 const ddOpts = Object.freeze(Array.from(toGrouping(withdrawalDrugs, (d) => d.drugClass)));
-interface IDoseUnits { dose?: number; units?: string; }
+interface IDoseUnits { dose?: number; units?: string }
 const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 
 @Component({
   components: {
-    // AgeValidatedWeight,
-
+    AgeValidatedWeight,
+    NHI,
     ValidatedInputSelectGroup,
     BAlert,
   },
@@ -242,12 +242,15 @@ export default class Withdrawal extends Vue {
     if (!this.originalDrugName) { return; }
     return withdrawalDrugs.find((wd) => wd.name === this.originalDrugName);
   }
+
   public get concentrations() {
     return this.originalDrug ? this.originalDrug.concentrations : emptyArray;
   }
+
   public get conversionDrugs() {
     return this.originalDrug ? this.originalDrug.conversion : emptyObj;
   }
+
   public get concLabel() {
     if (this.isPatch) {
       return { label: 'Patch strength:', description: 'strength' };
@@ -257,27 +260,34 @@ export default class Withdrawal extends Vue {
     }
     return { label: '1 ml/hr =', description: 'concentration' };
   }
+
   public get hasDifferentDefaults() {
     return !!(this.originalConcUnits && this.originalConcUnits.default);
   }
+
   public get isPatch() {
     return this.originalDrug && this.originalDrug.adminRoute === adminRoute.patch;
   }
+
   public get isDailyDrugRequired() {
     return !!(this.originalDrug && this.originalDrug.concentrations.length);
   }
+
   public get isClonidine() {
     return this.weaningDrug === 'clonidine';
   }
+
   public get isChloral() {
     return this.originalDrug && this.originalDrug.name === 'chloral hydrate';
   }
+
   public get original24HrUnits() {
     if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
       return 'doses';
     }
     return 'ml';
   }
+
   public get original24HrCalc(): IDoseUnits {
     if (this.originalConcUnits && this.originalConcVal && this.originalConcVal > 0) {
       if (this.originalConcUnits.units === 'TTS') {
@@ -328,22 +338,28 @@ export default class Withdrawal extends Vue {
       }
     }
   }
+
   public get weaningDoseUnits() {
     if (!this.weaningDrug) { return ''; }
     return this.weaningDrug === 'clonidine' ? 'microg' : 'mg';
   }
+
   public get isWeaningDoseMax() {
     return this.totalWeaning24Hrs && this.totalWeaning24Hrs.dailyCommence === this.totalWeaning24Hrs.maxPerDay;
   }
+
   public get clonidineWeanInfo() {
     return this.isClonidine && this.wtKg
       ? { wtKg: this.wtKg, rapidWean: this.rapidClonidineWean }
       : null;
   }
+
   public get linearWeanInfo() {
     return !this.isClonidine && this.weaningDrug && this.weanDuration
-      ? { weanOverDays: this.weanDuration,
-        weanAlternateDays: !this.weanDaily }
+      ? {
+        weanOverDays: this.weanDuration,
+        weanAlternateDays: !this.weanDaily,
+      }
       : null;
   }
 
@@ -375,6 +391,7 @@ export default class Withdrawal extends Vue {
       }
     }
   }
+
   public clearAll() {
     this.wtKg = '';
     this.ddOpts = ddOpts;
@@ -396,16 +413,24 @@ export default class Withdrawal extends Vue {
   }
 
   public async createPDF() {
-    const pdfBytes = await fetch('/pdf/WeaningProtocol.pdf').then(res => res.arrayBuffer());
-    const pdfDoc = await PDFDocument.load(pdfBytes, {updateMetadata: true});
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    createPDF({
+      name: this.ptName,
+      nhi: this.nhi,
+      weight: this.wtKg as number,
+      medicine: this.weaningDrug,
+      dob: this.age!.dob!,
+      prescriber: this.prescriber,
+      doseUnits: this.weaningDoseUnits,
+      route: 'oral/NG',
+      regime: this.createWeanInfo(),
+    }, '/pdf/WeaningProtocol.pdf');
   }
 
   public createWeanInfo() {
     // :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
     // :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits">
     if (!this.totalWeaning24Hrs) {
-      throw new Error("validation problem - allowed to submit createPDF but not all data present");
+      throw new Error('validation problem - allowed to submit createPDF but not all data present');
     }
     let individualDose = this.totalWeaning24Hrs.dailyCommence * this.totalWeaning24Hrs.qH / 24;
     if (this.linearWeanInfo) {
@@ -427,7 +452,7 @@ export default class Withdrawal extends Vue {
       }
       return returnVar.concat(exponentialWean(individualDose, 0.5, 4, this.totalWeaning24Hrs.qH, startWeanDate));
     }
-    throw new Error("linear and clonidine wean info both unavailable");
+    throw new Error('linear and clonidine wean info both unavailable');
   }
 
   public openThenNav(target: HTMLAnchorElement) {
@@ -438,14 +463,16 @@ export default class Withdrawal extends Vue {
       this.notifyShown();
     }
   }
+
   public notifyShown() {
     if (this.navTarget) {
       this.navTarget.parentElement!.scrollIntoView({ behavior: 'smooth' });
       this.navTarget = null;
     }
   }
-  private getNumber(val?: numberOrFunc, val2?: numberOrFunc) {
-    for (const v of arguments) {
+
+  private getNumber(...vals: Array<numberOrFunc | undefined>) {
+    for (const v of vals) {
       switch (typeof v) {
         case 'function':
           if (this.wtKg) {
@@ -457,6 +484,7 @@ export default class Withdrawal extends Vue {
       }
     }
   }
+
   private fieldTouched(fieldName: string) {
     const field = (this.$refs.mainObserver as any).fields[fieldName];
     return field && field.touched;

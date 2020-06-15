@@ -9,7 +9,7 @@ import DateInput from './DateInput.vue';
 export default {
   title: 'formGroups/DateInput',
   decorators: [
-    () => ({ template: `<form style="margin: 1em;"><story/></form>` }),
+    () => ({ template: '<form style="margin: 1em;"><story/></form>' }),
     // withKnobs,
   ],
 };

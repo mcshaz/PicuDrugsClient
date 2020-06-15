@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Watch, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins } from 'vue-property-decorator';
 import ValidatedDateEl from '@/mixins/ValidatedDateEl';
 import VModelReflector from '@/mixins/VModelReflector';
 import { mergeValidators } from '@/services/validation/mergeValidators';

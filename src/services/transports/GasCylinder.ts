@@ -12,7 +12,7 @@ export const cylinderSizes = Object.freeze({
   D2: new GasCylinder(1570),
   G: new GasCylinder(7290),
   M122: new GasCylinder(3455, 'fixed-wing'),
-  ME: new GasCylinder(1600, 'rotary-wing')
+  ME: new GasCylinder(1600, 'rotary-wing'),
 });
 
 export const pressureToKpa = {

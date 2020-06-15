@@ -86,15 +86,14 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import {
   timeInCentre,
   getAirportDriveTime,
   getMMHDrive,
-  getWaitakereDrive,
-  IStats
+  getWaitakereDrive
 } from '@/services/transports/roadTimes';
-import { hospitals, IHospital } from '@/services/transports/timeData';
+import { hospitals } from '@/services/transports/timeData';
 import DurationDisplay from '@/components/DurationDisplay.vue';
 import DurationStats from '@/components/DurationStats.vue';
 import ValidatedDateTimeGroup from '@/components/formGroups/ValidatedDateTimeGroup.vue';
@@ -109,7 +108,7 @@ type modes = 'prop' | 'jet' | 'road' | 'rotary' | '';
   },
 })
 export default class TransportTimes extends Vue {
-  public hospitalName: string = '';
+  public hospitalName = '';
   public hospitalNames: string[] = []
   public mode: modes = '';
   public arriveDest: Date | null = null;

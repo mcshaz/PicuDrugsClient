@@ -9,7 +9,7 @@ import { updatableAttrFactory } from '@/services/storybook/updatableAttrFactory'
 
 export default {
   title: 'formGroups/ValidatedInputSelectGroup',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` }), withKnobs],
+  decorators: [() => ({ template: '<form style="margin: 1em;"><story/></form>' }), withKnobs],
 };
 
 const getTemplate = updatableAttrFactory(`<validated-input-select-group label="test input" :value="val" :disabled="isDisabled" @input="input($event)" :select-value="units" @update:select-value="select($event)">

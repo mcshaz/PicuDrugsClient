@@ -8,7 +8,7 @@ import { updatableAttrFactory } from '@/services/storybook/updatableAttrFactory'
 
 export default {
   title: 'components/AgeValidatedWeight',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` }), withKnobs],
+  decorators: [() => ({ template: '<form style="margin: 1em;"><story/></form>' }), withKnobs],
 };
 
 const getTemplate = updatableAttrFactory(`<age-validated-weight v-model="val" :weeks-gestation="40" :child-age="childAge" :is-male="isMale"

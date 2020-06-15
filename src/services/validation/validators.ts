@@ -45,7 +45,7 @@ export const nhiChecksum: ValidationRuleSchema = {
 };
 
 function localeString(value: Date | string, includeTime = false) {
-  let limit = value instanceof Date
+  const limit = value instanceof Date
     ? value
     : new Date(value);
   return includeTime

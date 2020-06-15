@@ -6,6 +6,7 @@ export class NumericRange {
     }
     this.pPrecision = value;
   }
+
   get precision(): number {
     return this.pPrecision;
   }
@@ -13,39 +14,46 @@ export class NumericRange {
   get lowerBound(): number {
     return this.pLowerBound || 0;
   }
+
   set lowerBound(value: number) {
     if (this.pUpperBound! < value) {
       throw new RangeError('upperBound must be greater than lowerBound');
     }
     this.pLowerBound = value;
   }
+
   get upperBound(): number {
     return this.pUpperBound || 0;
   }
+
   set upperBound(value: number) {
     if (this.pLowerBound! > value) {
       throw new RangeError('upperBound must be greater than lowerBound');
     }
     this.pUpperBound = value;
   }
+
   public get isEmpty(): boolean {
     return this.pLowerBound === void 0 && this.pUpperBound === void 0;
   }
+
   public static opMultiply(rng: NumericRange, multiplier: number): NumericRange {
     return new NumericRange(rng.lowerBound * multiplier, rng.upperBound * multiplier);
   }
+
   public static opDivision(rng: NumericRange, divisor: number): NumericRange {
     return new NumericRange(rng.lowerBound / divisor, rng.upperBound / divisor);
   }
+
   public static sigFigures(val: number, precision = 2) {
     return Number((val).toPrecision(precision));
   }
 
   public rounding: roundingMethod = roundingMethod.toPrecision;
-  public separator: string = '–';
+  public separator = '–';
   private pLowerBound?: number;
   private pUpperBound?: number;
-  private pPrecision: number = 2;
+  private pPrecision = 2;
   constructor(val1?: number, val2?: number) {
     if (val1 !== void 0) {
       if (val2 !== void 0) {
@@ -61,6 +69,7 @@ export class NumericRange {
       }
     }
   }
+
   public toString(): string {
     if (this.isEmpty) {
       throw new Error('toString called without upper or lower set');
@@ -73,6 +82,7 @@ export class NumericRange {
     }
     return this.makeString(this.lowerBound as number) + this.separator + this.makeString(this.upperBound as number);
   }
+
   public avg(round = false) {
     if (this.isEmpty) {
       throw new Error('avg called without upper or lower set');
@@ -90,14 +100,17 @@ export class NumericRange {
       ? Math.round(returnVar)
       : returnVar;
   }
+
   public floor(floor: number) {
     if (this.lowerBound < floor) { this.lowerBound = floor; }
     if (this.upperBound < floor) { this.upperBound = floor; }
   }
+
   public cap(cap: number) {
     if (this.lowerBound > cap) { this.lowerBound = cap; }
     if (this.upperBound > cap) { this.upperBound = cap; }
   }
+
   public apply(transform: (n: number) => number) {
     if (this.lowerBound !== void 0) {
       this.lowerBound = transform(this.lowerBound);
@@ -106,6 +119,7 @@ export class NumericRange {
       this.upperBound = transform(this.upperBound);
     }
   }
+
   private makeString(val: number): string {
     switch (this.rounding) {
       case roundingMethod.noRounding:

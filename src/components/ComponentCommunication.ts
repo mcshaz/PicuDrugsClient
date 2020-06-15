@@ -6,12 +6,12 @@ export interface IPatientData { name: string; nhi: string; weeksGestation: numbe
     age: ChildAge | null; isMale: boolean | null; isWtEstimate: boolean; weightKg: number;
     centileString: string; }
 
-export interface IWardChartBase { charts: definedCharts[]; ward: IEntityWard; }
+export interface IWardChartBase { charts: definedCharts[]; ward: IEntityWard }
 
 export interface IWardChartData extends IPatientData, IWardChartBase { }
 
-export interface IInfusionData extends IPatientData { drug: IEntityInfusion; age: ChildAge; }
+export interface IInfusionData extends IPatientData { drug: IEntityInfusion; age: ChildAge }
 
-export interface IMultiWeightInfo { estAge: IMedianMatchResult; wtKg: number; }
+export interface IMultiWeightInfo { estAge: IMedianMatchResult; wtKg: number }
 
-export interface IMultiWardChartData extends IWardChartBase { weights: IMultiWeightInfo[]; updateEmail: string; }
+export interface IMultiWardChartData extends IWardChartBase { weights: IMultiWeightInfo[]; updateEmail: string }

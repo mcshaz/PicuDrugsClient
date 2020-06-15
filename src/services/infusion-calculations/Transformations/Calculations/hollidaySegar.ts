@@ -22,4 +22,5 @@ export function dailyMaintenanceFluid(weightKg: number): number {
 export function fullplus5(weightKg: number) {
   let dailyMl = dailyMaintenanceFluid(weightKg);
   dailyMl += weightKg * 5 * 10;
+  return dailyMl;
 }

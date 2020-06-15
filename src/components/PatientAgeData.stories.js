@@ -8,10 +8,10 @@ import { ChildAge } from '@/services/infusion-calculations';
 
 export default {
   title: 'components/PatientAgeData',
-  decorators: [() => ({ template: `<form novalidate style="margin: 1em;"><story/></form>` })],
+  decorators: [() => ({ template: '<form novalidate style="margin: 1em;"><story/></form>' })],
 };
 
-const getTemplate = updatableAttrFactory(`<patient-age-data :value="age" @input="input($event)"/>`);
+const getTemplate = updatableAttrFactory('<patient-age-data :value="age" @input="input($event)"/>');
 
 const getBaseObj = (val = null, attr = void 0) => ({
   template: getTemplate.insert(attr),
