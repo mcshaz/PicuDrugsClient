@@ -15,20 +15,23 @@ export class PdfTableValues {
   public setCoords(txt: string[], opts: ICoordOptions & PDFPageDrawTextOptions = {}) {
     const { rowNo = 0, getWidth = () => 0 } = opts;
     const totalGridsPerPage = this.gridsPerPage[0] * this.gridsPerPage[1];
-    const startPageY = this.startCoord[1] + rowNo * this.itemRowOffset;
     let currentPage = 0;
     let pg!: PDFPage;
+    let lastWidth = 0;
+    const startPageY = this.startCoord[1] + rowNo * this.itemRowOffset;
     for (let currentCell = 0; currentCell < txt.length; ++currentCell) {
-      const step = getWidth(txt[currentCell]) / 2;
+      const txtWidth = getWidth(txt[currentCell]) / 2;
+      // all a bit funky - the doc is rotated 180 degrees, so origin is upper right
       if (currentCell % totalGridsPerPage === 0) {
         pg = this.doc.getPage(currentPage++);
-        pg.moveTo(this.startCoord[0] - step, startPageY);
+        pg.moveTo(this.startCoord[0] + txtWidth, startPageY);
       } else if (currentCell % this.gridsPerPage[0] === 0) {
-        pg.moveTo(this.startCoord[0] - step, this.startCoord[1] + this.offsetCoord[1] * (currentCell / this.gridsPerPage[0]));
+        pg.moveTo(this.startCoord[0] + txtWidth, startPageY + this.offsetCoord[1] * (currentCell / this.gridsPerPage[0]));
       } else {
-        pg.moveRight(this.offsetCoord[0] - step);
+        pg.moveLeft(this.offsetCoord[0] + lastWidth - txtWidth);
       }
       pg.drawText(txt[currentCell], opts);
+      lastWidth = txtWidth;
     }
   }
 }

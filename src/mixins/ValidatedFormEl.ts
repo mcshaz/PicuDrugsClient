@@ -53,8 +53,9 @@ export default class ValidatedFormEl extends Mixins(StateWatcher, LabelColWidth)
         }
       }
       this.pErrorLabel = this.errorLabel || label;
-      this.pName = this.name || label.replace(/[^\w]+/g, '-');
-      if (!/\w+/.test(this.pName)) {
+      this.pName = this.name || label.replace(/^[0-9]/, (n) => ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][Number(n)])
+        .replace(/[^\w]+/g, '_');
+      if (!/^\w+$/.test(this.pName)) {
         this.pName = 'inpt-el-' + (this as any)._uid;
       }
       this.invalidId = this.pName + '-live-feedback';

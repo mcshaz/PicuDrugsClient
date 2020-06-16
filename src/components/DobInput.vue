@@ -52,8 +52,11 @@ export default class DobInput extends Mixins(LabelColWidth) {
 
     public set dob(value: Date | null) {
       if (this.pDob !== value) {
+        // user is still typing or changing the date
         this.pDob = value;
-        this.$emit('input', value);
+        if (value == null || value.getFullYear() > 999) {
+          this.$emit('input', value);
+        }
       }
     }
 

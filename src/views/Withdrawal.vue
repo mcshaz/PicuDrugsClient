@@ -83,17 +83,20 @@
           </b-collapse>
         </b-card>
       </b-col>
-      <validation-observer v-slot="{ invalid, handleSubmit }" slim>
+      <validation-observer v-slot="{ invalid, handleSubmit }" slim ref="mainObserver">
         <form class="col-lg-5 order-lg-1" novalidate autocomplete="off" @submit.prevent="handleSubmit(createPDF)" @reset.prevent="clearAll">
-          <b-form-group label="Patient details" label-cols-xl="3" id="patient-details" label-size="lg">
-            <validated-input-group label="Name" label-cols-lg="2" label-align-lg="right" type="text" v-model="ptName"
-              placeholder="Patient Name" trim/>
-            <nhi-input v-model="nhi" label-cols-lg="2"/>
-            <patient-age-data v-model="age" label-cols-lg="2"/>
-            <age-validated-weight :require-age="true" v-model="wtKg" :age="age"/>
+          <b-form-group label="Patient details" id="patient-details" label-size="lg">
+            <validated-input-group label="Surname" type="text" v-model="lastNm"
+              placeholder="Family Name" trim/>
+            <validated-input-group label="Given Name" type="text" v-model="firstNm"
+              placeholder="Given Name" trim/>
+            <nhi-input v-model="nhi"/>
+            <dob-input v-model="dob"/>
+            <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
+            <age-validated-weight :require-age="true" v-model="wtKg" :age="age" :allowMedianWeight="false" :is-male="isMale"/>
           </b-form-group><!--/patient-details-->
           <hr>
-          <b-form-group  label-cols-xl="3" id="original-Rx" label-size="lg">
+          <b-form-group  id="original-Rx" label-size="lg">
             <template #label>
               Original pain/sedative <font-awesome-icon icon="prescription"/>
             </template>
@@ -131,7 +134,7 @@
           <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !isChloral">
             This equates to a total {{originalDrug.name}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
           </div>
-          <b-form-group label="Weaning plan" label-cols-xl="3" id="weaning-med" label-size="lg">
+          <b-form-group label="Weaning plan" id="weaning-med" label-size="lg">
             <validated-select-group name="weaning-med" label="Oral" v-model="weaningDrug">
               <template>
                 <option value="" disabled>Please select …</option>
@@ -160,10 +163,10 @@
             <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
           </div>
           <hr>
-          <validated-input-group label="Prescriber name" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
+          <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
           <hr>
-          <button type="submit" class="btn btn-success mb-4 ml-2" :disabled="invalid"><font-awesome-icon icon="print"/> Create <font-awesome-icon icon="file-pdf"/></button>
-          <button type="reset" class="btn btn-warning mb-4">Clear All <font-awesome-icon icon="eraser"/></button>
+          <button type="submit" class="btn btn-success mb-4" :disabled="invalid"><font-awesome-icon icon="print"/> Create <font-awesome-icon icon="file-pdf"/></button>
+          <button type="reset" class="btn btn-warning mb-4 ml-2">Clear All <font-awesome-icon icon="eraser"/></button>
         </form>
       </validation-observer>
     </b-row>
@@ -173,8 +176,11 @@
 import 'reflect-metadata';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
-import NHI from '@/components/NhiInput.vue';
+import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
+import NhiInput from '@/components/NhiInput.vue';
 import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSelectGroup.vue';
+import DobInput from '@/components/DobInput.vue';
+import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import { toGrouping } from '@/services/drugDb';
 import { withdrawalDrugs, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
 import { roundToPrecision, ChildAge } from '@/services/infusion-calculations/';
@@ -183,7 +189,7 @@ import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSi
 import { BAlert } from 'bootstrap-vue';
 import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
-import { createPDF } from '@/services/pdf-generation/create-filled-data-pdf-lib';
+import { createAndDownloadPDF } from '@/services/pdf-generation/create-filled-data-pdf-lib';
 
 // import { regexDescribe } from '@/services/validation/regexDescribe';
 // import jsPDF from 'jspdf';
@@ -201,8 +207,11 @@ const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 @Component({
   components: {
     AgeValidatedWeight,
-    NHI,
+    NhiInput,
     ValidatedInputSelectGroup,
+    DobInput,
+    ValidatedBoolRadioGroup,
+    ValidatedInputGroup,
     BAlert,
   },
 })
@@ -214,9 +223,11 @@ export default class Withdrawal extends Vue {
   public weanDuration: vueNumber = '';
   public original24HrVol: vueNumber = '';
   public weanDaily = true;
-  public age: ChildAge | null = null;
-  public ptName = '';
+  public dob: Date | null = null;
+  public firstNm = '';
+  public lastNm = '';
   public nhi = '';
+  public isMale: boolean | null = null;
   public opiodBenzoVis = getViewportSize() >= bootstrapSizes.lg;
   public clonidineVis = false;
   public picuVolVis = false;
@@ -363,6 +374,12 @@ export default class Withdrawal extends Vue {
       : null;
   }
 
+  public get age() {
+    return this.dob
+      ? new ChildAge({ dob: this.dob })
+      : null;
+  }
+
   @Watch('originalDrug')
   @Watch('wtKg')
   public setDefaultUnits() {
@@ -402,9 +419,12 @@ export default class Withdrawal extends Vue {
     this.originalConcUnits = null;
     this.weanDaily = true;
     this.nhi = '';
-    this.age = null;
-    this.ptName = '';
+    this.firstNm = '';
+    this.lastNm = '';
+    this.isMale = null;
+    this.dob = null;
     this.weaningDrug = '';
+    this.rapidClonidineWean = false;
     this.opiodBenzoVis = false;
     this.clonidineVis = false;
     this.picuVolVis = false;
@@ -413,17 +433,19 @@ export default class Withdrawal extends Vue {
   }
 
   public async createPDF() {
-    createPDF({
-      name: this.ptName,
+    createAndDownloadPDF({
+      firstN: this.firstNm,
+      lastN: this.lastNm,
+      isMale: this.isMale,
       nhi: this.nhi,
       weight: this.wtKg as number,
       medicine: this.weaningDrug,
-      dob: this.age!.dob!,
+      dob: this.dob!,
       prescriber: this.prescriber,
       doseUnits: this.weaningDoseUnits,
       route: 'oral/NG',
       regime: this.createWeanInfo(),
-    }, '/pdf/WeaningProtocol.pdf');
+    });
   }
 
   public createWeanInfo() {

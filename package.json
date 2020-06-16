@@ -43,6 +43,7 @@
     "@storybook/vue": "^5.3.19",
     "@types/chai": "^4.2.11",
     "@types/chai-almost": "^1.0.1",
+    "@types/downloadjs": "^1.4.2",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lolex": "^5.1.0",
     "@types/mocha": "^7.0.2",

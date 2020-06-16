@@ -1,6 +1,6 @@
 <template>
   <validation-observer v-slot="observerCtxt" slim>
-    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
+    <b-form-group label-for="weight" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl" label="Weight:"
         label-align-lg="right" :state="getAndStoreState(observerCtxt)">
       <template #description v-if="lbWtCentile!==null">
         <output name="centile" id="centile" ref="centile" :class="centileClass">
@@ -54,6 +54,7 @@ import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/cen
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { BFormCheckbox } from 'bootstrap-vue';
 import StateWatcher, { IValCtxt } from '@/mixins/StateWatcher';
+import LabelColWidth from '@/mixins/LabelColWidth';
 import _ from 'lodash';
 import CombineErrors from '../mixins/CombineErrors';
 
@@ -62,7 +63,7 @@ type vueNumber = number | '';
 @Component({
   components: { PatientAgeData, NhiInput, ValidatedBoolRadioGroup, BFormCheckbox },
 })
-export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErrors) {
+export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErrors, LabelColWidth) {
   public lbWtCentile: ICentileVal | null = null;
   public ubWtCentile: ICentileVal | null = null;
 
@@ -95,10 +96,11 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
 
   // not to be watched
   private wtData!: UKWeightData;
-  private centileString?: string;
+  private centileString!: string;
 
   public beforeCreate() {
     this.wtData = new UKWeightData();
+    this.centileString = '';
   }
 
   public get alertLevel() {
@@ -184,7 +186,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   @Watch('ubWtCentile', { deep: true })
   @Watch('ubWtCentile', { deep: true })
   public watchCentilStr() {
-    const innerText = (this.$refs.centile as HTMLOutputElement).innerText;
+    const innerText = (this.$refs.centile as HTMLOutputElement)?.innerText || '';
     if (this.centileString !== innerText) {
       this.$emit('update:centile-string', (this.centileString = innerText));
     }

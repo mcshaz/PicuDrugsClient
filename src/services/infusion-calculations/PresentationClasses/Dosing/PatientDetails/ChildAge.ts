@@ -51,7 +51,7 @@ export class ChildAge implements IChildAge {
 
   public static ageOnDate(dob: Date, current: Date = new Date()) {
     if (dob > current) {
-      throw new RangeError('DOB must be on or before current');
+      throw new RangeError('DOB must be on or before current date');
     }
     const returnVar: IChildExactAge = {
       years: current.getFullYear() - dob.getFullYear(),

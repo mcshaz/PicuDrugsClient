@@ -1,4 +1,5 @@
 import { ValidationRuleSchema } from 'vee-validate/dist/types/types';
+import { shortFormatter } from '@/services/utilities/dateHelpers';
 
 export const maxYears = 122;
 
@@ -49,8 +50,8 @@ function localeString(value: Date | string, includeTime = false) {
     ? value
     : new Date(value);
   return includeTime
-    ? limit.toLocaleString()
-    : limit.toLocaleDateString();
+    ? limit.toLocaleDateString(navigator.languages as string[])
+    : shortFormatter.format(limit);
 }
 
 function makeComparable(value: any) {

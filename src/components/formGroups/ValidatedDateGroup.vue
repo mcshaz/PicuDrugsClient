@@ -24,8 +24,8 @@ export default class ValidatedDateGroup extends Mixins(ValidatedDateEl, VModelRe
   get pRules() {
     return mergeValidators(this.rules, {
       required: this.required,
-      after: this.min ? [this.min] : false,
-      before: this.max ? [this.max] : false,
+      after: this.min ? { limit: this.min } : false,
+      before: this.max ? { limit: this.max } : false,
     });
   }
 }
