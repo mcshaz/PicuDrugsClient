@@ -12,6 +12,7 @@ export class Lms {
       oppFraction * this.s + fraction * interpolWith.s
     );
   }
+
   public zFromParam(param: number) {
     if (this.l === 0) {
       return Math.log(param / this.m) / this.s;

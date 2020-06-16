@@ -22,17 +22,20 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Mixins } from 'vue-property-decorator';
 import ValidatedInputEl from '@/mixins/ValidatedInputEl';
 
 @Component
 export default class ValidatedInputGroup extends Mixins(ValidatedInputEl) {
     @Prop({ default: void 0 })
     rangeValue?: string;
+
     @Prop({ default: void 0 })
     append?: string;
+
     @Prop({ default: void 0 })
     datalist?: Array<string | number>;
+
     @Prop({ default: void 0 })
     pattern?: string;
 
@@ -59,6 +62,7 @@ export default class ValidatedInputGroup extends Mixins(ValidatedInputEl) {
         ? this.pName + '-datalist'
         : void 0;
     }
+
     private _counter = 0;
     log(v: any) {
       ++this._counter;

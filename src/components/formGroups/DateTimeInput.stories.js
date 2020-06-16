@@ -7,7 +7,7 @@ import DateTimeInput from './DateTimeInput.vue';
 
 export default {
   title: 'formGroups/DateTimeInput',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` })],
+  decorators: [() => ({ template: '<form style="margin: 1em;"><story/></form>' })],
 };
 
 const baseObj = {

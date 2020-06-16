@@ -8,7 +8,7 @@ import { mapProperties } from '../../helpers/mapProperties';
 export function filterFixedDilutionsForPt(drug: IEntityFixedInfusionDrug, weightKg: number, ageMonths?: number): IPatientFixedInfusionDrug | undefined {
   return filterFixedInfusionsForPt([drug], weightKg, ageMonths)[0];
 }
-export function filterFixedInfusionsForPt(infusions: IEntityFixedInfusionDrug[], weightKg: number, ageMonths: number = 600): IPatientFixedInfusionDrug[] {
+export function filterFixedInfusionsForPt(infusions: IEntityFixedInfusionDrug[], weightKg: number, ageMonths = 600): IPatientFixedInfusionDrug[] {
   if (weightKg > maxWeight) { weightKg = maxWeight; }
   if (weightKg < minWeight) { throw new Error(`weight of ${weightKg * 1000}g below lower limit of ${minWeight * 1000}g`); }
   const ageWt: IAgeWeightDetails = { ageMonths, weightKg };

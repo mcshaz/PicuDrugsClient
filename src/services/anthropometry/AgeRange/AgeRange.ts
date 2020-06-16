@@ -24,11 +24,13 @@ export abstract class AgeRange {
       this.minAge = minAge;
       this.maxAge = minAge + lookup.length - 1;
     }
+
     public abstract toAgeUnits(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer): number;
     public lookupAgeDays(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
       const ageUnits = this.toAgeUnits(ageDaysSinceBirth, gestAgeWeeksAtBirth);
       return this.findStats(ageUnits);
     }
+
     public isAgeIncluded(ageDaysSinceBirth: integer, gestAgeWeeksAtBirth: integer) {
       const ageUnits = this.toAgeUnits(ageDaysSinceBirth, gestAgeWeeksAtBirth);
       return this.isValueInRange(ageUnits);
@@ -41,6 +43,7 @@ export abstract class AgeRange {
     public maxLms() {
       return this.lookup[this.lookup.length - 1];
     }
+
     protected findStats(value: number): IRangeMatchResult {
       const returnVar = { matchResult: this.isValueInRange(value) } as IRangeMatchResult;
       if (returnVar.matchResult === searchComparison.inRange) {
@@ -50,6 +53,7 @@ export abstract class AgeRange {
       }
       return returnVar;
     }
+
     protected isValueInRange(value: number): searchComparison {
       if (value < this.minAge) {
         return searchComparison.lessThanMin;
@@ -59,6 +63,7 @@ export abstract class AgeRange {
       }
       return searchComparison.inRange;
     }
+
     protected findAndlinearInterpolate(age: number) {
       const minLookup = age - this.minAge;
       if (Number.isInteger(minLookup)) {

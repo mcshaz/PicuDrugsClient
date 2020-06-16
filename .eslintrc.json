@@ -6,7 +6,7 @@
     "extends": [
       "plugin:vue/essential",
       "@vue/standard",
-      "@vue/typescript"
+      "@vue/typescript/recommended"
     ],
     "rules": {
       "space-before-function-paren": [
@@ -17,7 +17,20 @@
         "error",
         "always"
       ],
+      "@typescript-eslint/no-non-null-assertion": 0,
+      "@typescript-eslint/no-explicit-any": 0,
+      "@typescript-eslint/interface-name-prefix": [
+        "error",
+        {
+          "prefixWithI": "always"
+        }
+      ],
+      "@typescript-eslint/no-use-before-define": 0,
+      "no-void": 0,
+      "no-undefined": 1,
+      "no-case-declarations": 0,
       "no-useless-constructor": 0,
+      "@typescript-eslint/no-unused-vars": [2, { "argsIgnorePattern": "^_" }],
       "no-debugger": 1,
       "comma-dangle": [
         "error",
@@ -28,7 +41,7 @@
       ]
     },
     "parserOptions": {
-      "parser": "@typescript-eslint/parser"
+      "ecmaVersion": 2020
     },
     "overrides": [
       {

@@ -1,6 +1,6 @@
 import { WeanDay } from './WeanDay';
 
-export function linearWean(startingDose: number, fractionReduction: number, finishingDose = 0) {
+export function linearWean(startingDose: number, fractionReduction: number, qHourly: number, finishingDose = 0) {
   const dt = new Date();
   dt.setHours(0, 0, 0, 0);
   const returnVar = [] as WeanDay[];
@@ -8,7 +8,8 @@ export function linearWean(startingDose: number, fractionReduction: number, fini
   let i = 0;
   while (startingDose - finishingDose >= 0.05) {
     const wean = new WeanDay(new Date(dt),
-      startingDose);
+      startingDose,
+      qHourlyToString(qHourly));
     wean.addDays(i);
     returnVar.push(wean);
     startingDose -= reduction;
@@ -17,8 +18,8 @@ export function linearWean(startingDose: number, fractionReduction: number, fini
   return returnVar;
 }
 
-export function alternateWean(startingDose: number, days: number) {
-  let returnVar = linearWean(startingDose, 1 / Math.ceil(days / 2));
+export function alternateWean(startingDose: number, days: number, qHourly: number) {
+  let returnVar = linearWean(startingDose, 1 / Math.ceil(days / 2), qHourly);
   const oddCorrection = (days % 2 === 0) ? 0 : 1;
   // 6 over 6 days
   // odd 6 4 4 2 2
@@ -38,14 +39,15 @@ export function alternateWean(startingDose: number, days: number) {
   return returnVar;
 }
 
-export function exponentialWean(startingDose: number, fractionReduction: number, days: number, startDate?: Date) {
+export function exponentialWean(startingDose: number, fractionReduction: number, days: number, qHourly: number, startDate?: Date) {
   const dt = new Date(startDate as any);
   dt.setHours(0, 0, 0, 0);
   const returnVar = [] as WeanDay[];
   fractionReduction = (1 - fractionReduction);
   for (let i = 0; i < days; ++i) {
     const wean = new WeanDay(new Date(dt),
-      startingDose);
+      startingDose,
+      qHourlyToString(qHourly));
     if (wean.regularDose === 0) {
       break;
     }
@@ -54,4 +56,8 @@ export function exponentialWean(startingDose: number, fractionReduction: number,
     startingDose *= fractionReduction;
   }
   return returnVar;
+}
+
+function qHourlyToString(qHourly: number) {
+  return `Q ${qHourly} H`;
 }

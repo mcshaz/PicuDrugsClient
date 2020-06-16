@@ -1,7 +1,7 @@
 import { IServerChanges, IFetchUpdates } from '@/services/drugDb';
 
 const fileFetch: IFetchUpdates = {
-  async getDbUpdates(lastServerCheckUtc: Date | null) {
+  async getDbUpdates(_lastServerCheckUtc: Date | null) {
     let fileName = process.env.VUE_APP_BASE_URL! + process.env.VUE_APP_DBJSON!;
     // eslint-disable-next-line no-new-func
     if (new Function('try {return this===global;}catch(e){return false;}')()) {

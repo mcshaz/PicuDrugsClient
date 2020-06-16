@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: '/PicuDrugsClient/',
   pwa: {
     name: 'Children\'s Drug Calculator',
   },

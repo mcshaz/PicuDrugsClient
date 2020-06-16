@@ -5,7 +5,7 @@ import { IEntityVariableInfusionDrug } from '@/services/drugDb';
 import { mapProperties } from '../../helpers/mapProperties';
 
 // 600 chosen as default ageMonths as 1/2 way between min and max
-export function filterVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug[], weightKg: number, ageMonths: number = 600): IPatientVariableInfuionDrug[] {
+export function filterVariableInfusionsForPt(infusions: IEntityVariableInfusionDrug[], weightKg: number, ageMonths = 600): IPatientVariableInfuionDrug[] {
   if (weightKg > maxWeight) { weightKg = maxWeight; }
   if (weightKg < minWeight) { throw new Error(`weight of ${weightKg * 1000}g below lower limit of ${minWeight * 1000}g`); }
   const ageWt: IAgeWeightDetails = { ageMonths, weightKg };

@@ -6,7 +6,7 @@
         <validation-observer v-slot="{passes, invalid}" slim>
           <form novalidate @submit.prevent="passes(submit)" class="card p-2" autocomplete="off">
             <validated-input-group label="Patient Name" label-cols-lg="2" label-align-lg="right" type="text" v-model="name"
-                    placeholder="Patient Name" pattern="^[a-zA-Z]" trim/>
+              placeholder="Patient Name" trim/>
             <nhi-input v-model="nhi" label-cols-lg="2"/>
             <patient-age-data v-model="age" label-cols-lg="2"/>
             <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false" label-cols-lg="2"/>
@@ -52,15 +52,15 @@ import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
 import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import ChartType from '@/components/ChartType.vue';
 import NhiInput from '@/components/NhiInput.vue';
-import PatientAgeData from '@/components/PatientAgeData.vue';
+import PatientAgeData, { vueNumber } from '@/components/PatientAgeData.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import { IWardChartData } from '@/components/ComponentCommunication';
-import { IEntityWard, IAppData } from '@/services/drugDb';
+import { IEntityWard, IAppData, definedCharts } from '@/services/drugDb';
 import { dateOrder } from '@/services/utilities/dateHelpers';
-import { vueNumber } from '../components/PatientAgeData.vue';
+
 import { ChildAge } from '../services/infusion-calculations';
 
-interface ISelectOption { value: number; text: string; disabled?: boolean; }
+interface ISelectOption { value: number; text: string; disabled?: boolean }
 
 @Component({
   components: {
@@ -72,8 +72,7 @@ interface ISelectOption { value: number; text: string; disabled?: boolean; }
   },
 })
 export default class Home extends Vue {
-  public boluses = true;
-  public infusions = true;
+  private charts: definedCharts[] = [];
   private ward: IEntityWard | null = null;
   public name = '';
   public nhi = '';
@@ -86,6 +85,7 @@ export default class Home extends Vue {
   public dateEg = dateOrder.join('');
   @Inject('appData')
   private appData!: IAppData;
+
   @Prop({ default: '' })
   private wardName!: string;
 
@@ -105,14 +105,12 @@ export default class Home extends Vue {
 
   public submit() {
     this.appData.setWardDefaults({
-      boluses: this.boluses,
-      infusions: this.infusions,
+      chartTypes: this.charts,
       wardAbbrev: this.ward!.abbrev,
       formalSet: false,
     });
     const chartData: IWardChartData = {
-      boluses: this.boluses,
-      infusions: this.infusions,
+      charts: this.charts,
       ward: this.ward!,
       name: this.name,
       nhi: this.nhi,

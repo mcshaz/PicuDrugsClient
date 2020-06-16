@@ -57,8 +57,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
         appData: 'dataType',
         // ...other tables goes here...
       });
-      let promiseReject: (ev: PromiseRejectionEvent) => void;
-      promiseReject = (ev) => {
+      const promiseReject: (ev: PromiseRejectionEvent) => void = (ev) => {
         window.removeEventListener('unhandledrejection', promiseReject);
         if (ev.reason instanceof Error) {
           throw ev.reason;
@@ -95,7 +94,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
       }
     }
 
-    private async getPutAndDeleteData(updateChecked: Date | null, vip: boolean = false) {
+    private async getPutAndDeleteData(updateChecked: Date | null, vip = false) {
       const serverData = await this.updateProvider.getDbUpdates(updateChecked);
       this.logger.log(`dbdata returned from server @ ${serverData.updateCheckStart} consisting of ` +
             Object.keys(serverData.data).map((k) => `{${k}:length[${(serverData.data as any)[k].length}]}`)

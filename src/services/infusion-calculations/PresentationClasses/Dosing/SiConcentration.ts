@@ -12,15 +12,19 @@ export class SiConcentration extends SiUnitMeasure {
     }
     this.perSeperator = '/';
   }
+
   public toString(): string {
     return super.toString() + this.rate();
   }
+
   public toShortUserSafeString(): string {
     return this.isUserSafePrefix ? this.toShortString() : this.toString();
   }
+
   public toShortString(): string {
     return super.toShortString() + this.rate();
   }
+
   private rate(): string {
     return this.perSeperator + 'mL';
   }

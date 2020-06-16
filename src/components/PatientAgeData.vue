@@ -36,7 +36,7 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { ChildAge } from '@/services/infusion-calculations/';
-import { Component, Prop, Vue, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Prop, Mixins, Watch } from 'vue-property-decorator';
 import { maxYears } from '@/services/validation/validators';
 import DobInput from '@/components/DobInput.vue';
 import StateWatcher from '@/mixins/StateWatcher';
@@ -53,12 +53,16 @@ export type vueNumber = number | ''; // todo https://stackoverflow.com/questions
 export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) {
   @Prop({ required: true })
   value!: ChildAge | null;
+
   @Prop({ default: false })
   required!: boolean;
+
   @Prop({ default: false })
   disabled!: boolean;
+
   @Prop({ default: false })
   exact!: boolean;
+
   @Prop({ default: false })
   immediate!: boolean;
 
@@ -88,6 +92,7 @@ export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) 
     }
     return this.childAge.months === null ? '' : this.childAge.months;
   }
+
   public set months(months: vueNumber) {
     if (months === this.months) {
       return;
@@ -106,6 +111,7 @@ export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) 
     }
     return this.childAge.days === null ? '' : this.childAge.days;
   }
+
   public set days(days: vueNumber) {
     if (days === this.days) {
       return;
@@ -121,6 +127,7 @@ export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) 
   public get dob() {
     return this.childAge === null ? null : this.childAge.dob;
   }
+
   public set dob(dob: Date | null) {
     if (dob === this.dob) {
       return;
@@ -182,7 +189,7 @@ export default class PatientAgeData extends Mixins(StateWatcher, LabelColWidth) 
     }
   }
 
-  private minChange(value: Date) {
+  private minChange() {
     if (this.pAgeCalcDate) {
       const now = new Date();
       now.setHours(0, 0, 0, 0);

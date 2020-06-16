@@ -18,8 +18,7 @@ import VariableInfusions from '@/components/VariableInfusions.vue';
 import { IMultiWardChartData } from '@/components/ComponentCommunication';
 import { WardLists, IDrugDB, IEntityBolusDrug, IEntityFixedInfusionDrug, IRegisterEmail } from '@/services/drugDb';
 import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM, daysPerMonth } from '@/services/infusion-calculations';
-
-import { weeksPerMonth } from '../services/anthropometry';
+// import { weeksPerMonth } from '../services/anthropometry';
 
 @Component({
   components: {
@@ -31,10 +30,13 @@ export default class WardMultiChart extends Vue {
   public boluses: Array<IEntityBolusDrug | IEntityFixedInfusionDrug | string> = [];
   @Prop({ required: true })
   private chartData!: IMultiWardChartData;
+
   @Inject('db')
   private db!: IDrugDB;
+
   @Inject('serverCom')
   private serverCom!: IRegisterEmail;
+
   public created() {
     if (!this.chartData) {
       this.$router.replace({ name: 'booklet' });
@@ -46,7 +48,7 @@ export default class WardMultiChart extends Vue {
           () => (this as any).$bvToast.show('email-failed-toast'));
     }
     const wardList = new WardLists(this.db);
-    if (this.chartData!.infusions) {
+    if (this.chartData!.charts.includes('infusion')) {
       const allInfusions = wardList.getVariableInfusions(this.chartData.ward);
       for (const w of this.chartData.weights) {
         const ageMonths = w.estAge.gestation < 40
@@ -58,7 +60,7 @@ export default class WardMultiChart extends Vue {
         }));
       }
     }
-    if (this.chartData.boluses) {
+    if (this.chartData.charts.includes('bolus')) {
       wardList.getBolusDrugs(this.chartData.ward).then((data) => {
         this.boluses = data;
       });

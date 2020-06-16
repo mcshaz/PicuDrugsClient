@@ -62,14 +62,14 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
-import { cylinderSizes, pressureToKpa, GasCylinder } from '@/services/transports/GasCylinder';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { cylinderSizes } from '@/services/transports/GasCylinder';
 import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
 
 import SvgGasGuage from '@/components/SvgGasGuage.vue';
 import DurationDisplay from '@/components/DurationDisplay.vue';
 type vueNumber = number | '';
-const units = [ 'Bar/kPa', 'PSI' ] as const; // 'fraction'
+const units = ['Bar/kPa', 'PSI'] as const; // 'fraction'
 
 @Component({
   components: {
@@ -81,10 +81,10 @@ export default class GasCalcs extends Vue {
   public minVol: vueNumber = '';
   public fio2: vueNumber = 0.5;
   public o2Rate: vueNumber = 0;
-  public durationMins: number = 60;
+  public durationMins = 60;
   public cylinderSizes = cylinderSizes;
   public selectedSize: keyof typeof cylinderSizes = 'M122';
-  public startPressure: number = 0;
+  public startPressure = 0;
 
   public units = units;
   public selectedUnits = units[0];

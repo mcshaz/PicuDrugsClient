@@ -3,11 +3,11 @@ import { roundToFixed } from '@/services/infusion-calculations/';
 
 export type numberOrFunc = number | ((wtKg: number) => number);
 type qH = 4 | 6 | 8 | 12 | 24;
-interface IToDailyWean { dailyCommence: number; qH: qH; maxPerDay: number; }
+interface IToDailyWean { dailyCommence: number; qH: qH; maxPerDay: number }
 export type dailyWeanCommence = (daily: number, ageLt1: boolean) => IToDailyWean;
 
-interface IAgeDosing { maxPerDose: number; qH: qH; }
-function conversionFactory(args: { lt1: IAgeDosing, gte1: IAgeDosing}) {
+interface IAgeDosing { maxPerDose: number; qH: qH }
+function conversionFactory(args: { lt1: IAgeDosing; gte1: IAgeDosing}) {
   return (multiplier: number): dailyWeanCommence => {
     return (daily: number, ageLt1: boolean) => {
       const dailyCommence = roundToFixed(daily * multiplier);
@@ -34,10 +34,12 @@ const diazepamMultiplyBy = conversionFactory({
   lt1: { maxPerDose: 10, qH: 6 },
   gte1: { maxPerDose: 10, qH: 4 },
 });
-const clonidineConvert: IWeaningMed = { clonidine: conversionFactory({
-  lt1: { maxPerDose: 150, qH: 6 },
-  gte1: { maxPerDose: 300, qH: 6 },
-})(1.4) };
+const clonidineConvert: IWeaningMed = {
+  clonidine: conversionFactory({
+    lt1: { maxPerDose: 150, qH: 6 },
+    gte1: { maxPerDose: 300, qH: 6 },
+  })(1.4),
+};
 
 const enum drugClass {
     opiate = 'opiate infusions',
@@ -77,7 +79,7 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
   conversion: { morphine: morphineMultiplyBy(3) },
   concentrations: [
     { units: 'microg/kg/hr', min: 10, max: 40, default: 20 },
-    { units: 'mg/hr', min: 1, max: 4 } ],
+    { units: 'mg/hr', min: 1, max: 4 }],
 }, {
   name: 'IV fentanyl',
   drugClass: drugClass.opiate,
@@ -120,18 +122,23 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
   adminRoute: adminRoute.boluses,
   conversion: clonidineConvert,
   concentrations: [
-    { units: 'microg/dose',
+    {
+      units: 'microg/dose',
       min: (wtKg: number) => wtKg * 0.5,
       max: (wtKg: number) => wtKg * 2,
-      default: (wtKg: number) => wtKg }],
+      default: (wtKg: number) => wtKg,
+    }],
 }, {
   name: 'chloral hydrate',
   drugClass: drugClass.others,
   adminRoute: adminRoute.boluses,
-  conversion: { diazepam: (wtKg: number) => ({
-    dailyCommence: roundToFixed((wtKg > 100 ? 100 : wtKg) * 0.4),
-    qH: 6,
-    maxPerDay: 40 }) },
+  conversion: {
+    diazepam: (wtKg: number) => ({
+      dailyCommence: roundToFixed((wtKg > 100 ? 100 : wtKg) * 0.4),
+      qH: 6,
+      maxPerDay: 40,
+    }),
+  },
   concentrations: [ /*
             { units: 'mg/dose', min: (wtKg: number) => wtKg * 12.5, max: (wtKg: number) => wtKg * 100,
                 default: (wtKg: number) => wtKg * 25, totalDaily: totalDoses,

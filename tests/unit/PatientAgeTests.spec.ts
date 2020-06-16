@@ -58,7 +58,7 @@ describe('PatientAgeData.vue', () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     wrapper.find('#dob').setValue(ymdFormat(yesterday));
-    const emitted = wrapper.emitted()['age-data-change'];
+    const emitted = wrapper.emitted()['age-data-change']!;
     expect(emitted.length, 'ageDataChange emits.length').to.equal(1);
     expect(emitted[0].length, 'ageDataChange emits[0].length').to.equal(1);
     expect(emitted[0][0], 'emit data').to.deep.equal(new ChildAge(0, 0, 1));
@@ -69,7 +69,7 @@ describe('PatientAgeData.vue', () => {
     createExpect('days').to.equal(ageDays.toString());
     createExpect('months').to.equal('0');
     createExpect('years').to.equal('0');
-    const emitted = wrapper.emitted()['age-data-change'];
+    const emitted = wrapper.emitted()['age-data-change']!;
     expect(emitted.length, 'ageDataChange emits.length').to.equal(1);
     expect(emitted[0].length, 'ageDataChange emits[0].length').to.equal(1);
     expect(emitted[0][0], 'emit data').to.deep.equal(new ChildAge(0, 0, ageDays));
@@ -124,7 +124,7 @@ describe('PatientAgeData.vue', () => {
       createExpect('years').to.equal('0');
       createExpect('months').to.equal('0');
       createExpect('days').to.equal('0');
-      let emitted = wrapper.emitted()['age-data-change'];
+      let emitted = wrapper.emitted()['age-data-change']!;
       expect(emitted[0][0], 'emit data [0]').to.deep.equal(new ChildAge(0, 0, 0));
       expect(clock.countTimers(), 'countTimers').to.equal(1);
       clock.tick('00:59:00');
@@ -136,7 +136,7 @@ describe('PatientAgeData.vue', () => {
       createExpect('months').to.equal('0');
       createExpect('days').to.equal('1');
       expect(clock.countTimers()).to.equal(1);
-      emitted = wrapper.emitted()['age-data-change'];
+      emitted = wrapper.emitted()['age-data-change']!;
       expect(emitted.length, 'ageDataChange emits.length').to.equal(2);
       expect(emitted[0].length, 'ageDataChange emits[0].length').to.equal(1);
       expect(emitted[1].length, 'ageDataChange emits[1].length').to.equal(1);

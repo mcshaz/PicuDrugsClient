@@ -66,7 +66,7 @@ import { Component, Vue } from 'vue-property-decorator';
 // import PatientWeightData from '@/components/PatientWeightData.vue'; // @ is an alias to /src
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import PatientAgeData from '@/components/PatientAgeData.vue';
-import { anthroCalculations, applyAnthropometry } from '@/services/pharmacokinetics/anthroCalculations';
+import { anthroCalculations } from '@/services/pharmacokinetics/anthroCalculations';
 import { mcLarenObesityCorrection, mooreObesityCorrection, bmiObesityCorrection } from '@/services/anthropometry/helpers/obesityCorrections';
 import { UKWeightData, UKBMIData, UKLengthData } from '@/services/anthropometry/';
 import { ChildAge } from '@/services/infusion-calculations';
@@ -102,6 +102,7 @@ export default class WeightCalculations extends Vue {
       this.formulaGroups['Body Surface Area'] = bsa.get(true);
       this.formulaGroups.Allometry = bsa.get(false);
     }
+
     // computed
     public get description() {
       if (this.formula === '') { return ''; }
@@ -116,6 +117,7 @@ export default class WeightCalculations extends Vue {
       }
       return anthroCalculations.get(this.formula)!.description;
     }
+
     public get value() {
       if (this.formula === '') { return ''; }
       if (this.isCentileCalc) {
@@ -133,42 +135,56 @@ export default class WeightCalculations extends Vue {
         // else this.formula === centileCorrections.BMI
         return bmiObesityCorrection(this.heightCm, ageDays, this.isMale, this.bmiCentiles());
       }
-      return applyAnthropometry(anthroCalculations.get(this.formula)!, this.weightKg, this.heightCm, this.isMale) || '';
+      return anthroCalculations.get(this.formula)!.formula({
+        massKg: this.weightKg,
+        heightCm: this.heightCm,
+        isMale: this.isMale,
+      }) || '';
     }
+
     public get texFormulae() {
       if (!this.formula || this.isCentileCalc) { return emptyArray; }
       return anthroCalculations.get(this.formula)!.katex;
     }
+
     public get requireAge() {
       return this.formula === centileCorrections.Moore || this.formula === centileCorrections.BMI;
     }
+
     public get requireWeight() {
       const calc = anthroCalculations.get(this.formula);
       return calc === void 0 ? false : !!calc.requiresMassKg;
     }
+
     public get requireHeight() {
       if (this.isCentileCalc) { return true; }
       const calc = anthroCalculations.get(this.formula);
       return calc === void 0 ? false : !!calc.requiresHeightCm;
     }
+
     public get requireGender() {
       if (this.isCentileCalc) { return true; }
       const calc = anthroCalculations.get(this.formula);
       return calc === void 0 ? false : !!calc.requiresGender;
     }
+
     public get isBsa() {
       return isBsa(this.formula);
     }
+
     public get isCentileCalc() {
       return this.formula === centileCorrections.Moore || this.formula === centileCorrections.McLaren || this.formula === centileCorrections.BMI;
     }
+
     // methods - more lik properties, but vue will make them observable if written as such
     private weightCentiles() {
       return this.pWeightCentiles || (this.pWeightCentiles = new UKWeightData());
     }
+
     private lengthCentiles() {
       return this.pLengthCentiles || (this.pLengthCentiles = new UKLengthData());
     }
+
     private bmiCentiles() {
       return this.pBmiCentiles || (this.pBmiCentiles = new UKBMIData());
     }

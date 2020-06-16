@@ -10,7 +10,7 @@ import { updatableAttrFactory } from '@/services/storybook/updatableAttrFactory'
 export default {
   title: 'formGroups/ValidatedInputGroup',
   decorators: [
-    () => ({ template: `<form style="margin: 1em;"><story/></form>` }),
+    () => ({ template: '<form style="margin: 1em;"><story/></form>' }),
     withKnobs,
   ],
 };

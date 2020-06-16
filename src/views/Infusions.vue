@@ -34,7 +34,7 @@ import 'reflect-metadata';
 import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
 import { SiUnitMeasure } from '@/services/infusion-calculations';
 import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
-import { IEntityInfusion, IDrugDB, appDataType } from '@/services/drugDb';
+import { IEntityInfusion, IDrugDB } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 
 interface ISelectOption {
@@ -50,13 +50,14 @@ interface ISelectOption {
 })
 export default class Infusions extends Vue {
   public searchableDrugs: string[] = [];
-  public selectedDrugName: string = '';
+  public selectedDrugName = '';
   public selectedAmpuleIndx: number | null = null;
 
   private baseRef!: string;
   private drugs!: Map<string, IEntityInfusion>;
   @Inject('db')
   private db!: IDrugDB;
+
   @Prop({ default: '' })
   private abbrev!: string;
 

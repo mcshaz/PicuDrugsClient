@@ -23,7 +23,7 @@ export function maxWeightRecord(ageMonths?: number) {
 
 function interpolWt(ageMonths: number, weightList: Array<[number, number]>) {
   if (ageMonths < 0 || ageMonths > maxAge) {
-    throw new RangeError('ageMonths must be 0-' + maxAge);
+    throw new RangeError(`ageMonths must be 0-${maxAge} (actual-value:${ageMonths})`);
   }
   let cur: [number, number];
   for (let i = 0; i < weightList.length; i++) {

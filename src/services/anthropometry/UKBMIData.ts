@@ -6,13 +6,14 @@ export class UKBMIData extends CentileCollection {
   public static calculateBMI(weightKg: number, heightCm: number) {
     return weightKg / Math.pow(heightCm / 100, 2);
   }
+
   constructor() {
     super({
       gestAgeWeeksRange: new GenderRange(43),
       lmsForGestAgeMale: [
-        new Lms(0.3449, 14.2241, 0.0923) ],
+        new Lms(0.3449, 14.2241, 0.0923)],
       lmsForGestAgeFemale: [
-        new Lms(0.4263, 13.9505, 0.09647) ],
+        new Lms(0.4263, 13.9505, 0.09647)],
       lmsForAgeWeeksMale: [
         new Lms(0.2881, 14.7714, 0.09072),
         new Lms(0.2409, 15.2355, 0.08953),
@@ -23,7 +24,7 @@ export class UKBMIData extends CentileCollection {
         new Lms(0.0766, 16.5494, 0.08612),
         new Lms(0.052, 16.6882, 0.08569),
         new Lms(0.0291, 16.8016, 0.08531),
-        new Lms(0.0077, 16.895, 0.08496) ],
+        new Lms(0.0077, 16.895, 0.08496)],
       lmsForAgeWeeksFemale: [
         new Lms(0.3637, 14.4208, 0.09577),
         new Lms(0.3124, 14.8157, 0.0952),
@@ -34,7 +35,7 @@ export class UKBMIData extends CentileCollection {
         new Lms(0.1377, 15.9874, 0.09332),
         new Lms(0.1118, 16.1277, 0.09304),
         new Lms(0.0877, 16.2485, 0.09279),
-        new Lms(0.0652, 16.3531, 0.09255) ],
+        new Lms(0.0652, 16.3531, 0.09255)],
       lmsForAgeMonthsMale: [
         new Lms(0.0068, 16.8987, 0.08495),
         new Lms(-0.0727, 17.1579, 0.08378),
@@ -273,7 +274,7 @@ export class UKBMIData extends CentileCollection {
         new Lms(-1.404, 21.878, 0.11561),
         new Lms(-1.4, 21.914, 0.11558),
         new Lms(-1.396, 21.951, 0.11554),
-        new Lms(-1.392, 21.986, 0.11551) ],
+        new Lms(-1.392, 21.986, 0.11551)],
       lmsForAgeMonthsFemale: [
         new Lms(0.0643, 16.3574, 0.09254),
         new Lms(-0.0191, 16.6703, 0.09166),
@@ -512,7 +513,7 @@ export class UKBMIData extends CentileCollection {
         new Lms(-1.168, 21.674, 0.12542),
         new Lms(-1.167, 21.695, 0.12538),
         new Lms(-1.166, 21.715, 0.12534),
-        new Lms(-1.165, 21.735, 0.1253) ],
+        new Lms(-1.165, 21.735, 0.1253)],
     });
   }
 }

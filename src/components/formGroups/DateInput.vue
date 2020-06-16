@@ -14,9 +14,9 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import DateInputPolyfill from '@/components/formGroups/DateInputPolyfill.vue';
-import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
+import { ymdFormat } from '@/services/utilities/dateHelpers';
 import { dateElSupportValues, dateElSupport } from '@/services/utilities/html5ElementSupport';
 
 @Component({
@@ -30,16 +30,22 @@ export default class DateInput extends Vue {
 
     @Prop({ default: void 0 })
     private cssClass?: string;
+
     @Prop({ default: void 0 })
     private min?: Date | null;
+
     @Prop({ default: void 0 })
     private max?: Date | null;
+
     @Prop({ default: null })
     private value!: Date | null;
+
     @Prop({ default: void 0 })
     private name?: string;
+
     @Prop({ default: void 0 })
     private id?: string;
+
     @Prop({ default: false })
     private required!: boolean;
 
@@ -57,6 +63,7 @@ export default class DateInput extends Vue {
       returnVar.setMinutes(-returnVar.getTimezoneOffset());
       return ymdFormat(returnVar);
     }
+
     public set dateStr(newVal: string) {
       let dt!: Date;
       if ((newVal === '' || Number.isNaN((dt = new Date(newVal)).valueOf())) && this.value) {
@@ -74,6 +81,7 @@ export default class DateInput extends Vue {
         ? ymdFormat(this.min)
         : void 0;
     }
+
     public get maxStr() {
       return this.max
         ? ymdFormat(this.max)

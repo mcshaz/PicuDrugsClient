@@ -4,10 +4,10 @@ export const daysPerYear = 365.25;
 export const daysPerMonth = daysPerYear / 12;
 const weeksPerMonth = daysPerMonth / 7;
 
-export interface IChildAge { years: number; months: number | null; days: number | null; }
-export interface IChildExactAge { years: number; months: number; days: number; }
+export interface IChildAge { years: number; months: number | null; days: number | null }
+export interface IChildExactAge { years: number; months: number; days: number }
 
-interface IAgeConstructorArgs { years?: number; months?: number; days?:number; }
+interface IAgeConstructorArgs { years?: number; months?: number; days?: number }
 interface IDobConstructorArgs { dob: Date }
 
 export class ChildAge implements IChildAge {
@@ -51,7 +51,7 @@ export class ChildAge implements IChildAge {
 
   public static ageOnDate(dob: Date, current: Date = new Date()) {
     if (dob > current) {
-      throw new RangeError('DOB must be on or before current');
+      throw new RangeError('DOB must be on or before current date');
     }
     const returnVar: IChildExactAge = {
       years: current.getFullYear() - dob.getFullYear(),
@@ -89,6 +89,7 @@ export class ChildAge implements IChildAge {
       this.pDob = null;
     }
   }
+
   public get months() { return this.pMonths; }
   public set months(value: number | null) {
     if (value !== this.pMonths) {
@@ -106,6 +107,7 @@ export class ChildAge implements IChildAge {
       this.pDob = null;
     }
   }
+
   public get days() { return this.pDays; }
   public set days(value: number | null) {
     if (value !== this.pDays) {
@@ -129,11 +131,12 @@ export class ChildAge implements IChildAge {
       this.pDob = null;
     }
   }
+
   public get dob() { return this.pDob; }
   public set dob(value: Date | null) {
     this.pDob = value;
     if (value !== null) {
-      var ageVars = ChildAge.ageOnDate(value);
+      const ageVars = ChildAge.ageOnDate(value);
       this.pDays = ageVars.days;
       this.pMonths = ageVars.months;
       this.pYears = ageVars.years;

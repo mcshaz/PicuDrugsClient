@@ -2,14 +2,14 @@
 // import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 // import { linkTo } from '@storybook/addon-links';
-import { withKnobs, boolean, date } from '@storybook/addon-knobs';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
 import { updatableAttrFactory } from '@/services/storybook/updatableAttrFactory';
 import ValidatedDateGroup from './ValidatedDateGroup.vue';
 
 export default {
   title: 'formGroups/ValidatedDateGroup',
   decorators: [
-    () => ({ template: `<form style="margin: 1em;"><story/></form>` }),
+    () => ({ template: '<form style="margin: 1em;"><story/></form>' }),
     withKnobs,
   ],
 };

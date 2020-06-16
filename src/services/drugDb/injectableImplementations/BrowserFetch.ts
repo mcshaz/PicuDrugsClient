@@ -25,6 +25,7 @@ export class BrowserFetch implements IFetchUpdates, IRegisterEmail {
     public async notifyOfDbChanges(email: string, WardId: number) {
       switch (process.env.NODE_ENV) {
         case 'production':
+
           const response = await fetch(BrowserFetch.subscribeDbChangesUrl, {
             credentials: 'same-origin',
             method: 'POST',

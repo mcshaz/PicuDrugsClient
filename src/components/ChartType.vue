@@ -10,7 +10,7 @@
           {{ w.text }}
         </option>
     </validated-select-group>
-    <validation-provider v-slot="valState" name="Chart type" rules="required">
+    <validation-provider v-slot="valState" name="Chart type(s)" rules="required">
       <b-form-group
         :label-cols-lg="labelColsLg"
         :label-cols-xl="labelColsXl"
@@ -19,19 +19,32 @@
         :invalid-feedback="valState.errors[0]"
         :state="getState(valState)"
       >
-        <b-form-checkbox-group stacked v-model="chartSelection" name="chart-type" :state="getState(valState)">
+        <b-form-checkbox-group stacked v-model="chartSelection" rules="required" name="chart-type" :state="getState(valState)">
           <b-form-checkbox
             value="boluses"
-            id="boluses"
-          >
+            id="boluses">
             Bolus Drugs
           </b-form-checkbox>
           <b-form-checkbox
             value="infusions"
             id="infusions"
-            :disabled="infusionsDisabled"
-          >
+            :disabled="infusionsDisabled">
             Infusions
+          </b-form-checkbox>
+          <b-form-checkbox
+            value="anaphylaxis"
+            id="anaphylaxis">
+            Anaphylaxis Flowchart
+          </b-form-checkbox>
+          <b-form-checkbox
+            value="seizures"
+            id="seizures">
+            Status Epilepsy Flowchart
+          </b-form-checkbox>
+          <b-form-checkbox
+            value="svt"
+            id="svt">
+            SVT Flowchart
           </b-form-checkbox>
         </b-form-checkbox-group>
       </b-form-group>
@@ -58,8 +71,8 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch, Mixins } from 'vue-property-decorator';
-import { IEntityWard, IDrugDB, IAppData } from '@/services/drugDb';
+import { Component, Inject, Prop, Mixins } from 'vue-property-decorator';
+import { IEntityWard, IDrugDB, IAppData, definedCharts } from '@/services/drugDb';
 import { sortByStringProp } from '@/services/utilities/sortByProp';
 import StateWatcher from '@/mixins/StateWatcher';
 import ValidatedSelectGroup from '@/components/formGroups/ValidatedSelectGroup.vue';
@@ -73,23 +86,25 @@ import LabelColWidth from '@/mixins/LabelColWidth';
     BFormCheckboxGroup,
   },
 })
-export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) {
+export default class ChartSelection extends Mixins(StateWatcher, LabelColWidth) {
   private selectedWard: IEntityWard | null = null;
-  public wardOptions: { value: string; text: string; disabled?: boolean; }[] = [];
+  public wardOptions: { value: string; text: string; disabled?: boolean }[] = [];
 
   @Inject('db')
   private db!: IDrugDB;
+
   @Prop({ default: '' })
   private wardAbbrev!: string;
-  @Prop({ default: true })
-  private boluses!: boolean;
-  @Prop({ default: true })
-  private infusions!: boolean;
+
+  @Prop({ default: ['boluses', 'anaphylaxis'] as definedCharts[] })
+  private chartTypes: definedCharts[] = [];
+
   @Inject('appData')
   private appData!: IAppData;
+
   // unwatched
   private wards!: PromiseLike<IEntityWard[]>;
-  private chartSelectionTouched?: boolean;
+  private chartsTouched!: boolean;
 
   public created() {
     this.wards = this.db.wards.toArray().then(wards => {
@@ -103,34 +118,13 @@ export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) 
     } else {
       this.appData.getWardDefaults().then(wd => {
         if (wd) {
-          this.boluses = wd.boluses;
-          this.infusions = wd.infusions;
+          this.chartTypes = wd.chartTypes;
           // the chart selection touched is a hack to not change the ward selection to the default
           // for a particular ward if the user has set different defaults
-          this.chartSelectionTouched = true;
           this.abbrev = wd.wardAbbrev;
         }
       });
-      this.chartSelectionTouched = false;
     }
-  }
-
-  private get chartSelection() {
-    const returnVar = [];
-    if (this.boluses) { returnVar.push('boluses'); }
-    if (this.infusions && !this.infusionsDisabled) { returnVar.push('infusions'); }
-    return returnVar;
-  }
-  private set chartSelection(value: string[]) {
-    let val = value.includes('boluses');
-    if (this.boluses !== val) {
-      this.$emit('update:boluses', val);
-    }
-    val = value.includes('infusions') && !this.infusionsDisabled;
-    if (this.infusions !== val) {
-      this.$emit('update:infusions', val);
-    }
-    this.chartSelectionTouched = true;
   }
 
   public get infusionsDisabled() {
@@ -138,23 +132,43 @@ export default class chartSelection extends Mixins(StateWatcher, LabelColWidth) 
   }
 
   public get abbrev() {
-    return this.selectedWard ? this.selectedWard.abbrev : '';
+    return this.selectedWard?.abbrev || '';
   }
+
   public set abbrev(value: string) {
     if (value !== this.abbrev) {
       if (value === '') {
-        this.$emit('update:ward', this.selectedWard = null);
+        if (this.selectedWard !== null) {
+          this.$emit('update:ward', this.selectedWard = null);
+        }
       } else {
         this.wards.then(wards => {
           const searchFor = value.toLowerCase();
-          this.selectedWard = wards.find(w => w.abbrev.toLowerCase() === searchFor) || null;
-          this.$emit('update:ward', this.selectedWard);
-          if (this.selectedWard && !this.chartSelectionTouched && this.infusions === this.selectedWard.defaultBolusOnly) {
-            this.$emit('update:infusions', !this.selectedWard.defaultBolusOnly);
+          const foundWard = wards.find(w => w.abbrev.toLowerCase() === searchFor) || null;
+          if (this.selectedWard !== foundWard) {
+            this.$emit('update:ward', foundWard);
+            this.selectedWard = foundWard;
+          }
+          if (foundWard && !this.chartsTouched) {
+            this.charts = foundWard.defaultCharts;
           }
         });
       }
     }
   }
+
+  public get charts() {
+    return this.chartTypes;
+  }
+
+  public set charts(value: definedCharts[]) {
+    if (!setsEquivalent(value, this.chartTypes)) {
+      this.$emit('update:chartTypes', value);
+      this.chartsTouched = true;
+    }
+  }
+}
+function setsEquivalent<T>(ar1: T[], ar2: T[]) {
+  return ar1.length === ar2.length && ar1.every((a) => ar2.includes(a));
 }
 </script>
