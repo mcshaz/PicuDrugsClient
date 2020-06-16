@@ -1,4 +1,4 @@
-export interface IStats {p50: number; p25: number; p75: number; }
+export interface IStats {p50: number; p25: number; p75: number }
 
 export const timeInCentre = { p50: 65, p25: 36, p75: 105 };
 

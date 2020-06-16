@@ -1,5 +1,7 @@
 import { IEntityDefibModel } from './IEntityDefibModel';
 
+export type definedCharts = 'bolus' | 'infusion' | 'svt' | 'anaphylaxis' | 'seizure';
+
 export interface IEntityWard {
     wardId: number;
     abbrev: string;
@@ -10,7 +12,7 @@ export interface IEntityWard {
     bolusChartHeader: string;
     bolusChartFooter: string;
     infusionChartHeader: string;
-    defaultBolusOnly: boolean;
+    defaultCharts: definedCharts[];
     isNicu: boolean;
     lastUpdated: Date;
 

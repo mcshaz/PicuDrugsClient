@@ -30,9 +30,11 @@ export function dateInRange(dt: Date | null, min: Date | null, max: Date | null)
 }
 
 export const shortFormatter = new Intl.DateTimeFormat(navigator.languages as string[],
-  { year: 'numeric',
+  {
+    year: 'numeric',
     month: 'numeric',
-    day: 'numeric' });
+    day: 'numeric',
+  });
 
 export const dateOrder = shortFormatter.formatToParts(new Date(1974, 2, 28))
   .map((p) => p.type === 'literal' ? p.value : p.type, [] as string[]);

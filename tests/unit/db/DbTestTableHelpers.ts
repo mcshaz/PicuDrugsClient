@@ -31,7 +31,7 @@ export class DbTestTableHelpers {
         ? table
         : dbTableName[table]);
       if (returnVar === void 0) {
-        throw new Error(`tableName does not exist on DrugsLocalDB`);
+        throw new Error('tableName does not exist on DrugsLocalDB');
       }
       return returnVar;
     }
@@ -51,11 +51,11 @@ export class DbTestTableHelpers {
       }
     }
 
-    // tslint:disable-next-line:no-empty
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private noop() {}
 }
 
-// tslint:disable-next-line:max-classes-per-file
+// eslint-disable-next-line max-classes-per-file
 class DrugDBTable<Tentity> implements IDexieTable<Tentity> {
     public entities?: Tentity[];
     public table?: Dexie.Table<Tentity, number>;
@@ -64,6 +64,7 @@ class DrugDBTable<Tentity> implements IDexieTable<Tentity> {
                 public readonly idProp: string & keyof Tentity) {
       this.tableCode = dbTableName[this.name];
     }
+
     public getId(entity: Tentity): number {
       return entity[this.idProp] as any as number;
     }

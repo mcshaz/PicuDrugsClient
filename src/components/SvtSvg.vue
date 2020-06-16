@@ -224,7 +224,7 @@ import 'reflect-metadata';
 import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
 import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine';
 // import { NumericRange } from '@/services/infusion-calculations/Utilities/NumericRange';
-import { IDrugDB, IEntityInfusion, IEntityVariableInfusionDrug, IEntityDrugAmpuleConcentration } from '@/services/drugDb';
+import { IDrugDB, IEntityInfusion, IEntityVariableInfusionDrug } from '@/services/drugDb';
 import { filterVariableInfusionsForPt, transformVariableInfusions, IVariableInfusionDrugVM } from '@/services/infusion-calculations';
 import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
 
@@ -242,6 +242,7 @@ export default class SvtSvg extends Vue {
 
     @Inject('db')
     private db!: IDrugDB;
+
     // private cvlAmioDbData!: PromiseLike<IEntityInfusion | undefined>;
     private pivAmioDbData!: PromiseLike<IEntityInfusion | undefined>;
 
@@ -254,6 +255,7 @@ export default class SvtSvg extends Vue {
     public get initialAdenosines() {
       return this.adenosineDoses.slice(0, 3);
     }
+
     public get finalAdenosine() {
       return {
         dose: this.adenosineDoses[3].dose + '–' + this.adenosineDoses[4].dose,
@@ -300,7 +302,7 @@ export default class SvtSvg extends Vue {
 
     private async getAmio() {
       if (this.wtKg) {
-        const infusions = await Promise.all([ this.pivAmioDbData ]) as any as IEntityVariableInfusionDrug[]; /* this.cvlAmioDbData, */
+        const infusions = await Promise.all([this.pivAmioDbData]) as any as IEntityVariableInfusionDrug[]; /* this.cvlAmioDbData, */
         const wtSelectedInfusions = filterVariableInfusionsForPt(infusions, this.wtKg);
         const transformed = transformVariableInfusions(this.wtKg, wtSelectedInfusions);
         // this.cvlAmio = transformed[0];

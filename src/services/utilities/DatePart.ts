@@ -1,6 +1,6 @@
 export type datePartType = 'day' | 'month' | 'year';
 type splitVal = boolean | [string, string];
-// tslint:disable-next-line: max-classes-per-file
+// eslint-disable-next-line  max-classes-per-file
 export class DatePart {
   private static moveDay(day: string): splitVal {
     if (!day.length) {
@@ -21,6 +21,7 @@ export class DatePart {
     }
     return false;
   }
+
   private static moveYear(year: string): splitVal {
     if (year.length < 4) {
       return false;
@@ -37,6 +38,7 @@ export class DatePart {
     }
     return true;
   }
+
   private static moveMonth(month: string): splitVal {
     if (!month.length) {
       return false;
@@ -56,10 +58,11 @@ export class DatePart {
     }
     return false;
   }
+
     public readonly placeholder: string;
     public max: number;
     public readonly class: string;
-    private pValue: string = '';
+    private pValue = '';
     private readonly len: 2 | 4;
     constructor(readonly part: datePartType) {
       this.class = 'FormDate__input--' + part;
@@ -83,6 +86,7 @@ export class DatePart {
           throw new TypeError('part must be 1 of day, month or year');
       }
     }
+
     public get value() { return this.pValue; }
     // sets the value. If 'overflow' returns the value to add to the next field
     public setValue(no: string, divideOverflow = true) {

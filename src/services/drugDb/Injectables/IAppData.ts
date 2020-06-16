@@ -1,4 +1,6 @@
-export interface IWardDefaults { wardAbbrev: string; boluses: boolean; infusions: boolean; formalSet: boolean; }
+import { definedCharts } from '../entities/IEntityWard';
+
+export interface IWardDefaults { wardAbbrev: string; chartTypes: definedCharts[]; formalSet: boolean }
 
 export interface IAppData {
     getWardDefaults(): PromiseLike<IWardDefaults | undefined>;

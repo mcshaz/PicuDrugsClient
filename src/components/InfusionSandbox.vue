@@ -90,12 +90,12 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { exampleWeights } from '@/services/utilities/weightHelpers';
 import {
   siUnit,
-  IEntityFixedDilution,
-  IEntityFixedConcentration,
+  //  IEntityFixedDilution,
+  //  IEntityFixedConcentration,
   dilutionMethod
 } from '@/services/drugDb';
 import {

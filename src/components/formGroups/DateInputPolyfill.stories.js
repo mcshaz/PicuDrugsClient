@@ -7,7 +7,7 @@ import DateInputPolyfill from './DateInputPolyfill.vue';
 
 export default {
   title: 'formGroups/DateInputPolyfill',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` })],
+  decorators: [() => ({ template: '<form style="margin: 1em;"><story/></form>' })],
 };
 
 const baseObj = {

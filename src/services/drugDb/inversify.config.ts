@@ -1,4 +1,4 @@
-import { Container, multiBindToService } from 'inversify';
+import { Container } from 'inversify';
 import { TYPES } from './types';
 import { IFetchUpdates, IRegisterEmail } from './Injectables/IFetch';
 import { ILogger } from './Injectables/ILogger';

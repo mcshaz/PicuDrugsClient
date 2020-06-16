@@ -1,5 +1,5 @@
-const minVariableWeight: number = 30.0;
-const maxVolume: number = 60.0;
+const minVariableWeight = 30.0;
+const maxVolume = 60.0;
 export function getVariableDilutionVolumeMls(ptWeight: number): number {
   if (ptWeight < minVariableWeight) {
     throw new Error('ptWeight < ' + minVariableWeight);

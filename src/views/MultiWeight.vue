@@ -80,10 +80,10 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import ChartType from '@/components/ChartType.vue';
 import { IMultiWardChartData } from '@/components/ComponentCommunication';
-import { IEntityWard, IAppData } from '@/services/drugDb';
+import { IEntityWard, definedCharts } from '@/services/drugDb';
 import MultiWeightRow from '@/components/MultiWeightRow.vue';
 import { UKWeightData, medianMatchAvg } from '@/services/anthropometry';
 import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
@@ -110,8 +110,7 @@ interface IWtAge {
   },
 })
 export default class MultiWeight extends Vue {
-  public boluses = true;
-  public infusions = true;
+  public charts: definedCharts[] = [];
   public infusionsAvailable = false;
   public email = '';
   public weights: IWtAge[] = exampleWeights.map(wtKg => ({ wtKg } as IWtAge));
@@ -151,8 +150,7 @@ export default class MultiWeight extends Vue {
       );
     }
     const chartData: IMultiWardChartData = {
-      boluses: this.boluses,
-      infusions: this.infusions,
+      charts: this.charts,
       ward: this.ward,
       weights: this.weights.map(w => ({
         wtKg: w.wtKg,

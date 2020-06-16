@@ -7,10 +7,10 @@ import { updatableAttrFactory } from '@/services/storybook/updatableAttrFactory'
 
 export default {
   title: 'components/NhiInput',
-  decorators: [() => ({ template: `<form style="margin: 1em;"><story/></form>` })],
+  decorators: [() => ({ template: '<form style="margin: 1em;"><story/></form>' })],
 };
 
-const getTemplate = updatableAttrFactory(`<nhi-input v-model="val" @input="input($event)"/>`);
+const getTemplate = updatableAttrFactory('<nhi-input v-model="val" @input="input($event)"/>');
 
 const getBaseObj = (val = null, attr = void 0) => ({
   template: getTemplate.insert(attr),

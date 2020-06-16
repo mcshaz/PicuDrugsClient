@@ -17,7 +17,7 @@ export function updatableAttrFactory(xml: string) {
             ? ' ' + attName
             : ` ${attName}="${attValue}"`;
           let isReplaced = false;
-          returnVar = returnVar.replace(findAttr, (_match) => {
+          returnVar = returnVar.replace(findAttr, () => {
             isReplaced = true;
             return newVal;
           });

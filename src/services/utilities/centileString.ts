@@ -1,7 +1,7 @@
 
 type gtlt = '<' | '>' | '';
 type suffix = 'th' | 'st' | 'nd' | 'rd' | '';
-export interface ICentileVal { prefix: gtlt; val: number; suffix: suffix; alarm: alarmLevel; note: string; }
+export interface ICentileVal { prefix: gtlt; val: number; suffix: suffix; alarm: alarmLevel; note: string }
 export enum alarmLevel { none, minorWarning, warning, danger }
 export function centileString(val: number): ICentileVal {
   if (val < 1) {

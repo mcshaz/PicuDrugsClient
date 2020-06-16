@@ -17,11 +17,11 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Inject, Watch } from 'vue-property-decorator';
-import { UKWeightData } from '@/services/anthropometry/';
+import { UKWeightData, medianMatchAvg } from '@/services/anthropometry/';
 import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
-import { medianMatchAvg } from '@/services/anthropometry';
+
 import { ageString } from '@/services/utilities/ageString';
-import { IEntityFixedInfusionDrug } from '@/services/drugDb';
+// import { IEntityFixedInfusionDrug } from '@/services/drugDb';
 import { transformFixedInfusions, IPatientFixedInfusionDrug, FixedInfusionDrugVM } from '@/services/infusion-calculations';
 
 type vueNumber = number | '';
@@ -30,8 +30,10 @@ type vueNumber = number | '';
 export default class InfusionSandboxTable extends Vue {
     @Prop({ required: true })
     public wtKg!: number;
+
     @Prop({ required: true })
     public drugData!: IPatientFixedInfusionDrug;
+
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
 

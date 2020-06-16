@@ -107,7 +107,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import {
   UKWeightData,
   UKBMIData,
@@ -115,11 +115,7 @@ import {
   UKHeadCircumferenceData,
   IAnthropometry
 } from '@/services/anthropometry/';
-import {
-  centileString,
-  alarmLevel,
-  ICentileVal
-} from '@/services/utilities/centileString';
+// import { alarmLevel } from '@/services/utilities/centileString';
 import DobInput from '@/components/DobInput.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import CentileRow, { ICentileVals } from '@/components/CentileRow.vue';
@@ -242,8 +238,7 @@ export default class Centiles extends Vue {
     }
 
     this.saved = true;
-    const self = this;
-    setTimeout(() => (self.saved = false), 2000);
+    setTimeout(() => (this.saved = false), 2000);
   }
 
   public deleteRow(rowId: symbol) {

@@ -14,11 +14,11 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import DateInput from '@/components/formGroups/DateInput.vue';
-import { ymdFormat, dateInRange } from '@/services/utilities/dateHelpers';
+// import { ymdFormat } from '@/services/utilities/dateHelpers';
 
-interface IDates { value: number; text: string; /* disabled: boolean; */ }
+interface IDates { value: number; text: string /* disabled: boolean; */ }
 
 @Component({
   components: { DateInput },
@@ -26,16 +26,22 @@ interface IDates { value: number; text: string; /* disabled: boolean; */ }
 export default class DateTimeInput extends Vue {
     @Prop({ default: null })
     public value!: Date | null;
+
     @Prop({ default: void 0 })
     public min?: Date;
+
     @Prop({ default: void 0 })
     public max?: Date;
+
     @Prop({ default: 60 })
     public timeStep!: number;
+
     @Prop({ default: void 0 })
     public required?: boolean;
+
     @Prop({ default: void 0 })
     public cssClass?: string;
+
     // @Prop({default: () => today})
     // public min!: Date;
     public date: Date | null = null;
@@ -83,6 +89,7 @@ export default class DateTimeInput extends Vue {
         this.time = '';
       }
     }
+
     @Watch('date')
     @Watch('time')
     public dateTimeChange() {

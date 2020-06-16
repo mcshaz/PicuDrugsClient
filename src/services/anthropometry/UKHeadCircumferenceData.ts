@@ -27,7 +27,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 34.91071, 0.0332788),
         new Lms(1, 35.38669, 0.0314591),
         new Lms(1, 35.85209, 0.02967462),
-        new Lms(1, 36.5216, 0.03197) ],
+        new Lms(1, 36.5216, 0.03197)],
       lmsForGestAgeFemale: [
         new Lms(1, 21.10156, 0.0662953),
         new Lms(1, 22.16809, 0.06482162),
@@ -49,7 +49,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 34.13042, 0.03055761),
         new Lms(1, 34.4652, 0.02876645),
         new Lms(1, 34.79057, 0.02701415),
-        new Lms(1, 35.843, 0.03231) ],
+        new Lms(1, 35.843, 0.03231)],
       lmsForAgeWeeksMale: [
         new Lms(1, 37.0926, 0.03148),
         new Lms(1, 37.601, 0.03107),
@@ -60,7 +60,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 39.5797, 0.02969),
         new Lms(1, 39.9033, 0.0295),
         new Lms(1, 40.2096, 0.02933),
-        new Lms(1, 40.5008, 0.02918) ],
+        new Lms(1, 40.5008, 0.02918)],
       lmsForAgeWeeksFemale: [
         new Lms(1, 36.3761, 0.03215),
         new Lms(1, 36.8472, 0.03202),
@@ -71,7 +71,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 38.6673, 0.03158),
         new Lms(1, 38.9661, 0.03152),
         new Lms(1, 39.2501, 0.03146),
-        new Lms(1, 39.521, 0.0314) ],
+        new Lms(1, 39.521, 0.0314)],
       lmsForAgeMonthsMale: [
         new Lms(1, 40.5135, 0.02918),
         new Lms(1, 41.6317, 0.02868),
@@ -286,7 +286,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 57.174, 0.0299),
         new Lms(1, 57.201, 0.02991),
         new Lms(1, 57.227, 0.02991),
-        new Lms(1, 57.26, 0.02991) ],
+        new Lms(1, 57.26, 0.02991)],
       lmsForAgeMonthsFemale: [
         new Lms(1, 39.5328, 0.0314),
         new Lms(1, 40.5817, 0.03119),
@@ -489,7 +489,7 @@ export class UKHeadCircumferenceData extends CentileCollection {
         new Lms(1, 55.474, 0.02497),
         new Lms(1, 55.491, 0.02499),
         new Lms(1, 55.506, 0.02501),
-        new Lms(1, 55.52, 0.02501) ],
+        new Lms(1, 55.52, 0.02501)],
     });
   }
 }

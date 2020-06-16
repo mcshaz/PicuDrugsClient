@@ -540,9 +540,9 @@
 <script lang="ts">
 import 'reflect-metadata';
 import { Component, Prop, Vue, Watch, Inject } from 'vue-property-decorator';
-import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine';
+// import { getAdenosineDoses, IDoseInfo, ampuleDescription } from '@/services/infusion-calculations/Transformations/Calculations/adenosine';
 // import { NumericRange } from '@/services/infusion-calculations/Utilities/NumericRange';
-import { IDrugDB, IEntityInfusion, IEntityFixedInfusionDrug, IEntityDrugAmpuleConcentration, IEntityBolusDrug } from '@/services/drugDb';
+import { IDrugDB, IEntityInfusion, IEntityFixedInfusionDrug, IEntityBolusDrug } from '@/services/drugDb';
 import { filterFixedInfusionsForPt, transformFixedInfusions, FixedInfusionDrugVM, filterTransformBolusesForPt, IBolusDrugVM } from '@/services/infusion-calculations';
 import { roundToFixed } from '@/services/infusion-calculations/Utilities/rounding';
 
@@ -561,6 +561,7 @@ export default class StatusEpilepsySvg extends Vue {
 
   @Inject('db')
   private db!: IDrugDB;
+
   private pivPhenyDbData!: PromiseLike<IEntityInfusion | undefined>;
   private leveDbData!: PromiseLike<IEntityInfusion | undefined>;
   private buccalMidazDbData!: PromiseLike<IEntityBolusDrug | undefined>;

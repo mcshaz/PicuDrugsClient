@@ -1,4 +1,4 @@
-import { CentileRange, weeksPerMonth } from '../CentileRange';
+import { CentileRange } from '../CentileRange';
 import { searchComparison } from '../binarySearch';
 import { Lms } from '../Lms';
 import { LmsForAgeMonths } from '../AgeRange/LmsForAgeMonths';
@@ -32,9 +32,9 @@ export function lmsChunkAroundAge(agesInDays: number[],
       const maxAgeMonths = Math.ceil(centiles.ageMonthsData.toAgeUnits(Math.max(...agesInDays), gestAgeWeeks));
       if (chartBounds[0] <= fixedChartBoundaries.zeroTo52Weeks) {
         const minWeeks = Math.floor(gestAgeWeeks - 40 + minAgeDays / 7);
-        const units = chartBounds[1] <= fixedChartBoundaries.zeroTo52Weeks
+        /* const units = chartBounds[1] <= fixedChartBoundaries.zeroTo52Weeks
           ? ageUnits.weeksOfAge
-          : ageUnits.monthsOfAge;
+          : ageUnits.monthsOfAge; */
         return mergeGestAgeToSubsequent(centiles, minWeeks, maxAgeMonths);
       }
       const startMonth = Math.floor(centiles.ageMonthsData.toAgeUnits(minAgeDays, gestAgeWeeks));
@@ -48,6 +48,7 @@ export function lmsChunkAroundAge(agesInDays: number[],
 function getMOHDefaultChart(boundary: fixedChartBoundaries, centiles: CentileRange): IChartData | null {
   switch (boundary) {
     case fixedChartBoundaries.gest:
+
       const startGest = centiles.gestAgeData.minAge - 40;
       return {
         units: ageUnits.weeksOfAge,

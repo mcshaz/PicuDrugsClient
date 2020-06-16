@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Inject, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import {
   pressureInAtm,
   equivalentFiO2,
@@ -57,12 +57,13 @@ import {
 
 @Component({})
 export default class AltitudeCalcs extends Vue {
-  public fio2: number = 0.21;
-  public altitude: number = 6000;
+  public fio2 = 0.21;
+  public altitude = 6000;
 
   public get fractionSea() {
     return pressureInAtm(this.altitude, lengthMeasures.feet);
   }
+
   public get percentSea() {
     return (this.fractionSea * 100).toFixed();
   }

@@ -7,18 +7,25 @@ import { Component, Prop, Watch } from 'vue-property-decorator';
 export default class ValidatedInputEl extends ValidatedFormEl {
     @Prop({ required: true })
     value!: number | string;
+
     @Prop({ default: 'number' })
     type!: string & ('text' | 'number' | 'range' | 'email' | 'password');
+
     @Prop({ default: void 0 })
     min?: number;
+
     @Prop({ default: void 0 })
     max?: number;
+
     @Prop({ default: void 0 })
     step?: number | 'any';
+
     @Prop({ default: void 0 })
     prepend?: string;
+
     @Prop({ default: void 0 })
     autocomplete?: string;
+
     @Prop({ default: void 0 })
     trim?: boolean;
 

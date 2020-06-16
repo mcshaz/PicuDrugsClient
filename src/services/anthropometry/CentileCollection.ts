@@ -38,9 +38,11 @@ export abstract class CentileCollection {
     public cumSnormForAge(measure: number, daysOfAge: number, isMale: boolean, totalWeeksGestAtBirth: number = termGestationWeeks) {
       return this.lmsForAge(daysOfAge, isMale, totalWeeksGestAtBirth).cumSnormfromParam(measure);
     }
+
     public zForAge(measure: number, daysOfAge: number, isMale: boolean, totalWeeksGestAtBirth: number = termGestationWeeks) {
       return this.lmsForAge(daysOfAge, isMale, totalWeeksGestAtBirth).zFromParam(measure);
     }
+
     public lmsForAge(daysSinceBirth: number, isMale: boolean, weeksGestAtBirth: number = termGestationWeeks) {
       const range = isMale ? this.maleRange : this.femaleRange;
       return range.lmsForAge(daysSinceBirth, weeksGestAtBirth);

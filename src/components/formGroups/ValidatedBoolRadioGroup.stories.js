@@ -9,7 +9,7 @@ import ValidatedBoolRadioGroup from './ValidatedBoolRadioGroup.vue';
 export default {
   title: 'formGroups/ValidatedBoolRadioGroup',
   decorators: [
-    () => ({ template: `<form style="margin: 1em;"><story/></form>` }),
+    () => ({ template: '<form style="margin: 1em;"><story/></form>' }),
     withKnobs,
   ],
 };

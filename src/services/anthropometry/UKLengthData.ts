@@ -4,7 +4,8 @@ import { GenderRange } from './GenderRange';
 
 export class UKLengthData extends CentileCollection {
   constructor() {
-    super({ gestAgeWeeksRange: new GenderRange(25),
+    super({
+      gestAgeWeeksRange: new GenderRange(25),
       lmsForGestAgeMale: [
         new Lms(1, 35.42414, 0.08132453),
         new Lms(1, 36.42492, 0.07862004),
@@ -24,7 +25,7 @@ export class UKLengthData extends CentileCollection {
         new Lms(1, 50.94454, 0.04197628),
         new Lms(1, 51.64579, 0.04100319),
         new Lms(1, 52.30513, 0.03994391),
-        new Lms(1, 53.3905, 0.03609) ],
+        new Lms(1, 53.3905, 0.03609)],
       lmsForGestAgeFemale: [
         new Lms(1, 34.59544, 0.08086044),
         new Lms(1, 35.59771, 0.07735533),
@@ -44,7 +45,7 @@ export class UKLengthData extends CentileCollection {
         new Lms(1, 50.01719, 0.0369674),
         new Lms(1, 50.62523, 0.03608866),
         new Lms(1, 51.20649, 0.03570984),
-        new Lms(1, 52.4695, 0.03669) ],
+        new Lms(1, 52.4695, 0.03669)],
       lmsForAgeWeeksMale: [
         new Lms(1, 54.3881, 0.0357),
         new Lms(1, 55.3374, 0.03534),
@@ -55,7 +56,7 @@ export class UKLengthData extends CentileCollection {
         new Lms(1, 59.3872, 0.03392),
         new Lms(1, 60.0894, 0.03369),
         new Lms(1, 60.7605, 0.03348),
-        new Lms(1, 61.4013, 0.03329) ],
+        new Lms(1, 61.4013, 0.03329)],
       lmsForAgeWeeksFemale: [
         new Lms(1, 53.3809, 0.03647),
         new Lms(1, 54.2454, 0.03627),
@@ -66,7 +67,7 @@ export class UKLengthData extends CentileCollection {
         new Lms(1, 57.9436, 0.03552),
         new Lms(1, 58.5816, 0.0354),
         new Lms(1, 59.1922, 0.0353),
-        new Lms(1, 59.7773, 0.0352) ],
+        new Lms(1, 59.7773, 0.0352)],
       lmsForAgeMonthsMale: [
         new Lms(1, 61.4292, 0.03328),
         new Lms(1, 63.886, 0.03257),
@@ -305,7 +306,7 @@ export class UKLengthData extends CentileCollection {
         new Lms(1, 177.31, 0.03932),
         new Lms(1, 177.32, 0.03931),
         new Lms(1, 177.33, 0.0393),
-        new Lms(1, 177.34, 0.03929) ],
+        new Lms(1, 177.34, 0.03929)],
       lmsForAgeMonthsFemale: [
         new Lms(1, 59.8029, 0.0352),
         new Lms(1, 62.0899, 0.03486),

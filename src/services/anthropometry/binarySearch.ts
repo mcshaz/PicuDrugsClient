@@ -1,7 +1,7 @@
 
 export enum searchComparison { lessThanMin, inRange, greaterThanMax }
 
-export interface ISearchResult { comparison: searchComparison; lowerBound?: number; upperBound?: number; }
+export interface ISearchResult { comparison: searchComparison; lowerBound?: number; upperBound?: number }
 
 export function binarySearch(lookup: (index: number) => number,
   target: number, minIndex: number, maxIndex: number): ISearchResult {

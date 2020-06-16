@@ -6,12 +6,12 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Watch, Mixins } from 'vue-property-decorator';
 import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
-import { ymdFormat, dateInRange, shortFormatter } from '@/services/utilities/dateHelpers';
+import { shortFormatter } from '@/services/utilities/dateHelpers';
 import LabelColWidth from '../mixins/LabelColWidth';
 
-enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
+// enum dateElSupport { noSupport, elSupport, valueAsDateSupport }
 
 @Component({
   components: {
@@ -29,12 +29,16 @@ export default class DobInput extends Mixins(LabelColWidth) {
 
     @Prop({ default: void 0 })
     private required?: boolean;
+
     @Prop({ default: void 0 })
     private immediate?: boolean;
+
     @Prop({ default: null })
     private value!: Date | null;
+
     @Prop({ default: 122 }) // current longest lifespan in modern history
     private maxYears!: number;
+
     @Prop({ default: void 0 })
     rules: any;
 
@@ -45,10 +49,14 @@ export default class DobInput extends Mixins(LabelColWidth) {
     public get dob() {
       return this.pDob;
     }
+
     public set dob(value: Date | null) {
       if (this.pDob !== value) {
+        // user is still typing or changing the date
         this.pDob = value;
-        this.$emit('input', value);
+        if (value == null || value.getFullYear() > 999) {
+          this.$emit('input', value);
+        }
       }
     }
 

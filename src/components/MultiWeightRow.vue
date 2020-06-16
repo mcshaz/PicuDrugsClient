@@ -41,6 +41,7 @@ let ageForWeightStr!: (ageDays: IMedianMatchResult, abbrev?: boolean) => string;
 export default class MultiWeightRow extends Vue {
     @Prop({ required: true })
     public wtKg!: vueNumber;
+
     @Inject('wtCentiles')
     private wtCentiles!: UKWeightData;
 

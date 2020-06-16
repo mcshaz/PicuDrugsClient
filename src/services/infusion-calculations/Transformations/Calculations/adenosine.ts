@@ -1,6 +1,6 @@
 import { roundToFixed, syringeRounding } from './../../Utilities/rounding';
 
-export interface IDoseInfo { dose: number; dosePerKg: number; doseMax: number; ampuleMl: number; }
+export interface IDoseInfo { dose: number; dosePerKg: number; doseMax: number; ampuleMl: number }
 
 const ampVolMl = 2;
 const ampDrugMg = 6;

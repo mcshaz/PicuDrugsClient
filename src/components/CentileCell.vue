@@ -42,16 +42,22 @@ export const emitKey = 'debounced-input';
 export default class CentileCell extends Vue {
   @Model(emitKey, { required: true })
   public value!: vueNumber;
+
   @Prop({ required: true })
   public centile!: ICentileVal | null;
+
   @Prop({ default: '' })
   public units!: string;
+
   @Prop({ default: '' })
   public measure!: string;
+
   @Prop({ default: false })
   public readOnly!: boolean;
+
   @Prop({ default: 0.2 })
   public min!: number;
+
   @Prop({ default: 700 })
   public max!: number;
 

@@ -49,8 +49,8 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Emit, Watch } from 'vue-property-decorator';
-import { parseDateUtc0, dateInRange, dateOrder, shortFormatter, ymdFormat } from '@/services/utilities/dateHelpers';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { parseDateUtc0, dateOrder, ymdFormat } from '@/services/utilities/dateHelpers';
 import { DatePart, datePartType } from '@/services/utilities/DatePart';
 
 type vueNumber = number | '';
@@ -70,6 +70,7 @@ export default class DateInputPolyfill extends Vue {
 
     @Prop({ default: null })
     private value!: string;
+
     @Prop({ default: false })
     private required!: boolean;
 
@@ -90,7 +91,7 @@ export default class DateInputPolyfill extends Vue {
     }
 
     @Watch('value', { immediate: true })
-    public valueChanged(newVal: string) {
+    public valueChanged() {
       if (this.value) {
         this.pDate = new Date(this.value + 'T00:00+00:00');
         this.dateArgs[0].setValue(this.pDate.getFullYear().toString(), false);

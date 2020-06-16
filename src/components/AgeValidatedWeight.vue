@@ -1,6 +1,6 @@
 <template>
   <validation-observer v-slot="observerCtxt" slim>
-    <b-form-group label-for="weight" label-cols-lg="2" label-cols-xl="2" label="Weight:"
+    <b-form-group label-for="weight" :label-cols-lg="labelColsLg" :label-cols-xl="labelColsXl" label="Weight:"
         label-align-lg="right" :state="getAndStoreState(observerCtxt)">
       <template #description v-if="lbWtCentile!==null">
         <output name="centile" id="centile" ref="centile" :class="centileClass">
@@ -31,10 +31,10 @@
       <validation-provider name="Weight" vid="weight" :immediate="immediate" class="form-inline" tag="div">
         <b-input-group append="kg">
           <input class="form-control" name="weight" v-model.number="weightKg" placeholder="Weight"
-              type="number" :required="required" @blur="flush"
+              type="number" :required="required" @blur="debounceCentiles.flush()"
               :min="minWeight" :max="maxWeight" step="any" :class="wtClass"/>
         </b-input-group>
-        <b-button variant="outline-primary" :disabled="disableMedianWt" @click="medianWt4age" class="ml-3">
+        <b-button v-if="allowMedianWeight" variant="outline-primary" :disabled="disableMedianWt" @click="medianWt4age" class="ml-3">
           Median Weight For Age
         </b-button>
       </validation-provider> <!-- end form-inline -->
@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Prop, Vue, Watch, Mixins } from 'vue-property-decorator';
+import { Component, Prop, Watch, Mixins } from 'vue-property-decorator';
 import PatientAgeData from '@/components/PatientAgeData.vue';
 import NhiInput from '@/components/NhiInput.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
@@ -54,6 +54,7 @@ import { centileString, alarmLevel, ICentileVal } from '@/services/utilities/cen
 import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { BFormCheckbox } from 'bootstrap-vue';
 import StateWatcher, { IValCtxt } from '@/mixins/StateWatcher';
+import LabelColWidth from '@/mixins/LabelColWidth';
 import _ from 'lodash';
 import CombineErrors from '../mixins/CombineErrors';
 
@@ -62,22 +63,30 @@ type vueNumber = number | '';
 @Component({
   components: { PatientAgeData, NhiInput, ValidatedBoolRadioGroup, BFormCheckbox },
 })
-export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErrors) {
+export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErrors, LabelColWidth) {
   public lbWtCentile: ICentileVal | null = null;
   public ubWtCentile: ICentileVal | null = null;
 
   @Prop({ required: true })
   private value!: vueNumber;
+
   @Prop({ default: 40 })
   private weeksGestation!: vueNumber;
+
   @Prop({ default: null })
   private age!: ChildAge;
+
   @Prop({ default: null })
   private isMale!: boolean | null;
+
   @Prop({ default: true })
   private required!: boolean;
+
   @Prop({ default: false })
   private immediate!: boolean;
+
+  @Prop({ default: true })
+  private allowMedianWeight!: boolean;
 
   private acceptWtWarn = false;
   private weightKg: vueNumber = '';
@@ -87,10 +96,11 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
 
   // not to be watched
   private wtData!: UKWeightData;
-  private centileString?: string;
+  private centileString!: string;
 
   public beforeCreate() {
     this.wtData = new UKWeightData();
+    this.centileString = '';
   }
 
   public get alertLevel() {
@@ -140,6 +150,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   public get minWeight() {
     return minWeightRecord(this.age ? ChildAge.getMinTotalDays(this.age!) / daysPerMonth : void 0);
   }
+
   public get maxWeight() {
     return maxWeightRecord(this.age ? ChildAge.getMaxTotalDays(this.age!) / daysPerMonth : void 0);
   }
@@ -175,7 +186,7 @@ export default class AgeValidatedWeight extends Mixins(StateWatcher, CombineErro
   @Watch('ubWtCentile', { deep: true })
   @Watch('ubWtCentile', { deep: true })
   public watchCentilStr() {
-    const innerText = (this.$refs.centile as HTMLOutputElement).innerText;
+    const innerText = (this.$refs.centile as HTMLOutputElement)?.innerText || '';
     if (this.centileString !== innerText) {
       this.$emit('update:centile-string', (this.centileString = innerText));
     }

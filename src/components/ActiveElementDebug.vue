@@ -17,9 +17,11 @@ export default class ActiveElementDebug extends Vue {
     this.boundFocusChanged = this.focusChanged.bind(this);
     document.addEventListener('focusout', this.boundFocusChanged);
   }
+
   private beforeDestroy() {
     document.removeEventListener('focusout', this.boundFocusChanged);
   }
+
   private focusChanged(evt: Event) {
     const el = evt.target as HTMLElement | null;
     if (el === null) {

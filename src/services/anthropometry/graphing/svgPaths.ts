@@ -4,13 +4,13 @@ import { CentileRange } from '../CentileRange';
 import { lmsChunkAroundAge, ageUnits } from './lmsChunkAroundAge';
 import { daysPerMonth, daysPerYear } from '../AgeRange/AgeRange';
 
-interface IAxisLabel { start: number; increment: number; count: number; minorTickIncrement?: number; }
+interface IAxisLabel { start: number; increment: number; count: number; minorTickIncrement?: number }
 export enum labelAgeUnits { weeks, months, years }
 interface ITimeAxisLabel extends IAxisLabel {
     units: labelAgeUnits; startLabelAt: number; incrementLabelBy: number;
 }
-export interface ICentileLine {centile: number; centileLastY: number; path: string; }
-export interface IAnthropometry { ageDays: number; measure: number; }
+export interface ICentileLine {centile: number; centileLastY: number; path: string }
+export interface IAnthropometry { ageDays: number; measure: number }
 export enum pathTypes { polyline, quadratic }
 export interface ICentileLines {
     lines: ICentileLine[];
@@ -46,8 +46,8 @@ export function svgPaths(dataPoints: IAnthropometry[],
       transformY: (y: number) => height - yRatio * (y - minY),
       minX,
       xLabels: centileChart.units === ageUnits.weeksOfAge
-        ? [ weekLabels(minX, maxX) ]
-        : [ yearLabels(minX, maxX) ],
+        ? [weekLabels(minX, maxX)]
+        : [yearLabels(minX, maxX)],
       yLabels: Object.assign(inc, getLabel(minY, maxY, inc.increment)),
     } as ICentileLines;
     if (centileChart.units === ageUnits.weeksOfAge && maxX / daysPerMonth >= 6) {
