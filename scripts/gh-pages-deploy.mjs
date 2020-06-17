@@ -21,12 +21,14 @@ import execa from 'execa';
         await execa("git", ["--work-tree", folderName, "add", "--all"]);
         await execa("git", ["--work-tree", folderName, "commit", "-m", "gh-pages"]);
         console.log("Pushing to gh-pages...");
-        const { stdout } = await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
-        console.log(stdout);
-        const rmCmd = process.platform.startsWith("win")
-            ? "del"
-            : "rm";
-        await execa(rmCmd, ["-r", folderName]);
+        await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
+        console.log("deleting files");
+        if (process.platform.startsWith("win")) {
+            await execa("del", ["/f", "/s", folderName]);
+            await execa("rd", ["/s", folderName]);
+        } else {
+            await execa("rm", ["-r", folderName]);
+        }
         console.log("Successfully deployed");
     } catch (e) {
         console.log(e.message);
