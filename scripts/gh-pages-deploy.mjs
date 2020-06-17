@@ -1,5 +1,5 @@
 import execa from 'execa';
-import { promises, existsSync } from 'fs';
+import { existsSync } from 'fs';
 
 (async () => {
     try {
@@ -13,16 +13,11 @@ import { promises, existsSync } from 'fs';
         console.log(e.message);
         process.exit(1);
     }
-    const configFilePath = "vue.config.js";
-    const fileOpts = {encoding: 'utf-8'};
-    let config = await promises.readFile(configFilePath, fileOpts);
-    const originPublicPath = "publicPath: '/'";
-    await promises.writeFile(configFilePath, config.replace(originPublicPath, "publicPath: '/PicuDrugsClient/'"), fileOpts);
     let exitCode = 0;
     try {
         await execa("git", ["checkout", "--orphan", "gh-pages"]);
         console.log("Building...");
-        await execa("yarn", ["run", "build-modern"]);
+        await execa("yarn", ["run", "build-staging"]);
         // Understand if it's dist or build folder
         const folderName = existsSync("dist") ? "dist" : "build";
         await execa("git", ["--work-tree", folderName, "add", "--all"]);
@@ -38,7 +33,6 @@ import { promises, existsSync } from 'fs';
         console.log(e.message);
         exitCode = 1;
     } finally {
-        await promises.writeFile(configFilePath, originPublicPath, fileOpts);
         await execa("git", ["checkout", "-f", "master"]);
         await execa("git", ["branch", "-D", "gh-pages"]);
     }

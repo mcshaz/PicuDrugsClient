@@ -1,5 +1,7 @@
 module.exports = {
-  publicPath: '/',
+  publicPath: process.env.NODE_ENV === 'staging'
+    ? '/PicuDrugsClient/'
+    : '/',
   pwa: {
     name: 'Children\'s Drug Calculator',
   },

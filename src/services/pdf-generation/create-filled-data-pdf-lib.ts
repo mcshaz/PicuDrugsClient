@@ -24,7 +24,7 @@ export async function createAndDownloadPDF(details: IChartPatientDetails) {
   const pdfBytes = await pdfDoc.save();
   const dt = new Date();
   dt.setMinutes(dt.getTimezoneOffset());
-  download(pdfBytes, `withdrawal-chart-${details.nhi}-${dt.toISOString().slice(0, 10)}.pdf`, 'application/pdf');
+  download(pdfBytes, process.env.VUE_APP_BASE_URL + `withdrawal-chart-${details.nhi}-${dt.toISOString().slice(0, 10)}.pdf`, 'application/pdf');
 }
 
 export async function createPDF(details: IChartPatientDetails, url: string) {
