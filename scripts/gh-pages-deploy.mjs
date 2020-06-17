@@ -29,7 +29,10 @@ import { promises, existsSync } from 'fs';
         await execa("git", ["--work-tree", folderName, "commit", "-m", "gh-pages"]);
         console.log("Pushing to gh-pages...");
         await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
-        await execa("rm", ["-r", folderName]);
+        const rmCmd = process.platform === "win32"
+            ? "dir"
+            : "rm";
+        await execa(rmCmd, ["-r", folderName]);
         console.log("Successfully deployed");
     } catch (e) {
         console.log(e.message);
