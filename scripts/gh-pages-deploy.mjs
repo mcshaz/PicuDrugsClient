@@ -14,7 +14,7 @@ import { promisify } from 'util';
         console.log(e.message);
         process.exit(1);
     }
-    promrmrf = promisify(rimraf);
+    const promrmrf = promisify(rimraf);
     let exitCode = 0;
     try {
         await execa("git", ["checkout", "--orphan", "gh-pages"]);
