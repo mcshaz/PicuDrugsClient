@@ -1,5 +1,4 @@
 import execa from 'execa';
-import { existsSync } from 'fs';
 
 (async () => {
     try {
@@ -18,13 +17,13 @@ import { existsSync } from 'fs';
         await execa("git", ["checkout", "--orphan", "gh-pages"]);
         console.log("Building...");
         await execa("yarn", ["run", "build-staging"]);
-        // Understand if it's dist or build folder
-        const folderName = existsSync("dist") ? "dist" : "build";
+        const folderName = "dist";
         await execa("git", ["--work-tree", folderName, "add", "--all"]);
         await execa("git", ["--work-tree", folderName, "commit", "-m", "gh-pages"]);
         console.log("Pushing to gh-pages...");
-        await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
-        const rmCmd = process.platform === "win32"
+        const { stdout } = await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
+        console.log(stdout);
+        const rmCmd = process.platform.startsWith("win")
             ? "del"
             : "rm";
         await execa(rmCmd, ["-r", folderName]);
@@ -33,8 +32,8 @@ import { existsSync } from 'fs';
         console.log(e.message);
         exitCode = 1;
     } finally {
-        await execa("git", ["checkout", "-f", "master"]);
-        await execa("git", ["branch", "-D", "gh-pages"]);
+        await execa("git", ["checkout", "-f", "master"]); // git checkout -f master
+        await execa("git", ["branch", "-D", "gh-pages"]); // git branch -D gh-pages
     }
 	process.exit(exitCode);
 })();
