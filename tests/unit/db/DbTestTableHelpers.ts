@@ -4,7 +4,7 @@ import { IEntityDefibModel } from '@/services/drugDb/entities/IEntityDefibModel'
 import { IEntityInfusion } from '@/services/drugDb/entities/InfusionDrugs/IEntityInfusionDrug';
 import { IEntityWard } from '@/services/drugDb/entities/IEntityWard';
 import { dbTableName } from '@/services/drugDb/entities/enums/dbTableName';
-import Dexie from './../../../../Dexie.js/dist/dexie';
+import Dexie from 'dexie';
 
 export interface IDexieTable<Tentity> {
     name: keyof DrugsDBLocal & keyof typeof dbTableName;

@@ -1,0 +1,30 @@
+import execa from 'execa';
+import { promises } from 'fs';
+
+(async () => {
+    const configFilePath = "vue.config.js";
+    const fileOpts = {encoding: 'utf-8'};
+    let config = await promises.readFile(configFilePath, fileOpts);
+    const originPublicPath = "publicPath: '/'";
+    await promises.writeFile(configFilePath, config.replace(originPublicPath, "publicPath: '/PicuDrugsClient/'"), fileOpts);
+    try {
+        await execa("git", ["checkout", "--orphan", "gh-pages"]);
+        console.log("Building...");
+        await execa("yarn", ["run", "build"]);
+        // Understand if it's dist or build folder
+        const folderName = fs.existsSync("dist") ? "dist" : "build";
+        await execa("git", ["--work-tree", folderName, "add", "--all"]);
+        await execa("git", ["--work-tree", folderName, "commit", "-m", "gh-pages"]);
+        console.log("Pushing to gh-pages...");
+        await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
+        await execa("rm", ["-r", folderName]);
+        await execa("git", ["checkout", "-f", "master"]);
+        await execa("git", ["branch", "-D", "gh-pages"]);
+        console.log("Successfully deployed");
+    } catch (e) {
+        console.log(e.message);
+        process.exit(1);
+    } finally {
+        await promises.writeFile(configFilePath, originPublicPath, fileOpts);
+    }
+})();

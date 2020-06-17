@@ -10,14 +10,14 @@
             <nhi-input v-model="nhi" label-cols-lg="2"/>
             <patient-age-data v-model="age" label-cols-lg="2"/>
             <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false" label-cols-lg="2"/>
-            <validated-input-group label="Weeks Gestation" :disabled="gestationDisabled" v-model="weeksGestation"
-              min="22" max="43" :description="gestationDescription" label-cols-lg="2"/>
-            <age-validated-weight :require-age="infusions" v-model="weightKg" :age="age" :weeks-gestation="weeksGestation" :is-male="isMale"/>
+            <validated-input-group label="Gestation" :disabled="gestationDisabled" v-model="weeksGestation" append="weeks" name="gestation"
+              min="22" max="43" :description="gestationDescription" label-cols-lg="2" placeholder="Completed Weeks"/>
+            <age-validated-weight label-cols-lg="2" :require-age="isAgeRequired" v-model="weightKg" :age="age" :weeks-gestation="weeksGestation" :is-male="isMale"/>
             <validated-bool-radio-group label="Weight is" v-model="isWtMeasured" false-label="estimate on age or appearance" true-label="recent measure" label-cols-lg="2"/>
             <chart-type :wardAbbrev="wardName"
                 @change:ward="ward=$event"
-                :boluses.sync="boluses"
-                :infusions.sync="infusions" label-cols-lg="2"/>
+                :chart-types.sync="charts"
+                label-cols-lg="2"/>
             <b-row align-h="end">
               <b-col lg="10">
                 <b-button type="submit" :variant="invalid ? '' : 'success'" :disabled="invalid">Create Chart</b-button>
@@ -143,6 +143,10 @@ export default class Home extends Vue {
     }
     return 'weeks gestation @ delivery';
   }
+
+  public get isAgeRequired() {
+    return this.charts.includes('infusion');
+  }
 }
 
 function setSlash(path: string) {
@@ -158,3 +162,8 @@ function setSlash(path: string) {
   return path;
 }
 </script>
+<style>
+#gestation {
+  max-width: 12em;
+}
+</style>

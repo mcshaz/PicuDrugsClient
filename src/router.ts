@@ -19,7 +19,7 @@ import Tests from './views/Tests.vue';
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: 'hash', // todo change to 'history'
   base: process.env.BASE_URL,
   routes: [
     {

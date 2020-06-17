@@ -19,7 +19,7 @@
         :invalid-feedback="valState.errors[0]"
         :state="getState(valState)"
       >
-        <b-form-checkbox-group stacked v-model="chartSelection" rules="required" name="chart-type" :state="getState(valState)">
+        <b-form-checkbox-group stacked v-model="charts" rules="required" name="chart-type" :state="getState(valState)">
           <b-form-checkbox
             value="boluses"
             id="boluses">
@@ -96,8 +96,8 @@ export default class ChartSelection extends Mixins(StateWatcher, LabelColWidth) 
   @Prop({ default: '' })
   private wardAbbrev!: string;
 
-  @Prop({ default: ['boluses', 'anaphylaxis'] as definedCharts[] })
-  private chartTypes: definedCharts[] = [];
+  @Prop({ default: () => ['boluses', 'anaphylaxis'] as definedCharts[] })
+  private chartTypes!: definedCharts[];
 
   @Inject('appData')
   private appData!: IAppData;
@@ -163,7 +163,7 @@ export default class ChartSelection extends Mixins(StateWatcher, LabelColWidth) 
 
   public set charts(value: definedCharts[]) {
     if (!setsEquivalent(value, this.chartTypes)) {
-      this.$emit('update:chartTypes', value);
+      this.$emit('update:chart-types', value);
       this.chartsTouched = true;
     }
   }

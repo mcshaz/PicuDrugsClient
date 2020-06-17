@@ -1,4 +1,4 @@
-import Dexie from '../../../../Dexie.js/dist/dexie'; // todo - return to node import once fixes released released
+import Dexie from 'dexie';
 import { IPatient } from './IPatient';
 
 export class PatientDBLocal extends Dexie {
