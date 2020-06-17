@@ -1,4 +1,6 @@
 import execa from 'execa';
+import rimraf from 'rimraf';
+import { promisify } from 'util';
 
 (async () => {
     try {
@@ -12,6 +14,7 @@ import execa from 'execa';
         console.log(e.message);
         process.exit(1);
     }
+    promrmrf = promisify(rimraf);
     let exitCode = 0;
     try {
         await execa("git", ["checkout", "--orphan", "gh-pages"]);
@@ -23,12 +26,7 @@ import execa from 'execa';
         console.log("Pushing to gh-pages...");
         await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
         console.log("deleting files");
-        if (process.platform.startsWith("win")) {
-            await execa("del", ["/f", "/s", folderName]);
-            await execa("rd", ["/s", folderName]);
-        } else {
-            await execa("rm", ["-r", folderName]);
-        }
+        await promrmrf(folderName, { glob: false })
         console.log("Successfully deployed");
     } catch (e) {
         console.log(e.message);
