@@ -8,6 +8,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build-modern": "vue-cli-service build --modern",
+    "gh-pages-deploy": "node scripts/gh-pages-deploy.mjs",
     "test:unit": "vue-cli-service test:unit tests/unit/**/*.spec.ts",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint --fix",
