@@ -30,7 +30,7 @@ import { promises, existsSync } from 'fs';
         console.log("Pushing to gh-pages...");
         await execa("git", ["push", "origin", "HEAD:gh-pages", "--force"]);
         const rmCmd = process.platform === "win32"
-            ? "dir"
+            ? "del"
             : "rm";
         await execa(rmCmd, ["-r", folderName]);
         console.log("Successfully deployed");
