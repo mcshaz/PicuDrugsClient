@@ -30,12 +30,12 @@
     "lodash.debounce": "^4.0.8",
     "reflect-metadata": "^0.1.13",
     "register-service-worker": "^1.7.1",
-    "vee-validate": "^3.3.3",
+    "vee-validate": "^3.3.4",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-katex": "https://github.com/lucpotage/vue-katex",
     "vue-property-decorator": "^8.5.0",
-    "vue-router": "^3.2.0",
+    "vue-router": "^3.3.4",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
@@ -70,7 +70,7 @@
     "chai": "^4.2.0",
     "chai-almost": "^1.0.1",
     "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",

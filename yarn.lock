@@ -5178,7 +5178,7 @@ eslint-plugin-es@^3.0.0:
     eslint-utils "^2.0.0"
     regexpp "^3.0.0"
 
-eslint-plugin-import@^2.20.2:
+eslint-plugin-import@^2.21.2:
   version "2.21.2"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.21.2.tgz#8fef77475cc5510801bedc95f84b932f7f334a7c"
   integrity sha512-FEmxeGI6yaz+SnEB6YgNHlQK1Bs2DKLM+YF+vuTk5H8J9CLbJLtlPvRFgZZ2+sXiKAlN5dpdlrWOjK8ZoZJpQA==
@@ -12580,10 +12580,10 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vee-validate@^3.3.3:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.3.3.tgz#aef64d3d51e1d3d22b709f9e68813085c38e751c"
-  integrity sha512-rIke0gobZkxqOTYFOTurz3iIUAYY9fqe41NtMc5Xz5p9FtS61sO6cc6TfsabZb8Fj9PK55UDYThGTnPec0fbZQ==
+vee-validate@^3.3.4:
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.3.4.tgz#16a49dc9afd4e406c4af55ab0aa272b2229cb8f8"
+  integrity sha512-KvmkRNVH6kYSSKBSO15K7XXnp/LrVMIFn1V2OoI4F4GJw+4rMWVIpswDCuVAzk+sXF50hy46BzdancWLkcqtuw==
 
 vendors@^1.0.0:
   version "1.0.4"
@@ -12662,7 +12662,7 @@ vue-property-decorator@^8.5.0:
   resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.5.0.tgz#9af64c5301413f4732640cc0d046879417e64994"
   integrity sha512-0RueJN/shPWf5gM8GLUD6bYiXr+q7bu+S1tgr7XwgBSng10H5DLQjVYfJ5XHAOPFo7fBfY1nxljBQ95qryAiWg==
 
-vue-router@^3.2.0:
+vue-router@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.3.4.tgz#4e38abc34a11c41b6c3d8244449a2e363ba6250b"
   integrity sha512-SdKRBeoXUjaZ9R/8AyxsdTqkOfMcI5tWxPZOUX5Ie1BTL5rPSZ0O++pbiZCeYeythiZIdLEfkDiQPKIaWk5hDg==
