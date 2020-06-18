@@ -22,7 +22,7 @@
             </p>
             <p>
                 If you are creating a ficticious patient for simulation activities, either leave the NHI
-                blank, or use the NHI <strong>SIM0000</strong> through to <strong>SIM0009</strong>.
+                blank, or use the NHI <strong>SIM0000</strong> through to <strong>SIM0099</strong>.
                 These are the <em>only</em> invalid NHIs which will pass validation.
             </p>
             <p>

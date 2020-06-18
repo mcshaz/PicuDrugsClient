@@ -59,58 +59,58 @@ export class DatePart {
     return false;
   }
 
-    public readonly placeholder: string;
-    public max: number;
-    public readonly class: string;
-    private pValue = '';
-    private readonly len: 2 | 4;
-    constructor(readonly part: datePartType) {
-      this.class = 'FormDate__input--' + part;
-      switch (part) {
-        case 'day':
-          this.max = 31;
-          this.len = 2;
-          this.placeholder = 'dd';
-          break;
-        case 'month':
-          this.max = 12;
-          this.len = 2;
-          this.placeholder = 'mm';
-          break;
-        case 'year':
-          this.max = 2099;
-          this.len = 4;
-          this.placeholder = 'yyyy';
-          break;
-        default:
-          throw new TypeError('part must be 1 of day, month or year');
-      }
+  public readonly placeholder: string;
+  public max: number;
+  public readonly class: string;
+  private pValue = '';
+  private readonly len: 2 | 4;
+  constructor(readonly part: datePartType) {
+    this.class = 'FormDate__input--' + part;
+    switch (part) {
+      case 'day':
+        this.max = 31;
+        this.len = 2;
+        this.placeholder = 'dd';
+        break;
+      case 'month':
+        this.max = 12;
+        this.len = 2;
+        this.placeholder = 'mm';
+        break;
+      case 'year':
+        this.max = 2099;
+        this.len = 4;
+        this.placeholder = 'yyyy';
+        break;
+      default:
+        throw new TypeError('part must be 1 of day, month or year');
     }
+  }
 
-    public get value() { return this.pValue; }
-    // sets the value. If 'overflow' returns the value to add to the next field
-    public setValue(no: string, divideOverflow = true) {
-      let returnVar: boolean | string = false;
-      if (no === '' || no === '0') {
-        this.pValue = no;
-        return false;
-      } else if (divideOverflow) {
-        let move: boolean | string[];
-        if (this.part === 'day') {
-          move = DatePart.moveDay(no);
-        } else if (this.part === 'month') {
-          move = DatePart.moveMonth(no);
-        } else { // year
-          move = DatePart.moveYear(no);
-        }
-        if (typeof move === 'boolean') {
-          returnVar = move;
-        } else {
-          no = move[0];
-          returnVar = move[1];
-        }
+  public get value() { return this.pValue; }
+  // sets the value. If 'overflow' returns the value to add to the next field
+  public setValue(no: string, divideOverflow = true) {
+    let returnVar: boolean | string = false;
+    if (no === '' || no === '0') {
+      this.pValue = no;
+      return false;
+    } else if (divideOverflow) {
+      let move: boolean | string[];
+      if (this.part === 'day') {
+        move = DatePart.moveDay(no);
+      } else if (this.part === 'month') {
+        move = DatePart.moveMonth(no);
+      } else { // year
+        move = DatePart.moveYear(no);
       }
-      this.pValue = no.slice(-this.len).padStart(this.len, '0');
-      return returnVar;
+      if (typeof move === 'boolean') {
+        returnVar = move;
+      } else {
+        no = move[0];
+        returnVar = move[1];
+      }
     }
+    this.pValue = no.slice(-this.len).padStart(this.len, '0');
+    return returnVar;
+  }
 }

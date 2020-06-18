@@ -10,11 +10,13 @@ module.exports = {
     config.module.rule('pdf')
       .test(/\w\.pdf$/)
       .use('file-loader')
-        .loader('file-loader')
-        .options({
-          name: 'assets/pdf/[name].[hash:8].[ext]'
-        })
-  }
+      .loader('file-loader')
+      .options({
+        name: 'assets/pdf/[name].[hash:8].[ext]',
+      });
+  },
+  transpileDependencies: ['pdf-lib'],
+  productionSourceMap: false,
 };
 // https://cli.vuejs.org/config/#publicpath
 /*

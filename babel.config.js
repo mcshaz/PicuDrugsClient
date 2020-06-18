@@ -1,7 +1,7 @@
 const settings = {
   presets: [
     '@vue/cli-plugin-babel/preset',
-  ]
+  ],
 };
 /*
 if (process.env.NODE_ENV === 'never') {
@@ -10,5 +10,10 @@ if (process.env.NODE_ENV === 'never') {
       'babel-plugin-parameter-decorator'
   ];
 }
+presets[
+  {
+    polyfills: ['es.codePointAt'];
+  }
+]
 */
 module.exports = settings;

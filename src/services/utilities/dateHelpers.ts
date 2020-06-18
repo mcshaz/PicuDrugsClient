@@ -1,3 +1,4 @@
+import { languages } from '@/services/utilities/localisation';
 // note in current form will intentionally not parse dates < 1000 AD
 export function parseDateUtc0(yyyy: string, mm: string, dd: string) {
   const yr = Number(yyyy);
@@ -29,12 +30,52 @@ export function dateInRange(dt: Date | null, min: Date | null, max: Date | null)
   return dt && (!min || dt >= min) && (!max || dt <= max);
 }
 
-export const shortFormatter = new Intl.DateTimeFormat(navigator.languages as string[],
+const shortFormatter = new Intl.DateTimeFormat(languages as string[],
   {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
   });
 
-export const dateOrder = shortFormatter.formatToParts(new Date(1974, 2, 28))
-  .map((p) => p.type === 'literal' ? p.value : p.type, [] as string[]);
+const doesformatterAdd8206 = shortFormatter.format(0).split('').length > 5; // weird IE thing gives charCode 8206 as 1st element
+
+function remove8206(txt: string) {
+  if (doesformatterAdd8206) {
+    let returnVar = '';
+    for (let i = 0; i < txt.length; ++i) {
+      if (txt.charCodeAt(i) !== 8206) {
+        returnVar += txt.charAt(i);
+      }
+    }
+    return returnVar;
+  }
+  return txt;
+}
+
+export function fixIE11Format(dt: Date | null, formatter = shortFormatter) {
+  if (!dt) {
+    return '';
+  }
+  return remove8206(formatter.format(dt));
+}
+
+let dateOrder: string[];
+if (typeof shortFormatter.formatToParts === 'function') {
+  dateOrder = shortFormatter.formatToParts(0)
+    .map((p) => p.type === 'literal' ? p.value : p.type, [] as string[]);
+} else { // not supported ie11 - this is a hack which will only support {calendar: 'gregory', numberingSystem: 'latn'};
+  const egDate = new Date(1984, 11, 30);
+  dateOrder = shortFormatter.format(egDate).replace(egDate.getFullYear().toString(), 'year')
+    .replace((egDate.getMonth() + 1).toString(), 'month')
+    .replace(egDate.getDate().toString(), 'day')
+    .match(/(year|month|day|\W+)/g)!
+    .reduce((accum, txt) => {
+      const rv = remove8206(txt);
+      if (rv) {
+        accum.push(rv);
+      }
+      return accum;
+    }, [] as string[]);
+}
+
+export { dateOrder, shortFormatter };

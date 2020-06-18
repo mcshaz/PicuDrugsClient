@@ -1,5 +1,6 @@
 import { ValidationRuleSchema } from 'vee-validate/dist/types/types';
 import { shortFormatter } from '@/services/utilities/dateHelpers';
+import { languages } from '@/services/utilities/localisation';
 
 export const maxYears = 122;
 
@@ -24,7 +25,7 @@ export const nhiRegex: ValidationRuleSchema = {
 
 export const nhiChecksum: ValidationRuleSchema = {
   validate(value: string) {
-    if (/^SIM000\d$/.test(value)) { return true; }
+    if (/^SIM00\d{2}$/.test(value)) { return true; }
     const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     const checkSum = parseInt(value.slice(-1), 10);
     value = value.slice(0, -1).toUpperCase();
@@ -50,7 +51,7 @@ function localeString(value: Date | string, includeTime = false) {
     ? value
     : new Date(value);
   return includeTime
-    ? limit.toLocaleDateString(navigator.languages as string[])
+    ? limit.toLocaleDateString(languages as string[])
     : shortFormatter.format(limit);
 }
 

@@ -1,6 +1,6 @@
 <template>
     <div class="date-input">
-        <date-input-polyfill v-model="pDate" v-if="isDateSupported===dateElSupportValues.noSupport"
+        <date-input-polyfill v-model="dateStr" v-if="isDateSupported===dateElSupportValues.noSupport"
               @blur="$emit('blur', $event)" :id="id" :required="required" :class="cssClass"/>
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr"

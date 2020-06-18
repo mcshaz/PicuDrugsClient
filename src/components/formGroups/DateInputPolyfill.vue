@@ -58,14 +58,25 @@ type vueNumber = number | '';
 @Component
 export default class DateInputPolyfill extends Vue {
     public isValid: null | boolean = null;
-
     public first = new DatePart(dateOrder[0] as datePartType);
     public sep1 = dateOrder[1];
     public second = new DatePart(dateOrder[2] as datePartType);
     public sep2 = dateOrder[3];
     public third = new DatePart(dateOrder[4] as datePartType);
 
-    private dateArgs!: [DatePart, DatePart, DatePart];
+    private dateArgs = [this.first, this.second, this.third].sort((a, b) => {
+      if (a.part === 'year') {
+        return -1;
+      }
+      if (b.part === 'year') {
+        return 1;
+      }
+      if (a.part === 'month') {
+        return -1;
+      }
+      return 1;
+    });
+
     private pDate: Date | null = null;
 
     @Prop({ default: null })
@@ -73,22 +84,6 @@ export default class DateInputPolyfill extends Vue {
 
     @Prop({ default: false })
     private required!: boolean;
-
-    public created() {
-      this.dateArgs = [this.first, this.second, this.third];
-      this.dateArgs.sort((a, b) => {
-        if (a.part === 'year') {
-          return -1;
-        }
-        if (b.part === 'year') {
-          return 1;
-        }
-        if (a.part === 'month') {
-          return -1;
-        }
-        return 1;
-      });
-    }
 
     @Watch('value', { immediate: true })
     public valueChanged() {
@@ -127,6 +122,7 @@ export default class DateInputPolyfill extends Vue {
           (this.$refs.third as HTMLInputElement).select();
         }
       }
+
       this.emitDate();
     }
 
@@ -152,6 +148,7 @@ export default class DateInputPolyfill extends Vue {
 
     private emitDate() {
       const timestamp = parseDateUtc0(this.dateArgs[0].value, this.dateArgs[1].value, this.dateArgs[2].value);
+      console.log(timestamp);
       if (!timestamp) {
         if (this.pDate) {
           this.pDate = null;

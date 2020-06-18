@@ -1,4 +1,6 @@
 import { roundToFixed } from '@/services/infusion-calculations/';
+import { languages } from '@/services/utilities/localisation';
+import { fixIE11Format } from '@/services/utilities/dateHelpers';
 
 export class WeanDay {
     public rescueDose: number;
@@ -15,7 +17,7 @@ export class WeanDay {
     }
 
     public get weanDateString() {
-      return WeanDay.formatter.format(this.weanDate); // .replace('/0', '/'); // hack because all browsers currently seems to give 2 digit month
+      return fixIE11Format(this.weanDate, WeanDay.formatter); // .replace('/0', '/'); // hack because all browsers currently seems to give 2 digit month
     }
 
     public addDays(days: number) {
@@ -28,7 +30,7 @@ export class WeanDay {
       return returnVar;
     }
 
-    private static formatter = new Intl.DateTimeFormat(navigator.languages as string[],
+    private static formatter = new Intl.DateTimeFormat(languages as string[],
       {
         year: '2-digit',
         month: 'numeric',

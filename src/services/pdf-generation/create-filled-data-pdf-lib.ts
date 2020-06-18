@@ -1,7 +1,7 @@
 import { PDFDocument, rgb, StandardFonts, radians } from 'pdf-lib';
 import { PdfTableValues } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
-import { shortFormatter } from '@/services/utilities/dateHelpers';
+import { fixIE11Format } from '@/services/utilities/dateHelpers';
 import { weightRounding } from '@/services/infusion-calculations/Utilities/rounding';
 import download from 'downloadjs';
 
@@ -21,7 +21,7 @@ interface IChartPatientDetails {
 
 export async function createAndDownloadPDF(details: IChartPatientDetails) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const pdfDoc = await createPDF(details, require('./../../assets/pdf/WeaningProtocol.pdf')); // process.env.BASE_URL
+  const pdfDoc = await createPDF(details, require('./../../assets/pdf/WeaningProtocol.pdf'));
   const pdfBytes = await pdfDoc.save();
   const dt = new Date();
   dt.setMinutes(dt.getTimezoneOffset());
@@ -61,7 +61,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       pg.drawText(details.isMale ? 'Male' : 'Female', { x: 428, y: 53, size, rotate }); // Given Name
     }
     if (details.dob) {
-      pg.drawText(shortFormatter.format(details.dob), { x: 531, y: 75, size, rotate });
+      pg.drawText(fixIE11Format(details.dob), { x: 531, y: 75, size, rotate });
     }
     pg.drawText(details.nhi, { x: 446, y: 75, size, rotate });
     // leave out page number incase different meds printed out
