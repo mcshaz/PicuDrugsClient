@@ -94,7 +94,7 @@ export default class Home extends Vue {
 
   public created() {
     // route might be user typed & is valid with or without trailing '/'
-    this.baseRef = process.env.VUE_APP_BASE_URL! + setSlash(this.$route.path);
+    this.baseRef = process.env.VUE_APP_BASE_ROUTE! + setSlash(this.$route.path);
     // logic should be - if wardName prop defined or if no appData use ward.isBolusOnly
     // else use appData
     // nb 2 promises - do not set up race condition - should be ok as in created hook

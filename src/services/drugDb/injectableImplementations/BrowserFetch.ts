@@ -6,8 +6,8 @@ import { IServerChanges } from '../ServerCommunication/IServerChanges';
 
 @injectable()
 export class BrowserFetch implements IFetchUpdates, IRegisterEmail {
-    private static getDbUpdatesUrl = process.env.VUE_APP_BASE_URL! + process.env.VUE_APP_DBJSON!;
-    private static subscribeDbChangesUrl = process.env.VUE_APP_BASE_URL! + process.env.VUE_APP_SubscribeChanges!;
+    private static getDbUpdatesUrl = process.env.VUE_APP_BASE_ROUTE! + process.env.VUE_APP_DBJSON!;
+    private static subscribeDbChangesUrl = process.env.VUE_APP_BASE_ROUTE! + process.env.VUE_APP_SubscribeChanges!;
 
     public async getDbUpdates(lastServerCheckUtc: Date | null) {
       const query = '?lastServerCheckUtc=' + lastServerCheckUtc;
