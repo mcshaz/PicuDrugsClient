@@ -20,11 +20,12 @@ interface IChartPatientDetails {
 }
 
 export async function createAndDownloadPDF(details: IChartPatientDetails) {
-  const pdfDoc = await createPDF(details, '/pdf/WeaningProtocol.pdf');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const pdfDoc = await createPDF(details, require('./../../assets/pdf/WeaningProtocol.pdf')); // process.env.BASE_URL
   const pdfBytes = await pdfDoc.save();
   const dt = new Date();
   dt.setMinutes(dt.getTimezoneOffset());
-  download(pdfBytes, process.env.VUE_APP_BASE_URL + `withdrawal-chart-${details.nhi}-${dt.toISOString().slice(0, 10)}.pdf`, 'application/pdf');
+  download(pdfBytes, `/withdrawal-chart-${details.nhi}-${dt.toISOString().slice(0, 10)}.pdf`, 'application/pdf');
 }
 
 export async function createPDF(details: IChartPatientDetails, url: string) {

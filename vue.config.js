@@ -8,6 +8,15 @@ module.exports = {
   configureWebpack: {
     devtool: 'source-map',
   },
+  chainWebpack: config => {
+    config.module.rule('pdf')
+      .test(/\w\.pdf$/)
+      .use('file-loader')
+        .loader('file-loader')
+        .options({
+          name: 'assets/pdf/[name].[hash:8].[ext]'
+        })
+  }
 };
 // https://cli.vuejs.org/config/#publicpath
 /*

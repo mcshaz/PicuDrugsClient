@@ -2,7 +2,7 @@
   <div id="app">
     <b-navbar toggleable="lg" type="dark" variant="info">
       <b-navbar-brand href="#">
-        <img src="/img/icons/logo.svg" class="d-inline-block align-top" alt="Paediatric Drugs Logo" height="32">
+        <img src="./assets/logo.svg" class="d-inline-block align-top" alt="Paediatric Drugs Logo" height="32">
         Paediatric Drugs
       </b-navbar-brand>
 

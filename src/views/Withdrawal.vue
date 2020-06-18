@@ -79,7 +79,7 @@
                 as this includes any boluses the patient has received, plus accounts for any change in infusion rate during the 24 hours.
               </p>
             </b-card-body>
-            <img src="/img/example-vol-PICU.jpg" img-alt="Example PICU observation chart" class="card-img-bottom">
+            <img src="../assets/example-vol-PICU.jpg" img-alt="Example PICU observation chart" class="card-img-bottom">
           </b-collapse>
         </b-card>
       </b-col>

@@ -52,7 +52,7 @@
               :fraction-remain="proportionRemain" :full-pres-bar="selectedCylinder.barFull" />
           <div id="tanks-used" v-else>
             {{roundedTanksUsed}} x
-            <img src="/img/gas-cylinder.svg" height="100">
+            <img src="../assets/gas-cylinder.svg" height="100">
           </div>
         </b-card>
       </b-col>

@@ -27,7 +27,6 @@ export default class Tests extends Mixins(Withdrawal) {
     this.rapidClonidineWean = false;
     this.weanDaily = true;
     this.weaningDrug = 'morphine';
-    console.log({ originalDrug: this.originalDrug, weaningDrug: this.weaningDrug, age: this.age });
     createAndDownloadPDF({
       firstN: 'Little',
       lastN: 'Johnny',
