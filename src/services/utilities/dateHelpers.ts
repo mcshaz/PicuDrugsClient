@@ -40,23 +40,23 @@ const shortFormatter = new Intl.DateTimeFormat(languages as string[],
 const doesformatterAdd8206 = shortFormatter.format(0).split('').length > 5; // weird IE thing gives charCode 8206 as 1st element
 
 function remove8206(txt: string) {
-  if (doesformatterAdd8206) {
-    let returnVar = '';
-    for (let i = 0; i < txt.length; ++i) {
-      if (txt.charCodeAt(i) !== 8206) {
-        returnVar += txt.charAt(i);
-      }
+  let returnVar = '';
+  for (let i = 0; i < txt.length; ++i) {
+    if (txt.charCodeAt(i) !== 8206) {
+      returnVar += txt.charAt(i);
     }
-    return returnVar;
   }
-  return txt;
+  return returnVar;
 }
 
 export function fixIE11Format(dt: Date | null, formatter = shortFormatter) {
   if (!dt) {
     return '';
   }
-  return remove8206(formatter.format(dt));
+  if (doesformatterAdd8206) {
+    return remove8206(formatter.format(dt));
+  }
+  return formatter.format(dt);
 }
 
 let dateOrder: string[];
