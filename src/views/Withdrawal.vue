@@ -83,7 +83,7 @@
           </b-collapse>
         </b-card>
       </b-col>
-      <validation-observer v-slot="{ invalid, handleSubmit }" slim ref="mainObserver">
+      <validation-observer v-slot="{ handleSubmit }" slim ref="mainObserver">
         <form class="col-lg-5 order-lg-1" novalidate autocomplete="off" @submit.prevent="handleSubmit(createPDF)" @reset.prevent="clearAll">
           <b-form-group label="Patient details" id="patient-details" label-size="lg">
             <validated-input-group label="Surname" type="text" v-model="lastNm"
@@ -165,7 +165,7 @@
           <hr>
           <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
           <hr>
-          <button type="submit" class="btn btn-success mb-4" :disabled="invalid"><font-awesome-icon icon="print"/> Create <font-awesome-icon icon="file-pdf"/></button>
+          <button type="submit" class="btn btn-success mb-4"><font-awesome-icon icon="print"/> Create <font-awesome-icon icon="file-pdf"/></button>
           <button type="reset" class="btn btn-warning mb-4 ml-2">Clear All <font-awesome-icon icon="eraser"/></button>
         </form>
       </validation-observer>
@@ -446,7 +446,7 @@ export default class Withdrawal extends Vue {
       route: 'oral/NG',
       originalDrug: this.originalDrug!.name,
       originalConc: this.isPatch
-        ? (this.originalConcUnits!.units + this.originalConcVal)
+        ? (this.originalConcUnits!.units + '-' + this.originalConcVal)
         : (this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units),
       originalVol: this.isPatch
         ? ''

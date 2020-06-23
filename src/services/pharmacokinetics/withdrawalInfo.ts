@@ -148,7 +148,7 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
 
 export function extractUnits(rateStr: string) {
   if (rateStr === 'TTS') {
-    return 'micro';
+    return 'microg';
   }
   return rateStr.substring(0, rateStr.indexOf('/'));
 }

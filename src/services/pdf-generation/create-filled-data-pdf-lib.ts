@@ -25,10 +25,12 @@ export interface IChartPatientDetails {
 export async function createAndDownloadPDF(details: IChartPatientDetails) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const pdfDoc = await createPDF(details, require('./../../assets/pdf/WeaningProtocol.pdf'));
-  const pdfBytes = await pdfDoc.save();
   const dt = new Date();
+  const title = `Withdrawal Chart ${details.nhi} ${dt.toISOString().slice(0, 10)}`;
+  pdfDoc.setTitle(title);
+  const pdfBytes = await pdfDoc.save();
   dt.setMinutes(dt.getTimezoneOffset());
-  download(pdfBytes, `withdrawal-chart-${details.nhi}-${dt.toISOString().slice(0, 10)}.pdf`, 'application/pdf');
+  download(pdfBytes, title.replace(/ /g, '-') + '.pdf', 'application/pdf');
 }
 
 export async function createPDF(details: IChartPatientDetails, url: string) {
@@ -68,6 +70,9 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     if (details.dob) {
       pg.drawText(fixIE11Format(details.dob), { x: 531, y: 75, size, rotate });
     }
+    const origTxt = `original: ${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trim();
+    pg.drawText(origTxt,
+      { x: 77 + widthOfTextAtSize(origTxt, 8), y: 42, color: grayscale(0.8), rotate, size: 8 });
     pg.drawText(details.nhi, { x: 446, y: 75, size, rotate });
     // leave out page number incase different meds printed out
     // + PdfTableValues.simpleBT(i.toString(), [756, 125], { getWidth })
