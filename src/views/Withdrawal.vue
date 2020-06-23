@@ -124,7 +124,7 @@
             </validated-input-select-group>
             <validated-input-group label="last 24hrs" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
                 label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
-                :append="original24HrUnits" type="number" v-model="original24HrVol">
+                :append="original24HrUnits" type="number" v-model="original24HrVol" min="0" max="500">
               <template #description v-if="original24HrUnits==='ml'">
                 where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
               </template>
@@ -189,7 +189,7 @@ import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSi
 import { BAlert } from 'bootstrap-vue';
 import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
-import { createAndDownloadPDF } from '@/services/pdf-generation/create-filled-data-pdf-lib';
+import { createAndDownloadPDF, IChartPatientDetails } from '@/services/pdf-generation/create-filled-data-pdf-lib';
 
 // import { regexDescribe } from '@/services/validation/regexDescribe';
 // import jsPDF from 'jspdf';
@@ -444,8 +444,15 @@ export default class Withdrawal extends Vue {
       prescriber: this.prescriber,
       doseUnits: this.weaningDoseUnits,
       route: 'oral/NG',
+      originalDrug: this.originalDrug!.name,
+      originalConc: this.isPatch
+        ? (this.originalConcUnits!.units + this.originalConcVal)
+        : (this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units),
+      originalVol: this.isPatch
+        ? ''
+        : this.original24HrVol + this.original24HrUnits,
       regime: this.createWeanInfo(),
-    });
+    } as IChartPatientDetails);
   }
 
   public createWeanInfo() {

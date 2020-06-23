@@ -1,11 +1,11 @@
-import { PDFDocument, rgb, StandardFonts, radians } from 'pdf-lib';
-import { PdfTableValues } from './pdf-table-values-pdf-lib';
+import { PDFDocument, rgb, StandardFonts, radians, grayscale } from 'pdf-lib';
+import { PdfTableValues, ICoordOptions } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { fixIE11Format } from '@/services/utilities/dateHelpers';
 import { weightRounding } from '@/services/infusion-calculations/Utilities/rounding';
 import download from 'downloadjs';
 
-interface IChartPatientDetails {
+export interface IChartPatientDetails {
     dob: Date | null;
     lastN: string;
     firstN: string;
@@ -16,6 +16,9 @@ interface IChartPatientDetails {
     medicine: string;
     doseUnits: string;
     route: string;
+    originalDrug: string;
+    originalConc: string;
+    originalVol: string;
     regime: WeanDay[];
 }
 
@@ -50,6 +53,8 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   let size = 11;
   const rotate = radians(Math.PI);
   const getWidth = (txt: string) => widthOfTextAtSize(txt, size);
+  const signArgs = await getSignArguments(doc);
+  signArgs.rotate = rotate;
   for (let p = 0; p < pagesRequired; ++p) {
     // Object { x: 0, y: 0, width: 595.22, height: 842 }
     // vs 825 1168 on gimp
@@ -69,9 +74,10 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     const wtText = weightRounding(details.weight) + ' kg';
     pg.drawText(wtText, { x: 48 + getWidth(wtText) / 2, y: 60, size, rotate });
     pg.drawText(details.prescriber, { x: 500 + getWidth(details.prescriber) / 2, y: 759, size, rotate });
+    pg.drawText('SIGN HERE', { x: 422, y: 760, ...signArgs });
   }
   size -= 2;
-  const cellTVs = new PdfTableValues(doc, [498, 129], [55.5, 205], [cols, gridsRows], 10.6);
+  const cellTVs = new PdfTableValues(doc, [499, 129], [55.5, 205], [cols, gridsRows], 10.6);
   cellTVs.setCoords([...details.regime.keys(), details.regime.length].slice(1).map(String),
     { getWidth, size, rotate });
   cellTVs.setCoords(details.regime.map(r => r.weanDateString),
@@ -80,9 +86,23 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     { getWidth, rowNo: 2, size, rotate });
   cellTVs.setCoords(details.regime.map(r => r.frequency),
     { getWidth, rowNo: 3, size, rotate });
+  // sign here
+  cellTVs.startCoord[1] += cellTVs.itemRowOffset * 0.4;
+  const shortSignText = new Array(details.regime.length).fill('SIGN');
+  const shortSignWidth = signArgs.signWidth(shortSignText[0], signArgs.size!);
+  (signArgs as any).opacity = 0.9;
+  signArgs.getWidth = () => shortSignWidth;
+  signArgs.rowNo = 4;
+  cellTVs.setCoords(shortSignText, signArgs);
+
   cellTVs.startCoord[1] = 266;
   cellTVs.setCoords(details.regime.map(r => r.rescueDose + details.doseUnits),
     { getWidth, size, color: toRGB('e9262c'), rotate });
+  // sign here
+  signArgs.rowNo = 1.35;
+  cellTVs.setCoords(shortSignText, signArgs);
+
+  // drug name & route
   cellTVs.gridsPerPage[0] = 1;
   cellTVs.startCoord = [537, 117];
   cellTVs.offsetCoord[0] = 0;
@@ -92,6 +112,19 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   cellTVs.setCoords(medArray.fill(details.medicine), { size, rotate });
   cellTVs.startCoord[0] = 362;
   cellTVs.setCoords(medArray.fill(details.route), { size, rotate });
+}
+
+interface ISignArgs extends ICoordOptions {signWidth: (txt: string, size: number) => number};
+async function getSignArguments(doc: PDFDocument): Promise<ISignArgs> {
+  const helveticaBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  const size = 11;
+  const signWidth = helveticaBold.widthOfTextAtSize.bind(helveticaBold);
+  return {
+    font: helveticaBold,
+    color: grayscale(240 / 255),
+    size,
+    signWidth,
+  };
 }
 
 function toRGB(color: string) {

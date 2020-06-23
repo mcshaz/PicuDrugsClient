@@ -37,7 +37,7 @@ const shortFormatter = new Intl.DateTimeFormat(languages as string[],
     day: 'numeric',
   });
 
-function remove8206(txt: string) {
+function strip8206(txt: string) {
   let returnVar = '';
   for (let i = 0; i < txt.length; ++i) {
     if (txt.charCodeAt(i) !== 8206) {
@@ -47,7 +47,7 @@ function remove8206(txt: string) {
   return returnVar;
 }
 
-let doesformatterAdd8206!: boolean; // weird IE thing gives charCode 8206 as 1st element
+let doesformatterAdd8206!: boolean; // weird IE thing gives charCode 8206 where unused dateParts - eg day of week are
 
 let dateOrder: string[];
 if (typeof shortFormatter.formatToParts === 'function') {
@@ -57,18 +57,13 @@ if (typeof shortFormatter.formatToParts === 'function') {
 } else { // not supported ie11 - this is a hack which will only support {calendar: 'gregory', numberingSystem: 'latn'};
   const egDate = new Date(1984, 11, 30);
   const formatted = shortFormatter.format(egDate);
-  doesformatterAdd8206 = formatted.indexOf(String.fromCharCode(8206)) !== -1;
-  dateOrder = formatted.replace(egDate.getFullYear().toString(), 'year')
+  const strippedFormated = strip8206(formatted);
+  doesformatterAdd8206 = formatted !== strippedFormated;
+  dateOrder = strippedFormated.replace(egDate.getFullYear().toString(), 'year')
     .replace((egDate.getMonth() + 1).toString(), 'month')
     .replace(egDate.getDate().toString(), 'day')
     .match(/(year|month|day|\W+)/g)!
-    .reduce((accum, txt) => {
-      txt = remove8206(txt);
-      if (txt) {
-        accum.push(txt);
-      }
-      return accum;
-    }, [] as string[]);
+    .slice();
 }
 
 export function fixIE11Format(dt: Date | null, formatter = shortFormatter) {
@@ -76,7 +71,7 @@ export function fixIE11Format(dt: Date | null, formatter = shortFormatter) {
     return '';
   }
   if (doesformatterAdd8206) {
-    return remove8206(formatter.format(dt));
+    return strip8206(formatter.format(dt));
   }
   return formatter.format(dt);
 }

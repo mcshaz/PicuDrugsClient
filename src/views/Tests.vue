@@ -38,6 +38,9 @@ export default class Tests extends Mixins(Withdrawal) {
       prescriber: 'Brent McSharry',
       doseUnits: 'mg',
       route: 'oral/NG',
+      originalDrug: this.originalDrug!.name,
+      originalConc: this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units,
+      originalVol: this.original24HrVol + this.original24HrUnits,
       regime: this.createWeanInfo(),
     });
   }
