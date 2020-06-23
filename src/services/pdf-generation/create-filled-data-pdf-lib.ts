@@ -90,7 +90,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   cellTVs.startCoord[1] += cellTVs.itemRowOffset * 0.4;
   const shortSignText = new Array(details.regime.length).fill('SIGN');
   const shortSignWidth = signArgs.signWidth(shortSignText[0], signArgs.size!);
-  (signArgs as any).opacity = 0.9;
+  signArgs.opacity = 0.85;
   signArgs.getWidth = () => shortSignWidth;
   signArgs.rowNo = 4;
   cellTVs.setCoords(shortSignText, signArgs);
@@ -100,6 +100,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     { getWidth, size, color: toRGB('e9262c'), rotate });
   // sign here
   signArgs.rowNo = 1.35;
+  signArgs.opacity = 0.5;
   cellTVs.setCoords(shortSignText, signArgs);
 
   // drug name & route
