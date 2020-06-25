@@ -178,11 +178,11 @@
             <text x="23" y="219" class="list amio">
                 For central line dosing (preferable if available) please see:
             </text>
-            <a href="/Cardiology">
+            <router-link to="/Cardiology" v-slot="{ route }">
                 <text x="127" y="219" class="list amio">
-                    https://paediatricdrugs.net/Cardiology
+                    {{ document.location.origin + route.fullPath }}
                 </text>
-            </a>
+            </router-link>
             <circle class="make" cx="24" cy="227.5" r="0.5px"></circle>
             <circle class="make" cx="24" cy="232.2" r="0.5px"></circle>
             <circle class="make" cx="24" cy="237" r="0.5px"></circle>

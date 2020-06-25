@@ -17,7 +17,7 @@ export const exactLength: ValidationRuleSchema = {
 
 export const nhiRegex: ValidationRuleSchema = {
   validate(value: string) {
-    return /^([A-HJ-NP-Z]{3}\d{4}|SIM000\d)$/.test(value);
+    return /^([A-HJ-NP-Z]{3}\d{4}|SIM00\d{2})$/.test(value);
   },
   // eslint-disable-next-line quotes
   message: "Must be 3 letters (NO 'I's or 'O's) followed by 4 numbers",

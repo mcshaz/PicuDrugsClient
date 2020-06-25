@@ -15,6 +15,7 @@ import About from './views/About.vue';
 import GasCalcs from './views/GasCalcs.vue';
 import AltitudeCalcs from './views/AltitudeCalcs.vue';
 import Tests from './views/Tests.vue';
+import NotFound from './views/NotFound.vue';
 
 Vue.use(Router);
 
@@ -94,11 +95,16 @@ export default new Router({
       path: '/tests',
       name: 'tests',
       component: Tests,
-    }, { // NB THIS MUST COME LAST
+    }, { // NB THIS MUST COME SECOND LAST
       path: '/:wardName?',
       name: 'home',
       component: Home,
       props: true,
-    }, // NB THIS MUST COME LAST
+    }, { // NB THIS MUST COME LAST
+      path: '*',
+      name: 'not-found',
+      component: NotFound,
+      props: false,
+    },
   ],
 });

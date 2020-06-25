@@ -15,8 +15,9 @@
             <age-validated-weight label-cols-lg="2" :require-age="isAgeRequired" v-model="weightKg" :age="age" :weeks-gestation="weeksGestation" :is-male="isMale"/>
             <validated-bool-radio-group label="Weight is" v-model="isWtMeasured" false-label="estimate on age or appearance" true-label="recent measure" label-cols-lg="2"/>
             <chart-type :wardAbbrev="wardName"
-                @change:ward="ward=$event"
+                @update:ward="ward=$event"
                 :chart-types.sync="charts"
+                @not-found:ward-abbrev="notFound"
                 label-cols-lg="2"/>
             <b-row align-h="end">
               <b-col lg="10">
@@ -33,8 +34,8 @@
               You can permanently set the <router-link to="/browser-defaults">default selections for this page</router-link>.
             </p>
             <p>
-              Do you write the date as {{dateEg}}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>
-              <a href="https://www.w3.org/International/questions/qa-lang-priorities#changing"> see these directions to set your browser language/culture</a>
+              Do you write the date as {{dateEg}}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>.
+              See <a href="https://www.w3.org/International/questions/qa-lang-priorities" target="_blank">these directions</a> to set the appropriate language/culture for your browser.
             </p>
             <p v-if="link">
               To provide a hyperlink to this ward in protocols etc., copy the link <a href="#" target="_self">{{link}}</a>
@@ -89,20 +90,6 @@ export default class Home extends Vue {
   @Prop({ default: '' })
   private wardName!: string;
 
-  // unwatched
-  private baseRef!: string;
-
-  public created() {
-    // route might be user typed & is valid with or without trailing '/'
-    this.baseRef = process.env.VUE_APP_BASE_ROUTE! + setSlash(this.$route.path);
-    // logic should be - if wardName prop defined or if no appData use ward.isBolusOnly
-    // else use appData
-    // nb 2 promises - do not set up race condition - should be ok as in created hook
-    if (this.wardName) {
-      this.baseRef = this.baseRef.slice(0, -1 - this.wardName.length);
-    }
-  }
-
   public submit() {
     this.appData.setWardDefaults({
       chartTypes: this.charts,
@@ -126,7 +113,7 @@ export default class Home extends Vue {
 
   public get link() {
     return this.ward
-      ? this.baseRef + encodeURIComponent(this.ward.abbrev)
+      ? window.location.origin + this.$router.currentRoute.fullPath + encodeURIComponent(this.ward.abbrev)
       : '';
   }
 
@@ -147,20 +134,12 @@ export default class Home extends Vue {
   public get isAgeRequired() {
     return this.charts.includes('infusion');
   }
+
+  public notFound() {
+    this.$router.push({ name: 'not-found', query: { path: window.location.href }, params: { pathMatch: 'foo' } }); // pathMatch provided as per https://github.com/vuejs/vue-router/issues/3062
+  }
 }
 
-function setSlash(path: string) {
-  if (/^\/*$/.test(path)) {
-    return '';
-  }
-  if (!path.endsWith('/')) { // route might be user typed & is valid with or without trailing '/'
-    path += '/';
-  }
-  if (path[0] === '/') {
-    path = path.substr(1);
-  }
-  return path;
-}
 </script>
 <style>
 #gestation {

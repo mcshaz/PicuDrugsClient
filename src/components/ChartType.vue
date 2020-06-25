@@ -148,6 +148,8 @@ export default class ChartSelection extends Mixins(StateWatcher, LabelColWidth) 
           if (this.selectedWard !== foundWard) {
             this.$emit('update:ward', foundWard);
             this.selectedWard = foundWard;
+          } else if (foundWard === null) {
+            this.$emit('not-found:ward-abbrev', foundWard);
           }
           if (foundWard && !this.chartsTouched) {
             this.charts = foundWard.defaultCharts;

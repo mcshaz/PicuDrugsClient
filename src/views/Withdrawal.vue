@@ -11,7 +11,7 @@
           </b-card-header>
           <b-collapse id="opiod-benzo-wean" v-model="opiodBenzoVis" accordion="weaning-info" role="tabpanel" @shown="notifyShown">
             <b-card-body>
-              <h5>The <a href="https://www.starship.org.nz/guidelines/weaning-of-opioids-and-benzodiazepines/">full weaning protocol</a> is available on the Starship website</h5>
+              <h5>The <a href="https://www.starship.org.nz/guidelines/weaning-of-opioids-and-benzodiazepines/" target="_blank">full weaning protocol</a> is available on the Starship website</h5>
               <p class="card-text">Generally, weaning from opiods &amp; benzodiazepines is done over:</p>
               <ul class="list-group">
                 <li class="list-group-item list-group-item-success">10 days if on the original medication for > 10 days.</li>
@@ -106,22 +106,27 @@
                 <option v-for="wd in gp[1]" :key="wd.name" :value="wd.name">{{wd.name}}</option>
               </optgroup>
             </validated-select-group>
-            <validated-input-select-group name="original-conc-details" error-label="Original Concentration" select-error-label="[concentration] UNITS"
-                :prepend="isPatch?originalConcUnits.units:void 0" type="number" v-model="originalConcVal" ref="originalConcVal"
-                :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]"
-                :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" select-name="unit-select"
-                v-if="isDailyDrugRequired">
-              <template #label>
-                {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
-              </template>
-              <template v-if="!isPatch">
-                <option value="" disabled>…</option>
-                <option v-for="conc in concentrations" :key="conc.units" :value="conc">{{conc.units}}</option>
-              </template>
-              <template #description v-if="hasDifferentDefaults">
-                <strong class="text-warning">*</strong> Please note different PICU vs PCA/NCA protocols
-              </template>
-            </validated-input-select-group>
+            <template v-if="isDailyDrugRequired">
+              <validated-input-group v-if="isPatch" name="original-conc-details" error-label="Original Concentration"
+                  :prepend="originalConcUnits.units" type="number" v-model="originalConcVal" ref="originalConcVal" :label="concLabel.label"
+                  :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]">
+              </validated-input-group>
+              <validated-input-select-group v-else name="original-conc-details" error-label="Original Concentration" select-error-label="[concentration] UNITS"
+                  type="number" v-model="originalConcVal" ref="originalConcVal"
+                  :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]"
+                  :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" select-name="unit-select">
+                <template #label>
+                  {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
+                </template>
+                <template>
+                  <option value="" disabled>…</option>
+                  <option v-for="conc in concentrations" :key="conc.units" :value="conc">{{conc.units}}</option>
+                </template>
+                <template #description v-if="hasDifferentDefaults">
+                  <strong class="text-warning">*</strong> Please note different PICU vs PCA/NCA protocols
+                </template>
+              </validated-input-select-group>
+            </template>
             <validated-input-group label="last 24hrs" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
                 label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
                 :append="original24HrUnits" type="number" v-model="original24HrVol" min="0" max="500">
@@ -163,7 +168,7 @@
             <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
           </div>
           <hr>
-          <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="your name" autocomplete="name" required min="2"/>
+          <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="Your Name" autocomplete="name" required min="2"/>
           <hr>
           <button type="submit" class="btn btn-success mb-4"><font-awesome-icon icon="print"/> Create <font-awesome-icon icon="file-pdf"/></button>
           <button type="reset" class="btn btn-warning mb-4 ml-2">Clear All <font-awesome-icon icon="eraser"/></button>
@@ -264,7 +269,7 @@ export default class Withdrawal extends Vue {
 
   public get concLabel() {
     if (this.isPatch) {
-      return { label: 'Patch strength:', description: 'strength' };
+      return { label: 'Patch strength', description: 'strength' };
     }
     if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
       return { label: 'Single dose:', description: 'dose' };
