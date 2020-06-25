@@ -34,11 +34,12 @@ const diazepamMultiplyBy = conversionFactory({
   lt1: { maxPerDose: 10, qH: 6 },
   gte1: { maxPerDose: 10, qH: 4 },
 });
-const clonidineConvert: IWeaningMed = {
-  clonidine: conversionFactory({
-    lt1: { maxPerDose: 150, qH: 6 },
-    gte1: { maxPerDose: 300, qH: 6 },
-  })(1.4),
+const clonidineConvert = conversionFactory({
+  lt1: { maxPerDose: 150, qH: 6 },
+  gte1: { maxPerDose: 300, qH: 6 },
+});
+const clonidineIVConvert: IWeaningMed = {
+  clonidine: clonidineConvert(1.4),
 };
 
 const enum drugClass {
@@ -108,19 +109,21 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
   name: 'clonidine patch',
   drugClass: drugClass.alpha2,
   adminRoute: adminRoute.patch,
-  conversion: clonidineConvert,
+  conversion: {
+    clonidine: clonidineConvert(1),
+  },
   concentrations: [{ units: 'TTS', min: 1, max: 3 }],
 }, {
   name: 'IV clonidine infusion',
   drugClass: drugClass.alpha2,
   adminRoute: adminRoute.infusion,
-  conversion: clonidineConvert,
+  conversion: clonidineIVConvert,
   concentrations: [{ units: 'microg/kg/hr', min: 0.5, max: 2 }],
 }, {
   name: 'clonidine boluses',
   drugClass: drugClass.alpha2,
   adminRoute: adminRoute.boluses,
-  conversion: clonidineConvert,
+  conversion: clonidineIVConvert,
   concentrations: [
     {
       units: 'microg/dose',

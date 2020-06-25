@@ -34,7 +34,7 @@
               You can permanently set the <router-link to="/browser-defaults">default selections for this page</router-link>.
             </p>
             <p>
-              Do you write the date as {{dateEg}}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>.
+              Do you write the date as {{ dateEg }}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>.
               See <a href="https://www.w3.org/International/questions/qa-lang-priorities" target="_blank">these directions</a> to set the appropriate language/culture for your browser.
             </p>
             <p v-if="link">
@@ -136,7 +136,7 @@ export default class Home extends Vue {
   }
 
   public notFound() {
-    this.$router.push({ name: 'not-found', query: { path: window.location.href }, params: { pathMatch: 'foo' } }); // pathMatch provided as per https://github.com/vuejs/vue-router/issues/3062
+    this.$router.replace({ name: 'not-found', query: { path: window.location.href }, params: { pathMatch: 'foo' } }); // pathMatch provided as per https://github.com/vuejs/vue-router/issues/3062
   }
 }
 
