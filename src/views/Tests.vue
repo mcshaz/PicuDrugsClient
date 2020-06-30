@@ -13,9 +13,10 @@ import 'reflect-metadata';
 import { Component, Mixins } from 'vue-property-decorator';
 import Withdrawal from './Withdrawal.vue';
 import { createAndDownloadPDF } from '@/services/pdf-generation/create-filled-data-pdf-lib';
+import WithdrawalDrug from '../components/WithdrawalDrug.vue';
 
 @Component
-export default class Tests extends Mixins(Withdrawal) {
+export default class Tests extends Mixins(Withdrawal, WithdrawalDrug) {
   public async submitForPDF() {
     this.wtKg = 5.3;
     this.dob = new Date(2020, 4, 20);

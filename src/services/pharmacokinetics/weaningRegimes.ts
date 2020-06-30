@@ -1,12 +1,12 @@
 import { WeanDay } from './WeanDay';
 
-export function linearWean(startingDose: number, fractionReduction: number, qHourly: number, finishingDose = 0) {
-  const dt = new Date();
+export function linearWean(startingDose: number, fractionReduction: number, qHourly: number, startDate: Date, finishingDose = 0) {
+  const dt = new Date(startDate);
   dt.setHours(0, 0, 0, 0);
   const returnVar = [] as WeanDay[];
   const reduction = fractionReduction * startingDose;
   let i = 0;
-  while (startingDose - finishingDose >= 0.05) {
+  while (startingDose - finishingDose > Number.EPSILON) {
     const wean = new WeanDay(new Date(dt),
       startingDose,
       qHourlyToString(qHourly));
@@ -18,8 +18,8 @@ export function linearWean(startingDose: number, fractionReduction: number, qHou
   return returnVar;
 }
 
-export function alternateWean(startingDose: number, days: number, qHourly: number) {
-  let returnVar = linearWean(startingDose, 1 / Math.ceil(days / 2), qHourly);
+export function alternateWean(startingDose: number, days: number, qHourly: number, startDate: Date) {
+  let returnVar = linearWean(startingDose, 1 / Math.ceil(days / 2), qHourly, startDate);
   const oddCorrection = (days % 2 === 0) ? 0 : 1;
   // 6 over 6 days
   // odd 6 4 4 2 2
@@ -39,8 +39,22 @@ export function alternateWean(startingDose: number, days: number, qHourly: numbe
   return returnVar;
 }
 
-export function exponentialWean(startingDose: number, fractionReduction: number, days: number, qHourly: number, startDate?: Date) {
-  const dt = new Date(startDate as any);
+export function nonWean(startingDose: number, days: number, qHourly: number, startDate: Date) {
+  const dt = new Date(startDate);
+  dt.setHours(0, 0, 0, 0);
+  const returnVar = new Array(days) as WeanDay[];
+  for (let i = 0; i < days; ++i) {
+    const wean = new WeanDay(new Date(dt),
+      startingDose,
+      qHourlyToString(qHourly));
+    wean.addDays(i);
+    returnVar[i] = wean;
+  }
+  return returnVar;
+}
+
+export function exponentialWean(startingDose: number, fractionReduction: number, days: number, qHourly: number, startDate: Date) {
+  const dt = new Date(startDate);
   dt.setHours(0, 0, 0, 0);
   const returnVar = [] as WeanDay[];
   fractionReduction = (1 - fractionReduction);

@@ -30,7 +30,7 @@ export class WeanDay {
       return returnVar;
     }
 
-    private static formatter = new Intl.DateTimeFormat(languages as string[],
+    public static formatter = new Intl.DateTimeFormat(languages as string[],
       {
         year: '2-digit',
         month: 'numeric',

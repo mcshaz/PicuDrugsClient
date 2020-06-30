@@ -46,7 +46,8 @@ const enum drugClass {
     opiate = 'opiate infusions',
     benzo = 'benzodiazepine infusions',
     alpha2 = 'αlpha-2 agonists',
-    others = 'others' }
+    others = 'others'
+}
 
 export const enum adminRoute {
     infusion, boluses, patch,
@@ -64,6 +65,7 @@ export interface IConcInfo {
   min: numberOrFunc;
   max: numberOrFunc;
   default?: numberOrFunc;
+  step?: number | 'any';
 }
 export interface IDrug {
     name: string;
@@ -118,7 +120,7 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
   drugClass: drugClass.alpha2,
   adminRoute: adminRoute.infusion,
   conversion: clonidineIVConvert,
-  concentrations: [{ units: 'microg/kg/hr', min: 0.5, max: 2 }],
+  concentrations: [{ units: 'microg/kg/hr', min: 0.5, max: 2, step: 0.1 }],
 }, {
   name: 'clonidine boluses',
   drugClass: drugClass.alpha2,
@@ -130,6 +132,7 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
       min: (wtKg: number) => wtKg * 0.5,
       max: (wtKg: number) => wtKg * 2,
       default: (wtKg: number) => wtKg,
+      step: 'any',
     }],
 }, {
   name: 'chloral hydrate',

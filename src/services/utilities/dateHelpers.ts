@@ -30,6 +30,14 @@ export function dateInRange(dt: Date | null, min: Date | null, max: Date | null)
   return dt && (!min || dt >= min) && (!max || dt <= max);
 }
 
+export function daysDif(earlier: Date | number, later: Date | number) {
+  earlier = new Date(earlier);
+  earlier.setHours(0, 0, 0, 0);
+  later = new Date(later);
+  later.setHours(0, 0, 0, 0);
+  return (later.getTime() - later.getTimezoneOffset() - earlier.getTime() + earlier.getTimezoneOffset()) / 86400000; // note js does not do leap seconds!
+}
+
 const shortFormatter = new Intl.DateTimeFormat(languages as string[],
   {
     year: 'numeric',

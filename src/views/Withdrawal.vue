@@ -83,7 +83,7 @@
           </b-collapse>
         </b-card>
       </b-col>
-      <validation-observer v-slot="{ handleSubmit }" slim ref="mainObserver">
+      <validation-observer v-slot="{ handleSubmit }" slim>
         <form class="col-lg-5 order-lg-1" novalidate autocomplete="off" @submit.prevent="handleSubmit(createPDF)" @reset.prevent="clearAll">
           <b-form-group label="Patient details" id="patient-details" label-size="lg">
             <validated-input-group label="Surname" type="text" v-model="lastNm"
@@ -96,77 +96,30 @@
             <age-validated-weight :require-age="true" v-model="wtKg" :age="age" :allowMedianWeight="false" :is-male="isMale"/>
           </b-form-group><!--/patient-details-->
           <hr>
-          <b-form-group  id="original-Rx" label-size="lg">
-            <template #label>
-              Original pain/sedative <font-awesome-icon icon="prescription"/>
-            </template>
-            <validated-select-group label="Medication" v-model="originalDrugName" required>
-              <option value="" disabled>Please select …</option>
-              <optgroup v-for="gp in ddOpts" :key="gp[0]" :label="gp[0]">
-                <option v-for="wd in gp[1]" :key="wd.name" :value="wd.name">{{wd.name}}</option>
-              </optgroup>
-            </validated-select-group>
-            <template v-if="isDailyDrugRequired">
-              <validated-input-group v-if="isPatch" name="original-conc-details" error-label="Original Concentration"
-                  :prepend="originalConcUnits.units" type="number" v-model="originalConcVal" ref="originalConcVal" :label="concLabel.label"
-                  :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]">
-              </validated-input-group>
-              <validated-input-select-group v-else name="original-conc-details" error-label="Original Concentration" select-error-label="[concentration] UNITS"
-                  type="number" v-model="originalConcVal" ref="originalConcVal"
-                  :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]"
-                  :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" select-name="unit-select">
-                <template #label>
-                  {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
-                </template>
-                <template>
-                  <option value="" disabled>…</option>
-                  <option v-for="conc in concentrations" :key="conc.units" :value="conc">{{conc.units}}</option>
-                </template>
-                <template #description v-if="hasDifferentDefaults">
-                  <strong class="text-warning">*</strong> Please note different PICU vs PCA/NCA protocols
-                </template>
-              </validated-input-select-group>
-            </template>
-            <validated-input-group label="last 24hrs" :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
-                label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
-                :append="original24HrUnits" type="number" v-model="original24HrVol" min="0" max="500">
-              <template #description v-if="original24HrUnits==='ml'">
+          <div v-for="d in drugs" :key="d.id">
+            <withdrawal-drug
+                :wtKg="wtKg"
+                :ageLt1Yr="ageLt1Yr"
+                :selectedDdOpts="selectedDrugs"
+                @update:original-drug-name="d.originalDrug=$event"
+                @update:original-conc="d.originalConc=$event"
+                @update:original-vol="d.originalVol=$event"
+                @update:weaning-drug="d.weaningDrug=$event"
+                @update:weaning-dose-units="d.weaningDoseUnits=$event"
+                @update:weaning-regime="d.weaningRegime=$event"
+                @delete="remove($event)">
+              <template #volume-details>
                 where do I <a href="#PICU-total-vol" @click.prevent="openThenNav($event.target, picuVolVis=true)">find the volume given…</a>?
               </template>
-            </validated-input-group>
-          </b-form-group><!--/original prescription-->
-          <hr>
-          <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !isChloral">
-            This equates to a total {{originalDrug.name}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
-          </div>
-          <b-form-group label="Weaning plan" id="weaning-med" label-size="lg">
-            <validated-select-group name="weaning-med" label="Oral" v-model="weaningDrug">
-              <template>
-                <option value="" disabled>Please select …</option>
-                <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key">{{key}}</option>
-              </template>
-            </validated-select-group>
-            <validated-bool-radio-group label="Wean Duration" v-model="rapidClonidineWean" v-if="isClonidine"
-                true-label="rapid" false-label="slower">
-              <template #description>
+              <template #clonidine-duration>
                 how do I <a href="#clonidine-wean" @click.prevent="openThenNav($event.target, clonidineVis=true)">determine the clonidine wean duration…</a>?
               </template>
-            </validated-bool-radio-group>
-            <template v-else>
-              <validated-input-group label="Wean over" rules="integer" append="days" type="number" step="1" v-model="weanDuration"
-                  required min="2" max="41">
-                <template #description>
-                  how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
-                </template>
-              </validated-input-group>
-              <validated-bool-radio-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily"/>
-            </template>
-          </b-form-group><!--Weaning plan-->
-          <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
-            This equates to a total <strong>daily</strong> <em> starting</em> enteral {{ weaningDrug }} dose of
-            <span class="nobr"><output>{{ totalWeaning24Hrs.dailyCommence }} {{ weaningDoseUnits }}</output>/<strong>day</strong></span>
-            <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
+              <template #opiod-benzo-duration>
+                how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
+              </template>
+            </withdrawal-drug>
           </div>
+          <button type="button" class="btn btn-primary mb-4" @click="$emit('delete', id)"><font-awesome-icon icon="trash-alt"/>Remove</button>
           <hr>
           <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="Your Name" autocomplete="name" required min="2"/>
           <hr>
@@ -179,43 +132,25 @@
 </template>
 <script lang="ts">
 import 'reflect-metadata';
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
 import NhiInput from '@/components/NhiInput.vue';
-import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSelectGroup.vue';
 import DobInput from '@/components/DobInput.vue';
-import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
-import { toGrouping } from '@/services/drugDb';
-import { withdrawalDrugs, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
-import { roundToPrecision, ChildAge } from '@/services/infusion-calculations/';
+import { ChildAge } from '@/services/infusion-calculations/';
 // import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize';
 import { BAlert } from 'bootstrap-vue';
-import { linearWean, alternateWean, exponentialWean } from '@/services/pharmacokinetics/weaningRegimes';
-import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
-import { createAndDownloadPDF, IChartPatientDetails } from '@/services/pdf-generation/create-filled-data-pdf-lib';
+import { createAndDownloadPDF, IChartPatientDetails, IWeaningDrug } from '@/services/pdf-generation/create-filled-data-pdf-lib';
 
-// import { regexDescribe } from '@/services/validation/regexDescribe';
-// import jsPDF from 'jspdf';
-// import { pdfTemplate } from '@/services/utilities/pdfTemplate';
-// import 'jspdf-autotable';
-// import { BaseConfig, HTMLConfig } from 'jspdf-autotable';
-
+interface IWithdrawalDrug extends IWeaningDrug { id: number }
 type vueNumber = number | '';
-const emptyObj = Object.freeze({});
-const emptyArray = Object.freeze([]) as [];
-const ddOpts = Object.freeze(Array.from(toGrouping(withdrawalDrugs, (d) => d.drugClass)));
-interface IDoseUnits { dose?: number; units?: string }
-const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 
 @Component({
   components: {
     AgeValidatedWeight,
     NhiInput,
-    ValidatedInputSelectGroup,
     DobInput,
-    ValidatedBoolRadioGroup,
     ValidatedInputGroup,
     BAlert,
   },
@@ -223,11 +158,6 @@ const defaultConcLimits = Object.freeze({ min: 1, max: 1000 });
 export default class Withdrawal extends Vue {
   public prescriber = '';
   public wtKg: vueNumber = '';
-  public ddOpts = ddOpts;
-  public originalDrugName = '';
-  public weanDuration: vueNumber = '';
-  public original24HrVol: vueNumber = '';
-  public weanDaily = true;
   public dob: Date | null = null;
   public firstNm = '';
   public lastNm = '';
@@ -236,203 +166,33 @@ export default class Withdrawal extends Vue {
   public opiodBenzoVis = getViewportSize() >= bootstrapSizes.lg;
   public clonidineVis = false;
   public picuVolVis = false;
-  public rapidClonidineWean = false;
-
-  public originalConcVal: vueNumber = '';
-  public originalConcUnits: IConcInfo | null = null;
-  public weaningDrug: (keyof IWeaningMed & string) | '' = '';
+  public drugs: IWithdrawalDrug[] = [this.createWeaningDrug()];
 
   // unwatched
   private navTarget!: HTMLElement | null;
+  private id!: number;
 
-  public get originalConcLimits() {
-    if (this.originalConcUnits) {
-      return [
-        this.getNumber(this.originalConcUnits.min) || defaultConcLimits.min,
-        this.getNumber(this.originalConcUnits.max) || defaultConcLimits.max];
-    }
-    return defaultConcLimits;
-  }
-
-  public get originalDrug() {
-    if (!this.originalDrugName) { return; }
-    return withdrawalDrugs.find((wd) => wd.name === this.originalDrugName);
-  }
-
-  public get concentrations() {
-    return this.originalDrug ? this.originalDrug.concentrations : emptyArray;
-  }
-
-  public get conversionDrugs() {
-    return this.originalDrug ? this.originalDrug.conversion : emptyObj;
-  }
-
-  public get concLabel() {
-    if (this.isPatch) {
-      return { label: 'Patch strength', description: 'strength' };
-    }
-    if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
-      return { label: 'Single dose:', description: 'dose' };
-    }
-    return { label: '1 ml/hr =', description: 'concentration' };
-  }
-
-  public get hasDifferentDefaults() {
-    return !!(this.originalConcUnits && this.originalConcUnits.default);
-  }
-
-  public get isPatch() {
-    return this.originalDrug && this.originalDrug.adminRoute === adminRoute.patch;
-  }
-
-  public get isDailyDrugRequired() {
-    return !!(this.originalDrug && this.originalDrug.concentrations.length);
-  }
-
-  public get isClonidine() {
-    return this.weaningDrug === 'clonidine';
-  }
-
-  public get isChloral() {
-    return this.originalDrug && this.originalDrug.name === 'chloral hydrate';
-  }
-
-  public get original24HrUnits() {
-    if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
-      return 'doses';
-    }
-    return 'ml';
-  }
-
-  public get original24HrCalc(): IDoseUnits {
-    if (this.originalConcUnits && this.originalConcVal && this.originalConcVal > 0) {
-      if (this.originalConcUnits.units === 'TTS') {
-        const dose = this.originalConcVal * 100;
-        return {
-          dose,
-          units: extractUnits(this.originalConcUnits.units),
-        };
-      } else if (this.original24HrVol) {
-        let multiplier = this.originalConcUnits.units.endsWith('/min') ? 60 : 1; // 1 assigned per hour & per dose
-        if (this.originalConcUnits.units.includes('/kg')) {
-          if (!this.wtKg || this.wtKg <= 0) {
-            return emptyObj;
-          }
-          multiplier *= this.wtKg;
-        }
-        const returnVar = {
-          dose: multiplier * this.originalConcVal * this.original24HrVol,
-          units: extractUnits(this.originalConcUnits.units),
-        } as IDoseUnits;
-        if (returnVar.dose! > 3000 && returnVar.units === 'microg') {
-          returnVar.dose = returnVar.dose! / 1000;
-          returnVar.units = 'mg';
-        }
-        returnVar.dose = roundToPrecision(returnVar.dose!, 3);
-
-        return returnVar;
-      }
-    }
-    return emptyObj;
-  }
-
-  public get totalWeaning24Hrs() {
-    if (this.originalDrug && this.weaningDrug && this.age !== null) {
-      const lt1Year = this.age.years < 1;
-      if (this.original24HrCalc.dose) {
-        let dose = this.original24HrCalc.dose;
-        if (this.weaningDrug === 'clonidine') {
-          if (this.original24HrCalc.units === 'mg') {
-            dose *= 1000;
-          }
-        } else if (this.original24HrCalc.units === 'microg') {
-          dose /= 1000;
-        }
-        return this.originalDrug.conversion[this.weaningDrug]!(dose, lt1Year);
-      } else if (this.wtKg && this.wtKg > 0 && !this.isDailyDrugRequired) {
-        return this.originalDrug.conversion[this.weaningDrug]!(this.wtKg, lt1Year);
-      }
-    }
-  }
-
-  public get weaningDoseUnits() {
-    if (!this.weaningDrug) { return ''; }
-    return this.weaningDrug === 'clonidine' ? 'microg' : 'mg';
-  }
-
-  public get isWeaningDoseMax() {
-    return this.totalWeaning24Hrs && this.totalWeaning24Hrs.dailyCommence === this.totalWeaning24Hrs.maxPerDay;
-  }
-
-  public get clonidineWeanInfo() {
-    return this.isClonidine && this.wtKg
-      ? { wtKg: this.wtKg, rapidWean: this.rapidClonidineWean }
-      : null;
-  }
-
-  public get linearWeanInfo() {
-    return !this.isClonidine && this.weaningDrug && this.weanDuration
-      ? {
-        weanOverDays: this.weanDuration,
-        weanAlternateDays: !this.weanDaily,
-      }
-      : null;
-  }
-
-  public get age() {
+  public get ageLt1Yr() {
     return this.dob
-      ? new ChildAge({ dob: this.dob })
+      ? new ChildAge({ dob: this.dob }).years < 1
       : null;
   }
 
-  @Watch('originalDrug')
-  @Watch('wtKg')
-  public setDefaultUnits() {
-    if (this.originalDrug) {
-      switch (this.originalDrug.concentrations.length) {
-        case 1:
-          this.originalConcUnits = this.originalDrug.concentrations[0];
-          break;
-        case 2:
-          // change conc units to default if - a) have an invalid value b) are not dirty
-          if (this.originalConcUnits && !this.originalDrug.concentrations.some((c) => c.units === this.originalConcUnits!.units)) {
-            this.originalConcUnits = null;
-          }
-          if ((!this.originalConcUnits || !this.fieldTouched('[concentration] UNITS')) && this.wtKg) {
-            this.originalConcUnits = this.originalDrug.concentrations[this.wtKg < 30 ? 0 : 1]!;
-          }
-      }
-      if (this.originalConcUnits && (this.originalConcUnits.min === this.originalConcUnits.max || !this.fieldTouched('Original Concentration'))) {
-        this.originalConcVal = this.getNumber(this.originalConcUnits.default, this.originalConcUnits.min) || '';
-      }
-      const convKeys = Object.keys(this.originalDrug.conversion);
-      if (convKeys.length === 1) {
-        this.weaningDrug = (convKeys[0] as (keyof IWeaningMed & string));
-      } else if (this.weaningDrug && !this.originalDrug.conversion[this.weaningDrug]) {
-        this.weaningDrug = '';
-      }
-    }
+  public get selectedDrugs() {
+    return this.drugs.map(d => d.originalDrug);
   }
 
   public clearAll() {
     this.wtKg = '';
-    this.ddOpts = ddOpts;
-    this.originalDrugName = '';
-    this.weanDuration = '';
-    this.original24HrVol = '';
-    this.originalConcVal = '';
-    this.originalConcUnits = null;
-    this.weanDaily = true;
     this.nhi = '';
     this.firstNm = '';
     this.lastNm = '';
     this.isMale = null;
     this.dob = null;
-    this.weaningDrug = '';
-    this.rapidClonidineWean = false;
     this.opiodBenzoVis = false;
     this.clonidineVis = false;
     this.picuVolVis = false;
+    this.drugs = [];
     // Wait until the models are updated in the UI
     this.$nextTick((this.$refs.form as any).reset);
   }
@@ -444,49 +204,10 @@ export default class Withdrawal extends Vue {
       isMale: this.isMale,
       nhi: this.nhi,
       weight: this.wtKg as number,
-      medicine: this.weaningDrug,
       dob: this.dob!,
       prescriber: this.prescriber,
-      doseUnits: this.weaningDoseUnits,
-      route: 'oral/NG',
-      originalDrug: this.originalDrug!.name,
-      originalConc: this.isPatch
-        ? (this.originalConcUnits!.units + '-' + this.originalConcVal)
-        : (this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units),
-      originalVol: this.isPatch
-        ? ''
-        : this.original24HrVol + this.original24HrUnits,
-      regime: this.createWeanInfo(),
+      drugs: this.drugs,
     } as IChartPatientDetails);
-  }
-
-  public createWeanInfo() {
-    // :drug="weaningDrug" :start24-hr-dose="totalWeaning24Hrs.dailyCommence" :q-hourly="totalWeaning24Hrs.qH"
-    // :linear-wean="linearWeanInfo" :clonidine-wean="clonidineWeanInfo" :doseUnit="weaningDoseUnits">
-    if (!this.totalWeaning24Hrs) {
-      throw new Error('validation problem - allowed to submit createPDF but not all data present');
-    }
-    let individualDose = this.totalWeaning24Hrs.dailyCommence * this.totalWeaning24Hrs.qH / 24;
-    if (this.linearWeanInfo) {
-      if (this.linearWeanInfo.weanAlternateDays) {
-        return alternateWean(individualDose, this.linearWeanInfo.weanOverDays, this.totalWeaning24Hrs.qH);
-      } else {
-        return linearWean(individualDose, 1 / this.linearWeanInfo.weanOverDays, this.totalWeaning24Hrs.qH);
-      }
-    } else if (this.clonidineWeanInfo) {
-      let returnVar: WeanDay[] = [];
-      let startWeanDate: Date;
-      if (!this.clonidineWeanInfo.rapidWean && individualDose > this.clonidineWeanInfo.wtKg) {
-        returnVar = linearWean(individualDose, this.clonidineWeanInfo.wtKg / individualDose, this.totalWeaning24Hrs.qH, this.clonidineWeanInfo.wtKg);
-        startWeanDate = new Date(returnVar[returnVar.length - 1].weanDate);
-        startWeanDate.setDate(startWeanDate.getDate() + 1);
-        individualDose = this.clonidineWeanInfo.wtKg;
-      } else {
-        startWeanDate = new Date();
-      }
-      return returnVar.concat(exponentialWean(individualDose, 0.5, 4, this.totalWeaning24Hrs.qH, startWeanDate));
-    }
-    throw new Error('linear and clonidine wean info both unavailable');
   }
 
   public openThenNav(target: HTMLAnchorElement) {
@@ -505,23 +226,22 @@ export default class Withdrawal extends Vue {
     }
   }
 
-  private getNumber(...vals: Array<numberOrFunc | undefined>) {
-    for (const v of vals) {
-      switch (typeof v) {
-        case 'function':
-          if (this.wtKg) {
-            return v(this.wtKg);
-          }
-          break;
-        case 'number':
-          return v;
-      }
-    }
+  public remove(id: number) {
+    this.drugs.splice(this.drugs.findIndex(d => d.id === id)!, 1);
   }
 
-  private fieldTouched(fieldName: string) {
-    const field = (this.$refs.mainObserver as any).fields[fieldName];
-    return field && field.touched;
+  private static id = 0;
+  private createWeaningDrug(): IWithdrawalDrug {
+    return {
+      id: ++this.id,
+      originalDrug: '',
+      originalConc: '',
+      originalVol: '',
+      route: 'oral/NG',
+      weaningDrug: '',
+      weaningDoseUnits: '',
+      regime: [],
+    };
   }
 }
 
