@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts, radians, grayscale, PDFPage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, grayscale, PDFPage } from 'pdf-lib';
 import { PdfTableValues, ICoordOptions } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { fixIE11Format, daysDif } from '@/services/utilities/dateHelpers';
@@ -64,29 +64,29 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     });
   // set up pdf drawing variables
   let size = 11;
-  const rotate = radians(Math.PI);
   const getWidth = (txt: string) => widthOfTextAtSize(txt, size);
   const signArgs = await getSignArguments(doc);
-  signArgs.rotate = rotate;
+  // old doc { width: 595.22, height: 842 }
+  // new doc { width: 841.89, height: 1190.55 }
   // adding constant data to first page before cloning
   const firstPg = doc.getPage(0);
-  firstPg.drawText(details.lastN, { x: 532, y: 42, size, rotate }); // Family Name
-  firstPg.drawText(details.firstN, { x: 532, y: 53, size, rotate }); // Given Name
+  firstPg.drawText(details.lastN, { x: 532, y: 42, size }); // Family Name
+  firstPg.drawText(details.firstN, { x: 532, y: 53, size }); // Given Name
   if (typeof details.isMale === 'boolean') {
-    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 428, y: 53, size, rotate }); // Gender
+    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 428, y: 53, size }); // Gender
   }
   if (details.dob) {
-    firstPg.drawText(fixIE11Format(details.dob), { x: 531, y: 74, size, rotate });
+    firstPg.drawText(fixIE11Format(details.dob), { x: 531, y: 74, size });
   }
-  firstPg.drawText(details.nhi, { x: 446, y: 74, size, rotate });
+  firstPg.drawText(details.nhi, { x: 446, y: 74, size });
   const wtText = weightRounding(details.weight) + ' kg';
-  firstPg.drawText(wtText, { x: 48 + getWidth(wtText) / 2, y: 58, size, rotate });
-  firstPg.drawText(details.prescriber, { x: 500 + getWidth(details.prescriber) / 2, y: 759, size, rotate });
+  firstPg.drawText(wtText, { x: 48 + getWidth(wtText) / 2, y: 58, size });
+  firstPg.drawText(details.prescriber, { x: 500 + getWidth(details.prescriber) / 2, y: 759, size });
   firstPg.drawText('SIGN HERE', { x: 422, y: 760, ...signArgs });
   // adding pages to doc including page No
   const addPgNo = (no: number, pg: PDFPage) => {
     const pgText = `${no} of ${pageNo}`;
-    pg.drawText(pgText, { x: 48 + getWidth(pgText) / 2, y: 88, size, rotate });
+    pg.drawText(pgText, { x: 48 + getWidth(pgText) / 2, y: 88, size });
   };
   while (pageNo > doc.getPageCount()) {
     const [clonedPg] = await doc.copyPages(doc, [0]);
@@ -111,14 +111,13 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       let opts: ICoordOptions = {
         getWidth,
         size,
-        rotate,
         currentPage: r.pageNo,
         startCol: daysDif(r.weaningDrugs[0].weaningRegime[0].weanDate, details.weaningRegime[0].weanDate),
         startRow,
       };
       // original prescription
       const origTxt = `${startRow === 0 ? 'original: ' : ''}${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trim();
-      doc.getPage(r.pageNo).drawText(origTxt, { x: 206 + widthOfTextAtSize(origTxt, 8), y: 21 + 10 * startRow, color: grayscale(0.8), rotate, size: 8 });
+      doc.getPage(r.pageNo).drawText(origTxt, { x: 206 + widthOfTextAtSize(origTxt, 8), y: 21 + 10 * startRow, color: grayscale(0.8), size: 8 });
       // day #
       cellTVs.setCoords([...details.weaningRegime.keys(), details.weaningRegime.length].map(k => (k + 1).toString()), opts);
       // date
@@ -151,7 +150,6 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       // by not providing getwidth, we provide the default (0) which should left align
       opts = {
         size,
-        rotate,
         currentPage: r.pageNo,
         startRow,
       };

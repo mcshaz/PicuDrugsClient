@@ -38,7 +38,7 @@ export class PdfTableValues {
     if (startCol !== 0) {
       pg = this.doc.getPage(currentPage++);
       // have to move to position before using moveLeft
-      pg.moveTo(this.startCoord[0] - (startCol - 1) * this.offsetCoord[0], startPageY + this.offsetCoord[1] * startRow);
+      pg.moveTo(this.startCoord[0] + (startCol - 1) * this.offsetCoord[0], startPageY - this.offsetCoord[1] * startRow);
     } else if (startRow !== 0) {
       pg = this.doc.getPage(currentPage++);
     }
@@ -46,14 +46,13 @@ export class PdfTableValues {
     const stopAt = txt.length + currentCell;
     for (let i = 0; currentCell < stopAt; ++currentCell, ++i) {
       const txtWidth = getWidth(txt[i]) / 2;
-      // all a bit funky - the doc is rotated 180 degrees, so origin is upper right
       if (currentCell % totalGridsPerPage === 0) {
         pg = this.doc.getPage(currentPage++);
-        pg.moveTo(this.startCoord[0] + txtWidth, startPageY);
+        pg.moveTo(this.startCoord[0] - txtWidth, startPageY);
       } else if (currentCell % this.gridsPerPage[0] === 0) {
-        pg.moveTo(this.startCoord[0] + txtWidth, startPageY + this.offsetCoord[1] * (currentCell / this.gridsPerPage[0]));
+        pg.moveTo(this.startCoord[0] - txtWidth, startPageY - this.offsetCoord[1] * (currentCell / this.gridsPerPage[0]));
       } else {
-        pg.moveLeft(this.offsetCoord[0] + lastWidth - txtWidth);
+        pg.moveRight(this.offsetCoord[0] + lastWidth - txtWidth);
       }
       pg.drawText(txt[i], opts);
       lastWidth = txtWidth;
