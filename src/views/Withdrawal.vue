@@ -24,8 +24,6 @@
               </ul>
               <p class="card-text">
                 Generally the dose reduction is daily. However in some withdrawal plans involving multiple medications, each medications is weaned on an alternate day.
-                To achieve this, enter an even number for one medication and an odd number for the other
-                <span class="text-muted">(for example wean oral morphine over 20 days and oral diazepam over 21 days).</span>
               </p>
             </b-card-body>
           </b-collapse>
@@ -97,6 +95,7 @@
           </b-form-group><!--/patient-details-->
           <hr>
           <div v-for="d in drugs" :key="d.id">
+            <!--  -->
             <withdrawal-drug
                 :wtKg="wtKg"
                 :ageLt1Yr="ageLt1Yr"
@@ -119,7 +118,7 @@
               </template>
             </withdrawal-drug>
           </div>
-          <button type="button" class="btn btn-primary mb-4" @click="$emit('delete', id)"><font-awesome-icon icon="trash-alt"/>Remove</button>
+          <button type="button" class="btn btn-primary mb-4" @click="drugs.push(createWeaningDrug())"><font-awesome-icon icon="plus"/> Another Medication</button>
           <hr>
           <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="Your Name" autocomplete="name" required min="2"/>
           <hr>
@@ -137,6 +136,8 @@ import AgeValidatedWeight from '@/components/AgeValidatedWeight.vue';
 import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
 import NhiInput from '@/components/NhiInput.vue';
 import DobInput from '@/components/DobInput.vue';
+import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
+import WithdrawalDrug from '@/components/WithdrawalDrug.vue';
 import { ChildAge } from '@/services/infusion-calculations/';
 // import { minWeightRecord, maxWeightRecord } from '@/services/utilities/weightHelpers';
 import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSize';
@@ -145,6 +146,7 @@ import { createAndDownloadPDF, IChartPatientDetails, IWeaningDrug } from '@/serv
 
 interface IWithdrawalDrug extends IWeaningDrug { id: number }
 type vueNumber = number | '';
+let id = 0;
 
 @Component({
   components: {
@@ -153,6 +155,8 @@ type vueNumber = number | '';
     DobInput,
     ValidatedInputGroup,
     BAlert,
+    WithdrawalDrug,
+    ValidatedBoolRadioGroup,
   },
 })
 export default class Withdrawal extends Vue {
@@ -173,13 +177,24 @@ export default class Withdrawal extends Vue {
   private id!: number;
 
   public get ageLt1Yr() {
+    return this.age
+      ? this.age.years < 1
+      : null;
+  }
+
+  public get age() {
     return this.dob
-      ? new ChildAge({ dob: this.dob }).years < 1
+      ? new ChildAge({ dob: this.dob })
       : null;
   }
 
   public get selectedDrugs() {
-    return this.drugs.map(d => d.originalDrug);
+    return this.drugs.reduce((accum, d) => {
+      if (d.originalDrug) {
+        accum.push(d.originalDrug);
+      }
+      return accum;
+    }, [] as string[]);
   }
 
   public clearAll() {
@@ -227,20 +242,19 @@ export default class Withdrawal extends Vue {
   }
 
   public remove(id: number) {
-    this.drugs.splice(this.drugs.findIndex(d => d.id === id)!, 1);
+    this.drugs.splice(this.drugs.findIndex(d => d.id === id), 1);
   }
 
-  private static id = 0;
   private createWeaningDrug(): IWithdrawalDrug {
     return {
-      id: ++this.id,
+      id: ++id,
       originalDrug: '',
       originalConc: '',
       originalVol: '',
       route: 'oral/NG',
       weaningDrug: '',
       weaningDoseUnits: '',
-      regime: [],
+      weaningRegime: [],
     };
   }
 }

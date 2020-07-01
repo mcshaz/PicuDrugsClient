@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, radians, grayscale, PDFPage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, radians, grayscale, PDFPage } from 'pdf-lib';
 import { PdfTableValues, ICoordOptions } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { fixIE11Format, daysDif } from '@/services/utilities/dateHelpers';
@@ -12,7 +12,7 @@ export interface IWeaningDrug {
   originalDrug: string;
   originalConc: string;
   originalVol: string;
-  regime: WeanDay[];
+  weaningRegime: WeanDay[];
 }
 
 export interface IChartPatientDetails {
@@ -76,17 +76,17 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 428, y: 53, size, rotate }); // Gender
   }
   if (details.dob) {
-    firstPg.drawText(fixIE11Format(details.dob), { x: 531, y: 75, size, rotate });
+    firstPg.drawText(fixIE11Format(details.dob), { x: 531, y: 74, size, rotate });
   }
-  firstPg.drawText(details.nhi, { x: 446, y: 75, size, rotate });
+  firstPg.drawText(details.nhi, { x: 446, y: 74, size, rotate });
   const wtText = weightRounding(details.weight) + ' kg';
-  firstPg.drawText(wtText, { x: 48 + getWidth(wtText) / 2, y: 60, size, rotate });
+  firstPg.drawText(wtText, { x: 48 + getWidth(wtText) / 2, y: 58, size, rotate });
   firstPg.drawText(details.prescriber, { x: 500 + getWidth(details.prescriber) / 2, y: 759, size, rotate });
   firstPg.drawText('SIGN HERE', { x: 422, y: 760, ...signArgs });
   // adding pages to doc including page No
   const addPgNo = (no: number, pg: PDFPage) => {
-    const pgText = `${no}/${pageNo}`;
-    pg.drawText(pgText, { x: 48 + getWidth(pgText) / 2, y: 70, size, rotate });
+    const pgText = `${no} of ${pageNo}`;
+    pg.drawText(pgText, { x: 48 + getWidth(pgText) / 2, y: 88, size, rotate });
   };
   while (pageNo > doc.getPageCount()) {
     const [clonedPg] = await doc.copyPages(doc, [0]);
@@ -94,62 +94,68 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     addPgNo(doc.getPageCount(), clonedPg);
   }
   addPgNo(1, firstPg);
-  // adding withdrawal regimes
-  //    const origTxt = `original: ${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trim();
-  //    pg.drawText(origTxt, { x: 77 + widthOfTextAtSize(origTxt, 8), y: 42, color: grayscale(0.8), rotate, size: 8 });
 
   const signText = 'SIGN';
   const shortSignWidth = signArgs.signWidth(signText, signArgs.size!);
   signArgs.opacity = 0.85;
   signArgs.getWidth = () => shortSignWidth;
 
-  const cellTVs = new PdfTableValues(doc, [499, 129], [55.5, 205], [cols, gridsRows], [0, 10.6, 21.1, 31.8, 46.6, 100, 115]);
-  const labelDrug = new PdfTableValues(doc, [537, 117], [0, 205], [1, gridsRows], []);
-  const labelRoute = new PdfTableValues(doc, [362, 117], [0, 205], [1, gridsRows], []);
+  const cellTVs = new PdfTableValues(doc, [499, 129], [55.5, 205], [cols, gridsRows], [0, 10, 20, 32, 46.6, 137, 151]);
+  const labelDrug = new PdfTableValues(doc, [537, 117], [0, 205], [1, gridsRows]);
+  const labelRoute = new PdfTableValues(doc, [362, 117], [0, 205], [1, gridsRows]);
 
   for (const r of regimes) {
     for (let startRow = 0; startRow < r.weaningDrugs.length; ++startRow) {
       const details = r.weaningDrugs[startRow];
       size = 9;
-      const opts: ICoordOptions = {
+      let opts: ICoordOptions = {
         getWidth,
         size,
         rotate,
         currentPage: r.pageNo,
-        startCol: daysDif(r.weaningDrugs[0].regime[0].weanDate, details.regime[0].weanDate),
+        startCol: daysDif(r.weaningDrugs[0].weaningRegime[0].weanDate, details.weaningRegime[0].weanDate),
         startRow,
       };
+      // original prescription
+      const origTxt = `${startRow === 0 ? 'original: ' : ''}${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trim();
+      doc.getPage(r.pageNo).drawText(origTxt, { x: 206 + widthOfTextAtSize(origTxt, 8), y: 21 + 10 * startRow, color: grayscale(0.8), rotate, size: 8 });
       // day #
-      cellTVs.setCoords([...details.regime.keys(), details.regime.length].map(k => (k + 1).toString()), opts);
+      cellTVs.setCoords([...details.weaningRegime.keys(), details.weaningRegime.length].map(k => (k + 1).toString()), opts);
       // date
       opts.itemRowNo = 1;
-      let txt = details.regime.map(r => r.weanDateString);
-      const lastDate = details.regime[details.regime.length - 1].weanDate;
+      let txt = details.weaningRegime.map(r => r.weanDateString);
+      const lastDate = new Date(details.weaningRegime[details.weaningRegime.length - 1].weanDate);
       lastDate.setDate(lastDate.getDate() + 1);
       txt.push(WeanDay.formatter.format(lastDate));
       cellTVs.setCoords(txt, opts);
       // dose
       opts.itemRowNo = 2;
-      txt = details.regime.map(r => r.regularDose + details.weaningDoseUnits);
-      txt.push('STOP');
+      txt = details.weaningRegime.map(r => r.regularDose + details.weaningDoseUnits);
+      txt.push('- stop -');
       cellTVs.setCoords(txt, opts);
       // frequency
       opts.itemRowNo = 3;
-      cellTVs.setCoords(details.regime.map(r => r.frequency), { ...opts, color: toRGB('e9262c') });
+      cellTVs.setCoords(details.weaningRegime.map(r => r.frequency), opts);
       // sign here below freq
-      const shortSignText = new Array(details.regime.length).fill(signText);
+      const shortSignText = new Array(details.weaningRegime.length).fill(signText);
       cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 4 });
 
       // rescue dose
-      opts.itemRowNo = 5;
-      cellTVs.setCoords(details.regime.map(r => r.rescueDose + details.weaningDoseUnits), opts);
+      opts.itemRowNo = 5; // { ...opts, color: toRGB('e9262c') }
+      cellTVs.setCoords(details.weaningRegime.map(r => r.rescueDose + details.weaningDoseUnits), opts);
       // sign here below rescue
       cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 6, opacity: 0.5 });
 
       // drug name & route
-      opts.size = size = 10;
-      const medArray = new Array<string>(Math.ceil(details.regime.length / cols));
+      size = 10;
       // by not providing getwidth, we provide the default (0) which should left align
+      opts = {
+        size,
+        rotate,
+        currentPage: r.pageNo,
+        startRow,
+      };
+      const medArray = new Array<string>(Math.ceil(details.weaningRegime.length / cols));
       labelDrug.setCoords(medArray.fill(details.weaningDrug), opts);
       labelRoute.setCoords(medArray.fill(details.route), opts);
     }
@@ -168,33 +174,33 @@ async function getSignArguments(doc: PDFDocument): Promise<ISignArgs> {
     signWidth,
   };
 }
-
+/*
 function toRGB(color: string) {
   return rgb(
     parseInt(color.slice(0, 2), 16) / 255,
     parseInt(color.slice(2, 4), 16) / 255,
     parseInt(color.slice(-2), 16) / 255);
 }
-
-function regimeDays(regimes: IWeaningDrug[]) {
-  const lastRegime = regimes[regimes.length - 1].regime;
-  return daysDif(regimes[0].regime[0].weanDate, lastRegime[lastRegime.length - 1].weanDate);
+*/
+function regimeDays(drugs: IWeaningDrug[]) {
+  const lastRegime = drugs[drugs.length - 1].weaningRegime;
+  return daysDif(drugs[0].weaningRegime[0].weanDate, lastRegime[lastRegime.length - 1].weanDate);
 }
 
 function groupRegimes(regimes: IWeaningDrug[], maxSize: number) {
   regimes = regimes.slice();
   regimes.sort((a, b) => {
-    const start = a.regime[0].weanDate.getTime() - b.regime[0].weanDate.getTime();
+    const start = a.weaningRegime[0].weanDate.getTime() - b.weaningRegime[0].weanDate.getTime();
     if (start === 0) {
-      return a.regime[a.regime.length - 1].weanDate.getTime() - b.regime[b.regime.length - 1].weanDate.getTime();
+      return a.weaningRegime[a.weaningRegime.length - 1].weanDate.getTime() - b.weaningRegime[b.weaningRegime.length - 1].weanDate.getTime();
     }
     return start;
   });
   const returnVar: IWeaningDrug[][] = [];
   let currentFinishIndx = 1;
   while (currentFinishIndx < regimes.length) {
-    const r = regimes[currentFinishIndx].regime;
-    const daysInMax = daysDif(regimes[0].regime[0].weanDate, r[r.length - 1].weanDate) < maxSize;
+    const r = regimes[currentFinishIndx].weaningRegime;
+    const daysInMax = daysDif(regimes[0].weaningRegime[0].weanDate, r[r.length - 1].weanDate) < maxSize;
     if (daysInMax) {
       ++currentFinishIndx;
     } else {

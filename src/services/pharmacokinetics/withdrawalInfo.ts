@@ -42,7 +42,7 @@ const clonidineIVConvert: IWeaningMed = {
   clonidine: clonidineConvert(1.4),
 };
 
-const enum drugClass {
+export const enum drugClass {
     opiate = 'opiate infusions',
     benzo = 'benzodiazepine infusions',
     alpha2 = 'αlpha-2 agonists',

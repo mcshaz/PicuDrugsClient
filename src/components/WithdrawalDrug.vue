@@ -3,6 +3,7 @@
     <b-form-group  id="original-Rx" label-size="lg">
       <template #label>
         Original pain/sedative <font-awesome-icon icon="prescription"/>
+        <button type="button" class="btn btn-warning float-right" @click="$emit('delete', id)"><font-awesome-icon icon="trash-alt"/> Remove</button>
       </template>
       <validated-select-group label="Medication" :name="'medication'+id" v-model="originalDrugName" required>
         <option value="" disabled>Please select …</option>
@@ -69,18 +70,17 @@
         </validated-input-group>
         <validated-bool-radio-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily"/>
       </template>
-      <validated-date-input v-bind="startOral" :min="startOralMin" :max="startOralMax" label="Convert On" :name="'start-oral'+id"
+      <validated-date-group v-model="startOral" :min="startOralMin" :max="startOralMax" label="Convert On" :name="'start-oral'+id"
           description="When to commence the first oral dose"/>
-      <validated-date-input v-bind="startWean" :min="startWeanMin" :max="startWeanMax" label="Start Wean" :name="'start-wean'+id"
-          description="When to begin reducing the dose (usually 1 day after commencing oral)"/>
+      <validated-date-group v-model="startWean" :min="startWeanMin" :max="startWeanMax" label="Start Wean" :name="'start-wean'+id"
+          description="When to begin reducing the dose (usually the day after converting to oral)"/>
     </b-form-group><!--Weaning plan-->
     <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
       This equates to a total <strong>daily</strong> <em> starting</em> enteral {{ weaningDrug }} dose of
       <span class="nobr"><output>{{ totalWeaning24Hrs.dailyCommence }} {{ weaningDoseUnits }}</output>/<strong>day</strong></span>
-      <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>
-      <span class="finishing">with the last dose on {{ lastDose }}</span>
+      <small v-if="isWeaningDoseMax"> (this is the maximum dose)</small>.
+      <span class="finishing">The last dose is due {{ lastDose }}</span>
     </div>
-    <button type="button" class="btn btn-warning mb-4" @click="drugs.push(createWeaningDrug())"><font-awesome-icon icon="add"/>Another Medication</button>
   </validation-observer>
 </template>
 <script lang="ts">
@@ -91,7 +91,7 @@ import ValidatedInputSelectGroup from '@/components/formGroups/ValidatedInputSel
 import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 import ValidatedBoolRadioGroup from '@/components/formGroups/ValidatedBoolRadioGroup.vue';
 import { toGrouping } from '@/services/drugDb';
-import { withdrawalDrugs, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits } from '@/services/pharmacokinetics/withdrawalInfo';
+import { withdrawalDrugs, IConcInfo, adminRoute, numberOrFunc, IWeaningMed, extractUnits, drugClass } from '@/services/pharmacokinetics/withdrawalInfo';
 import { roundToPrecision } from '@/services/infusion-calculations/';
 import { linearWean, alternateWean, exponentialWean, nonWean } from '@/services/pharmacokinetics/weaningRegimes';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
@@ -120,7 +120,7 @@ export default class WithdrawalDrug extends Vue {
   @Prop({ required: true })
   public ageLt1Yr!: boolean | null;
 
-  @Prop({ required: true })
+  @Prop({ default: () => [] })
   public selectedDdOpts!: string[];
 
   @Prop({ default: 0 })
@@ -133,8 +133,8 @@ export default class WithdrawalDrug extends Vue {
   }));
 
   public startOral: Date | null = null;
-  public startOralMin!: Date;
-  public startOralMax!: Date;
+  public startOralMin: Date = null as any as Date;
+  public startOralMax: Date = null as any as Date;
   public startWean: Date | null = null;
   public originalDrugName = '';
   public weanDuration: vueNumber = '';
@@ -145,7 +145,7 @@ export default class WithdrawalDrug extends Vue {
   public weaningDrug: (keyof IWeaningMed & string) | '' = '';
   public rapidClonidineWean = true;
 
-  public beforeCreate() {
+  public created() {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     this.startOral = now;
@@ -280,9 +280,12 @@ export default class WithdrawalDrug extends Vue {
   }
 
   public get originalConc() {
+    if (!this.originalConcUnits) {
+      return '';
+    }
     return this.isPatch
-      ? (this.originalConcUnits!.units + '-' + this.originalConcVal)
-      : (this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units);
+      ? (this.originalConcUnits.units + '-' + this.originalConcVal)
+      : (this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits.units);
   }
 
   public get originalVol() {
@@ -297,7 +300,9 @@ export default class WithdrawalDrug extends Vue {
   }
 
   public get lastDose() {
-    return shortFormatter.format(this.weaningRegime[this.weaningRegime.length - 1].weanDate);
+    return this.weaningRegime.length
+      ? shortFormatter.format(this.weaningRegime[this.weaningRegime.length - 1].weanDate)
+      : '';
   }
 
   public get weaningRegime() {
@@ -309,7 +314,7 @@ export default class WithdrawalDrug extends Vue {
     let individualDose = this.totalWeaning24Hrs.dailyCommence * this.totalWeaning24Hrs.qH / 24;
     const startWeanDate = new Date(this.startWean);
     startWeanDate.setDate(startWeanDate.getDate() - 1);
-    let returnVar = nonWean(individualDose, daysDif(this.startOral, this.startWean), this.totalWeaning24Hrs.qH, this.startOral);
+    let returnVar = nonWean(individualDose, daysDif(this.startOral, this.startWean) - 1, this.totalWeaning24Hrs.qH, this.startOral);
     if (this.isClonidine) {
       if (!this.wtKg) {
         return [];
@@ -341,9 +346,14 @@ export default class WithdrawalDrug extends Vue {
 
   @Watch('selectedDdOpts', { immediate: true })
   public setDisabledGroup() {
-    for (const o of this.ddOpts) {
-      // todo others & benzos also cannot coexist
-      o.disabled = !o.drugs.some(d => d.name === this.originalDrugName) && this.selectedDdOpts.some(sdd => o.drugs.some(d => d.name === sdd));
+    if (this.selectedDdOpts.length !== 0) {
+      for (const o of this.ddOpts) {
+        o.disabled = !o.drugs.some(d => d.name === this.originalDrugName) && this.selectedDdOpts.some(sdd => o.drugs.some(d => d.name === sdd));
+      }
+      // both benzo and other (=chloral) use diazepam withdrawal. Too risky to allow both together
+      const benzo = this.ddOpts.find(d => d.drugClass === drugClass.benzo)!;
+      const other = this.ddOpts.find(d => d.drugClass === drugClass.others)!;
+      benzo.disabled = other.disabled = benzo.disabled || other.disabled;
     }
   }
 

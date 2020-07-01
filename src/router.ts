@@ -14,7 +14,7 @@ import Withdrawal from './views/Withdrawal.vue';
 import About from './views/About.vue';
 import GasCalcs from './views/GasCalcs.vue';
 import AltitudeCalcs from './views/AltitudeCalcs.vue';
-import Tests from './views/Tests.vue';
+// import Tests from './views/Tests.vue';
 import NotFound from './views/NotFound.vue';
 
 Vue.use(Router);
@@ -91,10 +91,11 @@ export default new Router({
       path: '/altitude-calcs',
       name: 'altitude-calculations',
       component: AltitudeCalcs,
-    }, {
+    /* }, {
       path: '/tests',
       name: 'tests',
       component: Tests,
+    */
     }, { // NB THIS MUST COME SECOND LAST
       path: '/:wardName?',
       name: 'home',

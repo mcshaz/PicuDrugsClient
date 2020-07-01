@@ -5,9 +5,11 @@
         <b-input-group v-else>
             <input class="form-control" type="date" :min="minStr" :max="maxStr" v-model="dateStr"
                 @blur="$emit('blur', $event)" :name="name" :id="id" :required="required" :class="cssClass"/>
+            <!--
             <b-input-group-append is-text>
                 <font-awesome-icon icon="calendar-alt" />
             </b-input-group-append>
+            -->
         </b-input-group>
     </div>
 </template>

@@ -5,15 +5,15 @@ export function linearWean(startingDose: number, fractionReduction: number, qHou
   dt.setHours(0, 0, 0, 0);
   const returnVar = [] as WeanDay[];
   const reduction = fractionReduction * startingDose;
-  let i = 0;
-  while (startingDose - finishingDose > Number.EPSILON) {
+  const stopAt = Math.trunc((startingDose - finishingDose) / reduction + Number.EPSILON / fractionReduction);
+  for (let i = 0; i < stopAt; ++i) {
     const wean = new WeanDay(new Date(dt),
       startingDose,
       qHourlyToString(qHourly));
     wean.addDays(i);
+    // Object.freeze(wean.weanDate);
     returnVar.push(wean);
     startingDose -= reduction;
-    ++i;
   }
   return returnVar;
 }

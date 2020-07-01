@@ -16,7 +16,7 @@ export class PdfTableValues {
         public startCoord: [number, number],
         public offsetCoord: [number, number] = [0, 0],
         public gridsPerPage: [number, number] = [0, 0],
-        public itemRowOffset: number[],
+        public itemRowOffset: number[] = [0],
         public overflow: rowOverflow = rowOverflow.newRow) {
   }
 
@@ -36,11 +36,16 @@ export class PdfTableValues {
     let lastWidth = 0;
     const startPageY = this.startCoord[1] + this.itemRowOffset[itemRowNo];
     if (startCol !== 0) {
+      pg = this.doc.getPage(currentPage++);
       // have to move to position before using moveLeft
-      pg.moveTo(this.startCoord[0] - (startCol - 1) * this.offsetCoord[0], startPageY + this.offsetCoord[1] * (startRow / this.gridsPerPage[0]));
+      pg.moveTo(this.startCoord[0] - (startCol - 1) * this.offsetCoord[0], startPageY + this.offsetCoord[1] * startRow);
+    } else if (startRow !== 0) {
+      pg = this.doc.getPage(currentPage++);
     }
-    for (let currentCell = startCol + startRow * this.gridsPerPage[0]; currentCell < txt.length; ++currentCell) {
-      const txtWidth = getWidth(txt[currentCell]) / 2;
+    let currentCell = startCol + startRow * this.gridsPerPage[0];
+    const stopAt = txt.length + currentCell;
+    for (let i = 0; currentCell < stopAt; ++currentCell, ++i) {
+      const txtWidth = getWidth(txt[i]) / 2;
       // all a bit funky - the doc is rotated 180 degrees, so origin is upper right
       if (currentCell % totalGridsPerPage === 0) {
         pg = this.doc.getPage(currentPage++);
@@ -50,7 +55,7 @@ export class PdfTableValues {
       } else {
         pg.moveLeft(this.offsetCoord[0] + lastWidth - txtWidth);
       }
-      pg.drawText(txt[currentCell], opts);
+      pg.drawText(txt[i], opts);
       lastWidth = txtWidth;
     }
   }
