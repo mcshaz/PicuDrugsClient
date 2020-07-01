@@ -70,23 +70,23 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   // new doc { width: 841.89, height: 1190.55 }
   // adding constant data to first page before cloning
   const firstPg = doc.getPage(0);
-  firstPg.drawText(details.lastN, { x: 532, y: 42, size }); // Family Name
-  firstPg.drawText(details.firstN, { x: 532, y: 53, size }); // Given Name
+  firstPg.drawText(details.lastN, { x: 89, y: 1131, size }); // Family Name
+  firstPg.drawText(details.firstN, { x: 89, y: 1116, size }); // Given Name
   if (typeof details.isMale === 'boolean') {
-    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 428, y: 53, size }); // Gender
+    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 237, y: 1116, size }); // Gender
   }
   if (details.dob) {
-    firstPg.drawText(fixIE11Format(details.dob), { x: 531, y: 74, size });
+    firstPg.drawText(fixIE11Format(details.dob), { x: 91, y: 1086, size });
   }
-  firstPg.drawText(details.nhi, { x: 446, y: 74, size });
+  firstPg.drawText(details.nhi, { x: 211, y: 1086, size });
   const wtText = weightRounding(details.weight) + ' kg';
-  firstPg.drawText(wtText, { x: 48 + getWidth(wtText) / 2, y: 58, size });
-  firstPg.drawText(details.prescriber, { x: 500 + getWidth(details.prescriber) / 2, y: 759, size });
-  firstPg.drawText('SIGN HERE', { x: 422, y: 760, ...signArgs });
+  firstPg.drawText(wtText, { x: 774 + getWidth(wtText) / 2, y: 1109, size });
+  firstPg.drawText(details.prescriber, { x: 135 + getWidth(details.prescriber) / 2, y: 117, size });
+  firstPg.drawText('SIGN HERE', { x: 245, y: 116, ...signArgs });
   // adding pages to doc including page No
   const addPgNo = (no: number, pg: PDFPage) => {
     const pgText = `${no} of ${pageNo}`;
-    pg.drawText(pgText, { x: 48 + getWidth(pgText) / 2, y: 88, size });
+    pg.drawText(pgText, { x: 774 + getWidth(pgText) / 2, y: 1066, size });
   };
   while (pageNo > doc.getPageCount()) {
     const [clonedPg] = await doc.copyPages(doc, [0]);
@@ -100,9 +100,9 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   signArgs.opacity = 0.85;
   signArgs.getWidth = () => shortSignWidth;
 
-  const cellTVs = new PdfTableValues(doc, [499, 129], [55.5, 205], [cols, gridsRows], [0, 10, 20, 32, 46.6, 137, 151]);
-  const labelDrug = new PdfTableValues(doc, [537, 117], [0, 205], [1, gridsRows]);
-  const labelRoute = new PdfTableValues(doc, [362, 117], [0, 205], [1, gridsRows]);
+  const cellTVs = new PdfTableValues(doc, [136, 1008], [79, 290], [cols, gridsRows], [0, 14, 28, 45, 66, 194, 214]);
+  const labelDrug = new PdfTableValues(doc, [82, 1025], [0, 290], [1, gridsRows]);
+  const labelRoute = new PdfTableValues(doc, [330, 1025], [0, 290], [1, gridsRows]);
 
   for (const r of regimes) {
     for (let startRow = 0; startRow < r.weaningDrugs.length; ++startRow) {
@@ -117,7 +117,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       };
       // original prescription
       const origTxt = `${startRow === 0 ? 'original: ' : ''}${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trim();
-      doc.getPage(r.pageNo).drawText(origTxt, { x: 206 + widthOfTextAtSize(origTxt, 8), y: 21 + 10 * startRow, color: grayscale(0.8), size: 8 });
+      doc.getPage(r.pageNo).drawText(origTxt, { x: 551 + widthOfTextAtSize(origTxt, 8), y: 1161 + 10 * startRow, color: grayscale(0.8), size: 8 });
       // day #
       cellTVs.setCoords([...details.weaningRegime.keys(), details.weaningRegime.length].map(k => (k + 1).toString()), opts);
       // date
