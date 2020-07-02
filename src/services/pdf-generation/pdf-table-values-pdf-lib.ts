@@ -34,7 +34,7 @@ export class PdfTableValues {
       : this.gridsPerPage[0];
     let pg!: PDFPage;
     let lastWidth = 0;
-    const startPageY = this.startCoord[1] + this.itemRowOffset[itemRowNo];
+    const startPageY = this.startCoord[1] - this.itemRowOffset[itemRowNo];
     if (startCol !== 0) {
       pg = this.doc.getPage(currentPage++);
       // have to move to position before using moveLeft

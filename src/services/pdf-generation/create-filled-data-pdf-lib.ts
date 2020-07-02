@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts, grayscale, PDFPage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, grayscale, PDFPage, PDFPageDrawTextOptions } from 'pdf-lib';
 import { PdfTableValues, ICoordOptions } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { fixIE11Format, daysDif } from '@/services/utilities/dateHelpers';
@@ -63,30 +63,42 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       return returnVar;
     });
   // set up pdf drawing variables
-  let size = 11;
+  let size = 14;
   const getWidth = (txt: string) => widthOfTextAtSize(txt, size);
+  const shrinkPrn = (txt: string, maxWidth: number, page: PDFPage, opts: PDFPageDrawTextOptions, centre = false) => {
+    const limits = { min: 8, max: size };
+    const res = shrinkTxtSizeToFit(txt, maxWidth, widthOfTextAtSize, limits);
+    size = res.size > 0 ? res.size : limits.min;
+    const textDrawOpts = { ...opts, size };
+    if (centre) {
+      textDrawOpts.x = (textDrawOpts.x === void 0 ? page.getX() : textDrawOpts.x) - res.width / 2;
+    }
+    page.drawText(txt, textDrawOpts);
+    size = limits.max;
+  };
+
   const signArgs = await getSignArguments(doc);
-  // old doc { width: 595.22, height: 842 }
-  // new doc { width: 841.89, height: 1190.55 }
+  // current doc { width: 841.89, height: 1190.55 }
   // adding constant data to first page before cloning
   const firstPg = doc.getPage(0);
-  firstPg.drawText(details.lastN, { x: 89, y: 1131, size }); // Family Name
-  firstPg.drawText(details.firstN, { x: 89, y: 1116, size }); // Given Name
+  shrinkPrn(details.lastN, 200, firstPg, { x: 102, y: 1130 }); // Family Name
+  shrinkPrn(details.firstN, 118, firstPg, { x: 97, y: 1113 }); // Given Name
   if (typeof details.isMale === 'boolean') {
-    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 237, y: 1116, size }); // Gender
+    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 253, y: 1113, size }); // Gender
   }
   if (details.dob) {
-    firstPg.drawText(fixIE11Format(details.dob), { x: 91, y: 1086, size });
+    firstPg.drawText(fixIE11Format(details.dob), { x: 107, y: 1082, size });
   }
-  firstPg.drawText(details.nhi, { x: 211, y: 1086, size });
+  firstPg.drawText(details.nhi, { x: 230, y: 1082, size });
   const wtText = weightRounding(details.weight) + ' kg';
-  firstPg.drawText(wtText, { x: 774 + getWidth(wtText) / 2, y: 1109, size });
-  firstPg.drawText(details.prescriber, { x: 135 + getWidth(details.prescriber) / 2, y: 117, size });
-  firstPg.drawText('SIGN HERE', { x: 245, y: 116, ...signArgs });
+  const boxMidline = 798;
+  firstPg.drawText(wtText, { x: boxMidline - getWidth(wtText) / 2, y: 1106, size });
+  shrinkPrn(details.prescriber, 116, firstPg, { x: 109, y: 146 }, true);
+  firstPg.drawText('SIGN HERE', { x: 181, y: 146, ...signArgs });
   // adding pages to doc including page No
   const addPgNo = (no: number, pg: PDFPage) => {
     const pgText = `${no} of ${pageNo}`;
-    pg.drawText(pgText, { x: 774 + getWidth(pgText) / 2, y: 1066, size });
+    pg.drawText(pgText, { x: boxMidline - getWidth(pgText) / 2, y: 1062, size });
   };
   while (pageNo > doc.getPageCount()) {
     const [clonedPg] = await doc.copyPages(doc, [0]);
@@ -100,14 +112,25 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   signArgs.opacity = 0.85;
   signArgs.getWidth = () => shortSignWidth;
 
-  const cellTVs = new PdfTableValues(doc, [136, 1008], [79, 290], [cols, gridsRows], [0, 14, 28, 45, 66, 194, 214]);
-  const labelDrug = new PdfTableValues(doc, [82, 1025], [0, 290], [1, gridsRows]);
-  const labelRoute = new PdfTableValues(doc, [330, 1025], [0, 290], [1, gridsRows]);
+  const yBetweenGrids = 278.5;
+  const cellTVs = new PdfTableValues(doc, [164, 1005], [77.8, yBetweenGrids], [cols, gridsRows], [0, 15, 29, 45, 64, 181, 202]);
+  const labelDrug = new PdfTableValues(doc, [95, 1023], [0, yBetweenGrids], [1, gridsRows]);
+  const labelRoute = new PdfTableValues(doc, [363, 1022], [0, yBetweenGrids], [1, gridsRows]);
+
+  const originalRxOpts = {
+    color: grayscale(0.8),
+    size: 8,
+    x: 329,
+    y: 1059,
+    pre: 'original: ',
+    preWidth: 0,
+  };
+  originalRxOpts.preWidth = widthOfTextAtSize(originalRxOpts.pre, originalRxOpts.size);
 
   for (const r of regimes) {
     for (let startRow = 0; startRow < r.weaningDrugs.length; ++startRow) {
       const details = r.weaningDrugs[startRow];
-      size = 9;
+      size = 12;
       let opts: ICoordOptions = {
         getWidth,
         size,
@@ -116,8 +139,15 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
         startRow,
       };
       // original prescription
-      const origTxt = `${startRow === 0 ? 'original: ' : ''}${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trim();
-      doc.getPage(r.pageNo).drawText(origTxt, { x: 551 + widthOfTextAtSize(origTxt, 8), y: 1161 + 10 * startRow, color: grayscale(0.8), size: 8 });
+      if (startRow === 0) {
+        doc.getPage(r.pageNo).drawText(originalRxOpts.pre, originalRxOpts);
+      }
+      const origTxt = `${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trimRight();
+      doc.getPage(r.pageNo).drawText(origTxt, {
+        ...originalRxOpts,
+        x: originalRxOpts.x + originalRxOpts.preWidth,
+        y: originalRxOpts.y - originalRxOpts.size * 1.1 * startRow,
+      });
       // day #
       cellTVs.setCoords([...details.weaningRegime.keys(), details.weaningRegime.length].map(k => (k + 1).toString()), opts);
       // date
@@ -143,10 +173,10 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       opts.itemRowNo = 5; // { ...opts, color: toRGB('e9262c') }
       cellTVs.setCoords(details.weaningRegime.map(r => r.rescueDose + details.weaningDoseUnits), opts);
       // sign here below rescue
-      cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 6, opacity: 0.5 });
+      cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 6 });
 
       // drug name & route
-      size = 10;
+      size = 13;
       // by not providing getwidth, we provide the default (0) which should left align
       opts = {
         size,
@@ -163,11 +193,11 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
 interface ISignArgs extends ICoordOptions {signWidth: (txt: string, size: number) => number};
 async function getSignArguments(doc: PDFDocument): Promise<ISignArgs> {
   const helveticaBold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const size = 11;
+  const size = 12;
   const signWidth = helveticaBold.widthOfTextAtSize.bind(helveticaBold);
   return {
     font: helveticaBold,
-    color: grayscale(230 / 255),
+    color: grayscale(200 / 255),
     size,
     signWidth,
   };
@@ -180,6 +210,48 @@ function toRGB(color: string) {
     parseInt(color.slice(-2), 16) / 255);
 }
 */
+
+/*
+function shrinkThenWrap(txt: string,
+                        maxWidth: number,
+                        widthOfTextAtSize: (t: string, s: number) => number,
+                        txtSizes: { min: number, max: number }) {
+  let size = shrinkTxtSizeToFit(txt, maxWidth, widthOfTextAtSize, txtSizes);
+  if (size !== -1) {
+    return {
+      size,
+      txt: [ txt ],
+    }
+  }
+  size = txtSizes.min;
+  return {
+    size,
+    txt: breakTextIntoLines(txt, [' ', '-'], maxWidth, t => widthOfTextAtSize(t, size))
+  }
+}
+*/
+
+function shrinkTxtSizeToFit(txt: string,
+  maxWidth: number,
+  widthOfTextAtSize: (t: string, s: number) => number,
+  txtSizes: { min: number; max: number }) {
+  let size = txtSizes.max + 1;
+  let fits = false;
+  let width = 0;
+  do {
+    --size;
+    width = widthOfTextAtSize(txt, size);
+    fits = width < maxWidth;
+  } while (!fits && size > txtSizes.min);
+  if (!fits) {
+    size = -1;
+  }
+  return {
+    size,
+    width,
+  };
+}
+
 function regimeDays(drugs: IWeaningDrug[]) {
   const lastRegime = drugs[drugs.length - 1].weaningRegime;
   return daysDif(drugs[0].weaningRegime[0].weanDate, lastRegime[lastRegime.length - 1].weanDate);
