@@ -91,7 +91,7 @@ export const after: ValidationRuleSchema = {
 
 export const step: ValidationRuleSchema = {
   params: ['multiple'],
-  validate(value: number, { multiple }: Record<string, any> = {}) {
+  validate(value: number, { multiple }: Record<string, any>) {
     return value % multiple === 0;
   },
   // eslint-disable-next-line quotes

@@ -81,7 +81,7 @@
           </b-collapse>
         </b-card>
       </b-col>
-      <validation-observer v-slot="{ handleSubmit }" slim>
+      <validation-observer v-slot="{ handleSubmit, valid, failed }" slim>
         <form class="col-lg-5 order-lg-1" novalidate autocomplete="off" @submit.prevent="handleSubmit(createPDF)" @reset.prevent="clearAll">
           <b-form-group label="Patient details" id="patient-details" label-size="lg">
             <validated-input-group label="Surname" type="text" v-model="lastNm"
@@ -122,6 +122,12 @@
           <hr>
           <validated-input-group label="Prescriber" type="text" v-model="prescriber" placeholder="Your Name" autocomplete="name" required min="2"/>
           <hr>
+          <p v-if="valid" class="text-success">
+            Ready to submit!
+          </p>
+          <p v-else-if="failed" class="text-danger">
+            Please fix the fields highlighted in red above
+          </p>
           <button type="submit" class="btn btn-success mb-4"><font-awesome-icon icon="print"/> Create <font-awesome-icon icon="file-pdf"/></button>
           <button type="reset" class="btn btn-warning mb-4 ml-2">Clear All <font-awesome-icon icon="eraser"/></button>
         </form>
