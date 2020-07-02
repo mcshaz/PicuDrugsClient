@@ -32,7 +32,7 @@
           </template>
         </validated-input-select-group>
       </template>
-      <validated-input-group label="last 24hrs" :name="'last24hr'+id"
+      <validated-input-group label="last 24hrs" :name="'last24hr'+id" required
           :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
           label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
           :append="original24HrUnits" type="number" v-model="original24HrVol" min="0" max="500">
@@ -47,33 +47,33 @@
       This equates to a total {{originalDrugName}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
     </div>
     <b-form-group label="Weaning plan" id="weaning-med" label-size="lg">
-      <validated-select-group :name="'weaning-med'+id" label="Oral" v-model="weaningDrug">
+      <validated-select-group :name="'weaning-med'+id" label="Oral" v-model="weaningDrug" required>
         <template>
           <option value="" disabled>Please select …</option>
           <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key">{{key}}</option>
         </template>
       </validated-select-group>
       <validated-bool-radio-group label="Wean Duration" v-model="rapidClonidineWean" v-if="isClonidine"
-          true-label="rapid" false-label="slower" :name="'wean-duration'+id">
+          true-label="rapid" false-label="slower" :name="'wean-duration'+id" required>
         <template #description>
           <slot name="clonidine-duration">
           </slot>
         </template>
       </validated-bool-radio-group>
       <template v-else>
-        <validated-input-group label="Wean over" rules="integer" append="days" type="number" step="1" v-model="weanDuration"
+        <validated-input-group label="Wean over" :rules="{ required: true, step: { multiple: weanDaily ? 1 : 2}  }" append="days" type="number" step="1" v-model="weanDuration"
             required min="2" max="42" :name="'wean-over'+id">
           <template #description>
             <slot name="opiod-benzo-duration">
             </slot>
           </template>
         </validated-input-group>
-        <validated-bool-radio-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily"/>
+        <validated-bool-radio-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily" required/>
       </template>
       <validated-date-group v-model="startOral" :min="startOralMin" :max="startOralMax" label="Convert On" :name="'start-oral'+id"
-          description="When to commence the first oral dose"/>
+          description="When to commence the first oral dose" required/>
       <validated-date-group v-model="startWean" :min="startWeanMin" :max="startWeanMax" label="Start Wean" :name="'start-wean'+id"
-          description="When to begin reducing the dose (usually the day after converting to oral)"/>
+          description="When to begin reducing the dose (usually the day after converting to oral)" required/>
     </b-form-group><!--Weaning plan-->
     <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
       This equates to a total <strong>daily</strong> <em> starting</em> enteral {{ weaningDrug }} dose of
@@ -333,7 +333,15 @@ export default class WithdrawalDrug extends Vue {
     if (this.weanDaily) {
       return returnVar.concat(linearWean(individualDose, 1 / this.weanDuration, this.totalWeaning24Hrs.qH, startWeanDate));
     }
-    return returnVar.concat(alternateWean(individualDose, this.weanDuration, this.totalWeaning24Hrs.qH, startWeanDate));
+    const altRegime = alternateWean(individualDose, this.weanDuration, this.totalWeaning24Hrs.qH, startWeanDate);
+    // if even, 1st 2 days will be at starting dose
+    // if odd, 1 day at starting dose
+    // we want drop to be on startWean Date
+    if (this.weanDuration % 2 === 0) {
+      // however this now leaves our wean over 1 day less than the specified weanDuration
+      altRegime.shift();
+    }
+    return returnVar.concat(altRegime);
   }
 
   @Watch('startOral', { immediate: true })

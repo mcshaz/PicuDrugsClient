@@ -89,7 +89,7 @@
             <validated-input-group label="Given Name" type="text" v-model="firstNm"
               placeholder="Given Name" trim/>
             <nhi-input v-model="nhi"/>
-            <dob-input v-model="dob"/>
+            <dob-input v-model="dob" required/>
             <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
             <age-validated-weight :require-age="true" v-model="wtKg" :age="age" :allowMedianWeight="false" :is-male="isMale"/>
           </b-form-group><!--/patient-details-->

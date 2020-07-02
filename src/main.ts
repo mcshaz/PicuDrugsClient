@@ -22,14 +22,14 @@ import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
 /* eslint-disable @typescript-eslint/camelcase */
 import { required, min_value, max_value, between, integer, required_if, oneOf } from 'vee-validate/dist/rules';
 import { requiredIfEmpty } from '@/services/validation/requiredIfEmpty';
-import { exactLength, nhiChecksum, nhiRegex, before, after } from '@/services/validation/validators';
+import { exactLength, nhiChecksum, nhiRegex, before, after, step } from '@/services/validation/validators';
 import { messages } from 'vee-validate/dist/locale/en.json';
 import { ValidationRuleSchema } from 'vee-validate/dist/types/types';
 import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
 import ValidatedSelectGroup from '@/components/formGroups/ValidatedSelectGroup.vue';
 import ValidatedDateGroup from '@/components/formGroups/ValidatedDateGroup.vue';
 
-for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, oneOf, exactLength, nhiChecksum, nhiRegex, before, after, requiredIfEmpty } as { [key: string]: ValidationRuleSchema })) {
+for (const [rule, validation] of Object.entries({ required, min_value, max_value, between, integer, required_if, oneOf, exactLength, nhiChecksum, nhiRegex, before, after, requiredIfEmpty, step } as { [key: string]: ValidationRuleSchema })) {
   if (!validation.message) {
     validation.message = (messages as any)[rule];
   }

@@ -88,3 +88,12 @@ export const after: ValidationRuleSchema = {
     return `The ${fieldName} field must be ${placeholders!.included === false ? '' : 'on or '}after ${localeString(placeholders!.limit, placeholders!.displayTime)}`;
   },
 };
+
+export const step: ValidationRuleSchema = {
+  params: ['multiple'],
+  validate(value: number, { multiple }: Record<string, any> = {}) {
+    return value % multiple === 0;
+  },
+  // eslint-disable-next-line quotes
+  message: "The {_field_} value must be an exact multiple of {multiple}",
+};
