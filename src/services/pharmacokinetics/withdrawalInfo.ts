@@ -114,7 +114,7 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
   conversion: {
     clonidine: clonidineConvert(1),
   },
-  concentrations: [{ units: 'TTS', min: 1, max: 3 }],
+  concentrations: [{ units: 'mg/day', min: 0.1, max: 0.3 }],
 }, {
   name: 'IV clonidine infusion',
   drugClass: drugClass.alpha2,

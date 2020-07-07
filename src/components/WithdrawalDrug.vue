@@ -13,7 +13,7 @@
       </validated-select-group>
       <template v-if="isDailyDrugRequired">
         <validated-input-group v-if="isPatch" :name="'original-conc-details'+id" error-label="Original Concentration"
-            :prepend="originalConcUnits.units" type="number" v-model="originalConcVal" ref="originalConcVal" :label="concLabel.label"
+            :append="originalConcUnits.units" type="number" v-model="originalConcVal" ref="originalConcVal" :label="concLabel.label"
             :step="originalConcUnits?(originalConcUnits.step || originalConcUnits.min):1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]">
         </validated-input-group>
         <validated-input-select-group v-else :name="'original-conc-details'+id" error-label="Original Concentration" select-error-label="[concentration] UNITS"
@@ -227,32 +227,26 @@ export default class WithdrawalDrug extends Vue {
 
   public get original24HrCalc(): IDoseUnits {
     if (this.originalConcUnits && this.originalConcVal && this.originalConcVal > 0) {
-      if (this.originalConcUnits.units === 'TTS') {
-        const dose = this.originalConcVal * 100;
-        return {
-          dose,
-          units: extractUnits(this.originalConcUnits.units),
-        };
-      } else if (this.original24HrVol) {
-        let multiplier = this.originalConcUnits.units.endsWith('/min') ? 60 : 1; // 1 assigned per hour & per dose
-        if (this.originalConcUnits.units.includes('/kg')) {
-          if (!this.wtKg || this.wtKg <= 0) {
-            return emptyObj;
-          }
-          multiplier *= this.wtKg;
+      let multiplier = this.originalConcUnits.units.endsWith('/min') ? 60 : 1; // 1 assigned per hour & per dose
+      if (this.originalConcUnits.units.includes('/kg')) {
+        if (!this.wtKg || this.wtKg <= 0) {
+          return emptyObj;
         }
-        const returnVar = {
-          dose: multiplier * this.originalConcVal * this.original24HrVol,
-          units: extractUnits(this.originalConcUnits.units),
-        } as IDoseUnits;
-        if (returnVar.dose! > 3000 && returnVar.units === 'microg') {
-          returnVar.dose = returnVar.dose! / 1000;
-          returnVar.units = 'mg';
-        }
-        returnVar.dose = roundToPrecision(returnVar.dose!, 3);
-
-        return returnVar;
+        multiplier *= this.wtKg;
       }
+      const returnVar = {
+        dose: multiplier * this.originalConcVal,
+        units: extractUnits(this.originalConcUnits.units),
+      } as IDoseUnits;
+      if (this.original24HrVol) {
+        returnVar.dose! *= this.original24HrVol;
+      }
+      if (returnVar.dose! > 3000 && returnVar.units === 'microg') {
+        returnVar.dose = returnVar.dose! / 1000;
+        returnVar.units = 'mg';
+      }
+      returnVar.dose = roundToPrecision(returnVar.dose!, 3);
+      return returnVar;
     }
     return emptyObj;
   }
@@ -262,10 +256,10 @@ export default class WithdrawalDrug extends Vue {
       if (this.original24HrCalc.dose) {
         let dose = this.original24HrCalc.dose;
         if (this.weaningDrug === 'clonidine') {
-          if (this.original24HrCalc.units === 'mg') {
+          if (this.original24HrCalc.units?.startsWith('mg')) {
             dose *= 1000;
           }
-        } else if (this.original24HrCalc.units === 'microg') {
+        } else if (this.original24HrCalc.units?.startsWith('microg')) {
           dose /= 1000;
         }
         return this.originalDrug.conversion[this.weaningDrug]!(dose, this.ageLt1Yr);
@@ -283,9 +277,7 @@ export default class WithdrawalDrug extends Vue {
     if (!this.originalConcUnits) {
       return '';
     }
-    return this.isPatch
-      ? `${this.originalConcUnits.units}-${this.originalConcVal}`
-      : `${this.concLabel.label} ${this.originalConcVal} ${this.originalConcUnits.units}`;
+    return `${this.concLabel.label} ${this.originalConcVal} ${this.originalConcUnits.units}`;
   }
 
   public get originalVol() {
@@ -319,7 +311,6 @@ export default class WithdrawalDrug extends Vue {
       if (!this.wtKg) {
         return [];
       }
-
       if (!this.rapidClonidineWean && individualDose > this.wtKg) {
         returnVar = returnVar.concat(linearWean(individualDose, this.wtKg / individualDose, this.totalWeaning24Hrs.qH, startWeanDate, this.wtKg));
         startWeanDate.setDate(startWeanDate.getDate() + 1);
