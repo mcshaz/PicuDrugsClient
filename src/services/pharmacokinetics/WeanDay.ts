@@ -17,7 +17,7 @@ export class WeanDay {
     }
 
     public get weanDateString() {
-      return fixIE11Format(this.weanDate, WeanDay.formatter); // .replace('/0', '/'); // hack because all browsers currently seems to give 2 digit month
+      return WeanDay.formatDate(this.weanDate); // .replace('/0', '/'); // hack because all browsers currently seems to give 2 digit month
     }
 
     public addDays(days: number) {
@@ -30,7 +30,11 @@ export class WeanDay {
       return returnVar;
     }
 
-    public static formatter = new Intl.DateTimeFormat(languages as string[],
+    public static formatDate(dt: Date) {
+      return fixIE11Format(dt, WeanDay.formatter);
+    }
+
+    private static formatter = new Intl.DateTimeFormat(languages as string[],
       {
         year: '2-digit',
         month: 'numeric',

@@ -63,6 +63,7 @@ export default class ValidatedInputGroup extends Mixins(ValidatedInputEl) {
         : void 0;
     }
 
+    // probably get rid of this method once operational
     private _counter = 0;
     log(v: any) {
       ++this._counter;

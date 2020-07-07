@@ -37,6 +37,5 @@ export const worksBurgerKnobs = () => {
       pressureUnits: { default: select('pressureUnits', ['KPa', 'Bar', 'PSI'], 'KPa') },
     },
   };
-  console.log(returnVar);
   return returnVar;
 };

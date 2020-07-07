@@ -126,7 +126,6 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
     preWidth: 0,
   };
   originalRxOpts.preWidth = widthOfTextAtSize(originalRxOpts.pre, originalRxOpts.size);
-
   for (const r of regimes) {
     for (let startRow = 0; startRow < r.weaningDrugs.length; ++startRow) {
       const details = r.weaningDrugs[startRow];
@@ -156,7 +155,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       let txt = details.weaningRegime.map(r => r.weanDateString);
       const lastDate = new Date(details.weaningRegime[details.weaningRegime.length - 1].weanDate);
       lastDate.setDate(lastDate.getDate() + 1);
-      txt.push(WeanDay.formatter.format(lastDate));
+      txt.push(WeanDay.formatDate(lastDate));
       cellTVs.setCoords(txt, opts);
       // dose
       opts.itemRowNo = 2;

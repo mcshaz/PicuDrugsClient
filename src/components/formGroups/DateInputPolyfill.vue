@@ -148,7 +148,6 @@ export default class DateInputPolyfill extends Vue {
 
     private emitDate() {
       const timestamp = parseDateUtc0(this.dateArgs[0].value, this.dateArgs[1].value, this.dateArgs[2].value);
-      console.log(timestamp);
       if (!timestamp) {
         if (this.pDate) {
           this.pDate = null;
