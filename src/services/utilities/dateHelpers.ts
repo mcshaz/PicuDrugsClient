@@ -41,8 +41,8 @@ export function daysDif(earlier: Date | number, later: Date | number) {
 const shortFormatter = new Intl.DateTimeFormat(languages as string[],
   {
     year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
   });
 
 function strip8206(txt: string) {
