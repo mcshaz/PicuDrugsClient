@@ -1,4 +1,4 @@
-// daily maintenance in ml
+// daily maintenance in mL
 export function dailyMaintenanceFluid(weightKg: number): number {
   const flag: boolean = weightKg >= 65.0;
   let result: number;

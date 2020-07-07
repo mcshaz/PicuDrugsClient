@@ -161,7 +161,7 @@
             <circle cx="21" cy="202.5" r="1px"></circle>
             <text  x="16" class="list" y="193"><tspan >†</tspan>
                 <tspan  class="drug" >Adenosine</tspan>
-                <tspan  class="push" x="24" dy="1.1em">rapid flush with {{flushVol}} ml 0.9% saline</tspan>
+                <tspan  class="push" x="24" dy="1.1em">rapid flush with {{flushVol}} mL 0.9% saline</tspan>
                 <tspan class="amp-describe"  x="24" dy="1.1em">Ampule is {{ampDescription}}</tspan>
             </text>
             <text class="list small" x="124" y="192">Dose is calculated as:</text>

@@ -92,7 +92,7 @@ export default class Infusions extends Vue {
           text: `${c.concentration * c.volume} ${new SiUnitMeasure(
             this.selectedDrug!.siPrefix,
             this.selectedDrug!.siUnitId
-          ).toString()} in ${c.volume} ml`,
+          ).toString()} in ${c.volume} mL`,
         } as ISelectOption)
       );
     }

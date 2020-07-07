@@ -23,7 +23,7 @@
               </div><!--input-group-append-->
             </div><!--input-group-->
             <label for="ampVol">in</label>
-            <b-input-group append="ml">
+            <b-input-group append="mL">
               <input id="ampVol" type="number" v-model="ampVol" class="form-control" />
             </b-input-group>
           </b-form-group>
@@ -54,13 +54,13 @@
           </b-form-group>
         </validation-provider>
 
-        <validated-input-group label="Dilution Volume" append="ml" type="number" v-model="dilutionVol"/>
+        <validated-input-group label="Dilution Volume" append="mL" type="number" v-model="dilutionVol"/>
 
         <validated-input-group label="Duration" append="mins" type="number" v-model="duration"/>
 
-        <validated-input-group label="rate" append="ml" type="number" v-model="rate"/>
+        <validated-input-group label="rate" append="mL" type="number" v-model="rate"/>
 
-        <validated-input-group label="concentration" append="ml" type="number" v-model="concentration"/>
+        <validated-input-group label="concentration" append="mL" type="number" v-model="concentration"/>
       </form>
     </validation-observer>
     <table class="table table-striped">

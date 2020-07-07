@@ -176,7 +176,7 @@ export default class Withdrawal extends Vue {
   public opiodBenzoVis = getViewportSize() >= bootstrapSizes.lg;
   public clonidineVis = false;
   public picuVolVis = false;
-  public drugs: IWithdrawalDrug[] = [this.createWeaningDrug()];
+  public drugs: IWithdrawalDrug[] = [Withdrawal.createWeaningDrug()];
 
   // unwatched
   private navTarget!: HTMLElement | null;
@@ -251,7 +251,7 @@ export default class Withdrawal extends Vue {
     this.drugs.splice(this.drugs.findIndex(d => d.id === id), 1);
   }
 
-  private createWeaningDrug(): IWithdrawalDrug {
+  private static createWeaningDrug(): IWithdrawalDrug {
     return {
       id: ++id,
       originalDrug: '',

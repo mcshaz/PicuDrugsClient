@@ -151,6 +151,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       // day #
       cellTVs.setCoords([...details.weaningRegime.keys(), details.weaningRegime.length].map(k => (k + 1).toString()), opts);
       // date
+      opts.size = size = 11;
       opts.itemRowNo = 1;
       let txt = details.weaningRegime.map(r => r.weanDateString);
       const lastDate = new Date(details.weaningRegime[details.weaningRegime.length - 1].weanDate);
@@ -159,7 +160,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       cellTVs.setCoords(txt, opts);
       // dose
       opts.itemRowNo = 2;
-      txt = details.weaningRegime.map(r => r.regularDose + details.weaningDoseUnits);
+      txt = details.weaningRegime.map(r => r.regularDose + ' ' + details.weaningDoseUnits);
       txt.push('- stop -');
       cellTVs.setCoords(txt, opts);
       // frequency
@@ -171,7 +172,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
 
       // rescue dose
       opts.itemRowNo = 5; // { ...opts, color: toRGB('e9262c') }
-      cellTVs.setCoords(details.weaningRegime.map(r => r.rescueDose + details.weaningDoseUnits), opts);
+      cellTVs.setCoords(details.weaningRegime.map(r => r.rescueDose + ' ' + details.weaningDoseUnits), opts);
       // sign here below rescue
       cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 6 });
 

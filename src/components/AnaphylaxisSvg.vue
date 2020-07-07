@@ -220,7 +220,7 @@
                         infusion:
                     </tspan>
                     <tspan dy="1.1em" class="small" x="337">
-                        mix 1mg (1 vial) of adrenaline in 1,000ml 0.9% saline @ {{dirtyAdrenalineRate}}ml/h
+                        mix 1mg (1 vial) of adrenaline in 1,000ml 0.9% saline @ {{dirtyAdrenalineRate}}mL/h
                     </tspan>
                     <tspan class="small" dy="1.1em" x="337">
                         If no infusion pump avalable, ≈{{dirtyAdrenalineDrops}}drops/min

@@ -33,10 +33,10 @@
         </validated-input-select-group>
       </template>
       <validated-input-group label="last 24hrs" :name="'last24hr'+id" required
-          :description="`the ${original24HrUnits==='ml'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
+          :description="`the ${original24HrUnits==='mL'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
           label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
           :append="original24HrUnits" type="number" v-model="original24HrVol" min="0" max="500">
-        <template #description v-if="original24HrUnits==='ml'">
+        <template #description v-if="original24HrUnits==='mL'">
           <slot name="volume-details">
           </slot>
         </template>
@@ -195,7 +195,7 @@ export default class WithdrawalDrug extends Vue {
     if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
       return { label: 'Single dose:', description: 'dose' };
     }
-    return { label: '1 ml/hr =', description: 'concentration' };
+    return { label: '1 mL/hr =', description: 'concentration' };
   }
 
   public get hasDifferentDefaults() {
@@ -222,7 +222,7 @@ export default class WithdrawalDrug extends Vue {
     if (this.originalDrug && this.originalDrug.adminRoute === adminRoute.boluses) {
       return 'doses';
     }
-    return 'ml';
+    return 'mL';
   }
 
   public get original24HrCalc(): IDoseUnits {
@@ -284,8 +284,8 @@ export default class WithdrawalDrug extends Vue {
       return '';
     }
     return this.isPatch
-      ? (this.originalConcUnits.units + '-' + this.originalConcVal)
-      : (this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits.units);
+      ? `${this.originalConcUnits.units}-${this.originalConcVal}`
+      : `${this.concLabel.label} ${this.originalConcVal} ${this.originalConcUnits.units}`;
   }
 
   public get originalVol() {

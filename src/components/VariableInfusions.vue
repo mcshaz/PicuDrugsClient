@@ -19,7 +19,7 @@
                     <span>{{drug.drawingUpUnits}}</span>
                     <span>{{conc.isNeat?'neat, total':'diluted to'}}</span>
                     <span>{{conc.finalVolume}}</span>
-                    <span>ml</span>
+                    <span>mL</span>
                     <span>
                         (<span>1ml/h = </span>
                         <span>{{round(conc.oneMlHrDose)}}</span>
@@ -27,7 +27,7 @@
                     </span>
                     <span>@</span>
                     <span>{{conc.flowRange}}</span>
-                    <span>ml/h</span>
+                    <span>mL/h</span>
                 </b-card-text>
             </b-card-body>
         </b-collapse>
