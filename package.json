@@ -26,7 +26,7 @@
     "dexie": "^3.0.1",
     "downloadjs": "^1.4.7",
     "inversify": "^5.0.1",
-    "katex": "^0.11.1",
+    "katex": "^0.12.0",
     "lodash.debounce": "^4.0.8",
     "reflect-metadata": "^0.1.13",
     "register-service-worker": "^1.7.1",
@@ -36,10 +36,10 @@
     "vue-katex": "https://github.com/lucpotage/vue-katex",
     "vue-property-decorator": "^9.0.0",
     "vue-router": "^3.3.4",
-    "whatwg-fetch": "^3.1.0"
+    "whatwg-fetch": "^3.2.0"
   },
   "devDependencies": {
-    "@fluffy-spoon/substitute": "^1.143.0",
+    "@fluffy-spoon/substitute": "^1.145.0",
     "@sinonjs/fake-timers": "6.0.1",
     "@storybook/addon-actions": "^5.3.19",
     "@storybook/addon-knobs": "^5.3.19",
@@ -75,8 +75,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
-    "execa": "^4.0.2",
-    "fake-indexeddb": "^3.0.2",
+    "execa": "^4.0.3",
+    "fake-indexeddb": "^3.1.0",
     "mocha": "^8.0.1",
     "node-sass": "^4.14.1",
     "pako": "^1.0.11",

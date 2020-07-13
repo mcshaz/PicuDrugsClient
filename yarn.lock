@@ -957,10 +957,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@fluffy-spoon/substitute@^1.143.0":
-  version "1.143.0"
-  resolved "https://registry.yarnpkg.com/@fluffy-spoon/substitute/-/substitute-1.143.0.tgz#34b661a3e9f8bb691e12d60ea7b00dcf27e47ff4"
-  integrity sha512-sQ7SF9kkIfa0oOekdoPPnXGdoYjO8wgqfbRZKj38C7fmcZ7r53Ttv+6Mhr6fZUZxC/Kyj5JIWrNxg4/LRao6Ow==
+"@fluffy-spoon/substitute@^1.145.0":
+  version "1.145.0"
+  resolved "https://registry.yarnpkg.com/@fluffy-spoon/substitute/-/substitute-1.145.0.tgz#3bf1dd510a96855f6e66634f53595d74f3ee78a8"
+  integrity sha512-RkIxcYVcDnY6+uBOIdA1K0XptXzsvWQx2mrCajpOlGGRo3w9zUR1N30T4KA5+Co/WibtRgFgNIwej9MPqddInA==
 
 "@fortawesome/fontawesome-common-types@^0.2.29":
   version "0.2.29"
@@ -5425,10 +5425,10 @@ execa@^3.3.0:
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
 
-execa@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/execa/-/execa-4.0.2.tgz#ad87fb7b2d9d564f70d2b62d511bee41d5cbb240"
-  integrity sha512-QI2zLa6CjGWdiQsmSkZoGtDx2N+cQIGb3yNolGTdjSQzydzLgYYf8LRuagp7S7fPimjcrzUDSUFd/MgzELMi4Q==
+execa@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/execa/-/execa-4.0.3.tgz#0a34dabbad6d66100bd6f2c576c8669403f317f2"
+  integrity sha512-WFDXGHckXPWZX19t1kCsXzOpqX9LWYNqn4C+HqZlk/V0imTkzJZqf87ZBhvpHaftERYknpk0fjSylnXVlVgI0A==
   dependencies:
     cross-spawn "^7.0.0"
     get-stream "^5.0.0"
@@ -5542,10 +5542,10 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fake-indexeddb@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/fake-indexeddb/-/fake-indexeddb-3.0.2.tgz#53bdef4c6b71b605b53bad1a9f649c4812031210"
-  integrity sha512-m1OBz7GIbOG8ETsmlJPlCU/GP+HR7AsWvBJDH1qtDg1o4sbBrOtNduAGweSNwsoN1uKGHedmRMEWcVIr2y7HOQ==
+fake-indexeddb@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/fake-indexeddb/-/fake-indexeddb-3.1.0.tgz#2a84c8c67de200b398fc9430b17fcf6f73764d2d"
+  integrity sha512-wpAlOALUie3nlxwO5yCulEm1Wv+xAYG71fZ1Ygpted26OrRKxtitlpJQbPGNW38TvL3nL9GKcTmFq7GlZcGn+A==
   dependencies:
     realistic-structured-clone "^2.0.1"
     setimmediate "^1.0.5"
@@ -7629,10 +7629,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-katex@^0.11.1:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/katex/-/katex-0.11.1.tgz#df30ca40c565c9df01a466a00d53e079e84ffaa2"
-  integrity sha512-5oANDICCTX0NqYIyAiFCCwjQ7ERu3DQG2JFHLbYOf+fXaMoH8eg/zOq5WSYJsKMi/QebW+Eh3gSM+oss1H/bww==
+katex@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.12.0.tgz#2fb1c665dbd2b043edcf8a1f5c555f46beaa0cb9"
+  integrity sha512-y+8btoc/CK70XqcHqjxiGWBOeIL8upbS0peTPXTvgrh21n1RiWWcIpSWM+4uXq+IAgNh9YYQWdc7LVDPDAEEAg==
   dependencies:
     commander "^2.19.0"
 
@@ -9388,10 +9388,10 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-pdf-lib@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/pdf-lib/-/pdf-lib-1.8.0.tgz#2fe74b6d5ab1ed4df990afcea2fc5a145c4d61ea"
-  integrity sha512-3D2FExYcr0Egdk4Uy5WxojkNLmxYDj/VRt/Lxu9qjRHD6m3G/YiyjA9aRFHAahsXDf8uI0R4cTZ/CgwR8P6yfw==
+pdf-lib@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/pdf-lib/-/pdf-lib-1.9.0.tgz#315fdf6247553e85386fa92b9fefbded7dd53d85"
+  integrity sha512-CO0vkvnkqLGY9vC4cosHcoOR7PMsFC4Dkf29sQm5J894sphy9ZxO/vbccZfQcBqTROAp+aY7TD9bh1T1EY/52Q==
   dependencies:
     "@pdf-lib/standard-fonts" "^0.0.4"
     "@pdf-lib/upng" "^1.0.1"
@@ -12579,10 +12579,10 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vee-validate@^3.3.5:
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.3.5.tgz#4988705f3cbf740e775ec16060f8cb90e7c8d4b5"
-  integrity sha512-4yK9xxBBWYbKGR7qwiKPTtZ05T8R1LzhZfGPxBSfnZ9RPmfs07BcSeHjXJnE+dFrMvK6BNgBQHQ/ghV21eRhbQ==
+vee-validate@^3.3.6:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.3.7.tgz#e9c3230cd17caa4a679f56ca8dd6acb1fa46f977"
+  integrity sha512-s0CfIO8U+YSAzn7q+WnNtPignsndWKQlrbp8qbJ/zCw6QMO/OKDxhFXYRdWeNWRbRktVGCkiIaYktQiY/YL3TQ==
 
 vendors@^1.0.0:
   version "1.0.4"
@@ -12917,10 +12917,10 @@ whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   dependencies:
     iconv-lite "0.4.24"
 
-whatwg-fetch@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.0.0.tgz#fc804e458cc460009b1a2b966bc8817d2578aefb"
-  integrity sha512-9GSJUgz1D4MfyKU7KRqwOjXCXTqWdFNvEr7eUBYchQiVc744mqK/MzXPNR2WsPkmkOa4ywfg8C2n8h+13Bey1Q==
+whatwg-fetch@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.2.0.tgz#8e134f701f0a4ab5fda82626f113e2b647fd16dc"
+  integrity sha512-SdGPoQMMnzVYThUbSrEvqTlkvC1Ux27NehaJ/GUHBfNrh5Mjg+1/uRyFMwVnxO2MrikMWvWAqUGgQOfVU4hT7w==
 
 whatwg-mimetype@^2.1.0, whatwg-mimetype@^2.2.0, whatwg-mimetype@^2.3.0:
   version "2.3.0"
