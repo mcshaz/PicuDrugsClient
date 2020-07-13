@@ -9,7 +9,7 @@ export class WeanDay {
                 public frequency: string,
                 rescueDose?: number) {
       this.regularDose = roundToFixed(this.regularDose);
-      this.rescueDose = rescueDose ? roundToFixed(rescueDose) : this.regularDose;
+      this.rescueDose = roundToFixed(rescueDose || (this.regularDose * 0.25));
     }
 
     public get id() {
