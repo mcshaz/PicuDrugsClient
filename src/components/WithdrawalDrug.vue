@@ -42,7 +42,6 @@
         </template>
       </validated-input-group>
     </b-form-group><!--/original prescription-->
-    <hr>
     <div class="alert alert-primary" role="alert" v-if="original24HrCalc.dose && !isChloral">
       This equates to a total {{originalDrugName}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
     </div>
@@ -123,7 +122,7 @@ export default class WithdrawalDrug extends Vue {
   @Prop({ default: () => [] })
   public selectedDdOpts!: string[];
 
-  @Prop({ default: 0 })
+  @Prop({ default: -1 })
   public id!: number;
 
   public ddOpts = ddOpts.map((e) => ({

@@ -171,8 +171,10 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
 
       // rescue dose
       opts.itemRowNo = 5; // { ...opts, color: toRGB('e9262c') }
-      cellTVs.setCoords(details.weaningRegime.map(r => r.rescueDose + ' ' + details.weaningDoseUnits), opts);
+      cellTVs.setCoords(details.weaningRegime.concat(details.weaningRegime[details.weaningRegime.length - 1])
+        .map(r => r.rescueDose + ' ' + details.weaningDoseUnits), opts);
       // sign here below rescue
+      shortSignText.push(shortSignText[shortSignText.length - 1]);
       cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 6 });
 
       // drug name & route

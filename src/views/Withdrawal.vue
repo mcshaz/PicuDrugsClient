@@ -93,13 +93,14 @@
             <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
             <age-validated-weight :require-age="true" v-model="wtKg" :age="age" :allowMedianWeight="false" :is-male="isMale"/>
           </b-form-group><!--/patient-details-->
-          <hr>
           <div v-for="d in drugs" :key="d.id">
             <!--  -->
+            <hr>
             <withdrawal-drug
                 :wtKg="wtKg"
                 :ageLt1Yr="ageLt1Yr"
                 :selectedDdOpts="selectedDrugs"
+                :id="d.id"
                 @update:original-drug-name="d.originalDrug=$event"
                 @update:original-conc="d.originalConc=$event"
                 @update:original-vol="d.originalVol=$event"
@@ -117,6 +118,7 @@
                 how do I <a href="#opiod-benzo-wean" @click.prevent="openThenNav($event.target, opiodBenzoVis=true)">determine the wean duration…</a>?
               </template>
             </withdrawal-drug>
+            <hr>
           </div>
           <button type="button" class="btn btn-primary mb-4" @click="drugs.push(createWeaningDrug())"><font-awesome-icon icon="plus"/> Another Medication</button>
           <hr>
@@ -176,7 +178,7 @@ export default class Withdrawal extends Vue {
   public opiodBenzoVis = getViewportSize() >= bootstrapSizes.lg;
   public clonidineVis = false;
   public picuVolVis = false;
-  public drugs: IWithdrawalDrug[] = [Withdrawal.createWeaningDrug()];
+  public drugs: IWithdrawalDrug[] = [this.createWeaningDrug()];
 
   // unwatched
   private navTarget!: HTMLElement | null;
@@ -251,7 +253,7 @@ export default class Withdrawal extends Vue {
     this.drugs.splice(this.drugs.findIndex(d => d.id === id), 1);
   }
 
-  private static createWeaningDrug(): IWithdrawalDrug {
+  private createWeaningDrug(): IWithdrawalDrug {
     return {
       id: ++id,
       originalDrug: '',
