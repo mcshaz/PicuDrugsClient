@@ -17,8 +17,8 @@
     "storybook:serve": "vue-cli-service storybook:serve -p 6006 -c config/storybook"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.29",
-    "@fortawesome/free-solid-svg-icons": "^5.13.1",
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@fortawesome/vue-fontawesome": "^0.1.10",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
