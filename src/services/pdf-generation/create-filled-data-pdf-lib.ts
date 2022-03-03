@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts, grayscale, PDFPage, PDFPageDrawTextOptions } from 'pdf-lib';
+import { PDFDocument, StandardFonts, grayscale, PDFPage, PDFPageDrawTextOptions, PrintScaling, Duplex } from 'pdf-lib';
 import { PdfTableValues, ICoordOptions } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { fixIE11Format, daysDif } from '@/services/utilities/dateHelpers';
@@ -32,6 +32,10 @@ export async function createAndDownloadPDF(details: IChartPatientDetails) {
   const dt = new Date();
   const title = `Withdrawal Chart ${details.nhi} ${dt.toISOString().slice(0, 10)}`;
   pdfDoc.setTitle(title);
+  const viewerPrefs = pdfDoc.catalog.getOrCreateViewerPreferences();
+  viewerPrefs.setPrintScaling(PrintScaling.None);
+  viewerPrefs.setDuplex(Duplex.DuplexFlipLongEdge);
+  viewerPrefs.setPickTrayByPDFSize(true);
   const pdfBytes = await pdfDoc.save();
   dt.setMinutes(dt.getTimezoneOffset());
   download(pdfBytes, title.replace(/ /g, '-') + '.pdf', 'application/pdf');

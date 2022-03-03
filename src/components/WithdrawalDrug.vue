@@ -338,7 +338,8 @@ export default class WithdrawalDrug extends Vue {
   public setStartWean() {
     if (this.startOral !== null && (this.startWean === null || this.startWeanMin > this.startWean || this.startWean > this.startWeanMax || !this.fieldTouched('Start Wean'))) {
       this.startWean = new Date(this.startOral);
-      this.startWean.setDate(this.startWean.getDate() + 1);
+      const currentHour = (new Date()).getHours();
+      this.startWean.setDate(this.startWean.getDate() + currentHour >= 12 ? 2 : 1);
     }
   }
 

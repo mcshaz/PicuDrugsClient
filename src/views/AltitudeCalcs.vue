@@ -51,17 +51,22 @@ import 'reflect-metadata';
 import { Component, Vue } from 'vue-property-decorator';
 import {
   pressureInAtm,
-  equivalentFiO2,
-  lengthMeasures
+  equivalentFiO2ForPAO2,
+  altitudeMeasures,
+  pressureMeasures
 } from '@/services/transports/pressureCalcs';
 
 @Component({})
 export default class AltitudeCalcs extends Vue {
   public fio2 = 0.21;
+  public co2 = 5.3;
+  public co2Min = 4.6;
+  public co2Max = 15;
+  public pressureMeasures = pressureMeasures.kpa;
   public altitude = 6000;
 
   public get fractionSea() {
-    return pressureInAtm(this.altitude, lengthMeasures.feet);
+    return pressureInAtm(this.altitude, altitudeMeasures.feet);
   }
 
   public get percentSea() {
@@ -73,7 +78,7 @@ export default class AltitudeCalcs extends Vue {
   }
 
   public get equivalentFiO2Fract() {
-    return equivalentFiO2(this.fractionSea);
+    return equivalentFiO2ForPAO2(this.fio2, this.fractionSea, this.co2);
   }
 
   public get equivalentFiO2() {
