@@ -157,6 +157,7 @@ export class DrugsDBLocal extends Dexie implements IDrugDB {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function getSimpleProperties(arg: any, refs = new Set<object>()): any {
   const simpleTypes = ['number', 'string', 'boolean', 'undefined'];
   function isSimple(p: any) {
@@ -175,6 +176,7 @@ function getSimpleProperties(arg: any, refs = new Set<object>()): any {
       if (!refs.has(i)) {
         return getSimpleProperties(i, refs);
       }
+      return null;
     });
   }
   if (typeof arg === 'object') {

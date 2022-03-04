@@ -7,6 +7,13 @@ import { filterVariableInfusionsForPt } from '@/services/infusion-calculations/T
 import { IVariableInfusionDrugVM, NumericRange, InfusionRateUnit, SiUnitMeasure } from '@/services/infusion-calculations';
 import { transformVariableInfusions } from '@/services/infusion-calculations/Transformations/transformVariableInfusions';
 
+interface IVariableVMTestData {
+  wt: number;
+  ageMth: number;
+  infusionDrugIds: number[];
+  vm: IVariableInfusionDrugVM[];
+}
+
 chai.use(chaiAlmost());
 describe('variableVMConversion', () => {
   let dbDatum: IEntityVariableInfusionDrug[][];
@@ -44,8 +51,6 @@ describe('variableVMConversion', () => {
   });
 });
 
-interface IVariableVMTestData { wt: number; ageMth: number; infusionDrugIds: number[];
-vm: IVariableInfusionDrugVM[]; }
 function getVariableInfusionVMTestData(): IVariableVMTestData[] {
   return [{
     wt: 2.8,

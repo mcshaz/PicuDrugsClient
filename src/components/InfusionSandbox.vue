@@ -111,11 +111,13 @@ import {
 } from '@/services/utilities/enumToValues';
 
 type vueNumber = number | '';
+/*
 interface ISelectOption {
   value: number;
   text: string;
   disabled?: boolean;
 }
+*/
 
 @Component({
   provide: {

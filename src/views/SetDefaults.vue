@@ -22,12 +22,6 @@ import ChartType from '@/components/ChartType.vue';
 import { IAppData, definedCharts } from '@/services/drugDb';
 // import { sortByStringProp } from '@/services/utilities/sortByProp';
 
-interface ISelectOption {
-  value: number;
-  text: string;
-  disabled?: boolean;
-}
-
 @Component({
   components: {
     ChartType,

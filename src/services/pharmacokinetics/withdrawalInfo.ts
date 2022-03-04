@@ -38,6 +38,13 @@ const clonidineConvert = conversionFactory({
   lt1: { maxPerDose: 150, qH: 6 },
   gte1: { maxPerDose: 300, qH: 6 },
 });
+export interface IWeaningMed {
+  morphine?: dailyWeanCommence;
+  oxycodone?: dailyWeanCommence;
+  diazepam?: dailyWeanCommence;
+  clonidine?: dailyWeanCommence;
+  methadone?: dailyWeanCommence;
+}
 const clonidineIVConvert: IWeaningMed = {
   clonidine: clonidineConvert(1.4),
 };
@@ -53,13 +60,6 @@ export const enum adminRoute {
     infusion, boluses, patch,
 }
 
-export interface IWeaningMed {
-  morphine?: dailyWeanCommence;
-  oxycodone?: dailyWeanCommence;
-  diazepam?: dailyWeanCommence;
-  clonidine?: dailyWeanCommence;
-  methadone?: dailyWeanCommence;
-}
 export interface IConcInfo {
   units: string;
   min: numberOrFunc;

@@ -4,7 +4,7 @@ export function getVariableDilutionVolumeMls(ptWeight: number): number {
   if (ptWeight < minVariableWeight) {
     throw new Error('ptWeight < ' + minVariableWeight);
   }
-  let num: number = 3333.3333333333333 / ptWeight;
+  let num: number = 3333.333333333333 / ptWeight;
   if (num > maxVolume) {
     num = num / 2.0;
   }

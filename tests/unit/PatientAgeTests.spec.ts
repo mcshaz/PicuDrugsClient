@@ -9,6 +9,7 @@ import { CombinedVueInstance } from 'vue/types/vue';
 
 describe('PatientAgeData.vue', () => {
   const dtStr = (dob: Date, now: Date) => `born:${dmyFormat(dob)} now:${dmyFormat(now)}`;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   let wrapper: Wrapper<CombinedVueInstance<PatientAgeData, object, object, object, Record<never, any>>>;
   const createExpect = (el: string) => expect((wrapper.find('#' + el).element as HTMLInputElement).value, el);
   let clock: lolex.InstalledClock<lolex.Clock>;

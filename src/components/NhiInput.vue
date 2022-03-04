@@ -40,8 +40,6 @@ import { Component, Prop, Mixins } from 'vue-property-decorator';
 import ValidatedInputGroup from '@/components/formGroups/ValidatedInputGroup.vue';
 import LabelColWidth from '@/mixins/LabelColWidth';
 
-type vueNumber = number | '';
-
 @Component({
   components: {
     ValidatedInputGroup,

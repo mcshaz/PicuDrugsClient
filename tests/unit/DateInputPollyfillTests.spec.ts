@@ -12,6 +12,7 @@ const dData: IDData[] = [{ dmyDate: '9/9/1999', keystrokes: ['991999', '09091999
   { dmyDate: '3/2/2003', keystrokes: ['322003'] }];
 describe('DateInputPolyfill', () => {
   // const dtStr = (dob: Date, now: Date) => `born:${dmyFormat(dob)} now:${dmyFormat(now)}`;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   let wrapper: Wrapper<CombinedVueInstance<DateInputPolyfill, object, object, object, Record<never, any>>>;
   // const createExpect = (el: string) => expect((wrapper.find('#' + el).element as HTMLInputElement).value, el);
 

@@ -5,6 +5,8 @@ import chai from 'chai';
 import { fileFetch } from '../../test-resources/FileFetch';
 import { ToArrayMap } from './utilities/toMap';
 
+interface IFixedVMTestData {wt: number; ageMth: number; infusionDrugId: number; vm: FixedInfusionDrugVM }
+
 chai.use(chaiAlmost());
 describe('fixedVMConversion', () => {
   let dbDatum: IEntityFixedInfusionDrug[];
@@ -43,7 +45,6 @@ describe('fixedVMConversion', () => {
     });
   });
 });
-interface IFixedVMTestData {wt: number; ageMth: number; infusionDrugId: number; vm: FixedInfusionDrugVM }
 function getFixedInfusionVMTestData(): IFixedVMTestData[] {
   return [{
     wt: 10, // Dilution Method Id: 7 wt: 10

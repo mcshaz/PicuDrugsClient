@@ -72,7 +72,7 @@
       <validated-date-group v-model="startOral" :min="startOralMin" :max="startOralMax" label="Convert On" :name="'start-oral'+id"
           description="When to commence the first oral dose" required/>
       <validated-date-group v-model="startWean" :min="startWeanMin" :max="startWeanMax" label="Start Wean" :name="'start-wean'+id"
-          description="When to begin reducing the dose (usually the day after converting to oral)" required/>
+          description="When to begin reducing the dose" required/>
     </b-form-group><!--Weaning plan-->
     <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
       This equates to a total <strong>daily</strong> <em> starting</em> enteral {{ weaningDrug }} dose of
@@ -338,8 +338,8 @@ export default class WithdrawalDrug extends Vue {
   public setStartWean() {
     if (this.startOral !== null && (this.startWean === null || this.startWeanMin > this.startWean || this.startWean > this.startWeanMax || !this.fieldTouched('Start Wean'))) {
       this.startWean = new Date(this.startOral);
-      const currentHour = (new Date()).getHours();
-      this.startWean.setDate(this.startWean.getDate() + currentHour >= 12 ? 2 : 1);
+      const addDays = (new Date()).getHours() >= 12 ? 2 : 1;
+      this.startWean.setDate(this.startWean.getDate() + addDays);
     }
   }
 

@@ -7,15 +7,15 @@ export interface IEntityBolusDrugBase {
     min: number;
 }
 
-export interface IEntityBolusDrug extends IEntityBolusDrugBase {
-    specificWardId: number | null;
-
-    bolusDoses: IEntityBolusDose[];
-}
-
 interface IEntityBolusDose {
     minDosePerKg: number;
     maxDosePerKg: number;
     weightMin: number;
     weightMax: number;
+}
+
+export interface IEntityBolusDrug extends IEntityBolusDrugBase {
+    specificWardId: number | null;
+
+    bolusDoses: IEntityBolusDose[];
 }

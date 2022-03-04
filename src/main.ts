@@ -19,7 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable camelcase */
 import { required, min_value, max_value, between, integer, required_if, oneOf } from 'vee-validate/dist/rules';
 import { requiredIfEmpty } from '@/services/validation/requiredIfEmpty';
 import { exactLength, nhiChecksum, nhiRegex, before, after, step } from '@/services/validation/validators';

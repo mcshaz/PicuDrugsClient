@@ -1,57 +1,68 @@
 {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "@vue/standard",
-      "@vue/typescript/recommended"
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "plugin:vue/essential",
+    "@vue/standard",
+    "@vue/typescript/recommended"
+  ],
+  "rules": {
+    "space-before-function-paren": [
+      "error",
+      "never"
     ],
-    "rules": {
-      "space-before-function-paren": [
-        "error",
-        "never"
-      ],
-      "semi": [
-        "error",
-        "always"
-      ],
-      "@typescript-eslint/no-non-null-assertion": 0,
-      "@typescript-eslint/no-explicit-any": 0,
-      "@typescript-eslint/interface-name-prefix": [
-        "error",
-        {
-          "prefixWithI": "always"
-        }
-      ],
-      "@typescript-eslint/no-use-before-define": 0,
-      "no-void": 0,
-      "no-undefined": 1,
-      "no-case-declarations": 0,
-      "no-useless-constructor": 0,
-      "@typescript-eslint/no-unused-vars": [2, { "argsIgnorePattern": "^_" }],
-      "no-debugger": 1,
-      "comma-dangle": [
-        "error",
-        {
-          "arrays": "always-multiline",
-          "objects": "always-multiline"
-        }
-      ]
-    },
-    "parserOptions": {
-      "ecmaVersion": 2020
-    },
-    "overrides": [
+    "semi": [
+      "error",
+      "always"
+    ],
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/naming-convention": [
+      "error",
       {
-        "files": [
-          "**/__tests__/*.{j,t}s?(x)"
-        ],
-        "env": {
-          "mocha": true
+        "selector": "interface",
+        "format": ["PascalCase"],
+        "custom": {
+          "regex": "^I[A-Z]",
+          "match": true
         }
       }
+    ],
+    "@typescript-eslint/no-use-before-define": 0,
+    "@typescript-eslint/explicit-module-boundary-types":0,
+    "no-void": 0,
+    "no-undef": 0,
+    "no-case-declarations": 0,
+    "no-useless-constructor": 0,
+    "@typescript-eslint/no-unused-vars": [
+      2,
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-debugger": 1,
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }
     ]
-  }
-  
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "parser": "@typescript-eslint/parser"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/__tests__/*.{j,t}s?(x)"
+      ],
+      "env": {
+        "mocha": true
+      }
+    }
+  ]
+}

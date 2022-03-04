@@ -24,8 +24,6 @@ import { ageString } from '@/services/utilities/ageString';
 // import { IEntityFixedInfusionDrug } from '@/services/drugDb';
 import { transformFixedInfusions, IPatientFixedInfusionDrug, FixedInfusionDrugVM } from '@/services/infusion-calculations';
 
-type vueNumber = number | '';
-
 @Component
 export default class InfusionSandboxTable extends Vue {
     @Prop({ required: true })

@@ -90,11 +90,13 @@ import { IMedianMatchResult } from '@/services/anthropometry/CentileRange';
 import { exampleWeights } from '@/services/utilities/weightHelpers';
 
 type vueNumber = number | '';
+/*
 interface ISelectOption {
   value: number;
   text: string;
   disabled?: boolean;
 }
+*/
 interface IWtAge {
   wtKg: number;
   maleM: IMedianMatchResult;

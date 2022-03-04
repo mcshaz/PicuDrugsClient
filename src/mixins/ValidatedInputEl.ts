@@ -37,7 +37,7 @@ export default class ValidatedInputEl extends ValidatedFormEl {
       }
       if (this.step) {
         return this.step;
-      };
+      }
       let isInteger: boolean;
       switch (typeof this.rules) {
         case 'string':

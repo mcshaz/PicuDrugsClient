@@ -11,8 +11,9 @@
               v-model="pValue" :id="pName" :name="pName" :autocomplete="autocomplete" :aria-describedby="invalidId" :class="getInputClass(validationContext)" :pattern="pattern">
           <b-input-group-append is-text v-if="pAppend || $slots.append"><slot name="append">{{ pAppend }}</slot></b-input-group-append>
         </b-input-group>
-        <template #invalid-feedback :id="invalidId">
-          <slot name="invalid-feedback" :val-context="validationContext">{{ validationContext.errors[0] }}</slot></template>
+        <template #invalid-feedback>
+          <slot name="invalid-feedback" :val-context="validationContext">{{ validationContext.errors[0] }}</slot>
+        </template>
       </b-form-group>
     </validation-provider>
     <datalist v-if="datalist" :id="datalistId"><!--creates an infinite rendering loop if inside the validation-provider-->

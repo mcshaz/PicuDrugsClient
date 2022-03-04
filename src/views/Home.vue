@@ -31,7 +31,9 @@
         <b-card header="Did you know:">
           <b-card-body>
             <p>
-              You can permanently set the <router-link to="/browser-defaults">default selections for this page</router-link>.
+              You can permanently set the <router-link to="/browser-defaults">
+                default selections for this page
+              </router-link>.
             </p>
             <p>
               Do you write the date as {{ dateEg }}? If not, your browser culture settings are incorrect <span class="text-muted">(e.g. US English rather than NZ English)</span>.
@@ -61,7 +63,7 @@ import { dateOrder } from '@/services/utilities/dateHelpers';
 
 import { ChildAge } from '../services/infusion-calculations';
 
-interface ISelectOption { value: number; text: string; disabled?: boolean }
+// interface ISelectOption { value: number; text: string; disabled?: boolean }
 
 @Component({
   components: {

@@ -28,7 +28,7 @@ export interface IChartPatientDetails {
 
 export async function createAndDownloadPDF(details: IChartPatientDetails) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const pdfDoc = await createPDF(details, require('./../../assets/pdf/WeaningProtocol.pdf'));
+  const pdfDoc = await createPDF(details, require('@/assets/pdf/WeaningProtocol.pdf'));
   const dt = new Date();
   const title = `Withdrawal Chart ${details.nhi} ${dt.toISOString().slice(0, 10)}`;
   pdfDoc.setTitle(title);
@@ -196,7 +196,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   }
 }
 
-interface ISignArgs extends ICoordOptions {signWidth: (txt: string, size: number) => number};
+interface ISignArgs extends ICoordOptions {signWidth: (txt: string, size: number) => number}
 async function getSignArguments(doc: PDFDocument): Promise<ISignArgs> {
   const helveticaBold = await doc.embedFont(StandardFonts.HelveticaBold);
   const size = 12;

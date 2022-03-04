@@ -48,11 +48,11 @@ export default class VariableInfusions extends Vue {
     private chartPromise!: Promise<IVariableInfusionDrugVM[]>;
 
     public created() {
-      if (this.chartPromise!) {
-        this.chartPromise.then((data) => {
-          this.chart = data;
-        });
-      }
+      // if (this.chartPromise!) {
+      this.chartPromise.then((data) => {
+        this.chart = data;
+      });
+      // }
     }
 
     public round(val: number) {

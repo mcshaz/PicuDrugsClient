@@ -27,5 +27,5 @@ export default class StateWatcher extends Vue {
       ? valContext.valid!
       : null;
     */
-  };
+  }
 }

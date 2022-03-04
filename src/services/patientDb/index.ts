@@ -1,2 +1,2 @@
 export { PatientDBLocal } from './PatientDBLocal';
-export { IPatient, IGrowthMeasures } from './IPatient';
+export type { IPatient, IGrowthMeasures } from './IPatient';

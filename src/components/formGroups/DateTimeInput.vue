@@ -18,7 +18,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import DateInput from '@/components/formGroups/DateInput.vue';
 // import { ymdFormat } from '@/services/utilities/dateHelpers';
 
-interface IDates { value: number; text: string /* disabled: boolean; */ }
+// interface IDates { value: number; text: string /* disabled: boolean; */ }
 
 @Component({
   components: { DateInput },

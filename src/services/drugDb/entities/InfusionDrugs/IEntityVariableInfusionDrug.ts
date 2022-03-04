@@ -1,7 +1,7 @@
 import { IEntityConcentration, IEntityInfusion, IDilutionInfo, IEntityDilutionBase } from './IEntityInfusionDrug';
 
-export interface IEntityVariableInfusionDrug extends IEntityInfusion {
-    variableTimeDilutions: IEntityVariableDilution[];
+interface IEntityVariableConcentration extends IEntityConcentration {
+    doseCat: string;
 }
 
 export interface IVariableDilutionInfo extends IDilutionInfo {
@@ -16,6 +16,6 @@ export interface IEntityVariableDilution extends IEntityDilutionBase, IVariableD
     variableTimeConcentrations: IEntityVariableConcentration[];
 }
 
-interface IEntityVariableConcentration extends IEntityConcentration {
-    doseCat: string;
+export interface IEntityVariableInfusionDrug extends IEntityInfusion {
+    variableTimeDilutions: IEntityVariableDilution[];
 }

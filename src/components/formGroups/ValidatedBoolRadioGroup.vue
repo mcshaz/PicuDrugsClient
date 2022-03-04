@@ -23,9 +23,6 @@ import { mergeValidators } from '@/services/validation/mergeValidators';
 import ValidatedFormEl from '@/mixins/ValidatedFormEl';
 import { BFormRadio, BFormRadioGroup } from 'bootstrap-vue';
 
-type vueNumber = number | '';
-type nullBool = null | boolean;
-
 @Component({
   components: { BFormRadio, BFormRadioGroup },
 })

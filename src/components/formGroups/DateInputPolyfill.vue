@@ -53,8 +53,6 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { parseDateUtc0, dateOrder, ymdFormat } from '@/services/utilities/dateHelpers';
 import { DatePart, datePartType } from '@/services/utilities/DatePart';
 
-type vueNumber = number | '';
-
 @Component
 export default class DateInputPolyfill extends Vue {
     public isValid: null | boolean = null;
@@ -206,8 +204,8 @@ export default class DateInputPolyfill extends Vue {
   // 1. Hide the spinner button in Chrome, Safari and Firefox.
   &__input {
     padding: $vert-pad;
-    padding-right: $spacing / 2;
-    padding-left: $spacing / 2;
+    padding-right: calc($spacing / 2);
+    padding-left: calc($spacing / 2);
     border: none;
     color: #495057;
     text-align: center;

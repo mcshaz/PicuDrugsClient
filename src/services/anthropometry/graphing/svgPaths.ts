@@ -65,11 +65,11 @@ export function svgPaths(dataPoints: IAnthropometry[],
           switch (indx) {
             case 0:
               return p + coord + 'Q' + coord;
-            case 1:
-            default:
-              return p + ' ' + coord;
             case 2:
               return p + ' T' + coord;
+            // including case 1:
+            default:
+              return p + ' ' + coord;
           }
         }, 'M')
         : cc.reduce((p: string, c: [string, Lms], indx: number) => {

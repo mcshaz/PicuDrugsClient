@@ -1,7 +1,7 @@
 type nullString = string | null | undefined;
 type nullStringProps<T> = ({ [P in keyof T]: T[P] extends nullString ? P : never })[keyof T];
 type stringProps<T> = ({ [P in keyof T]: T[P] extends string ? P : never })[keyof T];
-type numberProps<T> = ({ [P in keyof T]: T[P] extends number ? P : never })[keyof T];
+// type numberProps<T> = ({ [P in keyof T]: T[P] extends number ? P : never })[keyof T];
 
 type nullDate = Date | null;
 type dateProps<T> = ({ [P in keyof T]: T[P] extends nullDate ? P : never })[keyof T];

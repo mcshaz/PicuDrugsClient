@@ -22,7 +22,7 @@ export function parseExpression<T>(expression: string, obj: T, props: Array<stri
     const f = new Function(`return ${expression};`);
     return f() as primativeType;
   } catch (e) {
-    if (e.name !== 'SyntaxError') throw e;
+    if (!(e instanceof Error) || e.name !== 'SyntaxError') throw e;
     console.log(`A SyntaxError has been caught:\n${e}\nresulting from expression: '${expression}'`);
     return null;
   }
