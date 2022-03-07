@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts, grayscale, PDFPage, PDFPageDrawTextOptions, PrintScaling, Duplex } from 'pdf-lib';
+import { PDFDocument, StandardFonts, grayscale, PDFPage, PDFPageDrawTextOptions, PrintScaling, Duplex, toDegrees, degrees } from 'pdf-lib';
 import { PdfTableValues, ICoordOptions } from './pdf-table-values-pdf-lib';
 import { WeanDay } from '@/services/pharmacokinetics/WeanDay';
 import { fixIE11Format, daysDif } from '@/services/utilities/dateHelpers';
@@ -28,7 +28,7 @@ export interface IChartPatientDetails {
 
 export async function createAndDownloadPDF(details: IChartPatientDetails) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const pdfDoc = await createPDF(details, require('@/assets/pdf/WeaningProtocol.pdf'));
+  const pdfDoc = await createPDF(details, require('@/assets/pdf/WeaningProtocol2Page.pdf'));
   const dt = new Date();
   const title = `Withdrawal Chart ${details.nhi} ${dt.toISOString().slice(0, 10)}`;
   pdfDoc.setTitle(title);
@@ -53,7 +53,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   if (!details.drugs.length) {
     return;
   }
-  const cols = 9;
+  const cols = 8;
   const gridsRows = 3;
   const maxDays = cols * gridsRows;
   let pageNo = 0;
@@ -67,47 +67,59 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       return returnVar;
     });
   // set up pdf drawing variables
-  let size = 14;
-  const getWidth = (txt: string) => widthOfTextAtSize(txt, size);
-  const shrinkPrn = (txt: string, maxWidth: number, page: PDFPage, opts: PDFPageDrawTextOptions, centre = false) => {
-    const limits = { min: 8, max: size };
-    const res = shrinkTxtSizeToFit(txt, maxWidth, widthOfTextAtSize, limits);
-    size = res.size > 0 ? res.size : limits.min;
-    const textDrawOpts = { ...opts, size };
+  const rotate = degrees(90);
+  // current doc { width: 841.89, height: 1190.55 }
+  const transform = (opts: PDFPageDrawTextOptions) => ({
+    ...opts,
+    x: 1230 - (opts.y ?? 0),
+    y: opts.x ?? 0,
+    rotate,
+  });
+  let fontSize = 14;
+  const getWidth = (txt: string) => widthOfTextAtSize(txt, fontSize);
+  const sizeAndTransform = (txt: string, maxWidth: number, page: PDFPage, opts: PDFPageDrawTextOptions, centre = false) => {
+    const fontSizeLimits = { min: 8, max: fontSize };
+    const res = shrinkTxtSizeToFit(txt, maxWidth, widthOfTextAtSize, fontSizeLimits);
+    fontSize = res.size > 0 ? res.size : fontSizeLimits.min;
+    const textDrawOpts = { ...opts, size: fontSize };
     if (centre) {
-      textDrawOpts.x = (textDrawOpts.x === void 0 ? page.getX() : textDrawOpts.x) - res.width / 2;
+      if (opts.rotate && toDegrees(opts.rotate) === 90) {
+        textDrawOpts.y = (textDrawOpts.y ?? page.getY()) - res.width / 2;
+      } else {
+        textDrawOpts.x = (textDrawOpts.x ?? page.getX()) - res.width / 2;
+      }
     }
     page.drawText(txt, textDrawOpts);
-    size = limits.max;
+    fontSize = fontSizeLimits.max;
   };
 
   const signArgs = await getSignArguments(doc);
-  // current doc { width: 841.89, height: 1190.55 }
   // adding constant data to first page before cloning
   const firstPg = doc.getPage(0);
-  shrinkPrn(details.lastN, 200, firstPg, { x: 102, y: 1130 }); // Family Name
-  shrinkPrn(details.firstN, 118, firstPg, { x: 97, y: 1113 }); // Given Name
+  sizeAndTransform(details.lastN, 200, firstPg, transform({ x: 85, y: 1132 })); // Family Name
+  sizeAndTransform(details.firstN, 118, firstPg, transform({ x: 85, y: 1112 })); // Given Name
   if (typeof details.isMale === 'boolean') {
-    firstPg.drawText(details.isMale ? 'Male' : 'Female', { x: 253, y: 1113, size }); // Gender
+    firstPg.drawText(details.isMale ? 'M' : 'F', transform({ x: 304, y: 1112, size: fontSize })); // Gender
   }
   if (details.dob) {
-    firstPg.drawText(fixIE11Format(details.dob), { x: 107, y: 1082, size });
+    firstPg.drawText(fixIE11Format(details.dob), transform({ x: 107, y: 1072, size: fontSize }));
   }
-  firstPg.drawText(details.nhi, { x: 230, y: 1082, size });
+  firstPg.drawText(details.nhi, transform({ x: 248, y: 1072, size: fontSize }));
   const wtText = weightRounding(details.weight) + ' kg';
-  const boxMidline = 798;
-  firstPg.drawText(wtText, { x: boxMidline - getWidth(wtText) / 2, y: 1106, size });
-  shrinkPrn(details.prescriber, 116, firstPg, { x: 109, y: 146 }, true);
-  firstPg.drawText('SIGN HERE', { x: 181, y: 146, ...signArgs });
+  const boxMidline = 749;
+  firstPg.drawText(wtText, transform({ x: boxMidline - getWidth(wtText) / 2, y: 1098, size: fontSize }));
+  sizeAndTransform(details.prescriber, 116, firstPg, transform({ x: 136, y: 146 }), true);
+  firstPg.drawText('SIGN HERE', transform({ x: 251, y: 146, ...signArgs }));
   // adding pages to doc including page No
   const addPgNo = (no: number, pg: PDFPage) => {
     const pgText = `${no} of ${pageNo}`;
-    pg.drawText(pgText, { x: boxMidline - getWidth(pgText) / 2, y: 1062, size });
+    pg.drawText(pgText, transform({ x: boxMidline - getWidth(pgText) / 2, y: 1066, size: fontSize }));
   };
-  while (pageNo > doc.getPageCount()) {
+  // 1 less page for the weaning chart
+  while (pageNo > doc.getPageCount() - 1) {
     const [clonedPg] = await doc.copyPages(doc, [0]);
     doc.addPage(clonedPg);
-    addPgNo(doc.getPageCount(), clonedPg);
+    addPgNo(doc.getPageCount() - 1, clonedPg);
   }
   addPgNo(1, firstPg);
 
@@ -116,45 +128,56 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   signArgs.opacity = 0.85;
   signArgs.getWidth = () => shortSignWidth;
 
-  const yBetweenGrids = 278.5;
-  const cellTVs = new PdfTableValues(doc, [164, 1005], [77.8, yBetweenGrids], [cols, gridsRows], [0, 15, 29, 45, 64, 181, 202]);
-  const labelDrug = new PdfTableValues(doc, [95, 1023], [0, yBetweenGrids], [1, gridsRows]);
-  const labelRoute = new PdfTableValues(doc, [363, 1022], [0, yBetweenGrids], [1, gridsRows]);
+  const yBetweenGrids = 283;
+  const pageGetter = (nextPage = 0) => {
+    return {
+      reset() {
+        nextPage = 0;
+      },
+      next() {
+        if (nextPage === 1) nextPage = 2;
+        return doc.getPage(nextPage++);
+      },
+    };
+  };
+  const cellTVs = new PdfTableValues(pageGetter(), [171, 1022], [82.25, yBetweenGrids], [cols, gridsRows], transform, [0, 15, 31, 46, 68, 187.5, 208]);
+  const labelDrug = new PdfTableValues(pageGetter(), [102, 1041], [0, yBetweenGrids], [1, gridsRows], transform);
+  const labelRoute = new PdfTableValues(pageGetter(), [381, 1041], [0, yBetweenGrids], [1, gridsRows], transform);
 
   const originalRxOpts = {
     color: grayscale(0.8),
     size: 8,
-    x: 329,
-    y: 1059,
+    x: 490,
+    y: 1168,
     pre: 'original: ',
     preWidth: 0,
   };
   originalRxOpts.preWidth = widthOfTextAtSize(originalRxOpts.pre, originalRxOpts.size);
   for (const r of regimes) {
+    const pageNo = r.pageNo === 0 ? 0 : r.pageNo + 1;
     for (let startRow = 0; startRow < r.weaningDrugs.length; ++startRow) {
       const details = r.weaningDrugs[startRow];
-      size = 12;
+      fontSize = 12;
       let opts: ICoordOptions = {
         getWidth,
-        size,
-        currentPage: r.pageNo,
+        size: fontSize,
         startCol: daysDif(r.weaningDrugs[0].weaningRegime[0].weanDate, details.weaningRegime[0].weanDate),
         startRow,
       };
       // original prescription
       if (startRow === 0) {
-        doc.getPage(r.pageNo).drawText(originalRxOpts.pre, originalRxOpts);
+        doc.getPage(pageNo).drawText(originalRxOpts.pre, transform(originalRxOpts));
       }
       const origTxt = `${details.originalDrug} ${details.originalConc} ${details.originalVol}`.trimRight();
-      doc.getPage(r.pageNo).drawText(origTxt, {
+      doc.getPage(pageNo).drawText(origTxt, transform({
         ...originalRxOpts,
         x: originalRxOpts.x + originalRxOpts.preWidth,
         y: originalRxOpts.y - originalRxOpts.size * 1.1 * startRow,
-      });
+      }));
       // day #
       cellTVs.setCoords([...details.weaningRegime.keys(), details.weaningRegime.length].map(k => (k + 1).toString()), opts);
       // date
-      opts.size = size = 11;
+      opts.size = fontSize = 11;
       opts.itemRowNo = 1;
       let txt = details.weaningRegime.map(r => r.weanDateString);
       const lastDate = new Date(details.weaningRegime[details.weaningRegime.length - 1].weanDate);
@@ -182,11 +205,10 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
       cellTVs.setCoords(shortSignText, { ...opts, ...signArgs, itemRowNo: 6 });
 
       // drug name & route
-      size = 13;
+      fontSize = 13;
       // by not providing getwidth, we provide the default (0) which should left align
       opts = {
-        size,
-        currentPage: r.pageNo,
+        size: fontSize,
         startRow,
       };
       const medArray = new Array<string>(Math.ceil(details.weaningRegime.length / cols));

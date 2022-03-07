@@ -93,14 +93,14 @@
             <validated-bool-radio-group label="Gender" true-label="Male" false-label="Female" v-model="isMale" :stacked="false"/>
             <age-validated-weight :require-age="true" v-model="wtKg" :age="age" :allowMedianWeight="false" :is-male="isMale"/>
           </b-form-group><!--/patient-details-->
-          <div v-for="d in drugs" :key="d.id">
+          <div v-for="d in drugs" :key="d.itemId">
             <!--  -->
             <hr>
             <withdrawal-drug
                 :wtKg="wtKg"
                 :ageLt1Yr="ageLt1Yr"
                 :selectedDdOpts="selectedDrugs"
-                :id="d.id"
+                :itemId="d.itemId"
                 @update:original-drug-name="d.originalDrug=$event"
                 @update:original-conc="d.originalConc=$event"
                 @update:original-vol="d.originalVol=$event"
@@ -152,9 +152,9 @@ import { getViewportSize, bootstrapSizes } from '@/services/utilities/viewportSi
 import { BAlert } from 'bootstrap-vue';
 import { createAndDownloadPDF, IChartPatientDetails, IWeaningDrug } from '@/services/pdf-generation/create-filled-data-pdf-lib';
 
-interface IWithdrawalDrug extends IWeaningDrug { id: number }
+interface IWithdrawalDrug extends IWeaningDrug { itemId: number }
 type vueNumber = number | '';
-let id = 0;
+let nextId = 0;
 
 @Component({
   components: {
@@ -182,7 +182,6 @@ export default class Withdrawal extends Vue {
 
   // unwatched
   private navTarget!: HTMLElement | null;
-  private id!: number;
 
   public get ageLt1Yr() {
     return this.age
@@ -250,12 +249,12 @@ export default class Withdrawal extends Vue {
   }
 
   public remove(id: number) {
-    this.drugs.splice(this.drugs.findIndex(d => d.id === id), 1);
+    this.drugs.splice(this.drugs.findIndex(d => d.itemId === id), 1);
   }
 
   private createWeaningDrug(): IWithdrawalDrug {
     return {
-      id: ++id,
+      itemId: ++nextId,
       originalDrug: '',
       originalConc: '',
       originalVol: '',

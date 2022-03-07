@@ -3,23 +3,23 @@
     <b-form-group  id="original-Rx" label-size="lg">
       <template #label>
         Original pain/sedative <font-awesome-icon icon="prescription"/>
-        <button type="button" class="btn btn-warning float-right" @click="$emit('delete', id)"><font-awesome-icon icon="trash-alt"/> Remove</button>
+        <button type="button" class="btn btn-warning float-right" @click="$emit('delete', itemId)"><font-awesome-icon icon="trash-alt"/> Remove</button>
       </template>
-      <validated-select-group label="Medication" :name="'medication'+id" v-model="originalDrugName" required>
+      <validated-select-group label="Medication" :name="'medication'+itemId" v-model="originalDrugName" required>
         <option value="" disabled>Please select …</option>
         <optgroup v-for="o in ddOpts" :key="o.drugClass" :label="o.drugClass" :disabled="o.disabled">
           <option v-for="wd in o.drugs" :key="wd.name" :value="wd.name">{{wd.name}}</option>
         </optgroup>
       </validated-select-group>
       <template v-if="isDailyDrugRequired">
-        <validated-input-group v-if="isPatch" :name="'original-conc-details'+id" error-label="Original Concentration"
+        <validated-input-group v-if="isPatch" :name="'original-conc-details'+itemId" error-label="Original Concentration"
             :append="originalConcUnits.units" type="number" v-model="originalConcVal" ref="originalConcVal" :label="concLabel.label"
             :step="originalConcUnits?(originalConcUnits.step || originalConcUnits.min):1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]">
         </validated-input-group>
-        <validated-input-select-group v-else :name="'original-conc-details'+id" error-label="Original Concentration" select-error-label="[concentration] UNITS"
+        <validated-input-select-group v-else :name="'original-conc-details'+itemId" error-label="Original Concentration" select-error-label="[concentration] UNITS"
             type="number" v-model="originalConcVal" ref="originalConcVal"
             :step="originalConcUnits?originalConcUnits.min:1" required :min="originalConcLimits[0]" :max="originalConcLimits[1]"
-            :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" :select-name="'unit-select'+id">
+            :select-disabled="concentrations.length===1" :select-value.sync="originalConcUnits" :select-name="'unit-select'+itemId">
           <template #label>
             {{concLabel.label}} <strong class="text-warning" v-if="hasDifferentDefaults">*</strong>
           </template>
@@ -32,7 +32,7 @@
           </template>
         </validated-input-select-group>
       </template>
-      <validated-input-group label="last 24hrs" :name="'last24hr'+id" required
+      <validated-input-group label="last 24hrs" :name="'last24hr'+itemId" required
           :description="`the ${original24HrUnits==='mL'?'volume':original24HrUnits} of ${originalDrugName} given in the last 24 hours`"
           label-for="vol" label-cols-sm="4" label-cols-md="3" label-align-sm="right" v-if="isDailyDrugRequired && !isPatch"
           :append="original24HrUnits" type="number" v-model="original24HrVol" min="0" max="500">
@@ -46,14 +46,14 @@
       This equates to a total {{originalDrugName}} dose of <output>{{original24HrCalc.dose}} {{original24HrCalc.units}}</output>/<strong>day</strong>
     </div>
     <b-form-group label="Weaning plan" id="weaning-med" label-size="lg">
-      <validated-select-group :name="'weaning-med'+id" label="Oral" v-model="weaningDrug" required>
+      <validated-select-group :name="'weaning-med'+itemId" label="Oral" v-model="weaningDrug" required>
         <template>
           <option value="" disabled>Please select …</option>
           <option v-for="(fn, key) in conversionDrugs" :key="key" :value="key">{{key}}</option>
         </template>
       </validated-select-group>
       <validated-bool-radio-group label="Wean Duration" v-model="rapidClonidineWean" v-if="isClonidine"
-          true-label="rapid" false-label="slower" :name="'wean-duration'+id" required>
+          true-label="rapid" false-label="slower" :name="'wean-duration'+itemId" required>
         <template #description>
           <slot name="clonidine-duration">
           </slot>
@@ -61,7 +61,7 @@
       </validated-bool-radio-group>
       <template v-else>
         <validated-input-group label="Wean over" :rules="{ required: true, step: { multiple: weanDaily ? 1 : 2}  }" append="days" type="number" step="1" v-model="weanDuration"
-            required min="2" max="42" :name="'wean-over'+id">
+            required min="2" max="42" :name="'wean-over'+itemId">
           <template #description>
             <slot name="opiod-benzo-duration">
             </slot>
@@ -69,9 +69,9 @@
         </validated-input-group>
         <validated-bool-radio-group label="Wean each" true-label="day" false-label="alternate day" v-model="weanDaily" required/>
       </template>
-      <validated-date-group v-model="startOral" :min="startOralMin" :max="startOralMax" label="Convert On" :name="'start-oral'+id"
+      <validated-date-group v-model="startOral" :min="startOralMin" :max="startOralMax" label="Convert On" :name="'start-oral'+itemId"
           description="When to commence the first oral dose" required/>
-      <validated-date-group v-model="startWean" :min="startWeanMin" :max="startWeanMax" label="Start Wean" :name="'start-wean'+id"
+      <validated-date-group v-model="startWean" :min="startWeanMin" :max="startWeanMax" label="Start Wean" :name="'start-wean'+itemId"
           description="When to begin reducing the dose" required/>
     </b-form-group><!--Weaning plan-->
     <div class="alert alert-success" role="alert" v-if="totalWeaning24Hrs">
@@ -123,7 +123,7 @@ export default class WithdrawalDrug extends Vue {
   public selectedDdOpts!: string[];
 
   @Prop({ default: -1 })
-  public id!: number;
+  public itemId!: number;
 
   public ddOpts = ddOpts.map((e) => ({
     drugClass: e[0],
@@ -338,7 +338,8 @@ export default class WithdrawalDrug extends Vue {
   public setStartWean() {
     if (this.startOral !== null && (this.startWean === null || this.startWeanMin > this.startWean || this.startWean > this.startWeanMax || !this.fieldTouched('Start Wean'))) {
       this.startWean = new Date(this.startOral);
-      const addDays = (new Date()).getHours() >= 12 ? 2 : 1;
+      const now = new Date();
+      const addDays = (isSameDay(now, this.startOral) && now.getHours() >= 12) ? 2 : 1;
       this.startWean.setDate(this.startWean.getDate() + addDays);
     }
   }
@@ -433,6 +434,12 @@ export default class WithdrawalDrug extends Vue {
     const field = (this.$refs.mainObserver as any).fields[fieldName];
     return field && field.touched;
   }
+}
+
+function isSameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
 }
 
 </script>

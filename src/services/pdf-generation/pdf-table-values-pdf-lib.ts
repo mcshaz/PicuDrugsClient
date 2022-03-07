@@ -1,31 +1,35 @@
 
-import { PDFDocument, PDFPage, PDFPageDrawTextOptions } from 'pdf-lib';
+import { PDFPage, PDFPageDrawTextOptions } from 'pdf-lib';
 export interface ICoordOptions extends PDFPageDrawTextOptions {
   getWidth?: (txt: string) => number;
   itemRowNo?: number;
   startCol?: number;
   startRow?: number;
-  currentPage?: number;
+}
+
+interface IPageGetter {
+  next: () => PDFPage;
+  reset: () => void;
 }
 
 export const enum rowOverflow { newRow, newPage }
 
 export class PdfTableValues {
   constructor(
-        public doc: PDFDocument,
+        public pages: IPageGetter,
         public startCoord: [number, number],
         public offsetCoord: [number, number] = [0, 0],
         public gridsPerPage: [number, number] = [0, 0],
+        public transform: (args: PDFPageDrawTextOptions) => PDFPageDrawTextOptions = args => args,
         public itemRowOffset: number[] = [0],
         public overflow: rowOverflow = rowOverflow.newRow) {
   }
 
   // to left justify, just return 0 from getWidth
   public setCoords(txt: string[], opts: ICoordOptions = {}) {
-    let {
+    const {
       itemRowNo = 0,
       startCol = 0,
-      currentPage = 0,
       startRow = 0,
       getWidth = () => 0,
     } = opts;
@@ -35,27 +39,34 @@ export class PdfTableValues {
     let pg!: PDFPage;
     let lastWidth = 0;
     const startPageY = this.startCoord[1] - this.itemRowOffset[itemRowNo];
+    let currentPos = { x: 0, y: 0 };
+    this.pages.reset();
     if (startCol !== 0) {
-      pg = this.doc.getPage(currentPage++);
+      pg = this.pages.next();
       // have to move to position before using moveLeft
-      pg.moveTo(this.startCoord[0] + (startCol - 1) * this.offsetCoord[0], startPageY - this.offsetCoord[1] * startRow);
+      currentPos = {
+        x: this.startCoord[0] + (startCol - 1) * this.offsetCoord[0],
+        y: startPageY - this.offsetCoord[1] * startRow,
+      };
     } else if (startRow !== 0) {
-      pg = this.doc.getPage(currentPage++);
+      pg = this.pages.next();
     }
     let currentCell = startCol + startRow * this.gridsPerPage[0];
     const stopAt = txt.length + currentCell;
     for (let i = 0; currentCell < stopAt; ++currentCell, ++i) {
-      const txtWidth = getWidth(txt[i]) / 2;
+      const txtHalfWidth = getWidth(txt[i]) / 2;
       if (currentCell % totalGridsPerPage === 0) {
-        pg = this.doc.getPage(currentPage++);
-        pg.moveTo(this.startCoord[0] - txtWidth, startPageY);
+        pg = this.pages.next();
+        currentPos.x = this.startCoord[0] - txtHalfWidth;
+        currentPos.y = startPageY;
       } else if (currentCell % this.gridsPerPage[0] === 0) {
-        pg.moveTo(this.startCoord[0] - txtWidth, startPageY - this.offsetCoord[1] * (currentCell / this.gridsPerPage[0]));
+        currentPos.x = this.startCoord[0] - txtHalfWidth;
+        currentPos.y = startPageY - this.offsetCoord[1] * (currentCell / this.gridsPerPage[0]);
       } else {
-        pg.moveRight(this.offsetCoord[0] + lastWidth - txtWidth);
+        currentPos.x += this.offsetCoord[0] + lastWidth - txtHalfWidth;
       }
-      pg.drawText(txt[i], opts);
-      lastWidth = txtWidth;
+      pg.drawText(txt[i], this.transform({ ...opts, ...currentPos }));
+      lastWidth = txtHalfWidth;
     }
   }
 
