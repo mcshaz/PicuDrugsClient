@@ -15,7 +15,7 @@ module.exports = {
         name: 'assets/pdf/[name].[hash:8].[ext]',
       });
   },
-  transpileDependencies: ['pdf-lib'],
+  transpileDependencies: ['pdf-lib', 'dexie'],
   productionSourceMap: false,
 };
 // https://cli.vuejs.org/config/#publicpath
