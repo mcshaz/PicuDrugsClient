@@ -4,7 +4,7 @@
         :invalid-feedback="valContext.errors[0]" :state="getState(valContext)" label-align-lg="right">
       <template #label><slot name="label">{{ label }}</slot><span class="label-colon">:</span></template>
       <template #description v-if="description || $slots.description"><slot name="description">{{ description }}</slot></template>
-      <b-form-radio-group :checked="value" @change="$emit('change', $event)" v-model="pValue"
+      <b-form-radio-group v-model="pValue" @change="$emit('change', $event)"
             :stacked="stacked" :name="radioGrpName" :state="getState(valContext)" :class="stacked?'':'inline-shim'">
         <b-form-radio :value="true" :disabled="disabled">
           {{trueLabel}}
@@ -22,7 +22,7 @@ import { Component, Prop, Model, Mixins, Watch } from 'vue-property-decorator';
 import { mergeValidators } from '@/services/validation/mergeValidators';
 import ValidatedFormEl from '@/mixins/ValidatedFormEl';
 import { BFormRadio, BFormRadioGroup } from 'bootstrap-vue';
-
+let id = 0;
 @Component({
   components: { BFormRadio, BFormRadioGroup },
 })
@@ -58,7 +58,7 @@ export default class ValidatedBoolRadioGroup extends Mixins(ValidatedFormEl) {
   }
 
   public get radioGrpName() {
-    return this.name || ('radioGrp_' + this.pName); // (this as any)._uid
+    return this.name || ('radioGrp_' + this.pName + id++); // (this as any)._uid
   }
 }
 </script>
