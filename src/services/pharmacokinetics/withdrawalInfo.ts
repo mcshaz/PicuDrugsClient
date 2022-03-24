@@ -97,8 +97,8 @@ export const withdrawalDrugs: ReadonlyArray<IDrug> = deepFreeze([{
   adminRoute: adminRoute.infusion,
   conversion: { oxycodone: oxycodoneMultiplyBy(1.25) },
   concentrations: [
-    { units: 'microg/kg/hr', min: 10, max: 10 },
-    { units: 'mg/hr', min: 1, max: 1 }],
+    { units: 'microg/kg/hr', min: 10, max: 40 },
+    { units: 'mg/hr', min: 1, max: 4 }],
 }, {
   name: 'IV midazolam',
   drugClass: drugClass.benzo,

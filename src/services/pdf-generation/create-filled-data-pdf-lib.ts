@@ -129,20 +129,28 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   signArgs.getWidth = () => shortSignWidth;
 
   const yBetweenGrids = 283;
-  const pageGetter = (nextPage = 0) => {
+  const pageGetter = () => {
+    let currentPage = 0;
+    let beginPage = 0;
+    const incrPage = (pg: number) => pg === 0 ? 2 : pg + 1;
     return {
+      nextBeginPage() {
+        beginPage = currentPage === 0 ? 0 : currentPage;
+      },
       reset() {
-        nextPage = 0;
+        currentPage = beginPage;
       },
       next() {
-        if (nextPage === 1) nextPage = 2;
-        return doc.getPage(nextPage++);
+        const oldVal = currentPage;
+        currentPage = incrPage(currentPage);
+        return doc.getPage(oldVal);
       },
     };
   };
-  const cellTVs = new PdfTableValues(pageGetter(), [171, 1022], [82.25, yBetweenGrids], [cols, gridsRows], transform, [0, 15, 31, 46, 68, 187.5, 208]);
-  const labelDrug = new PdfTableValues(pageGetter(), [102, 1041], [0, yBetweenGrids], [1, gridsRows], transform);
-  const labelRoute = new PdfTableValues(pageGetter(), [381, 1041], [0, yBetweenGrids], [1, gridsRows], transform);
+  const pg = pageGetter();
+  const cellTVs = new PdfTableValues(pg, [171, 1022], [82.25, yBetweenGrids], [cols, gridsRows], transform, [0, 15, 31, 46, 68, 187.5, 208]);
+  const labelDrug = new PdfTableValues(pg, [102, 1041], [0, yBetweenGrids], [1, gridsRows], transform);
+  const labelRoute = new PdfTableValues(pg, [381, 1041], [0, yBetweenGrids], [1, gridsRows], transform);
 
   const originalRxOpts = {
     color: grayscale(0.8),
@@ -154,6 +162,7 @@ async function createFilledPdfStream(details: IChartPatientDetails, doc: PDFDocu
   };
   originalRxOpts.preWidth = widthOfTextAtSize(originalRxOpts.pre, originalRxOpts.size);
   for (const r of regimes) {
+    pg.nextBeginPage();
     const pageNo = r.pageNo === 0 ? 0 : r.pageNo + 1;
     for (let startRow = 0; startRow < r.weaningDrugs.length; ++startRow) {
       const details = r.weaningDrugs[startRow];

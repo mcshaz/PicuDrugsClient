@@ -44,6 +44,15 @@ export default class Tests extends Mixins(Withdrawal, WithdrawalDrug) {
         originalConc: this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units,
         originalVol: this.original24HrVol + this.original24HrUnits,
         weaningRegime: this.weaningRegime,
+      },
+      {
+        weaningDrug: 'Oxycodone',
+        weaningDoseUnits: this.weaningDoseUnits,
+        route: 'oral/NG',
+        originalDrug: this.originalDrug!.name,
+        originalConc: this.concLabel.label + ' ' + this.originalConcVal + this.originalConcUnits!.units,
+        originalVol: this.original24HrVol + this.original24HrUnits,
+        weaningRegime: this.weaningRegime,
       }],
     });
   }
