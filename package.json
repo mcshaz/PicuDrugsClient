@@ -23,7 +23,7 @@
     "bootstrap": "^4.6.1",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.21.1",
-    "dexie": "^3.2.1",
+    "dexie": "^3.2.2",
     "downloadjs": "^1.4.7",
     "inversify": "^5.1.1",
     "katex": "^0.15.2",
