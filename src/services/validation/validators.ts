@@ -17,7 +17,7 @@ export const exactLength: ValidationRuleSchema = {
 
 export const nhiRegex: ValidationRuleSchema = {
   validate(value: string) {
-    return /^([A-HJ-NP-Z]{3}\d{4}|SIM00\d{2})$/.test(value);
+    return /([A-HJ-NP-Z]{3}\d{4}|[A-HJ-NP-Z]{3}\d{2}[A-HJ-NP-Z]{2}|SIM00\d{2})/.test(value);
   },
   // eslint-disable-next-line quotes
   message: "Must be 3 letters (NO 'I's or 'O's) followed by 4 numbers",
@@ -27,7 +27,7 @@ export const nhiChecksum: ValidationRuleSchema = {
   validate(value: string) {
     if (/^SIM00\d{2}$/.test(value)) { return true; }
     const alphaLookup = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-    const checkSum = parseInt(value.slice(-1), 10);
+    const checksumRaw = value.slice(-1);
     value = value.slice(0, -1).toUpperCase();
     let cum = 0;
     let multiplier = value.length + 1;
@@ -35,13 +35,23 @@ export const nhiChecksum: ValidationRuleSchema = {
       let val = parseInt(c, 10);
       if (Number.isNaN(val)) {
         val = alphaLookup.indexOf(c) + 1;
+        if (val === 0) { return false; }
       }
       cum += val * multiplier--;
     }
-    const modulus = cum % 11;
-    return modulus <= 1
-      ? checkSum === 0
-      : (checkSum === 11 - modulus);
+
+    const checksumVal = parseInt(checksumRaw, 10);
+    if (Number.isNaN(checksumVal)) { // newer NHI format
+      const modulus = cum % 24;
+      if (modulus === 0) { return false; }
+      return alphaLookup[23 - modulus] === checksumRaw.toUpperCase();
+    } else { // old NHI format
+      const modulus = cum % 11;
+      if (modulus === 0) { return false; }
+      return modulus === 1
+        ? checksumVal === 0
+        : (checksumVal === 11 - modulus);
+    }
   },
   message: 'A letter or number is mistyped',
 };
